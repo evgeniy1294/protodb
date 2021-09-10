@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="new_sessions.svg">icons/new_sessions.svg</file>
+    </qresource>
+</RCC>
