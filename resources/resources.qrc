@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/icons">
         <file alias="new_sessions.svg">icons/new_sessions.svg</file>
+        <file alias="open.svg">icons/open.svg</file>
+        <file alias="options.svg">icons/options.svg</file>
+        <file alias="save.svg">icons/save.svg</file>
+        <file alias="network.svg">icons/network.svg</file>
+        <file alias="manage.svg">icons/manage.svg</file>
+        <file alias="save_as.svg">icons/save_as.svg</file>
     </qresource>
 </RCC>

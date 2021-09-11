@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include <DockManager.h>
 
 class MainWindow : public QMainWindow
@@ -21,7 +22,6 @@ private slots:
   void toolsOptions();
   void toolsPlugins();
   void helpAbout();
-  void helpAboutQt();
   void helpContent();
   void exit();
 
@@ -47,6 +47,7 @@ private:
   QAction* mHelpAboutQtAct;
   QAction* mHelpContentsAct;
   QAction* mExitAct;
+  QLabel*  mLabel;
 };
 
 
