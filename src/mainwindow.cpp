@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::createActions()
 {
-  mExitAct = new QAction(tr("&Exit"), this);
+  mExitAct = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
   mExitAct->setStatusTip(tr("Close application"));
   connect(mExitAct, &QAction::triggered, this, &MainWindow::exit);
 
@@ -133,7 +133,7 @@ void MainWindow::sessionsNew() {
     ads::CDockWidget* DockWidget = new ads::CDockWidget(sessionName);
     DockWidget->setWidget(l);
 
-    mDockManager->addDockWidget(ads::TopDockWidgetArea, DockWidget);
+    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, DockWidget);
   }
 
   return;
@@ -206,5 +206,8 @@ void MainWindow::helpContent(){
 }
 
 void MainWindow::exit(){
+  // TODO: Save session
+  QApplication::exit(0);
+
   return;
 }
