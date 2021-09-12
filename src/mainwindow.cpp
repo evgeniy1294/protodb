@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStringList>
+#include <QInputDialog>
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -117,15 +118,23 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::sessionsNew() {
-  QLabel* l = new QLabel();
-  l->setWordWrap(true);
-  l->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-  l->setText("Some text on label.");
+  bool ok;
 
-  ads::CDockWidget* DockWidget = new ads::CDockWidget("Label 1");
-  DockWidget->setWidget(l);
+  QString sessionName = QInputDialog::getText(this, tr("Create new session"),
+                                              tr("Enter new session name:"), QLineEdit::Normal,
+                                              tr("New session"), &ok);
+  if (ok && !sessionName.isEmpty())
+  {
+    QLabel* l = new QLabel();
+    l->setWordWrap(true);
+    l->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    l->setText("Some text on label.");
 
-  mDockManager->addDockWidget(ads::TopDockWidgetArea, DockWidget);
+    ads::CDockWidget* DockWidget = new ads::CDockWidget(sessionName);
+    DockWidget->setWidget(l);
+
+    mDockManager->addDockWidget(ads::TopDockWidgetArea, DockWidget);
+  }
 
   return;
 }
