@@ -11,14 +11,16 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
+        src/session_widget.cpp
         include/mainwindow.h
+        include/session_widget.h
         resources/resources.qrc
 )
 

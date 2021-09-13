@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include "mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mDockManager(new ads::CDockManager(this))
@@ -125,15 +126,11 @@ void MainWindow::sessionsNew() {
                                               tr("New session"), &ok);
   if (ok && !sessionName.isEmpty())
   {
-    QLabel* l = new QLabel();
-    l->setWordWrap(true);
-    l->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    l->setText("Some text on label.");
+    SessionWidget* session_wdg = new SessionWidget();
+    ads::CDockWidget* dock_wdg = new ads::CDockWidget(sessionName);
+    dock_wdg->setWidget(session_wdg);
 
-    ads::CDockWidget* DockWidget = new ads::CDockWidget(sessionName);
-    DockWidget->setWidget(l);
-
-    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, DockWidget);
+    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);
   }
 
   return;

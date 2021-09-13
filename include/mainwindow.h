@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <DockManager.h>
+#include "session_widget.h"
 
 class MainWindow : public QMainWindow
 {
