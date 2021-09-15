@@ -20,12 +20,10 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         src/session_widget.cpp
         src/tools_widget.cpp
-        src/conn_widget.cpp
         src/serial_widget.cpp
         include/mainwindow.h
         include/session_widget.h
         include/tools_widget.h
-        include/conn_widget.h
         include/serial_widget.h
         resources/resources.qrc
 )
