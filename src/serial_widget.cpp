@@ -66,10 +66,9 @@ void SerialWidget::createGui()
       mStopBitsCb->addItem("2");
 
     mOpenModeCb = new QComboBox();
-      mOpenModeCb->addItem("Read/write");
-      mOpenModeCb->addItem("Read");
-      mOpenModeCb->addItem("Write");
-      mOpenModeCb->addItem("Sniffer");
+      mOpenModeCb->addItem("Send/Receive");
+      mOpenModeCb->addItem("Receive");
+      mOpenModeCb->addItem("Monitoring");
 
     mLogfileLe  = new QLineEdit(tr("/home/evgen/log.txt"));
     mConnectBtn = new QPushButton(tr("Open"));

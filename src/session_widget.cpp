@@ -3,6 +3,7 @@
 #include <QLabel>
 #include "session_widget.h"
 #include "tools_widget.h"
+#include "workarea_widget.h"
 
 
 SessionWidget::SessionWidget(QWidget *parent)
@@ -24,9 +25,6 @@ void SessionWidget::createGui()
 {
   auto mLayout = new QHBoxLayout(this);
 
-    auto mSplitterLabel2 = new QLabel(tr("Im splitter!"));
-    mSplitterLabel2->setStyleSheet("QLabel {background: red;}");
-
   mLayout->addWidget(new ToolsWidget(), 0);
-  mLayout->addWidget(mSplitterLabel2, 1);
+  mLayout->addWidget(new WorkareaWidget(), 1);
 }
