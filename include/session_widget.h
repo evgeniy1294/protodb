@@ -17,6 +17,5 @@ private:
   void createGui();
 
 private:
-  QSplitter* mSplitter;
   QLabel* mLabel;
 };
