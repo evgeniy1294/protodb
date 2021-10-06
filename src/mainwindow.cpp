@@ -21,6 +21,12 @@ MainWindow::MainWindow(QWidget *parent)
   createActions();
   createMenus();
   createToolBar();
+
+  SessionWidget* session_wdg = new SessionWidget();
+  ads::CDockWidget* dock_wdg = new ads::CDockWidget("sessionName");
+  dock_wdg->setWidget(session_wdg);
+
+  mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);
 }
 
 
