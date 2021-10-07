@@ -2,9 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QLabel>
-#include <DockManager.h>
-#include "session_widget.h"
+#include "tool_bar.h"
 
 class MainWindow : public QMainWindow
 {
@@ -27,16 +25,11 @@ private slots:
   void exit();
 
 private:
+  void createGui();
   void createActions();
-  void createMenus();
   void createToolBar();
 
 private:
-  ads::CDockManager* mDockManager;
-  QMenu* mSessionsMenu;
-  QMenu* mToolsMenu;
-  QMenu* mHelpMenu;
-  QToolBar* mSessionsToolBar;
   QAction* mSessionsNewAct;
   QAction* mSessionsManageAct;
   QAction* mSessionsSaveAct;
@@ -48,7 +41,7 @@ private:
   QAction* mHelpAboutQtAct;
   QAction* mHelpContentsAct;
   QAction* mExitAct;
-  QLabel*  mLabel;
+  isa_tool_bar* mIsaToolBar;
 };
 
 

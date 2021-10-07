@@ -4,18 +4,19 @@
 
 class QTextBrowser;
 
-class LogWidget: public QWidget
+class WorkAreaWidget: public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit LogWidget(QWidget* parent = nullptr);
-  ~LogWidget();
+  explicit WorkAreaWidget(QWidget* parent = nullptr);
+  ~WorkAreaWidget();
 
 private:
   void createGui();
 
 private:
   QTextBrowser* mLogBrowser;
+  QTextBrowser* mScriptBrowser;
 };
 

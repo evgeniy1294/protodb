@@ -8,5 +8,6 @@
         <file alias="manage.svg">icons/manage.svg</file>
         <file alias="save_as.svg">icons/save_as.svg</file>
         <file alias="close.svg">icons/close.svg</file>
+        <file alias="list.svg">icons/list.svg</file>
     </qresource>
 </RCC>

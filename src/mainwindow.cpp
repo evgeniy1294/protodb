@@ -8,25 +8,37 @@
 #include <QStringList>
 #include <QInputDialog>
 #include "mainwindow.h"
+#include "main_widget.h"
+#include "session_widget.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , mDockManager(new ads::CDockManager(this))
+    , mIsaToolBar(new isa_tool_bar( QBoxLayout::TopToBottom ))
+{
+  createGui();
+  createActions();
+  createToolBar();
+}
+
+
+void MainWindow::createGui()
 {
   setWindowTitle("Protocol Debugger");
   setWindowIcon(QIcon(":/icons/network.svg"));
   setIconSize({18,18});
-  resize(640, 480);
-  createActions();
-  createMenus();
-  createToolBar();
+  resize(maximumSize());
 
-  SessionWidget* session_wdg = new SessionWidget();
-  ads::CDockWidget* dock_wdg = new ads::CDockWidget("sessionName");
-  dock_wdg->setWidget(session_wdg);
+  mIsaToolBar->setButtonSize( QSize( 28, 28 ) );
 
-  mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);
+  auto layout = new QHBoxLayout();
+    layout->addWidget(mIsaToolBar);
+    layout->addWidget(new SessionWidget());
+
+  auto wdg = new QWidget(this);
+    wdg->setLayout(layout);
+
+  setCentralWidget(wdg);
 }
 
 
@@ -83,41 +95,13 @@ void MainWindow::createActions()
 }
 
 
-void MainWindow::createMenus()
-{
-  mSessionsMenu = menuBar()->addMenu(tr("&Sessions"));
-  mSessionsMenu->addAction(mSessionsNewAct);
-  mSessionsMenu->addAction(mSessionsManageAct);
-  mSessionsMenu->addAction(mSessionsOpenAct);
-  mSessionsMenu->addAction(mSessionsSaveAct);
-  mSessionsMenu->addAction(mSessionsSaveAsAct);
-  mSessionsMenu->addSeparator();
-  mSessionsMenu->addAction(mExitAct);
-
-  mToolsMenu = menuBar()->addMenu(tr("&Tools"));
-  mToolsMenu->addAction(mToolsPluginsAct);
-  mToolsMenu->addSeparator();
-  mToolsMenu->addAction(mToolsOptionsAct);
-
-  mHelpMenu = menuBar()->addMenu(tr("&Help"));
-  mHelpMenu->addAction(mHelpContentsAct);
-  mHelpMenu->addSeparator();
-  mHelpMenu->addAction(mHelpAboutAct);
-  mHelpMenu->addAction(mHelpAboutQtAct);
-}
-
 
 void MainWindow::createToolBar() {
-  mSessionsToolBar = addToolBar(tr("Sessions"));
-  mSessionsToolBar->setFixedHeight(32);
-  mSessionsToolBar->setIconSize({18,18});
-  mSessionsToolBar->setMovable(false);
-  mSessionsToolBar->addAction(mSessionsNewAct);
-  mSessionsToolBar->addAction(mSessionsOpenAct);
-  mSessionsToolBar->addAction(mSessionsSaveAct);
-  mSessionsToolBar->addAction(mSessionsManageAct);
-  mSessionsToolBar->addSeparator();
-  mSessionsToolBar->addAction(mToolsOptionsAct);
+  mIsaToolBar->addToolAction(mSessionsNewAct, false);
+  mIsaToolBar->addToolAction(mSessionsOpenAct);
+  mIsaToolBar->addToolAction(mSessionsSaveAct);
+  mIsaToolBar->addToolAction(mSessionsManageAct, false);
+  mIsaToolBar->addToolAction(mToolsOptionsAct);
 }
 
 MainWindow::~MainWindow()
@@ -132,11 +116,11 @@ void MainWindow::sessionsNew() {
                                               tr("New session"), &ok);
   if (ok && !sessionName.isEmpty())
   {
-    SessionWidget* session_wdg = new SessionWidget();
+   /* SessionWidget* session_wdg = new SessionWidget();
     ads::CDockWidget* dock_wdg = new ads::CDockWidget(sessionName);
     dock_wdg->setWidget(session_wdg);
 
-    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);
+    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);*/
   }
 
   return;

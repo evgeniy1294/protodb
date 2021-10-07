@@ -23,12 +23,24 @@ set(PROJECT_SOURCES
         src/serial_widget.cpp
         src/log_widget.cpp
         src/editor_widget.cpp
+        src/workarea_widget.cpp
+        src/script_widget.cpp
+        src/sidebar_widget.cpp
+        src/main_widget.cpp
+        src/menu.cpp
+        src/tool_bar.cpp
         include/mainwindow.h
         include/session_widget.h
         include/tools_widget.h
         include/serial_widget.h
         include/log_widget.h
         include/editor_widget.h
+        include/workarea_widget.h
+        include/script_widget.h
+        include/sidebar_widget.h
+        include/main_widget.h
+        include/menu.h
+        include/tool_bar.h
         resources/resources.qrc
 )
 
