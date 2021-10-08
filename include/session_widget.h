@@ -2,8 +2,9 @@
 
 #include <QWidget>
 
-class QSplitter;
-class QLabel;
+namespace ads {
+  class CDockManager;
+}
 
 class SessionWidget: public QWidget
 {
@@ -17,5 +18,5 @@ private:
   void createGui();
 
 private:
-  QLabel* mLabel;
+  ads::CDockManager* mDockManager;
 };

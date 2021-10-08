@@ -8,7 +8,6 @@
 #include <QStringList>
 #include <QInputDialog>
 #include "mainwindow.h"
-#include "main_widget.h"
 #include "session_widget.h"
 
 
