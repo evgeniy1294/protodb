@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
+        src/macro_widget.cpp
         include/mainwindow.h
         include/session_widget.h
         include/serial_widget.h
@@ -33,6 +34,7 @@ set(PROJECT_SOURCES
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
+        include/macro_widget.h
         resources/resources.qrc
 )
 
