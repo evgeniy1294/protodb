@@ -44,18 +44,10 @@ void MainWindow::createGui()
 
 void MainWindow::createActions()
 {
-  mExitAct = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
-  mExitAct->setStatusTip(tr("Close application"));
-  connect(mExitAct, &QAction::triggered, this, &MainWindow::exit);
-
   mSessionsNewAct = new QAction(QIcon(":/icons/new_sessions.svg"), tr("&New..."), this);
   mSessionsNewAct->setShortcuts(QKeySequence::New);
   mSessionsNewAct->setStatusTip(tr("Create a new file"));
   connect(mSessionsNewAct, &QAction::triggered, this, &MainWindow::sessionsNew);
-
-  mSessionsManageAct = new QAction(QIcon(":/icons/manage.svg"), tr("&Manage..."), this);
-  mSessionsManageAct->setStatusTip(tr("Manage active sessions"));
-  connect(mSessionsManageAct, &QAction::triggered, this, &MainWindow::sessionsManage);
 
   mSessionsSaveAct = new QAction(QIcon(":/icons/save.svg"), tr("&Save"), this);
   mSessionsSaveAct->setShortcuts(QKeySequence::Save);
@@ -88,9 +80,13 @@ void MainWindow::createActions()
   mHelpAboutQtAct->setStatusTip("About Qt");
   connect(mHelpAboutQtAct, &QAction::triggered, &QApplication::aboutQt);
 
-  mHelpContentsAct = new QAction(tr("&Contents"), this);
+  mHelpContentsAct = new QAction(tr("&Help"), this);
   mHelpContentsAct->setStatusTip("Help contents");
   connect(mHelpContentsAct, &QAction::triggered, this, &MainWindow::helpContent);
+
+  mExitAct = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
+  mExitAct->setStatusTip(tr("Close application"));
+  connect(mExitAct, &QAction::triggered, this, &MainWindow::exit);
 }
 
 
@@ -99,8 +95,16 @@ void MainWindow::createToolBar() {
   mIsaToolBar->addToolAction(mSessionsNewAct, false);
   mIsaToolBar->addToolAction(mSessionsOpenAct);
   mIsaToolBar->addToolAction(mSessionsSaveAct);
-  mIsaToolBar->addToolAction(mSessionsManageAct, false);
-  mIsaToolBar->addToolAction(mToolsOptionsAct);
+  mIsaToolBar->addToolAction(mSessionsSaveAsAct, false);
+  mIsaToolBar->addMenuSeparator();
+  mIsaToolBar->addToolAction(mToolsOptionsAct, false);
+  mIsaToolBar->addToolAction(mToolsPluginsAct, false);
+  mIsaToolBar->addMenuSeparator();
+  mIsaToolBar->addToolAction(mHelpContentsAct, false);
+  mIsaToolBar->addToolAction(mHelpAboutQtAct, false);
+  mIsaToolBar->addToolAction(mHelpAboutAct, false);
+  mIsaToolBar->addMenuSeparator();
+  mIsaToolBar->addToolAction(mExitAct, false);
 }
 
 MainWindow::~MainWindow()

@@ -22,6 +22,7 @@ private:
 
 private:
   QTextBrowser* mDataEditor;
+  QTextBrowser* mHelpEditor;
   QLineEdit* mNameLe;
   QComboBox* mCrcCb;
   QSpinBox* mRepeatSb;

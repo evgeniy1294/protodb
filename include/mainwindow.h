@@ -31,7 +31,6 @@ private:
 
 private:
   QAction* mSessionsNewAct;
-  QAction* mSessionsManageAct;
   QAction* mSessionsSaveAct;
   QAction* mSessionsSaveAsAct;
   QAction* mSessionsOpenAct;

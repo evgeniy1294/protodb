@@ -131,7 +131,12 @@ void isa_tool_bar::removeToolAction(QAction *action)
 ///
 QList<QAction*> isa_tool_bar::getActions() const
 {
-    return m_buttons_menu->actions();
+  return m_buttons_menu->actions();
+}
+
+void isa_tool_bar::addMenuSeparator()
+{
+  m_buttons_menu->addSeparator();
 }
 
 ///

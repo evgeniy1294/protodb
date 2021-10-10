@@ -9,5 +9,6 @@
         <file alias="save_as.svg">icons/save_as.svg</file>
         <file alias="close.svg">icons/close.svg</file>
         <file alias="list.svg">icons/list.svg</file>
+        <file alias="enter.png">icons/enter-arrow.png</file>
     </qresource>
 </RCC>

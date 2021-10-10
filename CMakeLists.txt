@@ -23,7 +23,6 @@ set(PROJECT_SOURCES
         src/log_widget.cpp
         src/editor_widget.cpp
         src/script_widget.cpp
-        src/sidebar_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
         include/mainwindow.h
@@ -32,7 +31,6 @@ set(PROJECT_SOURCES
         include/log_widget.h
         include/editor_widget.h
         include/script_widget.h
-        include/sidebar_widget.h
         include/menu.h
         include/tool_bar.h
         resources/resources.qrc

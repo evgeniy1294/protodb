@@ -28,6 +28,8 @@ public:
     void removeToolAction( QAction * action );
     QList< QAction* > getActions( ) const;
 
+    void addMenuSeparator();
+
     // Размер кнопок
     void setButtonSize( int getButtonSize );
     void setButtonSize( QSize getButtonSize );

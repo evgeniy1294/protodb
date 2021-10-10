@@ -31,6 +31,9 @@ void EditorWidget::createGui()
 
   mStatusLabel = new QLabel(tr("HEX, pos 4/7"));
 
+  mHelpEditor = new QTextBrowser();
+    mHelpEditor->setText(tr("Description..."));
+
   mDataEditor = new QTextBrowser();
     mDataEditor->setText(tr("x50 | x30 | x34 | xDE | xAD | xBE | xEF"));
 
@@ -46,19 +49,18 @@ void EditorWidget::createGui()
     mRepeatSb->setSuffix("ms");
     mRepeatSb->setSpecialValueText(tr("No Repeat"));
 
-  auto mSaveBtn  = new QPushButton("Save");
-  auto mSendBtn  = new QPushButton("Send");
+  auto mSaveBtn  = new QPushButton();
+    mSaveBtn->setIcon(QIcon(":/icons/save.svg"));
 
   QGridLayout* layout = new QGridLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
 
     layout->addWidget(mNameLe, 0, 0);
-    layout->addWidget(mStatusLabel, 1, 0);
-    layout->addWidget(mDataEditor, 2, 0, 3, 1);
     layout->addWidget(mSaveBtn, 0, 1);
-    layout->addWidget(mCrcCb, 2, 1);
-    layout->addWidget(mRepeatSb, 3, 1, Qt::AlignTop);
-    layout->addWidget(mSendBtn, 4, 1);
+
+    layout->addWidget(mHelpEditor, 1, 0);
+    layout->addWidget(mStatusLabel, 2, 0);
+    layout->addWidget(mDataEditor, 3, 0);
 }
 
