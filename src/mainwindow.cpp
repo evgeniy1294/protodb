@@ -11,6 +11,7 @@
 #include "session_widget.h"
 
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mIsaToolBar(new isa_tool_bar( QBoxLayout::TopToBottom ))

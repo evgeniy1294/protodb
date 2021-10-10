@@ -1,4 +1,3 @@
-#include <QWidget>
 #include <QLayout>
 #include <QComboBox>
 #include <QTextBrowser>
@@ -6,12 +5,8 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QLabel>
-#include <QLineEdit>
 #include "editor_widget.h"
 
-QTextBrowser* mTextBrowser;
-QLineEdit* mLineEdit;
-QComboBox* mComboBox;
 
 EditorWidget::EditorWidget(QWidget* parent)
   : QWidget(parent)

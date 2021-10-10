@@ -6,6 +6,7 @@
 #include "log_widget.h"
 #include "editor_widget.h"
 #include "script_widget.h"
+#include "macro_widget.h"
 
 SessionWidget::SessionWidget(QWidget *parent)
   : QWidget(parent)
@@ -40,11 +41,16 @@ void SessionWidget::createGui()
   auto script_dock_wdg = new ads::CDockWidget("Scripting");
     script_dock_wdg->setWidget(script_wdg);
 
+  auto macro_wdg = new MacroWidget();
+  auto macro_dock_wdg = new ads::CDockWidget("Macroses");
+    macro_dock_wdg->setWidget(macro_wdg);
+
   mDockManager = new ads::CDockManager();
     mDockManager->addDockWidget(ads::LeftDockWidgetArea, serial_dock_wdg);
     mDockManager->addDockWidget(ads::RightDockWidgetArea, log_dock_wdg);
     mDockManager->addDockWidget(ads::BottomDockWidgetArea, edit_dock_wdg);
     mDockManager->addDockWidget(ads::RightDockWidgetArea, script_dock_wdg);
+    mDockManager->addDockWidgetTab(ads::RightDockWidgetArea, macro_dock_wdg);
 
     QHBoxLayout *central = new QHBoxLayout();
         central->setContentsMargins( 0, 0, 0, 0 );
