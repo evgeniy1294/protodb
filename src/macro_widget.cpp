@@ -6,48 +6,44 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QTableView>
+#include <QToolButton>
+#include <QMenu>
+#include <QAction>
 #include "macro_widget.h"
+#include "sequence_box.h"
+
 
 QLineEdit* mLineEdit;
 QComboBox* mComboBox;
 
-MacroWidget::MacroWidget(QWidget* parent)
+SequenceMultiWidget::SequenceMultiWidget(QWidget* parent)
   : QWidget(parent)
 {
   createGui();
 }
 
 
-MacroWidget::~MacroWidget()
+SequenceMultiWidget::~SequenceMultiWidget()
 {
 }
 
-
-void MacroWidget::createGui()
+void SequenceMultiWidget::addMacroSequence(Sequence* aSequence)
 {
-  auto mNameLe = new QLineEdit("Sequence name");
-    mNameLe->setReadOnly(true);
+  SequenceBox box(aSequence);
 
-  auto mTrigLe = new QLineEdit("Trigger sequence");
+  auto row = mLayout->rowCount();
 
-  auto mRepeatSb = new QSpinBox();
-    mRepeatSb->setMaximum(10000);
-    mRepeatSb->setSingleStep(100);
-    mRepeatSb->setValue(0);
-    mRepeatSb->setSuffix("ms");
-    mRepeatSb->setSpecialValueText(tr("No Repeat"));
-
-  auto mSendBtn  = new QPushButton();
-    mSendBtn->setIcon(QIcon(":/icons/enter.png"));
-
-  QGridLayout* layout = new QGridLayout(this);
-    layout->setAlignment(Qt::AlignTop);
+  for (int col = 0; col < box.count(); col++) {
+    mLayout->addWidget(box.get(col), row, col);
+  }
+}
 
 
-    layout->addWidget(mNameLe, 0, 0);
-    layout->addWidget(mTrigLe, 0, 1);
-    layout->addWidget(mRepeatSb, 0, 2);
-    layout->addWidget(mSendBtn, 0, 3);
+void SequenceMultiWidget::createGui()
+{
+  mLayout = new QGridLayout(this);
+    mLayout->setAlignment(Qt::AlignTop);
 }
 
 

@@ -8,6 +8,7 @@
 #include "script_widget.h"
 #include "macro_widget.h"
 
+
 SessionWidget::SessionWidget(QWidget *parent)
   : QWidget(parent)
 {
@@ -41,7 +42,20 @@ void SessionWidget::createGui()
   auto script_dock_wdg = new ads::CDockWidget("Scripting");
     script_dock_wdg->setWidget(script_wdg);
 
-  auto macro_wdg = new MacroWidget();
+  auto macro_wdg = new SequenceMultiWidget();
+    Sequence seq;
+    seq.setName(tr("Sequence 1"));
+    seq.setTriggerName(tr("Sequence 2"));
+    macro_wdg->addMacroSequence(&seq);
+
+    seq.setName(tr("Sequence 2"));
+    seq.setTriggerName(tr("None"));
+    macro_wdg->addMacroSequence(&seq);
+
+    seq.setName(tr("Sequence 3"));
+    seq.setTriggerName(tr("None"));
+    macro_wdg->addMacroSequence(&seq);
+
   auto macro_dock_wdg = new ads::CDockWidget("Macroses");
     macro_dock_wdg->setWidget(macro_wdg);
 

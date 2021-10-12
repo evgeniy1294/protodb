@@ -11,8 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
@@ -26,6 +26,9 @@ set(PROJECT_SOURCES
         src/menu.cpp
         src/tool_bar.cpp
         src/macro_widget.cpp
+        src/sequence.cpp
+        src/sequence_box.cpp
+        src/sequence_storage.cpp
         include/mainwindow.h
         include/session_widget.h
         include/serial_widget.h
@@ -35,6 +38,9 @@ set(PROJECT_SOURCES
         include/menu.h
         include/tool_bar.h
         include/macro_widget.h
+        include/sequence.h
+        include/sequence_box.h
+        include/sequence_storage.h
         resources/resources.qrc
 )
 

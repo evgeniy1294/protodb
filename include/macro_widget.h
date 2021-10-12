@@ -3,17 +3,25 @@
 #include <QWidget>
 #include <QList>
 
-class MacroWidget: public QWidget
+#include "sequence.h"
+
+class QGridLayout;
+
+
+class SequenceMultiWidget: public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit MacroWidget(QWidget* parent = nullptr);
-  ~MacroWidget();
+  explicit SequenceMultiWidget(QWidget* parent = nullptr);
+  ~SequenceMultiWidget();
+
+  void addMacroSequence(Sequence* aSequence);
 
 private:
   void createGui();
 
 private:
-  QList<int> mMacroList;
+  QGridLayout* mLayout;
+  QList<Sequence> mMacroList;
 };
