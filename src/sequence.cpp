@@ -1,5 +1,23 @@
 #include "sequence.h"
 
+Sequence& Sequence::operator=(const Sequence& aSq)
+{
+  mUuid = aSq.mUuid;
+  mName = aSq.mName;
+  mCharString = aSq.mCharString;
+  mTrigSequence = aSq.mTrigSequence;
+  mDescription = aSq.mDescription;
+  mTriggerName = aSq.mTriggerName;
+  mRepeatPeriod = aSq.mRepeatPeriod;
+
+  return *this;
+}
+
+bool Sequence::operator==(const Sequence& aSq)
+{
+  return mUuid == aSq.mUuid;
+}
+
 void Sequence::setName(const QString& newName)
 {
   mName = newName;
@@ -58,4 +76,9 @@ const QString& Sequence::triggerName() const
 void Sequence::setTriggerName(const QString& newTriggerName)
 {
   mTriggerName = newTriggerName;
+}
+
+const QUuid& Sequence::uuid() const
+{
+  return mUuid;
 }

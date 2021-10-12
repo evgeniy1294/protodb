@@ -1,15 +1,18 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QByteArray>
 #include <QUuid>
 
 class SequenceProcessor;
 
-class Sequence {
-  friend class SequenceProcessor;
+class Sequence: public QObject {
+  Q_OBJECT
 
 public:
+  friend class SequenceProcessor;
+
   Sequence()
    : mUuid(QUuid::createUuid())
    , mName()
@@ -20,6 +23,20 @@ public:
    , mTrigSequence()
    , mDescription()
    , mTriggerName() {  }
+
+  Sequence(const Sequence& aSeq)
+    : mUuid(aSeq.mUuid)
+    , mName(aSeq.mName)
+    , mCharString(aSeq.mCharString)
+    , mCached(aSeq.mCached)
+    , mRepeatPeriod(aSeq.mRepeatPeriod)
+    , mByteArray(aSeq.mByteArray)
+    , mTrigSequence(aSeq.mTrigSequence)
+    , mDescription(aSeq.mDescription)
+    , mTriggerName(aSeq.mTriggerName) {  }
+
+  Sequence& operator=(const Sequence&);
+  bool operator==(const Sequence&);
 
   void setName(const QString& newName);
   const QString& name() const;
@@ -38,6 +55,8 @@ public:
 
   const QString& triggerName() const;
   void setTriggerName(const QString& newTriggerName);
+
+  const QUuid& uuid() const;
 
 private:
   bool mCached;

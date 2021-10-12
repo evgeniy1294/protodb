@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include "singleton.h"
 
 namespace ads {
   class CDockManager;

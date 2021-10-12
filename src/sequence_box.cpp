@@ -7,12 +7,12 @@
 #include "sequence.h"
 #include "sequence_box.h"
 
-SequenceBox::SequenceBox(Sequence* aSequence)
+SequenceBox::SequenceBox(const Sequence& aSequence)
 {
-  mNameWgt = new QLineEdit(aSequence->name());
+  mNameWgt = new QLineEdit(aSequence.name());
     mNameWgt->setReadOnly(true);
 
-  mTriggeredNameWgt = new QLineEdit(aSequence->triggerName());
+  mTriggeredNameWgt = new QLineEdit(aSequence.triggerName());
 
   mRepeatTimeWgt = new QSpinBox();
     mRepeatTimeWgt->setMaximum(10000);

@@ -15,12 +15,12 @@ class SequenceBox: public QObject {
 public:
   SequenceBox();
   SequenceBox(const Sequence& aSequence);
-  SequenceBox(QPointer<Sequence> aSequence);
+  // SequenceBox(QPointer<Sequence> aSequence);
   qsizetype count() const;
   QWidget* get(qsizetype aWgtId);
 
 private:
-  QPointer<Sequence> mSqPtr;
+  //QPointer<Sequence> mSqPtr;
 
   QToolButton* mToolButton;
   QLineEdit*   mNameWgt;

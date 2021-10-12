@@ -29,6 +29,7 @@ set(PROJECT_SOURCES
         src/sequence.cpp
         src/sequence_box.cpp
         src/sequence_storage.cpp
+        src/singleton.cpp
         include/mainwindow.h
         include/session_widget.h
         include/serial_widget.h
@@ -41,6 +42,7 @@ set(PROJECT_SOURCES
         include/sequence.h
         include/sequence_box.h
         include/sequence_storage.h
+        include/singleton.h
         resources/resources.qrc
 )
 
