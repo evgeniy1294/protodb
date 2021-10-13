@@ -17,9 +17,11 @@ public:
   ~SequenceMultiWidget();
 
 public slots:
-  void addSequenceSlot(const QUuid& aUuid, int aIndex);
-  void removeSequenceSlot(const QUuid& aUuid, int aIndex);
-  void ClearSlot();
+  void addSequence(const QUuid& aUuid, int aIndex);
+  void removeSequence(const QUuid& aUuid, int aIndex);
+  void clear();
+
+  void removeBox(const QPointer<Sequence>& aSq);
 
 private:
   void createGui();

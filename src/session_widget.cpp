@@ -43,9 +43,9 @@ void SessionWidget::createGui()
     script_dock_wdg->setWidget(script_wdg);
 
   auto macro_wdg = new SequenceMultiWidget();
-    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sSeqAppended, macro_wdg, &SequenceMultiWidget::addSequenceSlot);
-    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sSeqRemoved, macro_wdg, &SequenceMultiWidget::removeSequenceSlot);
-    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sCleared, macro_wdg, &SequenceMultiWidget::ClearSlot);
+    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sSeqAppended, macro_wdg, &SequenceMultiWidget::addSequence);
+    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sSeqRemoved, macro_wdg, &SequenceMultiWidget::removeSequence);
+    connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sCleared, macro_wdg, &SequenceMultiWidget::clear);
 
   auto macro_dock_wdg = new ads::CDockWidget("Macroses");
     macro_dock_wdg->setWidget(macro_wdg);

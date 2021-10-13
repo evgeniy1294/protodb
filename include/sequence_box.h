@@ -16,19 +16,28 @@ class SequenceBox: public QObject {
 
 public:
   SequenceBox(const QPointer<Sequence>& aSequence);
-  SequenceBox(const Sequence& aSequence);
   ~SequenceBox();
 
   int count() const;
   QWidget* get(int aWgtId);
 
+public slots:
+  void onSendClicked();
+  void onEditClicked();
+  void onRemoveClicked();
+
+signals:
+  void sSend(const QPointer<Sequence>& mSqPtr);
+  void sEdit(const QPointer<Sequence>& mSqPtr);
+  void sRemoved(const QPointer<Sequence>& mSqPtr);
+
 private:
   void createActions();
   void createMenu();
-  void createGui(const Sequence& aSequence);
+  void createGui();
 
 private:
-  QPointer<Sequence> mSqPtr;
+  QPointer<Sequence> mSq;
 
   // ---------[Actions]--------
   QAction* mSendAct;

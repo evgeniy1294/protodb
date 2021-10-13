@@ -7,15 +7,11 @@
 #include "sequence.h"
 #include "sequence_box.h"
 
-SequenceBox::SequenceBox(const Sequence& aSq)
-{
-  createGui(aSq);
-}
-
 
 SequenceBox::SequenceBox(const QPointer<Sequence>& aSq)
+  : mSq(aSq)
 {
-  createGui(*aSq);
+  createGui();
 }
 
 SequenceBox::~SequenceBox()
@@ -56,11 +52,32 @@ QWidget* SequenceBox::get(int aWgtId)
   return wgt;
 }
 
+void SequenceBox::onSendClicked()
+{
+  emit sSend(mSq);
+}
+
+void SequenceBox::onEditClicked()
+{
+  emit sEdit(mSq);
+}
+
+void SequenceBox::onRemoveClicked()
+{
+  //deleteLater();
+  emit sRemoved(mSq);
+}
+
 void SequenceBox::createActions()
 {
   mSendAct   = new QAction(QIcon(":/icons/arrow.svg"), tr("&Send"), this);
+    connect(mSendAct, &QAction::triggered, this, &SequenceBox::onSendClicked);
+
   mEditAct   = new QAction(QIcon(":/icons/edit.svg") , tr("&Show in editor"), this);
+    connect(mEditAct, &QAction::triggered, this, &SequenceBox::onEditClicked);
+
   mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
+    connect(mRemoveAct, &QAction::triggered, this, &SequenceBox::onRemoveClicked);
 }
 
 void SequenceBox::createMenu()
@@ -72,15 +89,15 @@ void SequenceBox::createMenu()
     mToolMenu->addAction(mRemoveAct);
 }
 
-void SequenceBox::createGui(const Sequence& aSq)
+void SequenceBox::createGui()
 {
   createActions();
   createMenu();
 
-  mNameWgt = new QLineEdit(aSq.name());
+  mNameWgt = new QLineEdit(mSq->name());
     mNameWgt->setReadOnly(true);
 
-  mTriggeredNameWgt = new QLineEdit(aSq.triggerName());
+  mTriggeredNameWgt = new QLineEdit(mSq->triggerName());
 
   mRepeatTimeWgt = new QSpinBox();
     mRepeatTimeWgt->setMaximum(10000);
@@ -92,5 +109,6 @@ void SequenceBox::createGui(const Sequence& aSq)
   mToolButton  = new QToolButton();
     mToolButton->setIcon(QIcon(":/icons/arrow.svg"));
     mToolButton->setMenu(mToolMenu);
+    connect(mToolButton, &QToolButton::clicked, this, &SequenceBox::onSendClicked);
 }
 

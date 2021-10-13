@@ -24,8 +24,6 @@ void EditorWidget::onSaveClicked()
   sq.setCharString(mDataEditor->toPlainText());
 
   Singleton::instance().mSequenceStorage.append(sq);
-
-  qDebug() << "EditorWidget: " << "onToolButtonClicked";
 }
 
 void EditorWidget::onResetClicked()

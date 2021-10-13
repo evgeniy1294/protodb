@@ -30,13 +30,14 @@ SequenceMultiWidget::~SequenceMultiWidget()
 {
 }
 
-void SequenceMultiWidget::addSequenceSlot(const QUuid& aUuid, int aIndex)
+void SequenceMultiWidget::addSequence(const QUuid& aUuid, int aIndex)
 {
   QPointer<Sequence> ptr = Singleton::instance().mSequenceStorage.getSequence(aIndex);
 
   if (!ptr.isNull()) {
-    auto box = QSharedPointer<SequenceBox>::create(*ptr);
+    auto box = QSharedPointer<SequenceBox>::create(ptr);
       mSqBoxList.insert(aIndex, box);
+      connect(box.data(), &SequenceBox::sRemoved, this, &SequenceMultiWidget::removeBox);
 
     auto row = mLayout->rowCount();
     mLayout->addWidget(new QLabel(QString::number(row)), row, 0);
@@ -47,17 +48,32 @@ void SequenceMultiWidget::addSequenceSlot(const QUuid& aUuid, int aIndex)
   }
 }
 
-void SequenceMultiWidget::removeSequenceSlot(const QUuid& aUuid, int aPos)
+void SequenceMultiWidget::removeSequence(const QUuid& aUuid, int aIndex)
 {
+  QLayoutItem* row = mLayout->takeAt(aIndex);
+    row->widget()->hide();
+    delete row;
 
+  mSqBoxList.removeAt(aIndex);
 }
 
-void SequenceMultiWidget::ClearSlot()
+void SequenceMultiWidget::clear()
 {
+  QLayoutItem* layoutItem;
 
+  for (int row = 0; row < mLayout->rowCount(); row++) {
+    layoutItem = mLayout->takeAt(row);
+    layoutItem->widget()->hide();
+      delete layoutItem;
+  }
+
+  mSqBoxList.clear();
 }
 
-
+void SequenceMultiWidget::removeBox(const QPointer<Sequence>& aSq)
+{
+  Singleton::instance().mSequenceStorage.remove(aSq);
+}
 
 
 void SequenceMultiWidget::createGui()
