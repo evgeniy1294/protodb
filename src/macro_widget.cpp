@@ -30,22 +30,20 @@ SequenceMultiWidget::~SequenceMultiWidget()
 {
 }
 
-void SequenceMultiWidget::addSequenceSlot(const QUuid& aUuid, int aPos)
+void SequenceMultiWidget::addSequenceSlot(const QUuid& aUuid, int aIndex)
 {
-  QPointer<Sequence> ptr = Singleton::instance().mSequenceStorage.getSequence(aPos);
+  QPointer<Sequence> ptr = Singleton::instance().mSequenceStorage.getSequence(aIndex);
 
   if (!ptr.isNull()) {
-    SequenceBox box(*ptr);
+    auto box = QSharedPointer<SequenceBox>::create(*ptr);
+      mSqBoxList.insert(aIndex, box);
 
     auto row = mLayout->rowCount();
+    mLayout->addWidget(new QLabel(QString::number(row)), row, 0);
 
-    for (int col = 0; col < box.count(); col++) {
-      mLayout->addWidget(box.get(col), row, col);
+    for (int col = 1; col < box->count()+1; col++) {
+      mLayout->addWidget(box->get(col-1), row, col);
     }
-  }
-  else
-  {
-    qDebug() << "Pointer on sequence is NULL";
   }
 }
 

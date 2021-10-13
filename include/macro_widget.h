@@ -2,11 +2,11 @@
 
 #include <QWidget>
 #include <QList>
+#include <QSharedPointer>
 
-#include "sequence.h"
+#include "sequence_box.h"
 
 class QGridLayout;
-
 
 class SequenceMultiWidget: public QWidget
 {
@@ -17,8 +17,8 @@ public:
   ~SequenceMultiWidget();
 
 public slots:
-  void addSequenceSlot(const QUuid& aUuid, int aPos);
-  void removeSequenceSlot(const QUuid& aUuid, int aPos);
+  void addSequenceSlot(const QUuid& aUuid, int aIndex);
+  void removeSequenceSlot(const QUuid& aUuid, int aIndex);
   void ClearSlot();
 
 private:
@@ -26,4 +26,5 @@ private:
 
 private:
   QGridLayout* mLayout;
+  QList< QSharedPointer<SequenceBox> > mSqBoxList;
 };

@@ -4,9 +4,9 @@
 
 class QTextBrowser;
 class QLineEdit;
-class QComboBox;
 class QLabel;
-class QSpinBox;
+class QToolButton;
+class QMenu;
 
 class EditorWidget: public QWidget
 {
@@ -14,16 +14,29 @@ class EditorWidget: public QWidget
 
 public:
   explicit EditorWidget(QWidget* parent = nullptr);
-  ~EditorWidget();
+  ~EditorWidget() = default;
+
+public slots:
+  void onSaveClicked();
+  void onResetClicked();
 
 private:
+  void createActions();
+  void createMenu();
   void createGui();
 
 private:
+  // ---------[Actions]--------
+  QAction* mSaveAct;
+  QAction* mResetAct;
+
+  // ----------[Menu]----------
+  QMenu* mToolMenu;
+
+  // --------[Widgets]----------
   QTextBrowser* mDataEditor;
   QTextBrowser* mHelpEditor;
-  QLineEdit* mNameLe;
-  QComboBox* mCrcCb;
-  QSpinBox* mRepeatSb;
-  QLabel* mStatusLabel;
+  QLineEdit*    mNameLe;
+  QLabel*       mStatusLabel;
+  QToolButton*  mToolButton;
 };

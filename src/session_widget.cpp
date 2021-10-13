@@ -50,21 +50,7 @@ void SessionWidget::createGui()
   auto macro_dock_wdg = new ads::CDockWidget("Macroses");
     macro_dock_wdg->setWidget(macro_wdg);
 
-   // !TEST
-    Sequence seq;
-    seq.setName(tr("Sequence 1"));
-    seq.setTriggerName(tr("Sequence 2"));
-    Singleton::instance().mSequenceStorage.append(seq);
 
-    seq.setName(tr("Sequence 2"));
-    seq.setTriggerName(tr("None"));
-    Singleton::instance().mSequenceStorage.append(seq);
-
-    seq.setName(tr("Sequence 3"));
-    seq.setTriggerName(tr("None"));
-    Singleton::instance().mSequenceStorage.append(seq);
-
-   // ~TEST
   mDockManager = new ads::CDockManager();
     mDockManager->addDockWidget(ads::LeftDockWidgetArea, serial_dock_wdg);
     mDockManager->addDockWidget(ads::RightDockWidgetArea, log_dock_wdg);
