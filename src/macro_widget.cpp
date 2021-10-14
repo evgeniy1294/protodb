@@ -41,24 +41,31 @@ void SequenceMultiWidget::addSequence(const QUuid& aUuid, int aIndex)
     mSqBoxList.insert(aIndex, box);
     connect(box.data(), &SequenceBox::sRemoveMe, this, &SequenceMultiWidget::removeBox);
 
-    auto row = mLayout->rowCount();
     for (int col = 0; col < box->count(); col++) {
-      mLayout->addWidget(box->get(col), row, col);
+      mLayout->addWidget(box->get(col), aIndex, col);
     }
   }
 }
 
 void SequenceMultiWidget::removeSequence(const QUuid& aUuid, int aIndex)
 {
-  mSqBoxList.removeAt(aIndex);
+  if ( aIndex >= 0 && aIndex < mSqBoxList.size() ) {
+    auto box = mSqBoxList.takeAt(aIndex);
 
-  QLayoutItem* row = mLayout->takeAt(aIndex);
-    mLayout->removeItem(row);
-    delete row;
+    for (int col = 0; col < box->count(); col++) {
+      mLayout->removeWidget(box->get(col));
+    }
 
-  for (int i = aIndex; i < mSqBoxList.size(); i++) {
-    mSqBoxList[i]->setIdx(i+1);
+    for (int row = aIndex; row < mSqBoxList.size(); row++) {
+      mSqBoxList[row]->setIdx(row+1);
+
+      for (int col = 0; col < box->count(); col++) {
+        mLayout->addWidget(mSqBoxList[row]->get(col), row, col);
+      }
+    }
   }
+
+  return;
 }
 
 void SequenceMultiWidget::clear()
