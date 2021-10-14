@@ -36,25 +36,29 @@ void SequenceMultiWidget::addSequence(const QUuid& aUuid, int aIndex)
 
   if (!ptr.isNull()) {
     auto box = QSharedPointer<SequenceBox>::create(ptr);
-      mSqBoxList.insert(aIndex, box);
-      connect(box.data(), &SequenceBox::sRemoved, this, &SequenceMultiWidget::removeBox);
+      box->setIdx(aIndex+1);
+
+    mSqBoxList.insert(aIndex, box);
+    connect(box.data(), &SequenceBox::sRemoveMe, this, &SequenceMultiWidget::removeBox);
 
     auto row = mLayout->rowCount();
-    mLayout->addWidget(new QLabel(QString::number(row)), row, 0);
-
-    for (int col = 1; col < box->count()+1; col++) {
-      mLayout->addWidget(box->get(col-1), row, col);
+    for (int col = 0; col < box->count(); col++) {
+      mLayout->addWidget(box->get(col), row, col);
     }
   }
 }
 
 void SequenceMultiWidget::removeSequence(const QUuid& aUuid, int aIndex)
 {
+  mSqBoxList.removeAt(aIndex);
+
   QLayoutItem* row = mLayout->takeAt(aIndex);
-    row->widget()->hide();
+    mLayout->removeItem(row);
     delete row;
 
-  mSqBoxList.removeAt(aIndex);
+  for (int i = aIndex; i < mSqBoxList.size(); i++) {
+    mSqBoxList[i]->setIdx(i+1);
+  }
 }
 
 void SequenceMultiWidget::clear()

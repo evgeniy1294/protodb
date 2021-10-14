@@ -4,6 +4,7 @@
 #include <QPointer>
 
 class QWidget;
+class QLabel;
 class QToolButton;
 class QLineEdit;
 class QSpinBox;
@@ -21,6 +22,8 @@ public:
   int count() const;
   QWidget* get(int aWgtId);
 
+  void setIdx(int aIdx);
+
 public slots:
   void onSendClicked();
   void onEditClicked();
@@ -29,7 +32,7 @@ public slots:
 signals:
   void sSend(const QPointer<Sequence>& mSqPtr);
   void sEdit(const QPointer<Sequence>& mSqPtr);
-  void sRemoved(const QPointer<Sequence>& mSqPtr);
+  void sRemoveMe(const QPointer<Sequence>& mSqPtr);
 
 private:
   void createActions();
@@ -48,6 +51,7 @@ private:
   QMenu* mToolMenu;
 
   // --------[Widgets]----------
+  QPointer<QLabel>      mIdxLabel;
   QPointer<QToolButton> mToolButton;
   QPointer<QLineEdit>   mNameWgt;
   QPointer<QLineEdit>   mTriggeredNameWgt;

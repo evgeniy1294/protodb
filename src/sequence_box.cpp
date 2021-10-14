@@ -1,5 +1,5 @@
 #include <QWidget>
-#include <QTranslator>
+#include <QLabel>
 #include <QToolButton>
 #include <QLineEdit>
 #include <QSpinBox>
@@ -16,6 +16,10 @@ SequenceBox::SequenceBox(const QPointer<Sequence>& aSq)
 
 SequenceBox::~SequenceBox()
 {
+  if (mIdxLabel) {
+    mIdxLabel->deleteLater();
+  }
+
   if (mToolButton) {
     mToolButton->deleteLater();
   }
@@ -35,7 +39,7 @@ SequenceBox::~SequenceBox()
 
 int SequenceBox::count() const
 {
-  return 4;
+  return 5;
 }
 
 QWidget* SequenceBox::get(int aWgtId)
@@ -43,13 +47,19 @@ QWidget* SequenceBox::get(int aWgtId)
   QWidget* wgt = nullptr;
 
   switch(aWgtId) {
-    case 0: wgt = mNameWgt;  break;
-    case 1: wgt = mTriggeredNameWgt; break;
-    case 2: wgt = mRepeatTimeWgt; break;
-    case 3: wgt = mToolButton; break;
+    case 0: wgt = mIdxLabel;  break;
+    case 1: wgt = mNameWgt;  break;
+    case 2: wgt = mTriggeredNameWgt; break;
+    case 3: wgt = mRepeatTimeWgt; break;
+    case 4: wgt = mToolButton; break;
   }
 
   return wgt;
+}
+
+void SequenceBox::setIdx(int aIdx)
+{
+  mIdxLabel->setText(QString::number(aIdx));
 }
 
 void SequenceBox::onSendClicked()
@@ -65,7 +75,7 @@ void SequenceBox::onEditClicked()
 void SequenceBox::onRemoveClicked()
 {
   //deleteLater();
-  emit sRemoved(mSq);
+  emit sRemoveMe(mSq);
 }
 
 void SequenceBox::createActions()
@@ -94,6 +104,7 @@ void SequenceBox::createGui()
   createActions();
   createMenu();
 
+  mIdxLabel = new QLabel("N");
   mNameWgt = new QLineEdit(mSq->name());
     mNameWgt->setReadOnly(true);
 
