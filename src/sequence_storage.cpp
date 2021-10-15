@@ -3,19 +3,19 @@
 #include "sequence_storage.h"
 
 
-void SequenceStorage::append(const Sequence& aSequence)
+void SqStorage::append(const Sequence& aSequence)
 {
   mList.append(aSequence);
   emit sSeqAppended(aSequence.uuid(), mList.size() - 1);
 }
 
-void SequenceStorage::clear()
+void SqStorage::clear()
 {
   mList.clear();
   emit sCleared();
 }
 
-void SequenceStorage::remove(int aIndex)
+void SqStorage::remove(int aIndex)
 {
   if (aIndex >= 0 && aIndex < mList.size()) {
     QUuid uuid = mList.at(aIndex).uuid();
@@ -25,7 +25,7 @@ void SequenceStorage::remove(int aIndex)
   }
 }
 
-void SequenceStorage::remove(const QUuid& aUuid)
+void SqStorage::remove(const QUuid& aUuid)
 {
   auto index = find(aUuid);
   if (index != -1) {
@@ -34,7 +34,7 @@ void SequenceStorage::remove(const QUuid& aUuid)
   }
 }
 
-void SequenceStorage::remove(const QPointer<Sequence>& aPtr)
+void SqStorage::remove(const QPointer<Sequence>& aPtr)
 {
   QUuid uuid = aPtr->uuid();
   int index = find(aPtr);
@@ -45,17 +45,17 @@ void SequenceStorage::remove(const QPointer<Sequence>& aPtr)
   }
 }
 
-qsizetype SequenceStorage::size() const
+qsizetype SqStorage::size() const
 {
   return mList.size();
 }
 
-bool SequenceStorage::empty() const
+bool SqStorage::empty() const
 {
   return mList.empty();
 }
 
-const QUuid SequenceStorage::getUuid(int aIndex) const
+const QUuid SqStorage::getUuid(int aIndex) const
 {
   QUuid uuid{};
 
@@ -66,12 +66,12 @@ const QUuid SequenceStorage::getUuid(int aIndex) const
   return uuid;
 }
 
-int SequenceStorage::find(const QPointer<Sequence>& aPtr) const
+int SqStorage::find(const QPointer<Sequence>& aPtr) const
 {
   return mList.indexOf(*aPtr);
 }
 
-int SequenceStorage::find(const QUuid& aUuid) const
+int SqStorage::find(const QUuid& aUuid) const
 {
   int index = -1;
 
@@ -85,7 +85,7 @@ int SequenceStorage::find(const QUuid& aUuid) const
   return index;
 }
 
-QPointer<Sequence> SequenceStorage::getSequence(const QUuid& aUuid)
+QPointer<Sequence> SqStorage::getSequence(const QUuid& aUuid)
 {
   QPointer<Sequence> ptr;
   int index = find(aUuid);
@@ -97,9 +97,9 @@ QPointer<Sequence> SequenceStorage::getSequence(const QUuid& aUuid)
   return ptr;
 }
 
-QPointer<Sequence> SequenceStorage::getSequence(int aIndex)
+QPointer<Sequence> SqStorage::getSequence(int aIndex)
 {
-  qDebug() << aIndex;
+  //qDebug() << aIndex;
   QPointer<Sequence> ptr;
   if (aIndex >= 0 && aIndex < mList.size()) {
     ptr = QPointer<Sequence>(&mList[aIndex]);

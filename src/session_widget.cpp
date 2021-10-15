@@ -14,6 +14,7 @@
 #include "editor_widget.h"
 #include "script_widget.h"
 #include "macro_widget.h"
+#include "sq_model.h"
 
 
 SessionWidget::SessionWidget(QWidget *parent)
@@ -56,6 +57,7 @@ void SessionWidget::createGui()
     connect(&Singleton::instance().mSequenceStorage, &SequenceStorage::sCleared, macro_wdg, &SequenceMultiWidget::clear);
   */
   /* -------[TEST]---------- */
+    /*
   auto mSendAct   = new QAction(QIcon(":/icons/arrow.svg"), tr("&Send"), this);
   auto mEditAct   = new QAction(QIcon(":/icons/edit.svg") , tr("&Show in editor"), this);
   auto mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
@@ -70,6 +72,7 @@ void SessionWidget::createGui()
      mToolButton->setIcon(QIcon(":/icons/arrow.svg"));
      mToolButton->setMenu(mToolMenu);
 
+
   auto mRepeatTimeWgt = new QSpinBox();
     mRepeatTimeWgt->setMaximum(10000);
     mRepeatTimeWgt->setSingleStep(100);
@@ -81,25 +84,26 @@ void SessionWidget::createGui()
     sq_table_wgt->setColumnCount(4);
     sq_table_wgt->setRowCount(2);
 
-    //sq_table_wgt->horizontalHeader()->setStretchLastSection(true);
-
     QHeaderView *headerView = new QHeaderView(Qt::Horizontal);
     sq_table_wgt->setHorizontalHeader(headerView);
     headerView->setSectionResizeMode(0, QHeaderView::Stretch);
     headerView->setSectionResizeMode(1, QHeaderView::Stretch);
     headerView->setSectionResizeMode(2, QHeaderView::Fixed);
     headerView->setSectionResizeMode(3, QHeaderView::Fixed);
-    sq_table_wgt->setColumnWidth(0, 12);
     sq_table_wgt->horizontalHeader()->hide();
 
     sq_table_wgt->setCellWidget(0, 2, mRepeatTimeWgt);
     sq_table_wgt->setCellWidget(0, 3, mToolButton);
-    sq_table_wgt->setColumnWidth(3, 12);
-    //sq_table_wgt->re
-    //sq_table_wgt->resizeColumnsToContents();
+    sq_table_wgt->setColumnWidth(3, 0);
+*/
+
+  auto mSqModel = new SqModel();
+    mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
+  auto mTblView = new QTableView();
+    mTblView->setModel(mSqModel);
 
   auto macro_dock_wdg = new ads::CDockWidget("Macroses");
-    macro_dock_wdg->setWidget(sq_table_wgt);
+    macro_dock_wdg->setWidget(mTblView);
 
 
   mDockManager = new ads::CDockManager();

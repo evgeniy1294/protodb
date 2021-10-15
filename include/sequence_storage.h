@@ -5,7 +5,7 @@
 #include <QUuid>
 #include "sequence.h"
 
-class SequenceStorage: public QObject {
+class SqStorage: public QObject {
   Q_OBJECT
 
 public:

@@ -5,7 +5,7 @@
 class Singleton
 {
 public:
-  SequenceStorage mSequenceStorage;
+  SqStorage mSequenceStorage;
 
   static Singleton& instance();
 private:
