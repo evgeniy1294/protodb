@@ -32,6 +32,7 @@ set(PROJECT_SOURCES
         src/singleton.cpp
         src/sq_table_widget.cpp
         src/sq_model.cpp
+        src/spinbox_delegate.cpp
         include/mainwindow.h
         include/session_widget.h
         include/serial_widget.h
@@ -47,6 +48,7 @@ set(PROJECT_SOURCES
         include/singleton.h
         include/sq_table_widget.h
         include/sq_model.h
+        include/spinbox_delegate.h
         resources/resources.qrc
 )
 

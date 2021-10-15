@@ -11,11 +11,14 @@ class SqModel: public QAbstractTableModel
 {
     Q_OBJECT
 
+public:
     enum ColumnNames {
       kColumnSqName     = 0,
       kColumnTrigName   = 1,
       kColumnRepeatTime = 2,
-      kColumnSendBtn    = 3
+      kColumnSendBtn    = 3,
+
+      kColumnCount
     };
 
 public:
@@ -34,9 +37,9 @@ signals:
 
 
 public slots:
-    void addSequence(const QUuid& aUuid, int aIndex);
-    void removeSequence(const QUuid& aUuid, int aIndex);
-    void clearStorage();
+    void onSequenceAdded(const QUuid& aUuid, int aIndex);
+    void onSequenceRemoved(const QUuid& aUuid, int aIndex);
+    void onClearStorage();
 
 private:
     QPointer<SqStorage> mStorage;

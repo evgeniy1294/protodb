@@ -15,71 +15,80 @@ SqModel::SqModel(QObject* parent)
 
 void SqModel::setStorage(const QPointer<SqStorage>& aStorage)
 {
-    if (mStorage) {
-      disconnect(mStorage);
+    if (aStorage) {
+        if (mStorage) {
+            disconnect(mStorage);
+        }
+
+        mStorage = aStorage;
+          connect(mStorage, &SqStorage::sSeqAppended, this, &SqModel::onSequenceAdded);
+          connect(mStorage, &SqStorage::sSeqRemoved, this, &SqModel::onSequenceRemoved);
+          connect(mStorage, &SqStorage::sCleared, this, &SqModel::onClearStorage);
+
+        beginInsertRows(QModelIndex(), 0, mStorage->size());
+        endInsertRows();
     }
-
-    mStorage = aStorage;
-      connect(mStorage, &SqStorage::sSeqAppended, this, &SqModel::addSequence);
-      connect(mStorage, &SqStorage::sSeqRemoved, this, &SqModel::removeSequence);
-      connect(mStorage, &SqStorage::sCleared, this, &SqModel::clearStorage);
-
-  beginInsertRows(QModelIndex(), 0, mStorage->size());
-  endInsertRows();
 }
 
 int SqModel::rowCount(const QModelIndex& aParent) const
 {
-  return /*(!mStorage.isNull()) ? 0 :*/ mStorage->size();
+    return (mStorage) ? mStorage->size() : 0;
 }
 
 int SqModel::columnCount(const QModelIndex& aParent) const
 {
-  return 4;
+    return kColumnCount;
 }
 
 
 QVariant SqModel::data(const QModelIndex& aIndex, int aRole) const
 {
-  auto row = aIndex.row();
-  auto col = aIndex.column();
+    auto row = aIndex.row();
+    auto col = aIndex.column();
 
 
-  if (aRole == Qt::DisplayRole) {
-    auto sq = mStorage->getSequence(row);
+    if (aRole == Qt::DisplayRole) {
+        auto sq = mStorage->getSequence(row);
 
-    switch (col) {
-      case kColumnSqName:
-          return sq->name();
+        switch (col) {
+            case kColumnSqName:
+                return sq->name();
 
-      case kColumnTrigName:
-          return sq->triggerName();
+            case kColumnTrigName:
+                return sq->triggerName();
 
-      case kColumnRepeatTime:
-          return QString("100ms");
+            case kColumnRepeatTime:
+                return sq->repeatPeriod();
 
-      case kColumnSendBtn:
-          return QString("B"); // "Send" Button
+            case kColumnSendBtn:
+                return QString("B"); // "Send" Button
+        }
     }
-  }
 
 
-  return QVariant();
+   return QVariant();
 }
 
 QVariant SqModel::headerData(int aSection, Qt::Orientation aOrientation, int aRole) const
 {
-    if (aRole == Qt::DisplayRole && aOrientation == Qt::Horizontal) {
-        switch (aSection) {
-            case kColumnSqName:
-                return QString(tr("Name"));
-            case kColumnTrigName:
-                return QString(tr("Triggered"));
-            case kColumnRepeatTime:
-                return QString(tr("Repeat"));
-            case kColumnSendBtn:
-                return QString(""); // "Send" Button
+    if (aRole == Qt::DisplayRole) {
+
+        if (aOrientation == Qt::Horizontal) {
+            switch (aSection) {
+                case kColumnSqName:
+                    return QString(tr("Name"));
+                case kColumnTrigName:
+                    return QString(tr("Triggered"));
+                case kColumnRepeatTime:
+                    return QString(tr("Repeat"));
+                case kColumnSendBtn:
+                    return QString(""); // "Send" Button
+            }
         }
+        else {
+            return QString::number(aSection+1);
+        }
+
     }
 
     return QVariant();
@@ -99,21 +108,26 @@ bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRo
 
         if (aRole == Qt::EditRole)
         {
-            if (col == kColumnSqName) {
-              sq->setName(aValue.toString());
-            }
-            else if (col == kColumnTrigName) {
-              sq->setTriggerName(aValue.toString());
+            switch (col) {
+                case kColumnSendBtn:
+                    sq->setName(aValue.toString());
+                    break;
+                case kColumnTrigName:
+                    sq->setTriggerName(aValue.toString());
+                    break;
+                case kColumnRepeatTime:
+                    sq->setRepeatPeriod(aValue.toInt());
+                    break;
+                default:
+                    break;
             }
 
-            ret = (col == kColumnSqName || col == kColumnTrigName);
+            ret = (col != kColumnSendBtn);
         }
     }
 
     return ret;
 }
-
-
 
 Qt::ItemFlags SqModel::flags(const QModelIndex& aIndex) const
 {
@@ -122,27 +136,29 @@ Qt::ItemFlags SqModel::flags(const QModelIndex& aIndex) const
 
     Qt::ItemFlags flags = QAbstractTableModel::flags(aIndex);
 
-    if (col == kColumnSqName || col == kColumnTrigName) {
+    if (col != kColumnSendBtn) {
         flags |= Qt::ItemIsEditable;
     }
 
     return flags;
 }
 
-void SqModel::addSequence(const QUuid& aUuid, int aIndex)
+void SqModel::onSequenceAdded(const QUuid& aUuid, int aIndex)
 {
   beginInsertRows(QModelIndex(), aIndex, aIndex);
   endInsertRows();
 }
 
-void SqModel::removeSequence(const QUuid& aUuid, int aIndex)
+void SqModel::onSequenceRemoved(const QUuid& aUuid, int aIndex)
 {
-
+  beginRemoveRows(QModelIndex(), aIndex, aIndex);
+  endRemoveRows();
 }
 
-void SqModel::clearStorage()
+void SqModel::onClearStorage()
 {
-
+  beginResetModel();
+  endResetModel();
 }
 
 

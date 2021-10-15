@@ -12,5 +12,7 @@
         <file alias="edit.svg">icons/edit.svg</file>
         <file alias="arrow.svg">icons/arrow.svg</file>
         <file alias="reset.svg">icons/reset.svg</file>
+        <file alias="add.svg">icons/add.svg</file>
+        <file alias="trash.svg">icons/trash.svg</file>
     </qresource>
 </RCC>
