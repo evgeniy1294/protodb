@@ -4,7 +4,7 @@
 #include <QDebug>
 
 #include "sq_model.h"
-
+#include <iostream>
 
 SqModel::SqModel(QObject* parent)
     : QAbstractTableModel(parent)
@@ -48,6 +48,25 @@ QVariant SqModel::data(const QModelIndex& aIndex, int aRole) const
 
 
     if (aRole == Qt::DisplayRole) {
+        auto sq = mStorage->getSequence(row);
+
+        switch (col) {
+            case kColumnSqName:
+                return sq->name();
+
+            case kColumnTrigName:
+                return sq->triggerName();
+
+            case kColumnRepeatTime:
+                return (sq->repeatPeriod() == 0) ? QString(tr("No Repeat")) :
+                                                   QString("%1ms").arg(sq->repeatPeriod());
+
+            case kColumnSendBtn:
+                return QString("B"); // "Send" Button
+        }
+    }
+
+    if (aRole == Qt::EditRole) {
         auto sq = mStorage->getSequence(row);
 
         switch (col) {

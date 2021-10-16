@@ -57,11 +57,10 @@ void SqTableWidget::createGui()
     auto mSqModel = new SqModel();
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
 
-    auto mSpinBoxDlgt = new SpinBoxDelegate();
-
     auto mTblView = new QTableView();
         mTblView->setModel(mSqModel);
-        mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, mSpinBoxDlgt);
+
+        mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
         auto headerView = mTblView->horizontalHeader();
             headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);

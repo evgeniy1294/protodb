@@ -7,14 +7,14 @@ SpinBoxDelegate::SpinBoxDelegate(QObject* aParent)
 
 }
 
+
 QWidget* SpinBoxDelegate::createEditor(QWidget* aParent, const QStyleOptionViewItem& aOption, const QModelIndex& aIndex) const
 {
-    auto editor = new QSpinBox();
+    auto editor = new QSpinBox(aParent);
     editor->setFrame(false);
     editor->setMinimum(0);
     editor->setMaximum(10000);
     editor->setSingleStep(100);
-    editor->setValue(0);
     editor->setSuffix("ms");
     editor->setSpecialValueText(QObject::tr("No Repeat"));
 
@@ -24,7 +24,6 @@ QWidget* SpinBoxDelegate::createEditor(QWidget* aParent, const QStyleOptionViewI
 void SpinBoxDelegate::setEditorData(QWidget* aEditor, const QModelIndex& aIndex) const
 {
     int value = aIndex.model()->data(aIndex, Qt::EditRole).toInt();
-
     auto spinBox = static_cast<QSpinBox*>(aEditor);
     spinBox->setValue(value);
 }
@@ -33,9 +32,7 @@ void SpinBoxDelegate::setModelData(QWidget* aEditor, QAbstractItemModel* aModel,
 {
     auto spinBox = static_cast<QSpinBox*>(aEditor);
     spinBox->interpretText();
-    int value = spinBox->value();
-
-    aModel->setData(aIndex, value, Qt::EditRole);
+    aModel->setData(aIndex, spinBox->value(), Qt::EditRole);
 }
 
 void SpinBoxDelegate::updateEditorGeometry(QWidget* aEditor, const QStyleOptionViewItem& aOption, const QModelIndex& aIndex) const
