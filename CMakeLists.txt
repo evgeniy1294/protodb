@@ -50,7 +50,6 @@ set(PROJECT_SOURCES
         include/sq_table_widget.h
         include/sq_table_widget_private.h
         include/sq_model.h
-        include/spinbox_delegate.h
         resources/resources.qrc
 )
 
