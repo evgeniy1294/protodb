@@ -6,6 +6,7 @@
 class QAction;
 
 class SqTableWidget: public QWidget {
+    Q_OBJECT
 
 public:
     explicit SqTableWidget(QWidget *parent = nullptr);
@@ -27,3 +28,5 @@ private:
 
     isa_tool_bar* mToolBar;
 };
+
+

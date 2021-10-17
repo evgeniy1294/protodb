@@ -40,6 +40,7 @@ public slots:
     void onSequenceAdded(const QUuid& aUuid, int aIndex);
     void onSequenceRemoved(const QUuid& aUuid, int aIndex);
     void onClearStorage();
+    void onSendSequence(const QModelIndex &index);
 
 private:
     QPointer<SqStorage> mStorage;

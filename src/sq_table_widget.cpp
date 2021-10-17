@@ -5,8 +5,7 @@
 #include "singleton.h"
 #include "sq_model.h"
 #include "sq_table_widget.h"
-#include "spinbox_delegate.h"
-
+#include "sq_table_widget_private.h"
 
 
 
@@ -54,13 +53,20 @@ void SqTableWidget::createGui()
         mToolBar->addMenuSeparator();
         mToolBar->addToolAction(mClearAct, false);
 
+
     auto mSqModel = new SqModel();
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
 
+    auto btnDelegate = new ButtonDelegate();
+        connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
+
     auto mTblView = new QTableView();
         mTblView->setModel(mSqModel);
+        mTblView->setMouseTracking(true);
 
         mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
+        mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, btnDelegate);
+        mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
         auto headerView = mTblView->horizontalHeader();
             headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);

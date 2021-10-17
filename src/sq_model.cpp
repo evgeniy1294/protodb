@@ -180,4 +180,9 @@ void SqModel::onClearStorage()
   endResetModel();
 }
 
+void SqModel::onSendSequence(const QModelIndex& index)
+{
+  std::cout << "Send sequence: " << index.row() << std::endl;
+}
+
 

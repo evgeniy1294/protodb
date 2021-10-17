@@ -1,5 +1,5 @@
 #include <QSpinBox>
-#include "spinbox_delegate.h"
+#include "sq_table_widget_private.h"
 
 SpinBoxDelegate::SpinBoxDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)

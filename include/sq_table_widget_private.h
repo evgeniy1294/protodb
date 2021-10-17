@@ -1,6 +1,26 @@
 #pragma once
 
+#include <QItemDelegate>
 #include <QStyledItemDelegate>
+
+class ButtonDelegate : public QItemDelegate
+{
+    Q_OBJECT
+
+public:
+    ButtonDelegate(QObject *parent = 0);
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
+signals:
+    void triggered(const QModelIndex &index);
+
+private:
+    QStyle::State mState;
+    int   activeRow;
+    QRect activeRect;
+};
+
 
 class SpinBoxDelegate: public QStyledItemDelegate
 {
