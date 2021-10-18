@@ -19,10 +19,8 @@ ButtonDelegate::ButtonDelegate(QObject *parent)
 
  void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
  {
-     QRect r = option.rect;
-
      QStyleOptionButton btn;
-     btn.rect     = QRect(r.left(), r.top(), r.width(), r.height());
+     btn.rect     = option.rect;
      btn.icon     = QIcon(":/icons/arrow.svg");
      btn.features = QStyleOptionButton::Flat;
 
@@ -42,17 +40,15 @@ ButtonDelegate::ButtonDelegate(QObject *parent)
      switch(event->type()) {
          case QEvent::MouseButtonPress:
              activeRow  = index.row();
-             activeRect = option.rect;
              mState = QStyle::State_Sunken;
              break;
 
          case QEvent::MouseButtonDblClick:
          case QEvent::MouseButtonRelease: {
-             if ( activeRow == index.row()) {
-                 emit triggered(index);
-             }
-             mState = QStyle::State_Raised;
              activeRow = -1;
+             mState = QStyle::State_Raised;
+
+             emit triggered(index);
 
          } break;
 

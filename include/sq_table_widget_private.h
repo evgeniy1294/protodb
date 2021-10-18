@@ -18,7 +18,6 @@ signals:
 private:
     QStyle::State mState;
     int   activeRow;
-    QRect activeRect;
 };
 
 
