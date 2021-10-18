@@ -1,6 +1,8 @@
 #include <QAction>
 #include <QLayout>
 #include <QHeaderView>
+#include <QToolButton>
+#include <QPushButton>
 
 #include "singleton.h"
 #include "sq_model.h"
@@ -32,27 +34,35 @@ void SqTableWidget::onClickClear()
 
 void SqTableWidget::createActions()
 {
-    mNewAct = new QAction(QIcon(":/icons/add.svg"), tr("&Add"), this);
-        mNewAct->setStatusTip(tr("Create new macros"));
-        connect(mNewAct, &QAction::triggered, this, &SqTableWidget::onClickNew);
+    mAddAct = new QAction(QIcon(":/icons/add.svg"), tr("&Add"), this);
+        mAddAct->setStatusTip(tr("Create new macros"));
+        connect(mAddAct, &QAction::triggered, this, &SqTableWidget::onClickNew);
 
     mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
         mRemoveAct->setStatusTip(tr("Remove selected macroses"));
         connect(mRemoveAct, &QAction::triggered, this, &SqTableWidget::onClickRemove);
 
-    mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Clear"), this);
+    mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Remove All"), this);
         mClearAct->setStatusTip(tr("Clear Macro Table"));
         connect(mClearAct, &QAction::triggered, this, &SqTableWidget::onClickClear);
 }
 
 void SqTableWidget::createGui()
 {
-    mToolBar = new isa_tool_bar( QBoxLayout::LeftToRight );
-        mToolBar->addToolAction(mNewAct);
-        mToolBar->addToolAction(mRemoveAct);
-        mToolBar->addMenuSeparator();
-        mToolBar->addToolAction(mClearAct, false);
+    auto h_layout = new QHBoxLayout();
+        auto add_btn = new QPushButton();
+            add_btn->setIcon(QIcon(":/icons/add.svg"));
+            add_btn->addAction(mAddAct);
 
+
+        auto rm_btn = new QToolButton();
+            rm_btn->setIcon(QIcon(":/icons/close.svg"));
+            rm_btn->addAction(mRemoveAct);
+            rm_btn->addAction(mClearAct);
+
+        h_layout->addWidget(add_btn);
+        h_layout->addWidget(rm_btn);
+        h_layout->addStretch();
 
     auto mSqModel = new SqModel();
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
@@ -67,15 +77,17 @@ void SqTableWidget::createGui()
         mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
         mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, btnDelegate);
         mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
+        mTblView->hideColumn(SqModel::kColumnDescription);
+        mTblView->hideColumn(SqModel::kColumnCharStr);
         auto headerView = mTblView->horizontalHeader();
             headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
             headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
 
-    auto layout = new QVBoxLayout();
-        layout->addWidget(mToolBar);
-        layout->addWidget(mTblView);
+    auto layout = new QGridLayout();
+        layout->addLayout(h_layout, 0, 0);
+        layout->addWidget(mTblView, 1, 0);
 
     setLayout(layout);
 }

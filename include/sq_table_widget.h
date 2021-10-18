@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QTableWidget>
-#include "tool_bar.h"
 
 class QAction;
+class QToolBar;
 
 class SqTableWidget: public QWidget {
     Q_OBJECT
@@ -22,11 +22,9 @@ private:
     void createGui();
 
 private:
-    QAction* mNewAct;
-    QAction* mRemoveAct;
-    QAction* mClearAct;
-
-    isa_tool_bar* mToolBar;
+    QAction*  mAddAct;
+    QAction*  mRemoveAct;
+    QAction*  mClearAct;
 };
 
 

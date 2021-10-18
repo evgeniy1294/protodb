@@ -65,10 +65,10 @@ private:
 private:
   QUuid mUuid;
 
+  int mRepeatPeriod;
   QString mName;
   QString mCharString;
-  Sequence* mTrigSequence;
   QString mDescription;
-  QString mTriggerName; // ?
-  int mRepeatPeriod;
+  QString mTriggerName;
+  Sequence* mTrigSequence;
 };

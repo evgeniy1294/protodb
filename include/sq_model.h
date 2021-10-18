@@ -13,10 +13,12 @@ class SqModel: public QAbstractTableModel
 
 public:
     enum ColumnNames {
-      kColumnSqName     = 0,
-      kColumnTrigName   = 1,
-      kColumnRepeatTime = 2,
-      kColumnSendBtn    = 3,
+      kColumnSqName      = 0,
+      kColumnTrigName    = 1,
+      kColumnRepeatTime  = 2,
+      kColumnDescription = 3,
+      kColumnCharStr     = 4,
+      kColumnSendBtn     = 5,
 
       kColumnCount
     };

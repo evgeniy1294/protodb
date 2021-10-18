@@ -61,6 +61,12 @@ QVariant SqModel::data(const QModelIndex& aIndex, int aRole) const
                 return (sq->repeatPeriod() == 0) ? QString(tr("No Repeat")) :
                                                    QString("%1ms").arg(sq->repeatPeriod());
 
+            case kColumnDescription:
+                return sq->description();
+
+            case kColumnCharStr:
+                return sq->charString();
+
             case kColumnSendBtn:
                 return QString("B"); // "Send" Button
         }
@@ -79,6 +85,12 @@ QVariant SqModel::data(const QModelIndex& aIndex, int aRole) const
             case kColumnRepeatTime:
                 return sq->repeatPeriod();
 
+            case kColumnDescription:
+                return sq->description();
+
+            case kColumnCharStr:
+                return sq->charString();
+
             case kColumnSendBtn:
                 return QString("B"); // "Send" Button
         }
@@ -94,14 +106,13 @@ QVariant SqModel::headerData(int aSection, Qt::Orientation aOrientation, int aRo
 
         if (aOrientation == Qt::Horizontal) {
             switch (aSection) {
-                case kColumnSqName:
-                    return QString(tr("Name"));
-                case kColumnTrigName:
-                    return QString(tr("Triggered"));
-                case kColumnRepeatTime:
-                    return QString(tr("Repeat"));
-                case kColumnSendBtn:
-                    return QString(""); // "Send" Button
+                case kColumnSqName: return QString(tr("Name"));
+                case kColumnTrigName: return QString(tr("Triggered"));
+                case kColumnRepeatTime: return QString(tr("Repeat"));
+                case kColumnDescription: return QString(tr("Description"));
+                case kColumnCharStr: return QString(tr("Sequence"));
+                case kColumnSendBtn: return QString(""); // "Send" Button
+                default: break;
             }
         }
         else {
@@ -136,6 +147,12 @@ bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRo
                     break;
                 case kColumnRepeatTime:
                     sq->setRepeatPeriod(aValue.toInt());
+                    break;
+                case kColumnDescription:
+                    sq->setDescription(aValue.toString());
+                    break;
+                case kColumnCharStr:
+                    sq->setCharString(aValue.toString());
                     break;
                 default:
                     break;
