@@ -21,13 +21,10 @@ set(PROJECT_SOURCES
         src/session_widget.cpp
         src/serial_widget.cpp
         src/log_widget.cpp
-        src/editor_widget.cpp
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
-        src/macro_widget.cpp
         src/sequence.cpp
-        src/sequence_box.cpp
         src/sequence_storage.cpp
         src/singleton.cpp
         src/sq_table_widget.cpp
@@ -39,13 +36,10 @@ set(PROJECT_SOURCES
         include/session_widget.h
         include/serial_widget.h
         include/log_widget.h
-        include/editor_widget.h
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
-        include/macro_widget.h
         include/sequence.h
-        include/sequence_box.h
         include/sequence_storage.h
         include/singleton.h
         include/sq_table_widget.h

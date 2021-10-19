@@ -7,6 +7,8 @@ class QDialogButtonBox;
 class QDataWidgetMapper;
 class QAbstractButton;
 class QLabel;
+class QLineEdit;
+class QTextBrowser;
 
 class SqTableDialog: public QDialog
 {
@@ -16,27 +18,26 @@ public:
     SqTableDialog( QWidget* aParent = nullptr );
     ~SqTableDialog() = default;
 
-    QDataWidgetMapper* getMapper() const;
+    QDataWidgetMapper* mapper() const;
     void setMapper(QDataWidgetMapper* aMapper);
-
-    void selectRow(int aRow);
-    int getRow() const;
 
 private slots:
     void onDialogBtnClicked(QAbstractButton* aBtn);
-    void onBackBtnClicked();
-    void onPrevBtnClicked();
-    void onNextBtnClicked();
-    void onFrontBtnClicked();
-    void onAddBtnClicked();
-
 
 private:
     void createGui();
-    void createConnections();
+    void connectSignals();
 
-    int mSelectedRow;
+private:
+    QPushButton* btn_back;
+    QPushButton* btn_prev;
+    QPushButton* btn_next;
+    QPushButton* btn_front;
+    QPushButton* btn_add;
     QLabel* itemLabel;
+    QLineEdit* mNameLe;
+    QTextBrowser* mDescrEditor;
+    QTextBrowser* mSeqEditor;
     QDataWidgetMapper* mMapper;
     QDialogButtonBox* mButtonBox;
 };

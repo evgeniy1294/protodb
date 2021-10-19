@@ -3,7 +3,10 @@
 #include <QTableWidget>
 
 class QAction;
+class QDataWidgetMapper;
 class QToolBar;
+class SqModel;
+class SqTableDialog;
 
 class SqTableWidget: public QWidget {
     Q_OBJECT
@@ -13,7 +16,6 @@ public:
     ~SqTableWidget() = default;
 
 public slots:
-    void onClickNew();
     void onClickRemove();
     void onClickClear();
 
@@ -22,9 +24,11 @@ private:
     void createGui();
 
 private:
-    QAction*  mAddAct;
     QAction*  mRemoveAct;
     QAction*  mClearAct;
+    QDataWidgetMapper* mMapper;
+    SqModel* mSqModel;
+    SqTableDialog* mDialog;
 };
 
 

@@ -9,6 +9,12 @@ void SqStorage::append(const Sequence& aSequence)
   emit sSeqAppended(aSequence.uuid(), mList.size() - 1);
 }
 
+void SqStorage::insert(int i, const Sequence& aSequence)
+{
+  mList.insert(i, aSequence);
+  emit sSeqAppended(aSequence.uuid(), i);
+}
+
 void SqStorage::clear()
 {
   mList.clear();

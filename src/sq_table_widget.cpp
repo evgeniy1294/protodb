@@ -1,6 +1,7 @@
 #include <QAction>
 #include <QLayout>
 #include <QHeaderView>
+#include <QDataWidgetMapper>
 #include <QToolButton>
 #include <QPushButton>
 #include <QLineEdit>
@@ -13,16 +14,12 @@
 
 
 SqTableWidget::SqTableWidget(QWidget* parent)
+    : mMapper(new QDataWidgetMapper())
 {
     createActions();
     createGui();
 }
 
-void SqTableWidget::onClickNew()
-{
-    auto dialog = new SqTableDialog();
-    dialog->exec();
-}
 
 void SqTableWidget::onClickRemove()
 {
@@ -36,10 +33,6 @@ void SqTableWidget::onClickClear()
 
 void SqTableWidget::createActions()
 {
-    mAddAct = new QAction(QIcon(":/icons/add.svg"), tr("&Add"), this);
-        mAddAct->setStatusTip(tr("Create new macros"));
-        connect(mAddAct, &QAction::triggered, this, &SqTableWidget::onClickNew);
-
     mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
         mRemoveAct->setStatusTip(tr("Remove selected macroses"));
         connect(mRemoveAct, &QAction::triggered, this, &SqTableWidget::onClickRemove);
@@ -54,7 +47,7 @@ void SqTableWidget::createGui()
     auto h_layout = new QHBoxLayout();
         auto add_btn = new QPushButton();
             add_btn->setIcon(QIcon(":/icons/add.svg"));
-            connect(add_btn, &QPushButton::released, this, &SqTableWidget::onClickNew);
+            connect(add_btn, &QPushButton::released, this, [this](){mDialog->show();});
 
 
         auto rm_btn = new QToolButton();
@@ -70,8 +63,14 @@ void SqTableWidget::createGui()
         h_layout->addWidget(rm_btn);
         h_layout->addWidget(find_le);
 
-    auto mSqModel = new SqModel();
+    mSqModel = new SqModel();
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
+
+    mMapper->setModel(mSqModel);
+    mMapper->setCurrentIndex(0);
+
+    mDialog = new SqTableDialog();
+        mDialog->setMapper(mMapper);
 
     auto btnDelegate = new ButtonDelegate();
         connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);

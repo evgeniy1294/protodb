@@ -10,6 +10,7 @@ class SqStorage: public QObject {
 
 public:
   void append(const Sequence& aSequence);
+  void insert(int i, const Sequence& aSequence);
   void clear();
   void remove(int aPos);
   void remove(const QUuid& aUuid);

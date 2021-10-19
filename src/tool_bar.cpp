@@ -29,7 +29,7 @@ void isa_tool_bar::create_gui()
     m_show_full_buttons->setIcon(QIcon(":/icons/list.svg"));
 
     m_buttons_menu = new isa_menu(this);
-    connect(m_show_full_buttons, &QToolButton::clicked,
+    connect(m_show_full_buttons, &QToolButton::clicked, this,
             [this]()
             {
                 m_buttons_menu->exec(QCursor::pos());

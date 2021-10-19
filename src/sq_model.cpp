@@ -21,9 +21,20 @@ void SqModel::setStorage(const QPointer<SqStorage>& aStorage)
         }
 
         mStorage = aStorage;
-          connect(mStorage, &SqStorage::sSeqAppended, this, &SqModel::onSequenceAdded);
-          connect(mStorage, &SqStorage::sSeqRemoved, this, &SqModel::onSequenceRemoved);
-          connect(mStorage, &SqStorage::sCleared, this, &SqModel::onClearStorage);
+          connect(mStorage, &SqStorage::sSeqAppended, this, [this](const QUuid& aUuid, int aIndex) {
+              beginInsertRows(QModelIndex(), aIndex, aIndex);
+              endInsertRows();
+          });
+
+          connect(mStorage, &SqStorage::sSeqRemoved, this, [this](const QUuid& aUuid, int aIndex) {
+              beginRemoveRows(QModelIndex(), aIndex, aIndex);
+              endRemoveRows();
+          });
+
+          connect(mStorage, &SqStorage::sCleared, this, [this]() {
+              beginResetModel();
+              endResetModel();
+          });
 
         beginInsertRows(QModelIndex(), 0, mStorage->size());
         endInsertRows();
@@ -132,6 +143,7 @@ bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRo
     int col = aIndex.column();
 
 
+
     if ( checkIndex(aIndex) )
     {
         auto sq = mStorage->getSequence(row);
@@ -139,7 +151,7 @@ bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRo
         if (aRole == Qt::EditRole)
         {
             switch (col) {
-                case kColumnSendBtn:
+                case kColumnSqName:
                     sq->setName(aValue.toString());
                     break;
                 case kColumnTrigName:
@@ -179,23 +191,16 @@ Qt::ItemFlags SqModel::flags(const QModelIndex& aIndex) const
     return flags;
 }
 
-void SqModel::onSequenceAdded(const QUuid& aUuid, int aIndex)
+bool SqModel::insertRows(int row, int count, const QModelIndex& parent)
 {
-  beginInsertRows(QModelIndex(), aIndex, aIndex);
-  endInsertRows();
+    Sequence sq;
+    sq.setName(tr("Sequence %1").arg(row+1));
+    sq.setDescription(tr("Document me!!!"));
+    mStorage->insert(row, sq);
+
+    return true;
 }
 
-void SqModel::onSequenceRemoved(const QUuid& aUuid, int aIndex)
-{
-  beginRemoveRows(QModelIndex(), aIndex, aIndex);
-  endRemoveRows();
-}
-
-void SqModel::onClearStorage()
-{
-  beginResetModel();
-  endResetModel();
-}
 
 void SqModel::onSendSequence(const QModelIndex& index)
 {
