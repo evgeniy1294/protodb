@@ -54,8 +54,8 @@ void SqTableDialog::createGui()
             btn_front->setIcon(QIcon(":/icons/arrow_front.svg"));
         auto btn_new   = new QPushButton();
             btn_new->setIcon(QIcon(":/icons/add.svg"));
-        auto btn_rm   = new QPushButton();
-            btn_rm->setIcon(QIcon(":/icons/close.svg"));
+        //auto btn_rm   = new QPushButton();
+            //btn_rm->setIcon(QIcon(":/icons/close.svg"));
 
         itemLabel = new QLabel(tr("2/14"));
 
@@ -66,7 +66,7 @@ void SqTableDialog::createGui()
         h_layout->addWidget(btn_front);
         h_layout->addStretch();
         h_layout->addWidget(btn_new);
-        h_layout->addWidget(btn_rm);
+        //h_layout->addWidget(btn_rm);
 
     auto mNameLe = new QLineEdit();
         mNameLe->setPlaceholderText(tr("Sequence name"));

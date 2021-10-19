@@ -3,6 +3,7 @@
 #include <QHeaderView>
 #include <QToolButton>
 #include <QPushButton>
+#include <QLineEdit>
 
 #include "singleton.h"
 #include "sq_model.h"
@@ -61,9 +62,13 @@ void SqTableWidget::createGui()
             rm_btn->addAction(mRemoveAct);
             rm_btn->addAction(mClearAct);
 
+        auto find_le = new QLineEdit();
+            find_le->setPlaceholderText(tr("Find sequence"));
+            find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+
         h_layout->addWidget(add_btn);
         h_layout->addWidget(rm_btn);
-        h_layout->addStretch();
+        h_layout->addWidget(find_le);
 
     auto mSqModel = new SqModel();
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
@@ -86,9 +91,9 @@ void SqTableWidget::createGui()
             headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
             headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
 
-    auto layout = new QGridLayout();
-        layout->addLayout(h_layout, 0, 0);
-        layout->addWidget(mTblView, 1, 0);
+    auto main_layout = new QGridLayout();
+        main_layout->addLayout(h_layout, 0, 0);
+        main_layout->addWidget(mTblView, 1, 0);
 
-    setLayout(layout);
+    setLayout(main_layout);
 }
