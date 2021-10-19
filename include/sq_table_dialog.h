@@ -23,7 +23,12 @@ public:
     int getRow() const;
 
 private slots:
-    void onBtnClicked(QAbstractButton* aBtn);
+    void onDialogBtnClicked(QAbstractButton* aBtn);
+    void onBackBtnClicked();
+    void onPrevBtnClicked();
+    void onNextBtnClicked();
+    void onFrontBtnClicked();
+    void onAddBtnClicked();
 
 
 private:

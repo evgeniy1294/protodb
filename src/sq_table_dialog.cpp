@@ -23,9 +23,9 @@ QDataWidgetMapper* SqTableDialog::getMapper() const
     return mMapper;
 }
 
-void SqTableDialog::setMapper(QDataWidgetMapper* aModel)
+void SqTableDialog::setMapper(QDataWidgetMapper* aMapper)
 {
-    mMapper = aModel;
+    mMapper = aMapper;
 }
 
 void SqTableDialog::selectRow(int aRow)
@@ -46,18 +46,28 @@ void SqTableDialog::createGui()
 
         auto btn_back  = new QPushButton();
             btn_back->setIcon(QIcon(":/icons/arrow_back.svg"));
+            connect(btn_back, &QPushButton::released, this, &SqTableDialog::onBackBtnClicked);
+
         auto btn_prev  = new QPushButton();
             btn_prev->setIcon(QIcon(":/icons/arrow_left.svg"));
+            connect(btn_prev, &QPushButton::released, this, &SqTableDialog::onPrevBtnClicked);
+
         auto btn_next  = new QPushButton();
             btn_next->setIcon(QIcon(":/icons/arrow_right.svg"));
+            connect(btn_next, &QPushButton::released, this, &SqTableDialog::onNextBtnClicked);
+
         auto btn_front = new QPushButton();
             btn_front->setIcon(QIcon(":/icons/arrow_front.svg"));
-        auto btn_new   = new QPushButton();
-            btn_new->setIcon(QIcon(":/icons/add.svg"));
+            connect(btn_front, &QPushButton::released, this, &SqTableDialog::onFrontBtnClicked);
+
+        auto btn_add   = new QPushButton();
+            btn_add->setIcon(QIcon(":/icons/add.svg"));
+            connect(btn_add, &QPushButton::released, this, &SqTableDialog::onAddBtnClicked);
+
         //auto btn_rm   = new QPushButton();
             //btn_rm->setIcon(QIcon(":/icons/close.svg"));
 
-        itemLabel = new QLabel(tr("2/14"));
+        itemLabel = new QLabel(tr("0/0"));
 
         h_layout->addWidget(btn_back);
         h_layout->addWidget(btn_prev);
@@ -65,7 +75,7 @@ void SqTableDialog::createGui()
         h_layout->addWidget(btn_next);
         h_layout->addWidget(btn_front);
         h_layout->addStretch();
-        h_layout->addWidget(btn_new);
+        h_layout->addWidget(btn_add);
         //h_layout->addWidget(btn_rm);
 
     auto mNameLe = new QLineEdit();
@@ -77,8 +87,11 @@ void SqTableDialog::createGui()
     auto mSeqEditor = new QTextBrowser();
         mSeqEditor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
 
-    mButtonBox = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply |
-                                       QDialogButtonBox::Reset | QDialogButtonBox::Cancel );
+    mButtonBox = new QDialogButtonBox( QDialogButtonBox::Ok|
+                                       QDialogButtonBox::Apply|
+                                       QDialogButtonBox::Reset|
+                                       QDialogButtonBox::Cancel );
+        connect( mButtonBox, &QDialogButtonBox::clicked, this, &SqTableDialog::onDialogBtnClicked );
 
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop);
@@ -93,10 +106,54 @@ void SqTableDialog::createGui()
 
 void SqTableDialog::createConnections()
 {
-      connect( mButtonBox, &QDialogButtonBox::clicked, this, &SqTableDialog::onBtnClicked );
+
 }
 
-void SqTableDialog::onBtnClicked(QAbstractButton* aBtn)
+void SqTableDialog::onDialogBtnClicked(QAbstractButton* aBtn)
+{
+    if( mMapper != nullptr ) {
+
+        switch( mButtonBox->standardButton( aBtn ) )
+        {
+            case QDialogButtonBox::Apply:
+                break;
+
+            case QDialogButtonBox::Ok:
+                break;
+
+            case QDialogButtonBox::Reset:
+                break;
+
+            case QDialogButtonBox::Cancel:
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+void SqTableDialog::onBackBtnClicked()
+{
+
+}
+
+void SqTableDialog::onPrevBtnClicked()
+{
+
+}
+
+void SqTableDialog::onNextBtnClicked()
+{
+
+}
+
+void SqTableDialog::onFrontBtnClicked()
+{
+
+}
+
+void SqTableDialog::onAddBtnClicked()
 {
 
 }
