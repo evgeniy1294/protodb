@@ -39,9 +39,6 @@ void SessionWidget::createGui()
     auto log_dock_wdg = new ads::CDockWidget("Log");
         log_dock_wdg->setWidget(new LogWidget());
 
-    auto edit_dock_wdg = new ads::CDockWidget("Editor");
-        edit_dock_wdg->setWidget(new EditorWidget());
-
     auto script_dock_wdg = new ads::CDockWidget("Scripting");
         script_dock_wdg->setWidget(new ScriptWidget());
 
@@ -51,7 +48,6 @@ void SessionWidget::createGui()
     mDockManager = new ads::CDockManager();
         mDockManager->addDockWidget(ads::LeftDockWidgetArea, serial_dock_wdg);
         mDockManager->addDockWidget(ads::RightDockWidgetArea, log_dock_wdg);
-        mDockManager->addDockWidget(ads::BottomDockWidgetArea, edit_dock_wdg);
         mDockManager->addDockWidget(ads::RightDockWidgetArea, script_dock_wdg);
         mDockManager->addDockWidgetTab(ads::RightDockWidgetArea, macro_dock_wdg);
 

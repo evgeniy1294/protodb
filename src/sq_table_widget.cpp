@@ -8,7 +8,7 @@
 #include "sq_model.h"
 #include "sq_table_widget.h"
 #include "sq_table_widget_private.h"
-
+#include "sq_table_dialog.h"
 
 
 SqTableWidget::SqTableWidget(QWidget* parent)
@@ -19,7 +19,8 @@ SqTableWidget::SqTableWidget(QWidget* parent)
 
 void SqTableWidget::onClickNew()
 {
-
+    auto dialog = new SqTableDialog();
+    dialog->exec();
 }
 
 void SqTableWidget::onClickRemove()
@@ -52,7 +53,7 @@ void SqTableWidget::createGui()
     auto h_layout = new QHBoxLayout();
         auto add_btn = new QPushButton();
             add_btn->setIcon(QIcon(":/icons/add.svg"));
-            add_btn->addAction(mAddAct);
+            connect(add_btn, &QPushButton::released, this, &SqTableWidget::onClickNew);
 
 
         auto rm_btn = new QToolButton();

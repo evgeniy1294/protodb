@@ -14,5 +14,9 @@
         <file alias="reset.svg">icons/reset.svg</file>
         <file alias="add.svg">icons/add.svg</file>
         <file alias="trash.svg">icons/trash.svg</file>
+        <file alias="arrow_back.svg">icons/arrow_back.svg</file>
+        <file alias="arrow_front.svg">icons/arrow_front.svg</file>
+        <file alias="arrow_left.svg">icons/arrow_left.svg</file>
+        <file alias="arrow_right.svg">icons/arrow_right.svg</file>
     </qresource>
 </RCC>
