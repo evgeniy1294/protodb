@@ -5,6 +5,8 @@
 #include <QToolButton>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QMessageBox>
+#include <QTableView>
 
 #include "singleton.h"
 #include "sq_model.h"
@@ -20,15 +22,49 @@ SqTableWidget::SqTableWidget(QWidget* parent)
     createGui();
 }
 
-
+#include <iostream>
 void SqTableWidget::onClickRemove()
 {
+    QMessageBox msgbox;
+    {
+        msgbox.setText( tr("Delete selected?") );
+        msgbox.setInformativeText( tr("Selected sequence will be removed") );
+        msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgbox.setDefaultButton(QMessageBox::No);
+        msgbox.setIcon(QMessageBox::Icon::Warning);
+        msgbox.setFixedSize( QSize(480, 240) );
 
+            msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+            msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
+    }
+
+    if (msgbox.exec() == QMessageBox::Yes) {
+        auto row_list = mTblView->selectionModel()->selectedRows();
+
+        if (!row_list.empty()) {
+            mSqModel->removeRows( row_list.constFirst().row(), row_list.count() );
+        }
+    }
 }
 
 void SqTableWidget::onClickClear()
 {
+    QMessageBox msgbox;
+    {
+        msgbox.setText( tr("Clear Table?") );
+        msgbox.setInformativeText( tr("All sequence will be removed") );
+        msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgbox.setDefaultButton(QMessageBox::No);
+        msgbox.setIcon(QMessageBox::Icon::Warning);
+        msgbox.setFixedSize( QSize(680, 240) );
 
+            msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+            msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
+    }
+
+    if (msgbox.exec() == QMessageBox::Yes) {
+        mSqModel->removeRows( 0, mSqModel->rowCount() );
+    }
 }
 
 void SqTableWidget::createActions()
@@ -54,6 +90,7 @@ void SqTableWidget::createGui()
             rm_btn->setIcon(QIcon(":/icons/close.svg"));
             rm_btn->addAction(mRemoveAct);
             rm_btn->addAction(mClearAct);
+            connect(rm_btn, &QToolButton::released, this, &SqTableWidget::onClickRemove);
 
         auto find_le = new QLineEdit();
             find_le->setPlaceholderText(tr("Find sequence"));
@@ -72,14 +109,14 @@ void SqTableWidget::createGui()
 
     mDialog = new SqTableDialog();
         mDialog->setMapper(mMapper);
+        mDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 
     auto btnDelegate = new ButtonDelegate();
         connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
 
-    auto mTblView = new QTableView();
+    mTblView = new QTableView();
         mSqModel->setParent(mTblView);
         mTblView->setModel(mSqModel);
-        mTblView->setMouseTracking(true);
 
         connect(mMapper, &QDataWidgetMapper::currentIndexChanged, mTblView, &QTableView::selectRow);
 
@@ -88,11 +125,13 @@ void SqTableWidget::createGui()
         mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
         mTblView->hideColumn(SqModel::kColumnDescription);
         mTblView->hideColumn(SqModel::kColumnCharStr);
+        mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
         auto headerView = mTblView->horizontalHeader();
             headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);
             headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
             headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
+
 
     auto main_layout = new QGridLayout();
         main_layout->addLayout(h_layout, 0, 0);

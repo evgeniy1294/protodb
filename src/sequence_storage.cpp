@@ -25,7 +25,7 @@ void SqStorage::remove(int aIndex)
 {
   if (aIndex >= 0 && aIndex < mList.size()) {
     QUuid uuid = mList.at(aIndex).uuid();
-    mList[aIndex];
+    mList.removeAt(aIndex);
 
     emit sSeqRemoved(uuid, aIndex);
   }

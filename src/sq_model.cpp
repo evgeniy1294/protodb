@@ -203,6 +203,15 @@ bool SqModel::insertRows(int row, int count, const QModelIndex& parent)
     return true;
 }
 
+bool SqModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    while(count--) {
+        mStorage->remove(row);
+    }
+
+    return true;
+}
+
 
 void SqModel::onSendSequence(const QModelIndex& index)
 {

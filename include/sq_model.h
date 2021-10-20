@@ -34,9 +34,9 @@ public:
     QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
     bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &aIndex) const override;
-    virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-signals:
 
 
 public slots:

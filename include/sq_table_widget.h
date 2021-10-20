@@ -1,9 +1,10 @@
 #pragma once
 
-#include <QTableWidget>
+#include <QWidget>
 
-class QAction;
+class QTableView;
 class QDataWidgetMapper;
+class QAction;
 class QToolBar;
 class SqModel;
 class SqTableDialog;
@@ -29,6 +30,7 @@ private:
     QDataWidgetMapper* mMapper;
     SqModel* mSqModel;
     SqTableDialog* mDialog;
+    QTableView* mTblView;
 };
 
 
