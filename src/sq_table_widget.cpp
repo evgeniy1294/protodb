@@ -67,6 +67,7 @@ void SqTableWidget::createGui()
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
 
     mMapper->setModel(mSqModel);
+    mMapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
     mMapper->setCurrentIndex(0);
 
     mDialog = new SqTableDialog();
@@ -76,8 +77,11 @@ void SqTableWidget::createGui()
         connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
 
     auto mTblView = new QTableView();
+        mSqModel->setParent(mTblView);
         mTblView->setModel(mSqModel);
         mTblView->setMouseTracking(true);
+
+        connect(mMapper, &QDataWidgetMapper::currentIndexChanged, mTblView, &QTableView::selectRow);
 
         mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
         mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, btnDelegate);

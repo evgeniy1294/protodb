@@ -135,14 +135,13 @@ QVariant SqModel::headerData(int aSection, Qt::Orientation aOrientation, int aRo
     return QVariant();
 }
 
+
 bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
 {
     bool ret = false;
 
     int row = aIndex.row();
     int col = aIndex.column();
-
-
 
     if ( checkIndex(aIndex) )
     {
@@ -171,6 +170,9 @@ bool SqModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRo
             }
 
             ret = (col != kColumnSendBtn);
+            if (ret) {
+               emit dataChanged(aIndex, aIndex);
+            }
         }
     }
 
