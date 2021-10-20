@@ -27,8 +27,34 @@ void SqStorage::remove(int aIndex)
     QUuid uuid = mList.at(aIndex).uuid();
     mList.removeAt(aIndex);
 
-    emit sSeqRemoved(uuid, aIndex);
+    emit sSeqRemoved(uuid, aIndex, 1);
   }
+}
+
+void SqStorage::remove(int aIndex, int aCount)
+{
+  if (aIndex >= 0 && aIndex < mList.size()) {
+
+    if (aIndex == 0 && aCount == mList.size()) {
+      mList.clear();
+      emit sCleared();
+    }
+    else
+    {
+      QUuid uuid = mList.at(aIndex).uuid();
+
+      aCount = ((aIndex + aCount) > mList.size()) ? mList.size() - aIndex : aCount;
+
+      for (int i = 0; i < aCount; i++) {
+        mList.removeAt(aIndex);
+      }
+
+      emit sSeqRemoved(uuid, aIndex, aCount);
+    }
+
+  }
+
+  return;
 }
 
 void SqStorage::remove(const QUuid& aUuid)
@@ -36,7 +62,7 @@ void SqStorage::remove(const QUuid& aUuid)
   auto index = find(aUuid);
   if (index != -1) {
     mList.removeAt(index);
-    emit sSeqRemoved(aUuid, index);
+    emit sSeqRemoved(aUuid, index, 1);
   }
 }
 
@@ -47,7 +73,7 @@ void SqStorage::remove(const QPointer<Sequence>& aPtr)
 
   if (index != -1) {
     mList.removeAt(index);
-    emit sSeqRemoved(uuid, index);
+    emit sSeqRemoved(uuid, index, 1);
   }
 }
 

@@ -13,6 +13,7 @@ public:
   void insert(int i, const Sequence& aSequence);
   void clear();
   void remove(int aPos);
+  void remove(int aPos, int aCount);
   void remove(const QUuid& aUuid);
   void remove(const QPointer<Sequence>& aPtr);
 
@@ -29,7 +30,7 @@ public:
 
 signals:
   void sSeqAppended(const QUuid& aUuid, int aPos);
-  void sSeqRemoved (const QUuid& aUuid, int aPos);
+  void sSeqRemoved (const QUuid& aUuid, int aPos, int aCount);
   void sCleared();
 
 private:

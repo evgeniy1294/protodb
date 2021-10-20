@@ -19,5 +19,8 @@
         <file alias="arrow_left.svg">icons/arrow_left.svg</file>
         <file alias="arrow_right.svg">icons/arrow_right.svg</file>
         <file alias="search.svg">icons/search.svg</file>
+        <file alias="delete_cross.svg">icons/delete_cross.svg</file>
+        <file alias="delete_minus.svg">icons/delete_minus.svg</file>
+        <file alias="add_plus.svg">icons/new_plus.svg</file>
     </qresource>
 </RCC>

@@ -22,7 +22,6 @@ SqTableWidget::SqTableWidget(QWidget* parent)
     createGui();
 }
 
-#include <iostream>
 void SqTableWidget::onClickRemove()
 {
     QMessageBox msgbox;
@@ -43,6 +42,7 @@ void SqTableWidget::onClickRemove()
 
         if (!row_list.empty()) {
             mSqModel->removeRows( row_list.constFirst().row(), row_list.count() );
+            mMapper->toLast();
         }
     }
 }
@@ -64,6 +64,7 @@ void SqTableWidget::onClickClear()
 
     if (msgbox.exec() == QMessageBox::Yes) {
         mSqModel->removeRows( 0, mSqModel->rowCount() );
+        mMapper->setCurrentIndex(0);
     }
 }
 
@@ -83,14 +84,22 @@ void SqTableWidget::createGui()
     auto h_layout = new QHBoxLayout();
         auto add_btn = new QPushButton();
             add_btn->setIcon(QIcon(":/icons/add.svg"));
-            connect(add_btn, &QPushButton::released, this, [this](){mDialog->show();});
+            connect(add_btn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
 
 
-        auto rm_btn = new QToolButton();
+        auto rm_btn = new QPushButton();
+            rm_btn->setIcon(QIcon(":/icons/delete_minus.svg"));
+            connect(rm_btn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
+
+        auto clr_btn = new QPushButton();
+            clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
+            connect(clr_btn, &QPushButton::released, this, &SqTableWidget::onClickClear);
+
+            /*auto rm_btn = new QToolButton();
             rm_btn->setIcon(QIcon(":/icons/close.svg"));
             rm_btn->addAction(mRemoveAct);
             rm_btn->addAction(mClearAct);
-            connect(rm_btn, &QToolButton::released, this, &SqTableWidget::onClickRemove);
+            connect(rm_btn, &QToolButton::released, this, &SqTableWidget::onClickRemove);*/
 
         auto find_le = new QLineEdit();
             find_le->setPlaceholderText(tr("Find sequence"));
@@ -98,6 +107,7 @@ void SqTableWidget::createGui()
 
         h_layout->addWidget(add_btn);
         h_layout->addWidget(rm_btn);
+        h_layout->addWidget(clr_btn);
         h_layout->addWidget(find_le);
 
     mSqModel = new SqModel();

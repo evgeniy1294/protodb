@@ -26,8 +26,8 @@ void SqModel::setStorage(const QPointer<SqStorage>& aStorage)
               endInsertRows();
           });
 
-          connect(mStorage, &SqStorage::sSeqRemoved, this, [this](const QUuid& aUuid, int aIndex) {
-              beginRemoveRows(QModelIndex(), aIndex, aIndex);
+          connect(mStorage, &SqStorage::sSeqRemoved, this, [this](const QUuid& aUuid, int aIndex, int aCount) {
+              beginRemoveRows(QModelIndex(), aIndex, aIndex + aCount - 1);
               endRemoveRows();
           });
 
@@ -196,7 +196,7 @@ Qt::ItemFlags SqModel::flags(const QModelIndex& aIndex) const
 bool SqModel::insertRows(int row, int count, const QModelIndex& parent)
 {
     Sequence sq;
-    sq.setName(tr("Sequence %1").arg(row+1));
+    sq.setName(tr("Sequence %1").arg(mStorage->size()+1));
     sq.setDescription(tr("Document me!!!"));
     mStorage->insert(row, sq);
 
@@ -205,10 +205,7 @@ bool SqModel::insertRows(int row, int count, const QModelIndex& parent)
 
 bool SqModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    while(count--) {
-        mStorage->remove(row);
-    }
-
+    mStorage->remove(row, count);
     return true;
 }
 
