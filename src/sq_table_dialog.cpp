@@ -41,12 +41,50 @@ void SqTableDialog::setMapper(QDataWidgetMapper* aMapper)
         mMapper->addMapping(mSeqEditor, SqModel::kColumnCharStr);
 
         auto onIndexChanged = [this]() {
-            itemLabel->setText(QString("%1/%2").arg(mMapper->currentIndex()+1).arg(mMapper->model()->rowCount()));
+            if (mMapper->model()->rowCount() > 0) {
+                itemLabel->setText(QString("%1/%2").arg(mMapper->currentIndex()+1).arg(mMapper->model()->rowCount()));
+
+                mNameLe->setDisabled(false);
+                mDescrEditor->setDisabled(false);
+                mSeqEditor->setDisabled(false);
+
+                if (mMapper->currentIndex() <= 0) {
+                    btn_back->setDisabled(true);
+                    btn_prev->setDisabled(true);
+                }
+                else
+                {
+                    btn_back->setDisabled(false);
+                    btn_prev->setDisabled(false);
+                }
+
+                if (mMapper->currentIndex() >= (mMapper->model()->rowCount() - 1)) {
+                    btn_next->setDisabled(true);
+                    btn_front->setDisabled(true);
+                }
+                else
+                {
+                    btn_next->setDisabled(false);
+                    btn_front->setDisabled(false);
+                }
+            }
         };
 
         connect(mMapper, &QDataWidgetMapper::currentIndexChanged, this, onIndexChanged);
         onIndexChanged();
     }
+}
+
+void SqTableDialog::wipe()
+{
+    itemLabel->setText(QString("0/0"));
+    mNameLe->setDisabled(true);
+    mDescrEditor->setDisabled(true);
+    mSeqEditor->setDisabled(true);
+    btn_back->setDisabled(true);
+    btn_prev->setDisabled(true);
+    btn_next->setDisabled(true);
+    btn_front->setDisabled(true);
 }
 
 void SqTableDialog::createGui()

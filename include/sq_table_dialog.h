@@ -21,6 +21,8 @@ public:
     QDataWidgetMapper* mapper() const;
     void setMapper(QDataWidgetMapper* aMapper);
 
+    void wipe();
+
 private slots:
     void onDialogBtnClicked(QAbstractButton* aBtn);
 

@@ -42,7 +42,14 @@ void SqTableWidget::onClickRemove()
 
         if (!row_list.empty()) {
             mSqModel->removeRows( row_list.constFirst().row(), row_list.count() );
-            mMapper->toLast();
+
+            if (mSqModel->rowCount() == 0) {
+                mDialog->wipe();
+            }
+            else
+            {
+                mMapper->toLast();
+            }
         }
     }
 }
@@ -64,7 +71,7 @@ void SqTableWidget::onClickClear()
 
     if (msgbox.exec() == QMessageBox::Yes) {
         mSqModel->removeRows( 0, mSqModel->rowCount() );
-        mMapper->setCurrentIndex(0);
+        mDialog->wipe();
     }
 }
 
@@ -86,7 +93,6 @@ void SqTableWidget::createGui()
             add_btn->setIcon(QIcon(":/icons/add.svg"));
             connect(add_btn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
 
-
         auto rm_btn = new QPushButton();
             rm_btn->setIcon(QIcon(":/icons/delete_minus.svg"));
             connect(rm_btn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
@@ -94,12 +100,6 @@ void SqTableWidget::createGui()
         auto clr_btn = new QPushButton();
             clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
             connect(clr_btn, &QPushButton::released, this, &SqTableWidget::onClickClear);
-
-            /*auto rm_btn = new QToolButton();
-            rm_btn->setIcon(QIcon(":/icons/close.svg"));
-            rm_btn->addAction(mRemoveAct);
-            rm_btn->addAction(mClearAct);
-            connect(rm_btn, &QToolButton::released, this, &SqTableWidget::onClickRemove);*/
 
         auto find_le = new QLineEdit();
             find_le->setPlaceholderText(tr("Find sequence"));
@@ -120,6 +120,7 @@ void SqTableWidget::createGui()
     mDialog = new SqTableDialog();
         mDialog->setMapper(mMapper);
         mDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+        mDialog->wipe();
 
     auto btnDelegate = new ButtonDelegate();
         connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
