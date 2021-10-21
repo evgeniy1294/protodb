@@ -14,7 +14,6 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , mIsaToolBar(new isa_tool_bar( QBoxLayout::TopToBottom ))
 {
   createGui();
   createActions();
@@ -27,15 +26,15 @@ void MainWindow::createGui()
   setWindowTitle("Protocol Debugger");
   setWindowIcon(QIcon(":/icons/network.svg"));
   setIconSize({18,18});
-  resize(maximumSize());
 
+  mIsaToolBar = new isa_tool_bar( QBoxLayout::TopToBottom );
   mIsaToolBar->setButtonSize( QSize( 28, 28 ) );
 
   auto layout = new QHBoxLayout();
     layout->addWidget(mIsaToolBar);
     layout->addWidget(new SessionWidget());
 
-  auto wdg = new QWidget(this);
+  auto wdg = new QWidget();
     wdg->setLayout(layout);
 
   setCentralWidget(wdg);

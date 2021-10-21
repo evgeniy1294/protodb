@@ -16,7 +16,6 @@
 
 
 SqTableWidget::SqTableWidget(QWidget* parent)
-    : mMapper(new QDataWidgetMapper())
 {
     createActions();
     createGui();
@@ -110,9 +109,10 @@ void SqTableWidget::createGui()
         h_layout->addWidget(clr_btn);
         h_layout->addWidget(find_le);
 
-    mSqModel = new SqModel();
+    mSqModel = new SqModel(this);
         mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
 
+    mMapper = new QDataWidgetMapper(this);
     mMapper->setModel(mSqModel);
     mMapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
     mMapper->setCurrentIndex(0);
