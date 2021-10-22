@@ -34,8 +34,8 @@ void SqTableWidget::createActions()
     mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Remove All"), this);
         mClearAct->setStatusTip(tr("Clear Macro Table"));
 
-    mCopyAct = new QAction(tr("Copy"));
-    mEditAct = new QAction(tr("Edit"));
+    mCopyAct = new QAction(QIcon(":/icons/copy.svg"), tr("Copy"), this);
+    mEditAct = new QAction(QIcon(":/icons/edit.svg"), tr("Edit"), this);
 
 }
 
