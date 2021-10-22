@@ -7,6 +7,9 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QTableView>
+#include <QMenu>
+
+#include <iostream>
 
 #include "singleton.h"
 #include "sq_model.h"
@@ -14,12 +17,139 @@
 #include "sq_table_widget_private.h"
 #include "sq_table_dialog.h"
 
-
 SqTableWidget::SqTableWidget(QWidget* parent)
 {
     createActions();
     createGui();
+    createConnections();
 }
+
+
+void SqTableWidget::createActions()
+{
+    mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
+        mRemoveAct->setStatusTip(tr("Remove selected macroses"));
+
+    mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Remove All"), this);
+        mClearAct->setStatusTip(tr("Clear Macro Table"));
+
+    mCopyAct = new QAction(tr("Copy"));
+    mEditAct = new QAction(tr("Edit"));
+
+}
+
+void SqTableWidget::createGui()
+{
+    // ---------[BUTTONS]---------- //
+    mAddBtn = new QPushButton();
+        mAddBtn->setIcon(QIcon(":/icons/add.svg"));
+
+    mRmBtn = new QPushButton();
+        mRmBtn->setIcon(QIcon(":/icons/delete_minus.svg"));
+
+    mClrBtn = new QPushButton();
+        mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
+
+    mBtnDelegate = new ButtonDelegate();
+
+    // ---------[MENU]---------- //
+    mMenu = new QMenu;
+        mMenu->addAction(mCopyAct);
+        mMenu->addAction(mEditAct);
+        mMenu->addSeparator();
+        mMenu->addAction(mRemoveAct);
+
+    // ---------[FIND LINE EDIT]---------- //
+    auto find_le = new QLineEdit();
+        find_le->setPlaceholderText(tr("Find sequence"));
+        find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+
+
+    // ---------[TABLE VIEW]---------- //
+    mSqModel = new SqModel(this);
+        mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
+
+    mMapper = new QDataWidgetMapper(this);
+        mMapper->setModel(mSqModel);
+        mMapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
+        mMapper->setCurrentIndex(0);
+
+    mDialog = new SqTableDialog();
+        mDialog->setMapper(mMapper);
+        mDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+        mDialog->wipe();
+
+    mTblView = new QTableView();
+        mTblView->setModel(mSqModel);
+        mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
+        mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
+        mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, mBtnDelegate);
+        mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
+        mTblView->hideColumn(SqModel::kColumnDescription);
+        mTblView->hideColumn(SqModel::kColumnCharStr);
+        mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        auto headerView = mTblView->horizontalHeader();
+            headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
+            headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);
+            headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
+            headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
+
+    // ---------[LAYOUT]---------- //
+    auto h_layout = new QHBoxLayout();
+
+        h_layout->addWidget(mAddBtn);
+        h_layout->addWidget(mRmBtn);
+        h_layout->addWidget(mClrBtn);
+        h_layout->addWidget(find_le);
+
+    auto main_layout = new QGridLayout();
+        main_layout->addLayout(h_layout, 0, 0);
+        main_layout->addWidget(mTblView, 1, 0);
+
+        setLayout(main_layout);
+}
+
+void SqTableWidget::createConnections()
+{
+    // ---------[BUTTONS]---------- //
+    connect(mAddBtn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
+    connect(mRmBtn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
+    connect(mClrBtn, &QPushButton::released, this, &SqTableWidget::onClickClear);
+    connect(mBtnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
+
+
+    // ---------[ACTIONS]---------- //
+    connect(mRemoveAct, &QAction::triggered, this, &SqTableWidget::onClickRemove);
+
+    connect(mClearAct, &QAction::triggered, this, &SqTableWidget::onClickClear);
+
+    connect(mEditAct, &QAction::triggered, this, [this]() {
+        auto row_list = mTblView->selectionModel()->selectedRows();
+        if (row_list.size() > 0) {
+            mMapper->setCurrentIndex(row_list.last().row()); mDialog->show();
+        }
+    });
+
+    // ---------[MAPPER]---------- //
+    connect(mMapper, &QDataWidgetMapper::currentIndexChanged, mTblView, &QTableView::selectRow);
+
+
+    // ---------[TABLE]---------- //
+    connect(mTblView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+        if (index.column() == SqModel::kColumnSqName) {
+            mMapper->setCurrentIndex(index.row()); mDialog->show();
+        }
+    });
+    connect(mTblView, &QTableView::customContextMenuRequested, this, [this](const QPoint &pos) {
+        QModelIndex index = mTblView->indexAt(pos);
+
+        if (index.row() >= 0) {
+            mMenu->popup(mTblView->viewport()->mapToGlobal(pos));
+        }
+    });
+}
+
+
 
 void SqTableWidget::onClickRemove()
 {
@@ -74,79 +204,3 @@ void SqTableWidget::onClickClear()
     }
 }
 
-void SqTableWidget::createActions()
-{
-    mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
-        mRemoveAct->setStatusTip(tr("Remove selected macroses"));
-        connect(mRemoveAct, &QAction::triggered, this, &SqTableWidget::onClickRemove);
-
-    mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Remove All"), this);
-        mClearAct->setStatusTip(tr("Clear Macro Table"));
-        connect(mClearAct, &QAction::triggered, this, &SqTableWidget::onClickClear);
-}
-
-void SqTableWidget::createGui()
-{
-    auto h_layout = new QHBoxLayout();
-        auto add_btn = new QPushButton();
-            add_btn->setIcon(QIcon(":/icons/add.svg"));
-            connect(add_btn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
-
-        auto rm_btn = new QPushButton();
-            rm_btn->setIcon(QIcon(":/icons/delete_minus.svg"));
-            connect(rm_btn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
-
-        auto clr_btn = new QPushButton();
-            clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
-            connect(clr_btn, &QPushButton::released, this, &SqTableWidget::onClickClear);
-
-        auto find_le = new QLineEdit();
-            find_le->setPlaceholderText(tr("Find sequence"));
-            find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
-
-        h_layout->addWidget(add_btn);
-        h_layout->addWidget(rm_btn);
-        h_layout->addWidget(clr_btn);
-        h_layout->addWidget(find_le);
-
-    mSqModel = new SqModel(this);
-        mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
-
-    mMapper = new QDataWidgetMapper(this);
-    mMapper->setModel(mSqModel);
-    mMapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
-    mMapper->setCurrentIndex(0);
-
-    mDialog = new SqTableDialog();
-        mDialog->setMapper(mMapper);
-        mDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        mDialog->wipe();
-
-    auto btnDelegate = new ButtonDelegate();
-        connect(btnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
-
-    mTblView = new QTableView();
-        mSqModel->setParent(mTblView);
-        mTblView->setModel(mSqModel);
-
-        connect(mMapper, &QDataWidgetMapper::currentIndexChanged, mTblView, &QTableView::selectRow);
-
-        mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
-        mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, btnDelegate);
-        mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
-        mTblView->hideColumn(SqModel::kColumnDescription);
-        mTblView->hideColumn(SqModel::kColumnCharStr);
-        mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
-        auto headerView = mTblView->horizontalHeader();
-            headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
-            headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);
-            headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
-            headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
-
-
-    auto main_layout = new QGridLayout();
-        main_layout->addLayout(h_layout, 0, 0);
-        main_layout->addWidget(mTblView, 1, 0);
-
-    setLayout(main_layout);
-}

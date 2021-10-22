@@ -186,7 +186,7 @@ Qt::ItemFlags SqModel::flags(const QModelIndex& aIndex) const
 
     Qt::ItemFlags flags = QAbstractTableModel::flags(aIndex);
 
-    if (col != kColumnSendBtn) {
+    if (col != kColumnSendBtn && col != kColumnSqName) {
         flags |= Qt::ItemIsEditable;
     }
 

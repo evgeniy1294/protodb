@@ -6,8 +6,11 @@ class QTableView;
 class QDataWidgetMapper;
 class QAction;
 class QToolBar;
+class QMenu;
+class QPushButton;
 class SqModel;
 class SqTableDialog;
+class ButtonDelegate;
 
 class SqTableWidget: public QWidget {
     Q_OBJECT
@@ -23,14 +26,26 @@ public slots:
 private:
     void createActions();
     void createGui();
+    void createConnections();
 
 private:
-    QAction*  mRemoveAct;
-    QAction*  mClearAct;
+    QAction* mRemoveAct;
+    QAction* mClearAct;
+    QAction* mCopyAct;
+    QAction* mEditAct;
+
+    QPushButton* mAddBtn;
+    QPushButton* mRmBtn;
+    QPushButton* mClrBtn;
+
+    ButtonDelegate* mBtnDelegate;
+
     QDataWidgetMapper* mMapper;
+    QTableView* mTblView;
+    QMenu* mMenu;
+
     SqModel* mSqModel;
     SqTableDialog* mDialog;
-    QTableView* mTblView;
 };
 
 
