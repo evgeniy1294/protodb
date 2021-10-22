@@ -8,6 +8,8 @@ class QAction;
 class QToolBar;
 class QMenu;
 class QPushButton;
+class QLineEdit;
+class QSortFilterProxyModel;
 class SqModel;
 class SqTableDialog;
 class ButtonDelegate;
@@ -38,12 +40,14 @@ private:
     QPushButton* mRmBtn;
     QPushButton* mClrBtn;
 
-    ButtonDelegate* mBtnDelegate;
+    QLineEdit* mFindLe;
 
     QDataWidgetMapper* mMapper;
     QTableView* mTblView;
+    QSortFilterProxyModel* mFilter;
     QMenu* mMenu;
 
+    ButtonDelegate* mBtnDelegate;
     SqModel* mSqModel;
     SqTableDialog* mDialog;
 };

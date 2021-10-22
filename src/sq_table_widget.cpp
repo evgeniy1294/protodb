@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QTableView>
 #include <QMenu>
+#include <QSortFilterProxyModel>
 
 #include <iostream>
 
@@ -60,9 +61,9 @@ void SqTableWidget::createGui()
         mMenu->addAction(mRemoveAct);
 
     // ---------[FIND LINE EDIT]---------- //
-    auto find_le = new QLineEdit();
-        find_le->setPlaceholderText(tr("Find sequence"));
-        find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+    mFindLe = new QLineEdit();
+        mFindLe->setPlaceholderText(tr("Find sequence"));
+        mFindLe->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
 
 
     // ---------[TABLE VIEW]---------- //
@@ -79,8 +80,14 @@ void SqTableWidget::createGui()
         mDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         mDialog->wipe();
 
+    mFilter = new QSortFilterProxyModel(this);
+        mFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+        mFilter->setDynamicSortFilter(true);
+        mFilter->setFilterKeyColumn(SqModel::kColumnSqName);
+        mFilter->setSourceModel(mSqModel);
+
     mTblView = new QTableView();
-        mTblView->setModel(mSqModel);
+        mTblView->setModel(mFilter);
         mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
         mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
         mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, mBtnDelegate);
@@ -100,7 +107,7 @@ void SqTableWidget::createGui()
         h_layout->addWidget(mAddBtn);
         h_layout->addWidget(mRmBtn);
         h_layout->addWidget(mClrBtn);
-        h_layout->addWidget(find_le);
+        h_layout->addWidget(mFindLe);
 
     auto main_layout = new QGridLayout();
         main_layout->addLayout(h_layout, 0, 0);
@@ -115,7 +122,14 @@ void SqTableWidget::createConnections()
     connect(mAddBtn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
     connect(mRmBtn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
     connect(mClrBtn, &QPushButton::released, this, &SqTableWidget::onClickClear);
-    connect(mBtnDelegate, &ButtonDelegate::triggered, mSqModel, &SqModel::onSendSequence);
+    connect(mBtnDelegate, &ButtonDelegate::triggered, this, [this](const QModelIndex& a_index) {
+        auto index = mFilter->mapToSource(a_index);
+        mSqModel->onSendSequence(index);
+    });
+
+
+    // ---------[FILTER]---------- //
+    connect(mFindLe, &QLineEdit::textChanged, mFilter, &QSortFilterProxyModel::setFilterFixedString);
 
 
     // ---------[ACTIONS]---------- //
@@ -125,8 +139,10 @@ void SqTableWidget::createConnections()
 
     connect(mEditAct, &QAction::triggered, this, [this]() {
         auto row_list = mTblView->selectionModel()->selectedRows();
-        if (row_list.size() > 0) {
-            mMapper->setCurrentIndex(row_list.last().row()); mDialog->show();
+
+        if (row_list.size() > 0) {  
+            auto index = mFilter->mapToSource( row_list.last() );
+            mMapper->setCurrentIndex(index.row()); mDialog->show();
         }
     });
 
@@ -135,13 +151,15 @@ void SqTableWidget::createConnections()
 
 
     // ---------[TABLE]---------- //
-    connect(mTblView, &QTableView::doubleClicked, this, [this](const QModelIndex &index) {
+    connect(mTblView, &QTableView::doubleClicked, this, [this](const QModelIndex &a_index) {
+        auto index = mFilter->mapToSource(a_index);
+
         if (index.column() == SqModel::kColumnSqName) {
             mMapper->setCurrentIndex(index.row()); mDialog->show();
         }
     });
     connect(mTblView, &QTableView::customContextMenuRequested, this, [this](const QPoint &pos) {
-        QModelIndex index = mTblView->indexAt(pos);
+        auto index = mFilter->mapToSource(mTblView->indexAt(pos));
 
         if (index.row() >= 0) {
             mMenu->popup(mTblView->viewport()->mapToGlobal(pos));
