@@ -120,8 +120,11 @@ void SqTableWidget::createConnections()
 {
     // ---------[BUTTONS]---------- //
     connect(mAddBtn, &QPushButton::released, this, [this](){mMapper->toLast(); mDialog->show();});
-    connect(mRmBtn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
+
     connect(mClrBtn, &QPushButton::released, this, &SqTableWidget::onClickClear);
+
+    connect(mRmBtn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
+
     connect(mBtnDelegate, &ButtonDelegate::triggered, this, [this](const QModelIndex& a_index) {
         auto index = mFilter->mapToSource(a_index);
         mSqModel->onSendSequence(index);
@@ -187,8 +190,12 @@ void SqTableWidget::onClickRemove()
     if (msgbox.exec() == QMessageBox::Yes) {
         auto row_list = mTblView->selectionModel()->selectedRows();
 
-        if (!row_list.empty()) {
-            mSqModel->removeRows( row_list.constFirst().row(), row_list.count() );
+        if (row_list.count() > 0) {
+            auto index =mFilter->mapToSource(row_list.first());
+
+            for (int i = 0; i < row_list.count(); i++) {
+               mSqModel->removeRow( index.row() );
+            }
 
             if (mSqModel->rowCount() == 0) {
                 mDialog->wipe();
