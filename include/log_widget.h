@@ -3,6 +3,7 @@
 #include <QWidget>
 
 class QTextBrowser;
+class QPushButton;
 
 class LogWidget: public QWidget
 {
@@ -15,7 +16,12 @@ public:
 private:
   void createGui();
 
+private slots:
+  void colorDialog();
+
 private:
   QTextBrowser* mLogBrowser;
+  QPushButton* mRxBtn;
+  QPushButton* mTxBtn;
 };
 

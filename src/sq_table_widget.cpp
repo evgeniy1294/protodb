@@ -31,9 +31,6 @@ void SqTableWidget::createActions()
     mRemoveAct = new QAction(QIcon(":/icons/close.svg"), tr("&Remove"), this);
         mRemoveAct->setStatusTip(tr("Remove selected macroses"));
 
-    mClearAct = new QAction(QIcon(":/icons/trash.svg"), tr("&Remove All"), this);
-        mClearAct->setStatusTip(tr("Clear Macro Table"));
-
     mCopyAct = new QAction(QIcon(":/icons/copy.svg"), tr("Copy"), this);
     mEditAct = new QAction(QIcon(":/icons/edit.svg"), tr("Edit"), this);
 
@@ -44,12 +41,15 @@ void SqTableWidget::createGui()
     // ---------[BUTTONS]---------- //
     mAddBtn = new QPushButton();
         mAddBtn->setIcon(QIcon(":/icons/add.svg"));
+        mAddBtn->setToolTip("Add sequence");
 
     mRmBtn = new QPushButton();
         mRmBtn->setIcon(QIcon(":/icons/delete_minus.svg"));
+        mRmBtn->setToolTip("Delete selected");
 
     mClrBtn = new QPushButton();
         mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
+        mClrBtn->setToolTip("Delete all");
 
     mBtnDelegate = new ButtonDelegate();
 
@@ -137,8 +137,6 @@ void SqTableWidget::createConnections()
 
     // ---------[ACTIONS]---------- //
     connect(mRemoveAct, &QAction::triggered, this, &SqTableWidget::onClickRemove);
-
-    connect(mClearAct, &QAction::triggered, this, &SqTableWidget::onClickClear);
 
     connect(mEditAct, &QAction::triggered, this, [this]() {
         auto row_list = mTblView->selectionModel()->selectedRows();

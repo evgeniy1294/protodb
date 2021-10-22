@@ -32,7 +32,6 @@ private:
 
 private:
     QAction* mRemoveAct;
-    QAction* mClearAct;
     QAction* mCopyAct;
     QAction* mEditAct;
 
