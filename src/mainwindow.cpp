@@ -170,6 +170,7 @@ void MainWindow::sessionsOpen() {
 }
 
 void MainWindow::toolsOptions() {
+  Singleton::instance().mSettingsDialog.show();
   return;
 }
 

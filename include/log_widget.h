@@ -4,6 +4,8 @@
 
 class QTextBrowser;
 class QPushButton;
+class QLabel;
+class LogConfigWidget;
 
 class LogWidget: public QWidget
 {
@@ -17,11 +19,16 @@ private:
   void createGui();
 
 private slots:
-  void colorDialog();
+  //void colorDialog();
+  void showDialog();
 
 private:
   QTextBrowser* mLogBrowser;
   QPushButton* mRxBtn;
   QPushButton* mTxBtn;
+  QLabel* mStatusLabel;
+  QLabel* mConfigLabel;
+  QLabel* mModeLabel;
+  LogConfigWidget* mDialog;
 };
 

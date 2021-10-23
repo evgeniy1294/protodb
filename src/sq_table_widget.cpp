@@ -19,6 +19,7 @@
 #include "sq_table_dialog.h"
 
 SqTableWidget::SqTableWidget(QWidget* parent)
+    : QWidget(parent)
 {
     createActions();
     createGui();

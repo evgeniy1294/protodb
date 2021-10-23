@@ -7,6 +7,7 @@
 #include <QSpinBox>
 #include <QPixmap>
 #include <QColorDialog>
+#include <QLabel>
 
 #include "log_widget.h"
 
@@ -29,8 +30,9 @@ void LogWidget::createGui()
     auto clr_btn = new QPushButton();
         clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
         clr_btn->setToolTip("Clear log window");
+        connect(clr_btn, &QPushButton::released, this, &LogWidget::showDialog);
 
-    auto rx_btn_pixmap = QPixmap(QSize(36,36));
+  /*  auto rx_btn_pixmap = QPixmap(QSize(36,36));
         rx_btn_pixmap.fill(Qt::red);
     mRxBtn = new QPushButton(rx_btn_pixmap, tr("RX"));
         mRxBtn->setFlat(true);
@@ -42,7 +44,31 @@ void LogWidget::createGui()
     mTxBtn = new QPushButton(tx_pixmap, tr("TX"));
         mTxBtn->setFlat(true);
         mTxBtn->setFixedSize(48, 36);
-        connect(mTxBtn, &QPushButton::released, this, &LogWidget::colorDialog);
+        connect(mTxBtn, &QPushButton::released, this, &LogWidget::colorDialog);*/
+
+    // ---------[LABEL]---------- //
+    mModeLabel = new QLabel("HEX");
+        mModeLabel->setFrameShape(QFrame::StyledPanel);
+        mModeLabel->setFrameShadow(QFrame::Raised);
+        mModeLabel->setLineWidth(3);
+        mModeLabel->setFixedSize(64, 32);
+        mModeLabel->setAlignment(Qt::AlignCenter);
+
+    mStatusLabel = new QLabel("Active");
+        mStatusLabel->setFrameShape(QFrame::StyledPanel);
+        mStatusLabel->setFrameShadow(QFrame::Raised);
+        mStatusLabel->setLineWidth(3);
+        mStatusLabel->setFixedSize(64, 32);
+        mStatusLabel->setAlignment(Qt::AlignCenter);
+
+    mConfigLabel = new QLabel("115200, none, 8, 1");
+        mConfigLabel->setFrameShape(QFrame::StyledPanel);
+        mConfigLabel->setFrameShadow(QFrame::Raised);
+        mConfigLabel->setLineWidth(3);
+        mConfigLabel->setFixedSize(136, 32);
+        mConfigLabel->setAlignment(Qt::AlignCenter);
+
+
 
     // ---------[LINE EDIT]---------- //
     auto msg_edit = new QLineEdit();
@@ -51,8 +77,6 @@ void LogWidget::createGui()
 
     // ---------[COMBO BOX]---------- //
     auto tool_mode_cmb = new QComboBox();
-        tool_mode_cmb->setFrame(false);
-        tool_mode_cmb->setFixedSize(64, 36);
         tool_mode_cmb->addItem("HEX");
         tool_mode_cmb->addItem("ASCII");
 
@@ -80,9 +104,9 @@ void LogWidget::createGui()
     auto tool_layout = new QHBoxLayout();
         tool_layout->addWidget(clr_btn);
         tool_layout->addStretch();
-        tool_layout->addWidget(tool_mode_cmb);
-        tool_layout->addWidget(mRxBtn);
-        tool_layout->addWidget(mTxBtn);
+        tool_layout->addWidget(mModeLabel);
+        tool_layout->addWidget(mStatusLabel);
+        tool_layout->addWidget(mConfigLabel);
 
     auto edit_layout = new QHBoxLayout();
         edit_layout->addWidget(msg_edit);
@@ -98,25 +122,6 @@ void LogWidget::createGui()
 }
 
 
-
-void LogWidget::colorDialog() {
-    auto s = sender();
-
-    QColorDialog dialog;
-    {
-        dialog.setOption(QColorDialog::ShowAlphaChannel, false);
-    }
-
-    if (dialog.exec() == 1) {
-        auto pixmap = QPixmap(QSize(36,36));
-            pixmap.fill(dialog.selectedColor());
-
-        if (s == mRxBtn) {
-            mRxBtn->setIcon(QIcon(pixmap));
-        }
-        else {
-            mTxBtn->setIcon(QIcon(pixmap));
-        }
-    }
+void LogWidget::showDialog() {
 }
 

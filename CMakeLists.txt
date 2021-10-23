@@ -32,6 +32,8 @@ set(PROJECT_SOURCES
         src/sq_model.cpp
         src/spinbox_delegate.cpp
         src/sq_table_dialog.cpp
+        src/log_config_widget.cpp
+        src/settings_dialog.cpp
         #src/crc_logic.cpp
         include/mainwindow.h
         include/session_widget.h
@@ -47,6 +49,8 @@ set(PROJECT_SOURCES
         include/sq_table_widget_private.h
         include/sq_model.h
         include/sq_table_dialog.h
+        include/log_config_widget.h
+        include/settings_dialog.h
         #include/crc_logic.hpp
         resources/resources.qrc
 )
