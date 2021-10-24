@@ -1,5 +1,6 @@
 #include <QLineEdit>
 #include <QTextBrowser>
+#include <QTextEdit>
 #include <QPushButton>
 #include <QDataWidgetMapper>
 #include <QAbstractItemModel>
@@ -121,10 +122,10 @@ void SqTableDialog::createGui()
     mNameLe = new QLineEdit();
         mNameLe->setPlaceholderText(tr("Sequence name"));
 
-    mDescrEditor = new QTextBrowser();
-        mDescrEditor->setPlaceholderText(tr("Description..."));
+    mDescrEditor = new QTextEdit();
+        mDescrEditor->setPlaceholderText(tr("Document me!"));
 
-    mSeqEditor = new QTextBrowser();
+    mSeqEditor = new QTextEdit();
         mSeqEditor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
 
     mButtonBox = new QDialogButtonBox( QDialogButtonBox::Ok|

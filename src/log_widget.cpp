@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QColorDialog>
 #include <QLabel>
+#include <QTextCursor>
 
 #include "log_widget.h"
 
@@ -23,7 +24,6 @@ LogWidget::~LogWidget()
 
 }
 
-
 void LogWidget::createGui()
 {
     // ---------[BUTTONS]---------- //
@@ -31,20 +31,6 @@ void LogWidget::createGui()
         clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
         clr_btn->setToolTip("Clear log window");
         connect(clr_btn, &QPushButton::released, this, &LogWidget::showDialog);
-
-  /*  auto rx_btn_pixmap = QPixmap(QSize(36,36));
-        rx_btn_pixmap.fill(Qt::red);
-    mRxBtn = new QPushButton(rx_btn_pixmap, tr("RX"));
-        mRxBtn->setFlat(true);
-        mRxBtn->setFixedSize(48, 36);
-        connect(mRxBtn, &QPushButton::released, this, &LogWidget::colorDialog);
-
-    auto tx_pixmap = QPixmap(QSize(36,36));
-        tx_pixmap.fill(Qt::green);
-    mTxBtn = new QPushButton(tx_pixmap, tr("TX"));
-        mTxBtn->setFlat(true);
-        mTxBtn->setFixedSize(48, 36);
-        connect(mTxBtn, &QPushButton::released, this, &LogWidget::colorDialog);*/
 
     // ---------[LABEL]---------- //
     mModeLabel = new QLabel("HEX");
@@ -97,8 +83,33 @@ void LogWidget::createGui()
         editor->setSpecialValueText(QObject::tr("No delay"));
 
     // ---------[TEXT BROWSER]---------- //
+    QTextCharFormat channelOneFormat = QTextCharFormat();
+        channelOneFormat.setForeground(Qt::red);
+
+    QTextCharFormat channelTwoFormat = QTextCharFormat();
+        channelTwoFormat.setForeground(Qt::blue);
+
+    QTextCharFormat channelSrvFormat = QTextCharFormat();
+        channelSrvFormat.setForeground(Qt::darkGreen);
+
+
+    QTextBlockFormat blockFormat = QTextBlockFormat();
+        blockFormat.setForeground(Qt::blue);
+
     mLogBrowser = new QTextBrowser();
-      mLogBrowser->setText(tr("05.10.21 15:29:53 <<< Connection log"));
+        auto cursor(mLogBrowser->textCursor());
+            cursor.beginEditBlock();
+                    cursor.setCharFormat(channelSrvFormat);
+                    cursor.insertText(tr("13:43:31 <<< "));
+                    cursor.setCharFormat(channelOneFormat);
+                    cursor.insertText(tr("received sequence"));
+                cursor.insertBlock();
+                    cursor.setCharFormat(channelSrvFormat);
+                    cursor.insertText(tr("13:45:32 >>> "));
+                    cursor.setCharFormat(channelTwoFormat);
+                    cursor.insertText(tr("sended sequence"));
+
+            cursor.endEditBlock();
 
     // ---------[LAYOUT]---------- //
     auto tool_layout = new QHBoxLayout();

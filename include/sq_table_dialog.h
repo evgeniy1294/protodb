@@ -9,6 +9,7 @@ class QAbstractButton;
 class QLabel;
 class QLineEdit;
 class QTextBrowser;
+class QTextEdit;
 
 class SqTableDialog: public QDialog
 {
@@ -38,8 +39,8 @@ private:
     QPushButton* btn_add;
     QLabel* itemLabel;
     QLineEdit* mNameLe;
-    QTextBrowser* mDescrEditor;
-    QTextBrowser* mSeqEditor;
+    QTextEdit* mDescrEditor;
+    QTextEdit* mSeqEditor;
     QDataWidgetMapper* mMapper;
     QDialogButtonBox* mButtonBox;
 };
