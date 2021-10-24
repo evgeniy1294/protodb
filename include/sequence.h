@@ -13,6 +13,11 @@ class Sequence: public QObject {
 public:
   friend class SequenceProcessor;
 
+  enum Type {
+      Incoming,
+      Outgoing
+  };
+
   Sequence()
    : mUuid(QUuid::createUuid())
    , mName()
@@ -57,6 +62,7 @@ public:
   void setTriggerName(const QString& newTriggerName);
 
   const QUuid& uuid() const;
+  inline Type type() const { return static_cast<Type>(mType); }
 
 private:
   bool mCached;
@@ -64,6 +70,7 @@ private:
 
 private:
   QUuid mUuid;
+  ushort mType;
 
   int mRepeatPeriod;
   QString mName;

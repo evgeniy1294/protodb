@@ -43,6 +43,8 @@ set(PROJECT_SOURCES
         include/menu.h
         include/tool_bar.h
         include/sequence.h
+        include/incoming_sequence.h
+        include/outgoing_sequence.h
         include/sequence_storage.h
         include/singleton.h
         include/sq_table_widget.h
