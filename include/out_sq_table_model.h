@@ -2,31 +2,27 @@
 
 #include <QAbstractTableModel>
 #include <QVariant>
-#include <QPointer>
+#include <QList>
 
-#include "sequence_storage.h"
+#include "outgoing_sequence.h"
 
-
-class SqModel: public QAbstractTableModel
+class OutSqTableModel: public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
     enum ColumnNames {
       kColumnSqName      = 0,
-      kColumnTrigName    = 1,
-      kColumnRepeatTime  = 2,
-      kColumnDescription = 3,
-      kColumnCharStr     = 4,
-      kColumnSendBtn     = 5,
+      kColumnRepeatTime  = 1,
+      kColumnDescription = 2,
+      kColumnCharStr     = 3,
+      kColumnSendBtn     = 4,
 
       kColumnCount
     };
 
 public:
-    SqModel(QObject* parent = nullptr);
-
-    void setStorage(const QPointer<SqStorage>& aStorage);
+    OutSqTableModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
@@ -40,10 +36,10 @@ public:
 
 
 public slots:
-    void onSendSequence(const QModelIndex &index);
+    void onSendSequence(const QModelIndex& index);
 
 private:
-    QPointer<SqStorage> mStorage;
+    QList<OutgoingSequence> mList;
 };
 
 

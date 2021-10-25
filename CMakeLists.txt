@@ -25,11 +25,10 @@ set(PROJECT_SOURCES
         src/menu.cpp
         src/tool_bar.cpp
         src/sequence.cpp
-        src/sequence_storage.cpp
         src/singleton.cpp
         src/sq_table_widget.cpp
         src/button_delegate.cpp
-        src/sq_model.cpp
+        src/out_sq_table_model.cpp
         src/spinbox_delegate.cpp
         src/sq_table_dialog.cpp
         src/log_config_widget.cpp
@@ -45,11 +44,10 @@ set(PROJECT_SOURCES
         include/sequence.h
         include/incoming_sequence.h
         include/outgoing_sequence.h
-        include/sequence_storage.h
         include/singleton.h
         include/sq_table_widget.h
         include/sq_table_widget_private.h
-        include/sq_model.h
+        include/out_sq_table_model.h
         include/sq_table_dialog.h
         include/log_config_widget.h
         include/settings_dialog.h

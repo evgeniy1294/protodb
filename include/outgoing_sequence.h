@@ -1,9 +1,16 @@
 #pragma once
 
-class OutgoingSequence//: public Sequence
+#include "sequence.h"
+
+class OutgoingSequence: public Sequence
 {
 public:
-    OutgoingSequence();
+    OutgoingSequence()
+        : Sequence()
+        , mRepeatPeriod(0)
+    {
+
+    }
 
     inline int repeatPeriod() const { return mRepeatPeriod; }
     void setRepeatPeriod(int aRepeatPeriod) { mRepeatPeriod = aRepeatPeriod; }

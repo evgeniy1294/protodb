@@ -12,8 +12,7 @@
 
 #include <iostream>
 
-#include "singleton.h"
-#include "sq_model.h"
+#include "out_sq_table_model.h"
 #include "sq_table_widget.h"
 #include "sq_table_widget_private.h"
 #include "sq_table_dialog.h"
@@ -68,8 +67,7 @@ void SqTableWidget::createGui()
 
 
     // ---------[TABLE VIEW]---------- //
-    mSqModel = new SqModel(this);
-        mSqModel->setStorage(&Singleton::instance().mSequenceStorage);
+    mSqModel = new OutSqTableModel(this);
 
     mMapper = new QDataWidgetMapper(this);
         mMapper->setModel(mSqModel);
@@ -84,23 +82,22 @@ void SqTableWidget::createGui()
     mFilter = new QSortFilterProxyModel(this);
         mFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
         mFilter->setDynamicSortFilter(true);
-        mFilter->setFilterKeyColumn(SqModel::kColumnSqName);
+        mFilter->setFilterKeyColumn(OutSqTableModel::kColumnSqName);
         mFilter->setSourceModel(mSqModel);
 
     mTblView = new QTableView();
         mTblView->setModel(mFilter);
         mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
-        mTblView->setItemDelegateForColumn(SqModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
-        mTblView->setItemDelegateForColumn(SqModel::kColumnSendBtn, mBtnDelegate);
-        mTblView->setColumnWidth(SqModel::kColumnSendBtn, 0);
-        mTblView->hideColumn(SqModel::kColumnDescription);
-        mTblView->hideColumn(SqModel::kColumnCharStr);
+        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
+        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnSendBtn, mBtnDelegate);
+        mTblView->setColumnWidth(OutSqTableModel::kColumnSendBtn, 0);
+        mTblView->hideColumn(OutSqTableModel::kColumnDescription);
+        mTblView->hideColumn(OutSqTableModel::kColumnCharStr);
         mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
         auto headerView = mTblView->horizontalHeader();
-            headerView->setSectionResizeMode(SqModel::kColumnSqName,     QHeaderView::Stretch);
-            headerView->setSectionResizeMode(SqModel::kColumnTrigName,   QHeaderView::Stretch);
-            headerView->setSectionResizeMode(SqModel::kColumnRepeatTime, QHeaderView::Fixed);
-            headerView->setSectionResizeMode(SqModel::kColumnSendBtn,    QHeaderView::Fixed);
+            headerView->setSectionResizeMode(OutSqTableModel::kColumnSqName,     QHeaderView::Stretch);
+            headerView->setSectionResizeMode(OutSqTableModel::kColumnRepeatTime, QHeaderView::Fixed);
+            headerView->setSectionResizeMode(OutSqTableModel::kColumnSendBtn,    QHeaderView::Fixed);
 
     // ---------[LAYOUT]---------- //
     auto h_layout = new QHBoxLayout();
@@ -156,7 +153,7 @@ void SqTableWidget::createConnections()
     connect(mTblView, &QTableView::doubleClicked, this, [this](const QModelIndex &a_index) {
         auto index = mFilter->mapToSource(a_index);
 
-        if (index.column() == SqModel::kColumnSqName) {
+        if (index.column() == OutSqTableModel::kColumnSqName) {
             mMapper->setCurrentIndex(index.row()); mDialog->show();
         }
     });

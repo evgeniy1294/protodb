@@ -10,7 +10,7 @@ class QMenu;
 class QPushButton;
 class QLineEdit;
 class QSortFilterProxyModel;
-class SqModel;
+class OutSqTableModel;
 class SqTableDialog;
 class ButtonDelegate;
 
@@ -47,7 +47,7 @@ private:
     QMenu* mMenu;
 
     ButtonDelegate* mBtnDelegate;
-    SqModel* mSqModel;
+    OutSqTableModel* mSqModel;
     SqTableDialog* mDialog;
 };
 

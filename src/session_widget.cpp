@@ -11,7 +11,6 @@
 #include "serial_widget.h"
 #include "log_widget.h"
 #include "script_widget.h"
-#include "sq_model.h"
 
 
 SessionWidget::SessionWidget(QWidget *parent)
