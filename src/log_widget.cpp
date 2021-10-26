@@ -1,16 +1,17 @@
 #include <QWidget>
 #include <QLayout>
-#include <QTextBrowser>
+#include <QTableView>
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSpinBox>
-#include <QPixmap>
-#include <QColorDialog>
 #include <QLabel>
-#include <QTextCursor>
+#include <QHeaderView>
+
 
 #include "log_widget.h"
+#include "log_model.h"
+#include "event.h"
 
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
@@ -101,20 +102,20 @@ void LogWidget::createGui()
     QTextBlockFormat blockFormat = QTextBlockFormat();
         blockFormat.setForeground(Qt::blue);
 
-    mLogBrowser = new QTextBrowser();
-        auto cursor(mLogBrowser->textCursor());
-            cursor.beginEditBlock();
-                    cursor.setCharFormat(channelSrvFormat);
-                    cursor.insertText(tr("13:43:31 <<< "));
-                    cursor.setCharFormat(channelOneFormat);
-                    cursor.insertText(tr("received sequence"));
-                cursor.insertBlock();
-                    cursor.setCharFormat(channelSrvFormat);
-                    cursor.insertText(tr("13:45:32 >>> "));
-                    cursor.setCharFormat(channelTwoFormat);
-                    cursor.insertText(tr("sended sequence"));
+    mLogView = new QTableView();
+    auto mLogModel = new LogModel(mLogView);
+        mLogView->setModel(mLogModel);
+        mLogView->hideColumn(LogModel::kColumnUser);
+        mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        mLogView->setShowGrid(false);
+        mLogView->verticalHeader()->hide();
+        mLogView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        auto headerView = mLogView->horizontalHeader();
+            headerView->setSectionResizeMode(LogModel::kColumnTimestamp, QHeaderView::ResizeToContents);
+            headerView->setSectionResizeMode(LogModel::kColumnChannel,   QHeaderView::ResizeToContents);
+            headerView->setSectionResizeMode(LogModel::kColumnBytes,     QHeaderView::Stretch);
+            headerView->hide();
 
-            cursor.endEditBlock();
 
     // ---------[LAYOUT]---------- //
     auto tool_layout = new QHBoxLayout();
@@ -131,10 +132,18 @@ void LogWidget::createGui()
 
     QGridLayout* layout = new QGridLayout();
       layout->addLayout(tool_layout, 0, 0);
-      layout->addWidget(mLogBrowser, 1, 0);
+      layout->addWidget(mLogView, 1, 0);
       layout->addLayout(edit_layout, 2, 0);
 
     setLayout(layout);
+
+    // --------[TEST]-------- //
+    auto eventFirst = Event{ .channel = 0, .timestamp = QDateTime::currentDateTime(), .bytes = QByteArray(12, '1'), .userData = QStringList()  };
+
+    auto eventSecond = Event{ .channel = 1, .timestamp = QDateTime::currentDateTime(), .bytes = QByteArray(90, '7'), .userData = QStringList()  };
+
+    mLogModel->append(eventFirst);
+    mLogModel->append(eventSecond);
 }
 
 

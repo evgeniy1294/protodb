@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-class QTextBrowser;
+class QTableView;
 class QPushButton;
 class QLabel;
 class QLineEdit;
@@ -24,7 +24,7 @@ private slots:
   void showDialog();
 
 private:
-  QTextBrowser* mLogBrowser;
+  QTableView* mLogView;
   QPushButton* mRxBtn;
   QPushButton* mTxBtn;
   QLabel* mStatusLabel;
