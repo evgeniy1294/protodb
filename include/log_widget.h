@@ -5,6 +5,7 @@
 class QTextBrowser;
 class QPushButton;
 class QLabel;
+class QLineEdit;
 class LogConfigWidget;
 
 class LogWidget: public QWidget
@@ -29,6 +30,7 @@ private:
   QLabel* mStatusLabel;
   QLabel* mConfigLabel;
   QLabel* mModeLabel;
+  QLineEdit* mFindLe;
   LogConfigWidget* mDialog;
 };
 

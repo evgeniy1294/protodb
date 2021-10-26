@@ -32,6 +32,11 @@ void LogWidget::createGui()
         clr_btn->setToolTip("Clear log window");
         connect(clr_btn, &QPushButton::released, this, &LogWidget::showDialog);
 
+    // ---------[FIND LINE EDIT]---------- //
+    mFindLe = new QLineEdit();
+        mFindLe->setPlaceholderText(tr("Find sequence"));
+        mFindLe->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+
     // ---------[LABEL]---------- //
     mModeLabel = new QLabel("HEX");
         mModeLabel->setFrameShape(QFrame::StyledPanel);
@@ -114,7 +119,7 @@ void LogWidget::createGui()
     // ---------[LAYOUT]---------- //
     auto tool_layout = new QHBoxLayout();
         tool_layout->addWidget(clr_btn);
-        tool_layout->addStretch();
+        tool_layout->addWidget(mFindLe);
         tool_layout->addWidget(mModeLabel);
         tool_layout->addWidget(mStatusLabel);
         tool_layout->addWidget(mConfigLabel);

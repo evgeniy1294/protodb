@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#include "incoming_sequence.h"
 #include "out_sq_table_model.h"
 #include "sq_table_widget.h"
 #include "sq_table_widget_private.h"
