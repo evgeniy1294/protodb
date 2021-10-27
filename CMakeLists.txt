@@ -34,6 +34,7 @@ set(PROJECT_SOURCES
         src/log_config_widget.cpp
         src/settings_dialog.cpp
         src/log_model.cpp
+        src/log_field_delegate.cpp
         #src/crc_logic.cpp
         include/mainwindow.h
         include/session_widget.h
@@ -53,6 +54,7 @@ set(PROJECT_SOURCES
         include/log_config_widget.h
         include/settings_dialog.h
         include/log_model.h
+        include/log_field_delegate.h
         #include/crc_logic.hpp
         resources/resources.qrc
 )

@@ -11,6 +11,7 @@
 
 #include "log_widget.h"
 #include "log_model.h"
+#include "log_field_delegate.h"
 #include "event.h"
 
 LogWidget::LogWidget(QWidget* parent)
@@ -88,22 +89,12 @@ void LogWidget::createGui()
         editor->setSuffix("ms");
         editor->setSpecialValueText(QObject::tr("No delay"));
 
-    // ---------[TEXT BROWSER]---------- //
-    QTextCharFormat channelOneFormat = QTextCharFormat();
-        channelOneFormat.setForeground(Qt::red);
-
-    QTextCharFormat channelTwoFormat = QTextCharFormat();
-        channelTwoFormat.setForeground(Qt::blue);
-
-    QTextCharFormat channelSrvFormat = QTextCharFormat();
-        channelSrvFormat.setForeground(Qt::darkGreen);
-
-
-    QTextBlockFormat blockFormat = QTextBlockFormat();
-        blockFormat.setForeground(Qt::blue);
+    // ---------[TEXT LOG]---------- //
+    auto mLogItemDelegate = new LogFieldDelegate();
 
     mLogView = new QTableView();
     auto mLogModel = new LogModel(mLogView);
+        mLogView->setItemDelegate(mLogItemDelegate);
         mLogView->setModel(mLogModel);
         mLogView->hideColumn(LogModel::kColumnUser);
         mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);

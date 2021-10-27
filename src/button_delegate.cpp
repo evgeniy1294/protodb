@@ -1,9 +1,6 @@
 #include <iostream>
 
-#include <QItemDelegate>
-#include <QtGui>
 #include <QApplication>
-#include <QDialog>
 
 #include "sq_table_widget_private.h"
 
@@ -25,7 +22,7 @@ void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
     btn.features = QStyleOptionButton::Flat;
 
     if (option.state & QStyle::State_MouseOver) {
-        btn.state  = (activeRow == index.row()) ? mState : QStyle::State_Raised;
+        btn.state  = (activeRow == index.row()) ? mState : QStyle::State_MouseOver;
     }
 
     btn.state |= QStyle::State_Enabled;
