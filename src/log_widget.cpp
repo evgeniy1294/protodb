@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QWidget>
 #include <QLayout>
 #include <QTableView>
@@ -90,11 +91,9 @@ void LogWidget::createGui()
         editor->setSpecialValueText(QObject::tr("No delay"));
 
     // ---------[TEXT LOG]---------- //
-    auto mLogItemDelegate = new LogFieldDelegate();
-
     mLogView = new QTableView();
     auto mLogModel = new LogModel(mLogView);
-        mLogView->setItemDelegate(mLogItemDelegate);
+        mLogView->setItemDelegate(new LogFieldDelegate());
         mLogView->setModel(mLogModel);
         mLogView->hideColumn(LogModel::kColumnUser);
         mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);

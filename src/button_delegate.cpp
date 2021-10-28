@@ -7,7 +7,7 @@
 
 ButtonDelegate::ButtonDelegate(QObject *parent)
      : QItemDelegate(parent)
-     , mState(QStyle::State_Enabled)
+     , mState(QStyle::State_Enabled | QStyle::State_Raised)
      , activeRow(-1)
 {
 }

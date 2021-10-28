@@ -9,42 +9,23 @@ LogFieldDelegate::LogFieldDelegate(QObject* aParent)
 
 void LogFieldDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    painter->save();
+    auto m_option = option;
 
-    auto text  = index.model()->data(index, Qt::DisplayRole).toString();
+    painter->save();
 
     // -------[TEXT COLOR]------- //
     auto color = index.model()->data(index, Qt::ForegroundRole).value<QColor>();
         painter->setPen(color);
+        m_option.palette.setColor(QPalette::HighlightedText, color);
 
-    // -------[BACKGROUND COLOR]-------- //
-    if (option.state & QStyle::State_Selected) {
-        //painter->fillRect(option.rect, option.palette.highlight());
-        painter->fillRect(option.rect, option.palette.midlight());
+    // -------[SELECTION STYLE]-------- //
+    m_option.state &= ~(QStyle::State_MouseOver | QStyle::State_Item | QStyle::State_HasFocus);
+
+    if (m_option.state & QStyle::State_Selected) {
+        m_option.state = QStyle::State_Selected | QStyle::State_Enabled;
     }
 
-    // -------[BACKGROUND COLOR]-------- //
-    int flags = Qt::AlignBaseline;
-    if (index.column() == 0) flags |= Qt::AlignRight;
-    if (index.column() == 1) flags |= Qt::AlignHCenter;
-    if (index.column() == 2) flags |= Qt::TextWordWrap;
-
-    QRect rect = option.rect;
-    //rect.setY(option.rect.y() + 4);
-
-    QApplication::style()->drawItemText(painter, rect, flags,
-                                        option.palette, true, text);
+    QStyledItemDelegate::paint(painter, m_option, index);
 
     painter->restore();
-}
-
-
-bool LogFieldDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index)
-{
-    return false;
-}
-
-void LogFieldDelegate::updateEditorGeometry(QWidget* aEditor, const QStyleOptionViewItem& aOption, const QModelIndex& aIndex) const
-{
-
 }

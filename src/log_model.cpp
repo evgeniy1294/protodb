@@ -63,7 +63,7 @@ QVariant LogModel::data(const QModelIndex& aIndex, int aRole) const
         }
 
         if (aRole == Qt::TextAlignmentRole) {
-            return (col == kColumnChannel) ? Qt::AlignHCenter : 0x21;
+            return (col == kColumnBytes) ? 0x81 : Qt::AlignCenter;
         }
     }
 
