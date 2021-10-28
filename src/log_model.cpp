@@ -3,6 +3,7 @@
 
 LogModel::LogModel(QObject* parent)
     : QAbstractTableModel(parent)
+    , mDataFormat(kDataFormatHex)
 {
 
 }
@@ -35,7 +36,7 @@ QVariant LogModel::data(const QModelIndex& aIndex, int aRole) const
                     return (event.channel == 0) ? QString(">>>") : QString("<<<");
 
                 case kColumnBytes:
-                    return event.bytes.toHex(' ');
+                    return (mDataFormat == kDataFormatHex) ? event.bytes.toHex(' ') : event.bytes;
 
                 case kColumnUser:
                     return event.userData;
@@ -125,4 +126,17 @@ void LogModel::clear()
     beginRemoveRows(QModelIndex(), 0, mLog.size() - 1);
         mLog.clear();
     endRemoveRows();
+}
+
+LogModel::DataFormat LogModel::dataFormat()
+{
+    return mDataFormat;
+}
+
+void LogModel::setDataFormat(DataFormat aFormat)
+{
+    if (aFormat != mDataFormat) {
+        mDataFormat = aFormat;
+        emit dataChanged(index(0, kColumnBytes), index(mLog.size()-1, kColumnBytes));
+    }
 }

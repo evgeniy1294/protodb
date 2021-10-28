@@ -8,6 +8,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QHeaderView>
+#include <QCheckBox>
 
 
 #include "log_widget.h"
@@ -47,6 +48,24 @@ void LogWidget::createGui()
         mModeLabel->setLineWidth(3);
         mModeLabel->setFixedSize(64, 32);
         mModeLabel->setAlignment(Qt::AlignCenter);
+
+     mModeBtn = new QPushButton();
+        mModeBtn->setText("Hex");
+        mModeBtn->setFixedSize(64, 32);
+        connect(mModeBtn, &QPushButton::released, this, [this]() {
+           auto format = mLogModel->dataFormat();
+
+           if (format == LogModel::kDataFormatHex) {
+               mModeBtn->setText("ASCII");
+               mLogModel->setDataFormat(LogModel::kDataFormatAscii);
+           }
+           else
+           {
+               mModeBtn->setText("HEX");
+               mLogModel->setDataFormat(LogModel::kDataFormatHex);
+           }
+        });
+
 
     mStatusLabel = new QLabel("Active");
         mStatusLabel->setFrameShape(QFrame::StyledPanel);
@@ -92,7 +111,7 @@ void LogWidget::createGui()
 
     // ---------[TEXT LOG]---------- //
     mLogView = new QTableView();
-    auto mLogModel = new LogModel(mLogView);
+    mLogModel = new LogModel(mLogView);
         mLogView->setItemDelegate(new LogFieldDelegate());
         mLogView->setModel(mLogModel);
         mLogView->hideColumn(LogModel::kColumnUser);
@@ -111,7 +130,7 @@ void LogWidget::createGui()
     auto tool_layout = new QHBoxLayout();
         tool_layout->addWidget(clr_btn);
         tool_layout->addWidget(mFindLe);
-        tool_layout->addWidget(mModeLabel);
+        tool_layout->addWidget(mModeBtn);
         tool_layout->addWidget(mStatusLabel);
         tool_layout->addWidget(mConfigLabel);
 

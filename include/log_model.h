@@ -19,6 +19,10 @@ public:
       kColumnCount
     };
 
+    enum DataFormat {
+        kDataFormatHex   = 0,
+        kDataFormatAscii = 1
+    };
 
 public:
     LogModel(QObject* parent = nullptr);
@@ -35,6 +39,13 @@ public:
     void append(const Event&);
     void clear();
 
+    DataFormat dataFormat();
+    void setDataFormat(DataFormat aFormat);
+
+signals:
+    void dataFormatChanget(DataFormat);
+
 private:
     QList<Event> mLog;
+    DataFormat mDataFormat;
 };

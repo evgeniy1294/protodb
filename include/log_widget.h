@@ -7,6 +7,7 @@ class QPushButton;
 class QLabel;
 class QLineEdit;
 class LogConfigWidget;
+class LogModel;
 
 class LogWidget: public QWidget
 {
@@ -25,12 +26,12 @@ private slots:
 
 private:
   QTableView* mLogView;
-  QPushButton* mRxBtn;
-  QPushButton* mTxBtn;
+  QPushButton* mModeBtn;
   QLabel* mStatusLabel;
   QLabel* mConfigLabel;
   QLabel* mModeLabel;
   QLineEdit* mFindLe;
   LogConfigWidget* mDialog;
+  LogModel* mLogModel;
 };
 
