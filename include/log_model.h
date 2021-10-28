@@ -21,7 +21,9 @@ public:
 
     enum DataFormat {
         kDataFormatHex   = 0,
-        kDataFormatAscii = 1
+        kDataFormatAscii = 1,
+
+        kDataFormatNum
     };
 
 public:
@@ -32,15 +34,16 @@ public:
     QVariant data(const QModelIndex& aIndex, int aRole = Qt::DisplayRole) const override;
     QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
     bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
-    //Qt::ItemFlags flags(const QModelIndex &aIndex) const override;
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
+    DataFormat dataFormat();
+    void setDataFormat(DataFormat aFormat);
+
+public slots:
     void append(const Event&);
     void clear();
 
-    DataFormat dataFormat();
-    void setDataFormat(DataFormat aFormat);
 
 signals:
     void dataFormatChanget(DataFormat);
@@ -49,3 +52,6 @@ private:
     QList<Event> mLog;
     DataFormat mDataFormat;
 };
+
+
+const QString& toString(LogModel::DataFormat format);

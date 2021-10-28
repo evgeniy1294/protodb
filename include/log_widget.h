@@ -19,6 +19,7 @@ public:
 
 private:
   void createGui();
+  void connectSignals();
 
 private slots:
   //void colorDialog();
@@ -27,10 +28,11 @@ private slots:
 private:
   QTableView* mLogView;
   QPushButton* mModeBtn;
-  QLabel* mStatusLabel;
-  QLabel* mConfigLabel;
-  QLabel* mModeLabel;
+  QPushButton* mClrBtn;
+  QPushButton* mChangeStateBtn;
+  QPushButton* mConfigBtn;
   QLineEdit* mFindLe;
+  QLineEdit* mMessageLe;
   LogConfigWidget* mDialog;
   LogModel* mLogModel;
 };

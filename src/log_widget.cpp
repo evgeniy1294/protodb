@@ -1,5 +1,3 @@
-#include <QApplication>
-#include <QWidget>
 #include <QLayout>
 #include <QTableView>
 #include <QPushButton>
@@ -8,7 +6,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QHeaderView>
-#include <QCheckBox>
+#include <QMessageBox>
 
 
 #include "log_widget.h"
@@ -19,7 +17,8 @@
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {
-  createGui();
+    createGui();
+    connectSignals();
 }
 
 
@@ -31,61 +30,29 @@ LogWidget::~LogWidget()
 void LogWidget::createGui()
 {
     // ---------[BUTTONS]---------- //
-    auto clr_btn = new QPushButton();
-        clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
-        clr_btn->setToolTip("Clear log window");
-        connect(clr_btn, &QPushButton::released, this, &LogWidget::showDialog);
+    mClrBtn = new QPushButton();
+        mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
+        mClrBtn->setToolTip("Clear log window");
 
-    // ---------[FIND LINE EDIT]---------- //
+    mModeBtn = new QPushButton();
+        mModeBtn->setText(toString(LogModel::kDataFormatHex));
+        mModeBtn->setFixedSize(64, 32);
+
+    mChangeStateBtn = new QPushButton();
+        mChangeStateBtn->setText("Active");
+        mChangeStateBtn->setFixedSize(64, 32);
+
+    mConfigBtn = new QPushButton();
+        mConfigBtn->setText("115200, none, 8, 1");
+        mConfigBtn->setFixedSize(136, 32);
+
+    // ---------[LINE EDIT]---------- //
     mFindLe = new QLineEdit();
         mFindLe->setPlaceholderText(tr("Find sequence"));
         mFindLe->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
 
-    // ---------[LABEL]---------- //
-    mModeLabel = new QLabel("HEX");
-        mModeLabel->setFrameShape(QFrame::StyledPanel);
-        mModeLabel->setFrameShadow(QFrame::Raised);
-        mModeLabel->setLineWidth(3);
-        mModeLabel->setFixedSize(64, 32);
-        mModeLabel->setAlignment(Qt::AlignCenter);
-
-     mModeBtn = new QPushButton();
-        mModeBtn->setText("Hex");
-        mModeBtn->setFixedSize(64, 32);
-        connect(mModeBtn, &QPushButton::released, this, [this]() {
-           auto format = mLogModel->dataFormat();
-
-           if (format == LogModel::kDataFormatHex) {
-               mModeBtn->setText("ASCII");
-               mLogModel->setDataFormat(LogModel::kDataFormatAscii);
-           }
-           else
-           {
-               mModeBtn->setText("HEX");
-               mLogModel->setDataFormat(LogModel::kDataFormatHex);
-           }
-        });
-
-
-    mStatusLabel = new QLabel("Active");
-        mStatusLabel->setFrameShape(QFrame::StyledPanel);
-        mStatusLabel->setFrameShadow(QFrame::Raised);
-        mStatusLabel->setLineWidth(3);
-        mStatusLabel->setFixedSize(64, 32);
-        mStatusLabel->setAlignment(Qt::AlignCenter);
-
-    mConfigLabel = new QLabel("115200, none, 8, 1");
-        mConfigLabel->setFrameShape(QFrame::StyledPanel);
-        mConfigLabel->setFrameShadow(QFrame::Raised);
-        mConfigLabel->setLineWidth(3);
-        mConfigLabel->setFixedSize(136, 32);
-        mConfigLabel->setAlignment(Qt::AlignCenter);
-
-
-
-    // ---------[LINE EDIT]---------- //
-    auto msg_edit = new QLineEdit();
-        msg_edit->setPlaceholderText("Your message");
+    mMessageLe = new QLineEdit();
+        mMessageLe->setPlaceholderText("Print your message");
 
 
     // ---------[COMBO BOX]---------- //
@@ -112,8 +79,10 @@ void LogWidget::createGui()
     // ---------[TEXT LOG]---------- //
     mLogView = new QTableView();
     mLogModel = new LogModel(mLogView);
+        mLogModel->setDataFormat(LogModel::kDataFormatHex);
         mLogView->setItemDelegate(new LogFieldDelegate());
         mLogView->setModel(mLogModel);
+        mLogView->setWordWrap(true);
         mLogView->hideColumn(LogModel::kColumnUser);
         mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);
         mLogView->setShowGrid(false);
@@ -127,22 +96,22 @@ void LogWidget::createGui()
 
 
     // ---------[LAYOUT]---------- //
-    auto tool_layout = new QHBoxLayout();
-        tool_layout->addWidget(clr_btn);
-        tool_layout->addWidget(mFindLe);
-        tool_layout->addWidget(mModeBtn);
-        tool_layout->addWidget(mStatusLabel);
-        tool_layout->addWidget(mConfigLabel);
+    auto top_layout = new QHBoxLayout();
+        top_layout->addWidget(mClrBtn);
+        top_layout->addWidget(mFindLe);
+        top_layout->addWidget(mModeBtn);
+        top_layout->addWidget(mChangeStateBtn);
+        top_layout->addWidget(mConfigBtn);
 
-    auto edit_layout = new QHBoxLayout();
-        edit_layout->addWidget(msg_edit);
-        edit_layout->addWidget(edit_mode_cmb);
-        edit_layout->addWidget(editor);
+    auto bottom_layout = new QHBoxLayout();
+        bottom_layout->addWidget(mMessageLe);
+        bottom_layout->addWidget(edit_mode_cmb);
+        bottom_layout->addWidget(editor);
 
     QGridLayout* layout = new QGridLayout();
-      layout->addLayout(tool_layout, 0, 0);
+      layout->addLayout(top_layout, 0, 0);
       layout->addWidget(mLogView, 1, 0);
-      layout->addLayout(edit_layout, 2, 0);
+      layout->addLayout(bottom_layout, 2, 0);
 
     setLayout(layout);
 
@@ -153,6 +122,50 @@ void LogWidget::createGui()
 
     mLogModel->append(eventFirst);
     mLogModel->append(eventSecond);
+}
+
+void LogWidget::connectSignals()
+{
+    connect(mChangeStateBtn, &QPushButton::released, this, [this]() {
+        static bool state = false;
+        if (state) {
+            mChangeStateBtn->setText("Disabled");
+            state = false;
+        }
+        else
+        {
+            mChangeStateBtn->setText("Active");
+            state = true;
+        }
+    });
+
+    connect(mClrBtn, &QPushButton::released, this, [this] {
+        QMessageBox msgbox;
+        {
+            msgbox.setText( tr("Clear log?") );
+            msgbox.setInformativeText( tr("All sequence will be removed") );
+            msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+            msgbox.setDefaultButton(QMessageBox::No);
+            msgbox.setIcon(QMessageBox::Icon::Warning);
+            msgbox.setFixedSize( QSize(680, 240) );
+
+                msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+                msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
+        }
+
+        if (msgbox.exec() == QMessageBox::Yes) {
+            mLogModel->clear();
+        }
+    });
+
+    connect(mModeBtn, &QPushButton::released, this, [this]() {
+       auto format = mLogModel->dataFormat();
+       format = (format == LogModel::kDataFormatHex) ?
+                   LogModel::kDataFormatAscii : LogModel::kDataFormatHex;
+
+       mLogModel->setDataFormat(format);
+       mModeBtn->setText(toString(format));
+    });
 }
 
 

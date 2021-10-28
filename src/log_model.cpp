@@ -98,11 +98,6 @@ bool LogModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aR
 {
     return false;
 }
-/*
-Qt::ItemFlags LogModel::flags(const QModelIndex& aIndex) const
-{
-    return QAbstractTableModel::flags(aIndex);
-}*/
 
 bool LogModel::insertRows(int row, int count, const QModelIndex& parent)
 {
@@ -139,4 +134,22 @@ void LogModel::setDataFormat(DataFormat aFormat)
         mDataFormat = aFormat;
         emit dataChanged(index(0, kColumnBytes), index(mLog.size()-1, kColumnBytes));
     }
+}
+
+const QString& toString(LogModel::DataFormat format)
+{
+    static const QString hexFormatName("HEX");
+    static const QString asciiFormatName("ASCII");
+    static const QString unknownFormatName("ERR");
+
+    switch(format) {
+        case LogModel::kDataFormatHex:
+            return hexFormatName;
+        case LogModel::kDataFormatAscii:
+            return asciiFormatName;
+        default:
+            break;
+    }
+
+    return unknownFormatName;
 }
