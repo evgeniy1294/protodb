@@ -6,7 +6,7 @@
 
 #include "event.h"
 
-class LogModel: public QAbstractTableModel {
+class LogTableModel: public QAbstractTableModel {
     Q_OBJECT
 
 public:
@@ -27,7 +27,7 @@ public:
     };
 
 public:
-    LogModel(QObject* parent = nullptr);
+    LogTableModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
@@ -54,4 +54,4 @@ private:
 };
 
 
-const QString& toString(LogModel::DataFormat format);
+const QString& toString(LogTableModel::DataFormat format);

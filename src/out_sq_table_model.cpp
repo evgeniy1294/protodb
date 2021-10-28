@@ -47,7 +47,7 @@ QVariant OutSqTableModel::data(const QModelIndex& aIndex, int aRole) const
                     return sq.description();
 
                 case kColumnCharStr:
-                    return sq.charString();
+                    return sq.dslString();
 
                 case kColumnSendBtn:
                     return QString("B");
@@ -66,7 +66,7 @@ QVariant OutSqTableModel::data(const QModelIndex& aIndex, int aRole) const
                     return sq.description();
 
                 case kColumnCharStr:
-                    return sq.charString();
+                    return sq.dslString();
 
                 case kColumnSendBtn:
                     return QString("B"); // "Send" Button
@@ -126,7 +126,7 @@ bool OutSqTableModel::setData(const QModelIndex& aIndex, const QVariant& aValue,
                     sq.setDescription(aValue.toString());
                     break;
                 case kColumnCharStr:
-                    sq.setCharString(aValue.toString());
+                    sq.setDslString(aValue.toString());
                     break;
                 default:
                     break;

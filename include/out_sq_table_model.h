@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <QList>
 
-#include "outgoing_sequence.h"
+#include "OutgoingSequence.h"
 
 class OutSqTableModel: public QAbstractTableModel
 {

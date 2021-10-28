@@ -9,7 +9,7 @@
 #include "session_widget.h"
 #include "sq_table_widget.h"
 #include "serial_widget.h"
-#include "log_widget.h"
+#include "LogWidget.h"
 #include "script_widget.h"
 
 

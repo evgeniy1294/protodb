@@ -20,11 +20,9 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         src/session_widget.cpp
         src/serial_widget.cpp
-        src/log_widget.cpp
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
-        src/sequence.cpp
         src/singleton.cpp
         src/sq_table_widget.cpp
         src/button_delegate.cpp
@@ -33,19 +31,19 @@ set(PROJECT_SOURCES
         src/sq_table_dialog.cpp
         src/log_config_widget.cpp
         src/settings_dialog.cpp
-        src/log_model.cpp
-        src/log_field_delegate.cpp
-        #src/crc_logic.cpp
+        src/LogWidget.cpp
+        src/LogTableModel.cpp
+        src/LogItemDelegate.cpp
+
         include/mainwindow.h
         include/session_widget.h
         include/serial_widget.h
-        include/log_widget.h
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
-        include/sequence.h
-        include/incoming_sequence.h
-        include/outgoing_sequence.h
+        include/SequenceAbstract.h
+        include/IncomingSequence.h
+        include/OutgoingSequence.h
         include/singleton.h
         include/sq_table_widget.h
         include/sq_table_widget_private.h
@@ -53,9 +51,9 @@ set(PROJECT_SOURCES
         include/sq_table_dialog.h
         include/log_config_widget.h
         include/settings_dialog.h
-        include/log_model.h
-        include/log_field_delegate.h
-        #include/crc_logic.hpp
+        include/LogTableModel.h
+        include/LogItemDelegate.h
+        include/LogWidget.h
         resources/resources.qrc
 )
 

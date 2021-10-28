@@ -7,7 +7,7 @@ class QPushButton;
 class QLabel;
 class QLineEdit;
 class LogConfigWidget;
-class LogModel;
+class LogTableModel;
 
 class LogWidget: public QWidget
 {
@@ -34,6 +34,6 @@ private:
   QLineEdit* mFindLe;
   QLineEdit* mMessageLe;
   LogConfigWidget* mDialog;
-  LogModel* mLogModel;
+  LogTableModel* mLogModel;
 };
 

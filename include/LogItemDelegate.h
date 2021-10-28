@@ -2,12 +2,12 @@
 
 #include <QStyledItemDelegate>
 
-class LogFieldDelegate: public QStyledItemDelegate
+class LogItemDelegate: public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit LogFieldDelegate(QObject* aParent = nullptr);
+    explicit LogItemDelegate(QObject* aParent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 

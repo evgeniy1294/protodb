@@ -1,24 +1,24 @@
 #include <QColor>
-#include "log_model.h"
+#include "LogTableModel.h"
 
-LogModel::LogModel(QObject* parent)
+LogTableModel::LogTableModel(QObject* parent)
     : QAbstractTableModel(parent)
     , mDataFormat(kDataFormatHex)
 {
 
 }
 
-int LogModel::rowCount(const QModelIndex& aParent) const
+int LogTableModel::rowCount(const QModelIndex& aParent) const
 {
     return mLog.count();
 }
 
-int LogModel::columnCount(const QModelIndex& aParent) const
+int LogTableModel::columnCount(const QModelIndex& aParent) const
 {
     return kColumnCount;
 }
 
-QVariant LogModel::data(const QModelIndex& aIndex, int aRole) const
+QVariant LogTableModel::data(const QModelIndex& aIndex, int aRole) const
 {
     auto row = aIndex.row();
     auto col = aIndex.column();
@@ -72,7 +72,7 @@ QVariant LogModel::data(const QModelIndex& aIndex, int aRole) const
    return QVariant();
 }
 
-QVariant LogModel::headerData(int aSection, Qt::Orientation aOrientation, int aRole) const
+QVariant LogTableModel::headerData(int aSection, Qt::Orientation aOrientation, int aRole) const
 {
     if (aRole == Qt::DisplayRole) {
 
@@ -94,41 +94,41 @@ QVariant LogModel::headerData(int aSection, Qt::Orientation aOrientation, int aR
     return QVariant();
 }
 
-bool LogModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
+bool LogTableModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
 {
     return false;
 }
 
-bool LogModel::insertRows(int row, int count, const QModelIndex& parent)
+bool LogTableModel::insertRows(int row, int count, const QModelIndex& parent)
 {
     return false;
 }
 
-bool LogModel::removeRows(int row, int count, const QModelIndex& parent)
+bool LogTableModel::removeRows(int row, int count, const QModelIndex& parent)
 {
     return false;
 }
 
-void LogModel::append(const Event& event)
+void LogTableModel::append(const Event& event)
 {
     beginInsertRows(QModelIndex(), mLog.size(), 1);
         mLog.append(event);
     endInsertRows();
 }
 
-void LogModel::clear()
+void LogTableModel::clear()
 {
     beginRemoveRows(QModelIndex(), 0, mLog.size() - 1);
         mLog.clear();
     endRemoveRows();
 }
 
-LogModel::DataFormat LogModel::dataFormat()
+LogTableModel::DataFormat LogTableModel::dataFormat()
 {
     return mDataFormat;
 }
 
-void LogModel::setDataFormat(DataFormat aFormat)
+void LogTableModel::setDataFormat(DataFormat aFormat)
 {
     if (aFormat != mDataFormat) {
         mDataFormat = aFormat;
@@ -136,16 +136,16 @@ void LogModel::setDataFormat(DataFormat aFormat)
     }
 }
 
-const QString& toString(LogModel::DataFormat format)
+const QString& toString(LogTableModel::DataFormat format)
 {
     static const QString hexFormatName("HEX");
     static const QString asciiFormatName("ASCII");
     static const QString unknownFormatName("ERR");
 
     switch(format) {
-        case LogModel::kDataFormatHex:
+        case LogTableModel::kDataFormatHex:
             return hexFormatName;
-        case LogModel::kDataFormatAscii:
+        case LogTableModel::kDataFormatAscii:
             return asciiFormatName;
         default:
             break;

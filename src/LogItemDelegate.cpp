@@ -1,13 +1,13 @@
 #include <QtGui>
 #include <QApplication>
-#include "log_field_delegate.h"
+#include "LogItemDelegate.h"
 
-LogFieldDelegate::LogFieldDelegate(QObject* aParent)
+LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
 {
 }
 
-void LogFieldDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     auto m_option = option;
 

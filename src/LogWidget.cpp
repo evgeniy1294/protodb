@@ -9,9 +9,9 @@
 #include <QMessageBox>
 
 
-#include "log_widget.h"
-#include "log_model.h"
-#include "log_field_delegate.h"
+#include "LogWidget.h"
+#include "LogTableModel.h"
+#include "LogItemDelegate.h"
 #include "event.h"
 
 LogWidget::LogWidget(QWidget* parent)
@@ -35,7 +35,7 @@ void LogWidget::createGui()
         mClrBtn->setToolTip("Clear log window");
 
     mModeBtn = new QPushButton();
-        mModeBtn->setText(toString(LogModel::kDataFormatHex));
+        mModeBtn->setText(toString(LogTableModel::kDataFormatHex));
         mModeBtn->setFixedSize(64, 32);
 
     mChangeStateBtn = new QPushButton();
@@ -78,20 +78,20 @@ void LogWidget::createGui()
 
     // ---------[TEXT LOG]---------- //
     mLogView = new QTableView();
-    mLogModel = new LogModel(mLogView);
-        mLogModel->setDataFormat(LogModel::kDataFormatHex);
-        mLogView->setItemDelegate(new LogFieldDelegate());
+    mLogModel = new LogTableModel(mLogView);
+        mLogModel->setDataFormat(LogTableModel::kDataFormatHex);
+        mLogView->setItemDelegate(new LogItemDelegate());
         mLogView->setModel(mLogModel);
         mLogView->setWordWrap(true);
-        mLogView->hideColumn(LogModel::kColumnUser);
+        mLogView->hideColumn(LogTableModel::kColumnUser);
         mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);
         mLogView->setShowGrid(false);
         mLogView->verticalHeader()->hide();
         mLogView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         auto headerView = mLogView->horizontalHeader();
-            headerView->setSectionResizeMode(LogModel::kColumnTimestamp, QHeaderView::ResizeToContents);
-            headerView->setSectionResizeMode(LogModel::kColumnChannel,   QHeaderView::ResizeToContents);
-            headerView->setSectionResizeMode(LogModel::kColumnBytes,     QHeaderView::Stretch);
+            headerView->setSectionResizeMode(LogTableModel::kColumnTimestamp, QHeaderView::ResizeToContents);
+            headerView->setSectionResizeMode(LogTableModel::kColumnChannel,   QHeaderView::ResizeToContents);
+            headerView->setSectionResizeMode(LogTableModel::kColumnBytes,     QHeaderView::Stretch);
             headerView->hide();
 
 
@@ -127,7 +127,7 @@ void LogWidget::createGui()
 void LogWidget::connectSignals()
 {
     connect(mChangeStateBtn, &QPushButton::released, this, [this]() {
-        static bool state = false;
+        static bool state = true;
         if (state) {
             mChangeStateBtn->setText("Disabled");
             state = false;
@@ -160,8 +160,8 @@ void LogWidget::connectSignals()
 
     connect(mModeBtn, &QPushButton::released, this, [this]() {
        auto format = mLogModel->dataFormat();
-       format = (format == LogModel::kDataFormatHex) ?
-                   LogModel::kDataFormatAscii : LogModel::kDataFormatHex;
+       format = (format == LogTableModel::kDataFormatHex) ?
+                   LogTableModel::kDataFormatAscii : LogTableModel::kDataFormatHex;
 
        mLogModel->setDataFormat(format);
        mModeBtn->setText(toString(format));
