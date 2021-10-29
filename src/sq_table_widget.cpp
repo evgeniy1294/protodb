@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "IncomingSequence.h"
+#include "CellButtonDelegate.h"
 #include "out_sq_table_model.h"
 #include "sq_table_widget.h"
 #include "sq_table_widget_private.h"
@@ -52,7 +53,11 @@ void SqTableWidget::createGui()
         mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
         mClrBtn->setToolTip("Delete all");
 
-    mBtnDelegate = new ButtonDelegate();
+    mBtnDelegate = new CellButtonDelegate();
+        mBtnDelegate->setCheckedIcon(QIcon(":/icons/arrow.svg"));
+        mBtnDelegate->setUncheckedIcon(QIcon(":/icons/stop_rect.svg"));
+        mBtnDelegate->setCheckable(true);
+        mBtnDelegate->setFlat(true);
 
     // ---------[MENU]---------- //
     mMenu = new QMenu;
@@ -90,15 +95,16 @@ void SqTableWidget::createGui()
         mTblView->setModel(mFilter);
         mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
         mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
-        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnSendBtn, mBtnDelegate);
-        mTblView->setColumnWidth(OutSqTableModel::kColumnSendBtn, 0);
+        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnActiveFlag, mBtnDelegate);
+        mTblView->setColumnWidth(OutSqTableModel::kColumnActiveFlag, 0);
         mTblView->hideColumn(OutSqTableModel::kColumnDescription);
         mTblView->hideColumn(OutSqTableModel::kColumnCharStr);
         mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        mTblView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
         auto headerView = mTblView->horizontalHeader();
             headerView->setSectionResizeMode(OutSqTableModel::kColumnSqName,     QHeaderView::Stretch);
             headerView->setSectionResizeMode(OutSqTableModel::kColumnRepeatTime, QHeaderView::Fixed);
-            headerView->setSectionResizeMode(OutSqTableModel::kColumnSendBtn,    QHeaderView::Fixed);
+            headerView->setSectionResizeMode(OutSqTableModel::kColumnActiveFlag,    QHeaderView::Fixed);
 
     // ---------[LAYOUT]---------- //
     auto h_layout = new QHBoxLayout();
@@ -123,12 +129,6 @@ void SqTableWidget::createConnections()
     connect(mClrBtn, &QPushButton::released, this, &SqTableWidget::onClickClear);
 
     connect(mRmBtn, &QPushButton::released, this, &SqTableWidget::onClickRemove);
-
-    connect(mBtnDelegate, &ButtonDelegate::triggered, this, [this](const QModelIndex& a_index) {
-        auto index = mFilter->mapToSource(a_index);
-        mSqModel->onSendSequence(index);
-    });
-
 
     // ---------[FILTER]---------- //
     connect(mFindLe, &QLineEdit::textChanged, mFilter, &QSortFilterProxyModel::setFilterFixedString);

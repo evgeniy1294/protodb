@@ -12,7 +12,7 @@ class QLineEdit;
 class QSortFilterProxyModel;
 class OutSqTableModel;
 class SqTableDialog;
-class ButtonDelegate;
+class CellButtonDelegate;
 
 class SqTableWidget: public QWidget {
     Q_OBJECT
@@ -46,7 +46,7 @@ private:
     QSortFilterProxyModel* mFilter;
     QMenu* mMenu;
 
-    ButtonDelegate* mBtnDelegate;
+    CellButtonDelegate* mBtnDelegate;
     OutSqTableModel* mSqModel;
     SqTableDialog* mDialog;
 };

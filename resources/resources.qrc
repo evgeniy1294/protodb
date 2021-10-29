@@ -10,7 +10,6 @@
         <file alias="close.svg">icons/close.svg</file>
         <file alias="list.svg">icons/list.svg</file>
         <file alias="edit.svg">icons/edit.svg</file>
-        <file alias="arrow.svg">icons/arrow.svg</file>
         <file alias="reset.svg">icons/reset.svg</file>
         <file alias="add.svg">icons/add.svg</file>
         <file alias="arrow_back.svg">icons/arrow_back.svg</file>
@@ -20,8 +19,9 @@
         <file alias="search.svg">icons/search.svg</file>
         <file alias="delete_cross.svg">icons/delete_cross.svg</file>
         <file alias="delete_minus.svg">icons/delete_minus.svg</file>
-        <file alias="add_plus.svg">icons/new_plus.svg</file>
         <file alias="copy.svg">icons/copy.svg</file>
         <file alias="file_search.svg">icons/file_search.svg</file>
+        <file alias="arrow.svg">icons/arrow_enter.svg</file>
+        <file alias="stop_rect.svg">icons/stop_rect.svg</file>
     </qresource>
 </RCC>

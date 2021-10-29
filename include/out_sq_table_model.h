@@ -16,7 +16,7 @@ public:
       kColumnRepeatTime  = 1,
       kColumnDescription = 2,
       kColumnCharStr     = 3,
-      kColumnSendBtn     = 4,
+      kColumnActiveFlag  = 4,
 
       kColumnCount
     };
@@ -32,11 +32,6 @@ public:
     Qt::ItemFlags flags(const QModelIndex &aIndex) const override;
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
-
-
-
-public slots:
-    void onSendSequence(const QModelIndex& index);
 
 private:
     QList<OutgoingSequence> mList;

@@ -21,6 +21,7 @@ LogWidget::LogWidget(QWidget* parent)
     createGui();
     connectSignals();
     m_conn_dialog = new ConnectionConfigDialog();
+        m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 

@@ -25,7 +25,6 @@ set(PROJECT_SOURCES
         src/tool_bar.cpp
         src/singleton.cpp
         src/sq_table_widget.cpp
-        src/button_delegate.cpp
         src/out_sq_table_model.cpp
         src/spinbox_delegate.cpp
         src/sq_table_dialog.cpp
@@ -36,6 +35,7 @@ set(PROJECT_SOURCES
         src/LogItemDelegate.cpp
         src/SerialConfigWidget.cpp
         src/ConnectionConfigDialog.cpp
+        src/CellButtonDelegate.cpp
 
         include/mainwindow.h
         include/session_widget.h
@@ -58,6 +58,7 @@ set(PROJECT_SOURCES
         include/LogWidget.h
         include/SerialConfigWidget.h
         include/ConnectionConfigDialog.h
+        include/CellButtonDelegate.h
         resources/resources.qrc
 )
 

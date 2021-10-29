@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="12.7124mm"
+   height="12.68811mm"
+   viewBox="0 0 12.712401 12.68811"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="stop.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="14.981825"
+     inkscape:cy="8.0875338"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid896"
+       originx="-310.47855"
+       originy="-228.77374" />
+    <sodipodi:guide
+       position="6.3534802,12.92143"
+       orientation="1,0"
+       id="guide932" />
+    <sodipodi:guide
+       position="5.4575482,6.3427611"
+       orientation="0,-1"
+       id="guide936" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient7768"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop7766" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       id="SVGID_1_"
+       x1="256"
+       x2="256"
+       y1="512"
+       y2="-9.094947e-13"
+       gradientTransform="matrix(0.27163778,0,0,0.27960838,30.857492,67.779025)">
+      <stop
+         offset="0"
+         style="stop-color:#E73827"
+         id="stop2" />
+      <stop
+         offset="1"
+         style="stop-color:#F85032"
+         id="stop4" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-310.47853,-228.77375)">
+    <path
+       id="path1278"
+       style="display:inline;fill:#d40000;fill-rule:evenodd;stroke-width:1.06669"
+       d="M 24.023438 0 C 10.755922 0.00020614022 0.00045649937 10.734686 0 23.976562 C -0.00062475228 37.219202 10.755157 47.954872 24.023438 47.955078 C 37.291717 47.954871 48.0475 37.219202 48.046875 23.976562 C 48.046419 10.734686 37.290953 0.00020669141 24.023438 0 z M 15.863281 15.726562 L 32.007812 15.726562 L 32.007812 32.201172 L 15.863281 32.201172 L 15.863281 15.726562 z "
+       transform="matrix(0.26458333,0,0,0.26458333,310.47853,228.77375)" />
+  </g>
+</svg>

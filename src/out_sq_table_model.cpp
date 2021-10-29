@@ -49,8 +49,8 @@ QVariant OutSqTableModel::data(const QModelIndex& aIndex, int aRole) const
                 case kColumnCharStr:
                     return sq.dslString();
 
-                case kColumnSendBtn:
-                    return QString("B");
+                case kColumnActiveFlag:
+                    return sq.active();
             }
         }
 
@@ -68,8 +68,8 @@ QVariant OutSqTableModel::data(const QModelIndex& aIndex, int aRole) const
                 case kColumnCharStr:
                     return sq.dslString();
 
-                case kColumnSendBtn:
-                    return QString("B"); // "Send" Button
+                case kColumnActiveFlag:
+                    return sq.active();
             }
         }
     }
@@ -88,7 +88,7 @@ QVariant OutSqTableModel::headerData(int aSection, Qt::Orientation aOrientation,
                 case kColumnRepeatTime: return QString(tr("Repeat"));
                 case kColumnDescription: return QString(tr("Description"));
                 case kColumnCharStr: return QString(tr("Sequence"));
-                case kColumnSendBtn: return QString("");
+                case kColumnActiveFlag: return QString("");
                 default: break;
             }
         }
@@ -111,6 +111,7 @@ bool OutSqTableModel::setData(const QModelIndex& aIndex, const QVariant& aValue,
 
     if ( checkIndex(aIndex) )
     {
+        ret = true;
         auto& sq = mList[row];
 
         if (aRole == Qt::EditRole)
@@ -128,14 +129,13 @@ bool OutSqTableModel::setData(const QModelIndex& aIndex, const QVariant& aValue,
                 case kColumnCharStr:
                     sq.setDslString(aValue.toString());
                     break;
+                case kColumnActiveFlag:
+                    sq.setActive( !sq.active() );
                 default:
                     break;
             }
 
-            ret = (col != kColumnSendBtn);
-            if (ret) {
-               emit dataChanged(aIndex, aIndex);
-            }
+            emit dataChanged(aIndex, aIndex);
         }
     }
 
@@ -149,7 +149,7 @@ Qt::ItemFlags OutSqTableModel::flags(const QModelIndex& aIndex) const
 
     Qt::ItemFlags flags = QAbstractTableModel::flags(aIndex);
 
-    if (col != kColumnSendBtn && col != kColumnSqName) {
+    if (col != kColumnActiveFlag && col != kColumnSqName) {
         flags |= Qt::ItemIsEditable;
     }
 
@@ -193,11 +193,5 @@ bool OutSqTableModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-
-void OutSqTableModel::onSendSequence(const QModelIndex& index)
-{
-  std::cout << "Send sequence: " << index.row() << std::endl;
-  // if ( checkIndex(aIndex) ) { emit sendSequence(mList.at(row()); }
-}
 
 

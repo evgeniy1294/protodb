@@ -23,6 +23,7 @@ public:
    , m_dsl_string()
    , m_cached(false)
    , m_bytes()
+   , m_active(false)
    , m_description() {  }
 
   SequenceAbstract(const SequenceAbstract& a_seq)
@@ -31,6 +32,7 @@ public:
     , m_dsl_string(a_seq.m_dsl_string)
     , m_cached(a_seq.m_cached)
     , m_bytes(a_seq.m_bytes)
+    , m_active(a_seq.m_active)
     , m_description(a_seq.m_description) {  }
 
   const QString& name() const { return m_name; }
@@ -45,6 +47,9 @@ public:
   const QUuid& uuid() const { return m_uuid; };
   inline Type type() const { return static_cast<Type>(mType); }
 
+  bool active() const { return m_active; }
+  void setActive(bool a_active) { m_active = a_active; }
+
   bool operator==(const SequenceAbstract& rsh) {return m_uuid == rsh.m_uuid;}
 
 private:
@@ -55,6 +60,7 @@ private:
   QUuid m_uuid;
   ushort mType;
 
+  bool m_active;
   QString m_name;
   QString m_dsl_string;
   QString m_description;
