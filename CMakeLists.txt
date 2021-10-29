@@ -11,8 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Core Widgets SerialPort REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets SerialPort REQUIRED)
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
         src/LogWidget.cpp
         src/LogTableModel.cpp
         src/LogItemDelegate.cpp
+        src/SerialConfigWidget.cpp
+        src/ConnectionConfigDialog.cpp
 
         include/mainwindow.h
         include/session_widget.h
@@ -54,6 +56,8 @@ set(PROJECT_SOURCES
         include/LogTableModel.h
         include/LogItemDelegate.h
         include/LogWidget.h
+        include/SerialConfigWidget.h
+        include/ConnectionConfigDialog.h
         resources/resources.qrc
 )
 
@@ -81,6 +85,7 @@ else()
 endif()
 
 target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort)
 target_link_libraries(protodb PRIVATE qtadvanceddocking)
 target_include_directories(protodb PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

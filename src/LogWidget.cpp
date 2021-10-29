@@ -12,6 +12,7 @@
 #include "LogWidget.h"
 #include "LogTableModel.h"
 #include "LogItemDelegate.h"
+#include "ConnectionConfigDialog.h"
 #include "event.h"
 
 LogWidget::LogWidget(QWidget* parent)
@@ -19,6 +20,7 @@ LogWidget::LogWidget(QWidget* parent)
 {
     createGui();
     connectSignals();
+    m_conn_dialog = new ConnectionConfigDialog();
 }
 
 
@@ -166,9 +168,13 @@ void LogWidget::connectSignals()
        mLogModel->setDataFormat(format);
        mModeBtn->setText(toString(format));
     });
+
+
+    connect(mConfigBtn, &QPushButton::released, this, [this]() {
+        m_conn_dialog->show();
+    });
 }
 
 
-void LogWidget::showDialog() {
-}
+
 

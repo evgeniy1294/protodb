@@ -6,7 +6,7 @@ class QTableView;
 class QPushButton;
 class QLabel;
 class QLineEdit;
-class LogConfigWidget;
+class ConnectionConfigDialog;
 class LogTableModel;
 
 class LogWidget: public QWidget
@@ -21,10 +21,6 @@ private:
   void createGui();
   void connectSignals();
 
-private slots:
-  //void colorDialog();
-  void showDialog();
-
 private:
   QTableView* mLogView;
   QPushButton* mModeBtn;
@@ -33,7 +29,7 @@ private:
   QPushButton* mConfigBtn;
   QLineEdit* mFindLe;
   QLineEdit* mMessageLe;
-  LogConfigWidget* mDialog;
+  ConnectionConfigDialog* m_conn_dialog;
   LogTableModel* mLogModel;
 };
 

@@ -22,5 +22,6 @@
         <file alias="delete_minus.svg">icons/delete_minus.svg</file>
         <file alias="add_plus.svg">icons/new_plus.svg</file>
         <file alias="copy.svg">icons/copy.svg</file>
+        <file alias="file_search.svg">icons/file_search.svg</file>
     </qresource>
 </RCC>
