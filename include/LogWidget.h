@@ -25,7 +25,7 @@ private:
   QTableView* mLogView;
   QPushButton* mModeBtn;
   QPushButton* mClrBtn;
-  QPushButton* mChangeStateBtn;
+  QPushButton* m_run;
   QPushButton* mConfigBtn;
   QLineEdit* mFindLe;
   QLineEdit* mMessageLe;

@@ -41,9 +41,10 @@ void LogWidget::createGui()
         mModeBtn->setText(toString(LogTableModel::kDataFormatHex));
         mModeBtn->setFixedSize(64, 32);
 
-    mChangeStateBtn = new QPushButton();
-        mChangeStateBtn->setText("Active");
-        mChangeStateBtn->setFixedSize(64, 32);
+    m_run = new QPushButton();
+        m_run->setIcon(QIcon(":/icons/run.svg"));
+        m_run->setIconSize(QSize(24,24));
+        m_run->setFixedSize(32, 32);
 
     mConfigBtn = new QPushButton();
         mConfigBtn->setText("115200, none, 8, 1");
@@ -102,8 +103,8 @@ void LogWidget::createGui()
     auto top_layout = new QHBoxLayout();
         top_layout->addWidget(mClrBtn);
         top_layout->addWidget(mFindLe);
+        top_layout->addWidget(m_run);
         top_layout->addWidget(mModeBtn);
-        top_layout->addWidget(mChangeStateBtn);
         top_layout->addWidget(mConfigBtn);
 
     auto bottom_layout = new QHBoxLayout();
@@ -129,15 +130,15 @@ void LogWidget::createGui()
 
 void LogWidget::connectSignals()
 {
-    connect(mChangeStateBtn, &QPushButton::released, this, [this]() {
+    connect(m_run, &QPushButton::released, this, [this]() {
         static bool state = true;
         if (state) {
-            mChangeStateBtn->setText("Disabled");
+            m_run->setIcon(QIcon(":/icons/stop_rect.svg"));;
             state = false;
         }
         else
         {
-            mChangeStateBtn->setText("Active");
+            m_run->setIcon(QIcon(":/icons/run.svg"));
             state = true;
         }
     });

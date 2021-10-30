@@ -23,5 +23,6 @@
         <file alias="file_search.svg">icons/file_search.svg</file>
         <file alias="arrow.svg">icons/arrow_enter.svg</file>
         <file alias="stop_rect.svg">icons/stop_rect.svg</file>
+        <file alias="run.svg">icons/run.svg</file>
     </qresource>
 </RCC>
