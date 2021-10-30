@@ -2,6 +2,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QSerialPortInfo>
+#include <QIntValidator>
 
 
 #include "SerialConfigWidget.h"
@@ -15,7 +16,7 @@ SerialConfigWidget::SerialConfigWidget(QWidget* parent)
 
 void SerialConfigWidget::createGui()
 {
-    static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", "Custom" };
+    static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200" };
     static const QStringList databits_list   = { "5", "6", "7", "8" };
     static const QStringList flow_ctrl_list  = { "None", "Software", "Hardware" };
     static const QStringList parity_list     = { "None", "Even", "Odd", "Space", "Mark" };
@@ -23,7 +24,11 @@ void SerialConfigWidget::createGui()
     static const QStringList open_mode_list  = { "Send/Receive", "Monitoring" };
 
     // --------[COMBO BOXES] --------- //
+    auto validator = new QIntValidator(0, 10000000, this);
+
     m_baudrate  = new QComboBox();
+        m_baudrate->setEditable(true);
+        m_baudrate->setValidator(validator);
         m_baudrate->addItems(baudrate_list);
     m_data_bits = new QComboBox();
         m_data_bits->addItems(databits_list);
@@ -55,10 +60,10 @@ void SerialConfigWidget::createGui()
         cfg_layout->setAlignment(Qt::AlignTop);
         cfg_layout->addWidget(label_device, 0, 0);
         cfg_layout->addWidget(m_device, 0, 1);
-        cfg_layout->addWidget(label_open_mode, 0, 2);
-        cfg_layout->addWidget(m_open_mode, 0, 3);
-        cfg_layout->addWidget(label_baudrate, 1, 0);
-        cfg_layout->addWidget(m_baudrate, 1, 1);
+        cfg_layout->addWidget(label_baudrate, 0, 2);
+        cfg_layout->addWidget(m_baudrate, 0, 3);
+        cfg_layout->addWidget(label_open_mode, 1, 0);
+        cfg_layout->addWidget(m_open_mode, 1, 1);
         cfg_layout->addWidget(label_data_bits, 1, 2);
         cfg_layout->addWidget(m_data_bits, 1, 3);
         cfg_layout->addWidget(label_flow_ctrl, 2, 0);
