@@ -50,28 +50,34 @@ void SerialConfigWidget::createGui()
     auto label_open_mode = new QLabel(tr("Open Mode"));
     auto label_device    = new QLabel(tr("Device"));
 
-    auto main_layout = new QGridLayout();
-        main_layout->setAlignment(Qt::AlignTop);
-        main_layout->addWidget(label_device, 0, 0);
-        main_layout->addWidget(m_device, 0, 1);
-        main_layout->addWidget(label_open_mode, 0, 2);
-        main_layout->addWidget(m_open_mode, 0, 3);
-        main_layout->addWidget(label_baudrate, 1, 0);
-        main_layout->addWidget(m_baudrate, 1, 1);
-        main_layout->addWidget(label_data_bits, 1, 2);
-        main_layout->addWidget(m_data_bits, 1, 3);
-        main_layout->addWidget(label_flow_ctrl, 2, 0);
-        main_layout->addWidget(m_flow_ctrl, 2, 1);
-        main_layout->addWidget(label_stop_bits, 2, 2);
-        main_layout->addWidget(m_stop_bits, 2, 3);
-        main_layout->addWidget(label_parity, 3, 0);
-        main_layout->addWidget(m_parity, 3, 1);
 
-        main_layout->setColumnStretch(0, 0);
-        main_layout->setColumnStretch(1, 0);
-        main_layout->setColumnStretch(2, 0);
-        main_layout->setColumnStretch(3, 0);
-        main_layout->setColumnStretch(4, 1);
+    auto cfg_layout = new QGridLayout();
+        cfg_layout->setAlignment(Qt::AlignTop);
+        cfg_layout->addWidget(label_device, 0, 0);
+        cfg_layout->addWidget(m_device, 0, 1);
+        cfg_layout->addWidget(label_open_mode, 0, 2);
+        cfg_layout->addWidget(m_open_mode, 0, 3);
+        cfg_layout->addWidget(label_baudrate, 1, 0);
+        cfg_layout->addWidget(m_baudrate, 1, 1);
+        cfg_layout->addWidget(label_data_bits, 1, 2);
+        cfg_layout->addWidget(m_data_bits, 1, 3);
+        cfg_layout->addWidget(label_flow_ctrl, 2, 0);
+        cfg_layout->addWidget(m_flow_ctrl, 2, 1);
+        cfg_layout->addWidget(label_stop_bits, 2, 2);
+        cfg_layout->addWidget(m_stop_bits, 2, 3);
+        cfg_layout->addWidget(label_parity, 3, 0);
+        cfg_layout->addWidget(m_parity, 3, 1);
+
+        cfg_layout->setColumnStretch(0, 0);
+        cfg_layout->setColumnStretch(1, 0);
+        cfg_layout->setColumnStretch(2, 0);
+        cfg_layout->setColumnStretch(3, 0);
+        cfg_layout->setColumnStretch(4, 1);
+
+    auto main_layout = new QVBoxLayout();
+        main_layout->setAlignment(Qt::AlignTop);
+        main_layout->addWidget(new QLabel(tr("Serial configurations:")));
+        main_layout->addLayout(cfg_layout);
 
     setLayout(main_layout);
     setFrameShape(QFrame::StyledPanel);
