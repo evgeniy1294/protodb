@@ -19,7 +19,6 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         src/session_widget.cpp
-        src/serial_widget.cpp
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
@@ -39,7 +38,6 @@ set(PROJECT_SOURCES
 
         include/mainwindow.h
         include/session_widget.h
-        include/serial_widget.h
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
