@@ -99,7 +99,7 @@ QVariant SequenceTableModel::headerData(int section, Qt::Orientation orientation
                 case kColumnPeriod: return (m_mode == kIncomingDisplayMode) ? QString(tr("Delay")) : QString(tr("Repeat"));
                 case kColumnDescription: return QString(tr("Description"));
                 case kColumnDsl: return QString(tr("Sequence"));
-                case kColumnActiveFlag: return (m_mode == kIncomingDisplayMode) ? QString(tr("Active")): QString("");
+                case kColumnActiveFlag: return (m_mode == kIncomingDisplayMode) ? QString(tr("Use")): QString("");
                 default: break;
             }
         }

@@ -35,16 +35,20 @@ void SessionWidget::createGui()
 
     auto log_dock_wdg = new ads::CDockWidget("Log");
         log_dock_wdg->setWidget(new LogWidget());
-
+/*
     auto script_dock_wdg = new ads::CDockWidget("Scripting");
-        script_dock_wdg->setWidget(new ScriptWidget());
+        script_dock_wdg->setWidget(new ScriptWidget());*/
 
-    auto macro_dock_wdg = new ads::CDockWidget("Macroses");
-        macro_dock_wdg->setWidget(new SqTableWidget(SqTableWidget::kIncomingDisplayMode));
+    auto seq_inc_dock_wdg = new ads::CDockWidget("Incoming");
+        seq_inc_dock_wdg->setWidget(new SqTableWidget(SqTableWidget::kIncomingDisplayMode));
+
+    auto seq_out_dock_wdg = new ads::CDockWidget("Outgoing");
+        seq_out_dock_wdg->setWidget(new SqTableWidget(SqTableWidget::kOutgoingDisplayMode));
 
     mDockManager->addDockWidget(ads::RightDockWidgetArea, log_dock_wdg);
-    mDockManager->addDockWidget(ads::RightDockWidgetArea, script_dock_wdg);
-    mDockManager->addDockWidgetTab(ads::RightDockWidgetArea, macro_dock_wdg);
+    //mDockManager->addDockWidget(ads::RightDockWidgetArea, script_dock_wdg);
+    mDockManager->addDockWidget(ads::RightDockWidgetArea, seq_out_dock_wdg);
+    mDockManager->addDockWidgetTab(ads::BottomDockWidgetArea, seq_inc_dock_wdg);
 
     QHBoxLayout *central = new QHBoxLayout();
         central->addWidget( mDockManager );

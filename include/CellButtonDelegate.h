@@ -26,9 +26,6 @@ public:
     void setFlat(bool flat);
     bool isFlat();
 
-signals:
-    void triggered(const QModelIndex &index);
-
 private:
     bool  m_flat;
     bool  m_checkable;

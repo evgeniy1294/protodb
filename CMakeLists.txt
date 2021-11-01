@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/CellSpinBoxDelegate.cpp
         src/CellButtonDelegate.cpp
+        src/CellCheckBoxDelegate.cpp
         src/mainwindow.cpp
         src/session_widget.cpp
         src/script_widget.cpp
@@ -55,6 +56,7 @@ set(PROJECT_SOURCES
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h
         include/CellSpinBoxDelegate.h
+        include/CellCheckBoxDelegate.h
         resources/resources.qrc
 )
 

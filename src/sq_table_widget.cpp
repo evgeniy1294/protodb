@@ -14,6 +14,7 @@
 
 #include "CellButtonDelegate.h"
 #include "CellSpinBoxDelegate.h"
+#include "CellCheckBoxDelegate.h"
 #include "SequenceTableModel.h"
 #include "sq_table_widget.h"
 #include "sq_table_dialog.h"
@@ -109,24 +110,29 @@ void SqTableWidget::createGui()
             headerView->setSectionResizeMode(SequenceTableModel::kColumnPeriod,     QHeaderView::Fixed);
             headerView->setSectionResizeMode(SequenceTableModel::kColumnActiveFlag, QHeaderView::ResizeToContents);
 
-     if (m_mode == kIncomingDisplayMode) {
-         mSqModel->setDisplayMode(SequenceTableModel::kIncomingDisplayMode);
-         cell_spinbox->setSpecialValueText(tr("No Delay"));
-     }
-     else
-     {
-         auto cell_button = new CellButtonDelegate();
-             cell_button->setCheckedIcon(QIcon(":/icons/arrow.svg"));
-             cell_button->setUncheckedIcon(QIcon(":/icons/stop_rect.svg"));
-             cell_button->setCheckable(true);
-             cell_button->setFlat(true);
+    if (m_mode == kIncomingDisplayMode) {
+        auto cell_checkbox = new CellCheckBoxDelegate();
+            cell_checkbox->setText("");
 
-         cell_spinbox->setSpecialValueText(tr("No Repeat"));
+        cell_spinbox->setSpecialValueText(tr("No Delay"));
 
-         mSqModel->setDisplayMode(SequenceTableModel::kOutgoingDisplayMode);
-         mTblView->hideColumn(SequenceTableModel::kColumnBindedName);
-         mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnActiveFlag, cell_button);
-     }
+        mSqModel->setDisplayMode(SequenceTableModel::kIncomingDisplayMode);
+        mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnActiveFlag, cell_checkbox);
+    }
+    else
+    {
+        auto cell_button = new CellButtonDelegate();
+            cell_button->setCheckedIcon(QIcon(":/icons/arrow.svg"));
+            cell_button->setUncheckedIcon(QIcon(":/icons/stop_rect.svg"));
+            cell_button->setCheckable(true);
+            cell_button->setFlat(true);
+
+        cell_spinbox->setSpecialValueText(tr("No Repeat"));
+
+        mSqModel->setDisplayMode(SequenceTableModel::kOutgoingDisplayMode);
+        mTblView->hideColumn(SequenceTableModel::kColumnBindedName);
+        mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnActiveFlag, cell_button);
+    }
 
     // ---------[LAYOUT]---------- //
     auto h_layout = new QHBoxLayout();
