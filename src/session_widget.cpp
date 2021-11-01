@@ -40,7 +40,7 @@ void SessionWidget::createGui()
         script_dock_wdg->setWidget(new ScriptWidget());
 
     auto macro_dock_wdg = new ads::CDockWidget("Macroses");
-        macro_dock_wdg->setWidget(new SqTableWidget());
+        macro_dock_wdg->setWidget(new SqTableWidget(SqTableWidget::kIncomingDisplayMode));
 
     mDockManager->addDockWidget(ads::RightDockWidgetArea, log_dock_wdg);
     mDockManager->addDockWidget(ads::RightDockWidgetArea, script_dock_wdg);

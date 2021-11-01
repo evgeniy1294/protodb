@@ -5,6 +5,10 @@
 class CellButtonDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
+public:
+    enum Role {
+        kClickRole = Qt::UserRole,
+    };
 
 public:
     CellButtonDelegate(QObject *parent = 0);

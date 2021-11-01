@@ -10,15 +10,20 @@ class QMenu;
 class QPushButton;
 class QLineEdit;
 class QSortFilterProxyModel;
-class OutSqTableModel;
+class SequenceTableModel;
 class SqTableDialog;
-class CellButtonDelegate;
 
 class SqTableWidget: public QWidget {
     Q_OBJECT
 
 public:
-    explicit SqTableWidget(QWidget *parent = nullptr);
+    enum DisplayMode {
+        kIncomingDisplayMode,
+        kOutgoingDisplayMode
+    };
+
+public:
+    explicit SqTableWidget(DisplayMode mode, QWidget* parent = nullptr);
     ~SqTableWidget() = default;
 
 public slots:
@@ -31,6 +36,8 @@ private:
     void createConnections();
 
 private:
+    const DisplayMode m_mode;
+
     QAction* mRemoveAct;
     QAction* mCopyAct;
     QAction* mEditAct;
@@ -46,8 +53,7 @@ private:
     QSortFilterProxyModel* mFilter;
     QMenu* mMenu;
 
-    CellButtonDelegate* mBtnDelegate;
-    OutSqTableModel* mSqModel;
+    SequenceTableModel* mSqModel;
     SqTableDialog* mDialog;
 };
 

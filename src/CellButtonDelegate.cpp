@@ -48,7 +48,7 @@ bool CellButtonDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
             [[fallthrough]];
         case QEvent::MouseButtonRelease:
             m_active_row = -1;
-            model->setData(index, true, Qt::EditRole);
+            model->setData(index, true, kClickRole);
             break;
 
         default:

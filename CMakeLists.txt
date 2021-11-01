@@ -17,6 +17,8 @@ find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/CellSpinBoxDelegate.cpp
+        src/CellButtonDelegate.cpp
         src/mainwindow.cpp
         src/session_widget.cpp
         src/script_widget.cpp
@@ -24,8 +26,7 @@ set(PROJECT_SOURCES
         src/tool_bar.cpp
         src/singleton.cpp
         src/sq_table_widget.cpp
-        src/out_sq_table_model.cpp
-        src/spinbox_delegate.cpp
+        src/SequenceTableModel.cpp
         src/sq_table_dialog.cpp
         src/log_config_widget.cpp
         src/settings_dialog.cpp
@@ -34,7 +35,6 @@ set(PROJECT_SOURCES
         src/LogItemDelegate.cpp
         src/SerialConfigWidget.cpp
         src/ConnectionConfigDialog.cpp
-        src/CellButtonDelegate.cpp
 
         include/mainwindow.h
         include/session_widget.h
@@ -42,12 +42,9 @@ set(PROJECT_SOURCES
         include/menu.h
         include/tool_bar.h
         include/SequenceAbstract.h
-        include/IncomingSequence.h
-        include/OutgoingSequence.h
         include/singleton.h
         include/sq_table_widget.h
-        include/sq_table_widget_private.h
-        include/out_sq_table_model.h
+        include/SequenceTableModel.h
         include/sq_table_dialog.h
         include/log_config_widget.h
         include/settings_dialog.h
@@ -57,6 +54,7 @@ set(PROJECT_SOURCES
         include/SerialConfigWidget.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h
+        include/CellSpinBoxDelegate.h
         resources/resources.qrc
 )
 

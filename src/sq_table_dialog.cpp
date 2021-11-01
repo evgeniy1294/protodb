@@ -9,7 +9,7 @@
 #include <QAction>
 #include <QDialogButtonBox>
 
-#include "out_sq_table_model.h"
+#include "SequenceTableModel.h"
 #include "sq_table_dialog.h"
 
 SqTableDialog::SqTableDialog(QWidget* aParent)
@@ -37,9 +37,9 @@ void SqTableDialog::setMapper(QDataWidgetMapper* aMapper)
 
         mMapper = aMapper;
         mMapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
-        mMapper->addMapping(mNameLe, OutSqTableModel::kColumnSqName);
-        mMapper->addMapping(mDescrEditor, OutSqTableModel::kColumnDescription);
-        mMapper->addMapping(mSeqEditor, OutSqTableModel::kColumnCharStr);
+        mMapper->addMapping(mNameLe, SequenceTableModel::kColumnName);
+        mMapper->addMapping(mDescrEditor, SequenceTableModel::kColumnDescription);
+        mMapper->addMapping(mSeqEditor, SequenceTableModel::kColumnDsl);
 
         auto onIndexChanged = [this]() {
             if (mMapper->model()->rowCount() > 0) {

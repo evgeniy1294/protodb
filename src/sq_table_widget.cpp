@@ -12,15 +12,15 @@
 
 #include <iostream>
 
-#include "IncomingSequence.h"
 #include "CellButtonDelegate.h"
-#include "out_sq_table_model.h"
+#include "CellSpinBoxDelegate.h"
+#include "SequenceTableModel.h"
 #include "sq_table_widget.h"
-#include "sq_table_widget_private.h"
 #include "sq_table_dialog.h"
 
-SqTableWidget::SqTableWidget(QWidget* parent)
+SqTableWidget::SqTableWidget(DisplayMode mode, QWidget* parent)
     : QWidget(parent)
+    , m_mode(mode)
 {
     createActions();
     createGui();
@@ -53,12 +53,6 @@ void SqTableWidget::createGui()
         mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
         mClrBtn->setToolTip("Delete all");
 
-    mBtnDelegate = new CellButtonDelegate();
-        mBtnDelegate->setCheckedIcon(QIcon(":/icons/arrow.svg"));
-        mBtnDelegate->setUncheckedIcon(QIcon(":/icons/stop_rect.svg"));
-        mBtnDelegate->setCheckable(true);
-        mBtnDelegate->setFlat(true);
-
     // ---------[MENU]---------- //
     mMenu = new QMenu;
         mMenu->addAction(mCopyAct);
@@ -73,7 +67,13 @@ void SqTableWidget::createGui()
 
 
     // ---------[TABLE VIEW]---------- //
-    mSqModel = new OutSqTableModel(this);
+    mSqModel = new SequenceTableModel(this);
+
+    auto cell_spinbox = new CellSpinBoxDelegate();
+        cell_spinbox->setMinimum(0);
+        cell_spinbox->setMaximum(10'000);
+        cell_spinbox->setSingleStep(100);
+        cell_spinbox->setSuffix(tr("ms"));
 
     mMapper = new QDataWidgetMapper(this);
         mMapper->setModel(mSqModel);
@@ -88,23 +88,45 @@ void SqTableWidget::createGui()
     mFilter = new QSortFilterProxyModel(this);
         mFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
         mFilter->setDynamicSortFilter(true);
-        mFilter->setFilterKeyColumn(OutSqTableModel::kColumnSqName);
+        mFilter->setFilterKeyColumn(SequenceTableModel::kColumnName);
         mFilter->setSourceModel(mSqModel);
 
     mTblView = new QTableView();
+        cell_spinbox->setParent(mTblView);
         mTblView->setModel(mFilter);
         mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
-        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnRepeatTime, new SpinBoxDelegate(mTblView));
-        mTblView->setItemDelegateForColumn(OutSqTableModel::kColumnActiveFlag, mBtnDelegate);
-        mTblView->setColumnWidth(OutSqTableModel::kColumnActiveFlag, 0);
-        mTblView->hideColumn(OutSqTableModel::kColumnDescription);
-        mTblView->hideColumn(OutSqTableModel::kColumnCharStr);
+        mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnPeriod, cell_spinbox);
+
         mTblView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        mTblView->setColumnWidth(SequenceTableModel::kColumnActiveFlag, 0);
         mTblView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        mTblView->hideColumn(SequenceTableModel::kColumnDescription);
+        mTblView->hideColumn(SequenceTableModel::kColumnDsl);
+
         auto headerView = mTblView->horizontalHeader();
-            headerView->setSectionResizeMode(OutSqTableModel::kColumnSqName,     QHeaderView::Stretch);
-            headerView->setSectionResizeMode(OutSqTableModel::kColumnRepeatTime, QHeaderView::Fixed);
-            headerView->setSectionResizeMode(OutSqTableModel::kColumnActiveFlag,    QHeaderView::Fixed);
+            headerView->setSectionResizeMode(SequenceTableModel::kColumnName,       QHeaderView::Stretch);
+            headerView->setSectionResizeMode(SequenceTableModel::kColumnBindedName, QHeaderView::Stretch);
+            headerView->setSectionResizeMode(SequenceTableModel::kColumnPeriod,     QHeaderView::Fixed);
+            headerView->setSectionResizeMode(SequenceTableModel::kColumnActiveFlag, QHeaderView::ResizeToContents);
+
+     if (m_mode == kIncomingDisplayMode) {
+         mSqModel->setDisplayMode(SequenceTableModel::kIncomingDisplayMode);
+         cell_spinbox->setSpecialValueText(tr("No Delay"));
+     }
+     else
+     {
+         auto cell_button = new CellButtonDelegate();
+             cell_button->setCheckedIcon(QIcon(":/icons/arrow.svg"));
+             cell_button->setUncheckedIcon(QIcon(":/icons/stop_rect.svg"));
+             cell_button->setCheckable(true);
+             cell_button->setFlat(true);
+
+         cell_spinbox->setSpecialValueText(tr("No Repeat"));
+
+         mSqModel->setDisplayMode(SequenceTableModel::kOutgoingDisplayMode);
+         mTblView->hideColumn(SequenceTableModel::kColumnBindedName);
+         mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnActiveFlag, cell_button);
+     }
 
     // ---------[LAYOUT]---------- //
     auto h_layout = new QHBoxLayout();
@@ -154,7 +176,7 @@ void SqTableWidget::createConnections()
     connect(mTblView, &QTableView::doubleClicked, this, [this](const QModelIndex &a_index) {
         auto index = mFilter->mapToSource(a_index);
 
-        if (index.column() == OutSqTableModel::kColumnSqName) {
+        if (index.column() == SequenceTableModel::kColumnName) {
             mMapper->setCurrentIndex(index.row()); mDialog->show();
         }
     });
