@@ -94,6 +94,8 @@ void SqTableWidget::createGui()
 
     mTblView = new QTableView();
         cell_spinbox->setParent(mTblView);
+        mTblView->setAlternatingRowColors(true);
+        mTblView->setStyleSheet("alternate-background-color: #eff0f1");
         mTblView->setModel(mFilter);
         mTblView->setContextMenuPolicy(Qt::CustomContextMenu);
         mTblView->setItemDelegateForColumn(SequenceTableModel::kColumnPeriod, cell_spinbox);
