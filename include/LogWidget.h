@@ -8,6 +8,7 @@ class QLabel;
 class QLineEdit;
 class ConnectionConfigDialog;
 class LogTableModel;
+class Logger;
 
 class LogWidget: public QWidget
 {
@@ -22,14 +23,16 @@ private:
   void connectSignals();
 
 private:
-  QTableView* mLogView;
-  QPushButton* mModeBtn;
-  QPushButton* mClrBtn;
+  QTableView* m_view;
+  QPushButton* m_mode_btn;
+  QPushButton* m_clear_btn;
   QPushButton* m_run;
-  QPushButton* mConfigBtn;
-  QLineEdit* mFindLe;
-  QLineEdit* mMessageLe;
+  QPushButton* m_config_btn;
+  QLineEdit* m_find_le;
+  QLineEdit* m_msg_le;
   ConnectionConfigDialog* m_conn_dialog;
-  LogTableModel* mLogModel;
+  LogTableModel* m_model;
+
+  Logger* m_log;
 };
 

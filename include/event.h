@@ -3,10 +3,7 @@
 #include <QDateTime>
 #include <QByteArray>
 #include <QStringList>
+#include <QColor>
 
-struct Event {
-    int channel;
-    QDateTime timestamp;
-    QByteArray  bytes;
-    QStringList userData;
-};
+
+

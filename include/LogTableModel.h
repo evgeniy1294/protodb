@@ -1,34 +1,27 @@
 #pragma once
 
 #include <QAbstractTableModel>
-#include <QVariant>
-#include <QList>
 
-#include "event.h"
+class Logger;
+class LogItemFormatter;
 
 class LogTableModel: public QAbstractTableModel {
     Q_OBJECT
+    friend class Logger;
 
 public:
     enum ColumnNames {
-      kColumnTimestamp = 0,
-      kColumnChannel   = 1,
-      kColumnBytes     = 2,
-      kColumnUser      = 3,
+        kColumnTimestamp = 0,
+        kColumnChannel   = 1,
+        kColumnMsg       = 2,
 
-      kColumnCount
-    };
-
-    enum DataFormat {
-        kDataFormatHex   = 0,
-        kDataFormatAscii = 1,
-
-        kDataFormatNum
+        kColumnCount
     };
 
 public:
     LogTableModel(QObject* parent = nullptr);
 
+    // ---------[ MODEL INTERFACE ]----------- //
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
     int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
     QVariant data(const QModelIndex& aIndex, int aRole = Qt::DisplayRole) const override;
@@ -37,21 +30,14 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    DataFormat dataFormat();
-    void setDataFormat(DataFormat aFormat);
+    void setLogger(Logger* logger);
+    void setFormatter(LogItemFormatter* decorator);
 
-public slots:
-    void append(const Event&);
-    void clear();
-
-
-signals:
-    void dataFormatChanget(DataFormat);
+    Logger* logger() const;
+    LogItemFormatter* formatter() const;
 
 private:
-    QList<Event> mLog;
-    DataFormat mDataFormat;
+    Logger* m_logger;
+    LogItemFormatter* m_formatter;
 };
 
-
-const QString& toString(LogTableModel::DataFormat format);

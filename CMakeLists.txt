@@ -17,6 +17,7 @@ find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/Core.cpp
         src/CellSpinBoxDelegate.cpp
         src/CellButtonDelegate.cpp
         src/CellCheckBoxDelegate.cpp
@@ -31,12 +32,15 @@ set(PROJECT_SOURCES
         src/sq_table_dialog.cpp
         src/log_config_widget.cpp
         src/settings_dialog.cpp
+        src/Logger.cpp
         src/LogWidget.cpp
         src/LogTableModel.cpp
         src/LogItemDelegate.cpp
+        src/LogItemFormatter.cpp
         src/SerialConfigWidget.cpp
         src/ConnectionConfigDialog.cpp
 
+        include/Core.h
         include/mainwindow.h
         include/session_widget.h
         include/script_widget.h
@@ -49,9 +53,11 @@ set(PROJECT_SOURCES
         include/sq_table_dialog.h
         include/log_config_widget.h
         include/settings_dialog.h
+        include/Logger.h
         include/LogTableModel.h
         include/LogItemDelegate.h
         include/LogWidget.h
+        include/LogItemFormatter.h
         include/SerialConfigWidget.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h

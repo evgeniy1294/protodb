@@ -10,8 +10,10 @@
 
 
 #include "LogWidget.h"
+#include "Logger.h"
 #include "LogTableModel.h"
 #include "LogItemDelegate.h"
+#include "LogItemFormatter.h"
 #include "ConnectionConfigDialog.h"
 #include "event.h"
 
@@ -29,34 +31,53 @@ LogWidget::~LogWidget()
 {
 
 }
+#include <iostream>
 
 void LogWidget::createGui()
 {
-    // ---------[BUTTONS]---------- //
-    mClrBtn = new QPushButton();
-        mClrBtn->setIcon(QIcon(":/icons/delete_cross.svg"));
-        mClrBtn->setToolTip("Clear log window");
+    // ---------[LOG VIEW]---------- //
+    m_log = new Logger();
+    m_view = new QTableView();
+        m_model = new LogTableModel(m_view);
+            m_model->setLogger(m_log);
+        m_view->setModel(m_model);
+        m_view->setItemDelegate(new LogItemDelegate());
+        m_view->setWordWrap(true);
+        m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_view->setShowGrid(false);
+        m_view->verticalHeader()->hide();
+        m_view->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        auto hh = m_view->horizontalHeader();
+            hh->setSectionResizeMode(LogTableModel::kColumnTimestamp, QHeaderView::ResizeToContents);
+            hh->setSectionResizeMode(LogTableModel::kColumnChannel,   QHeaderView::ResizeToContents);
+            hh->setSectionResizeMode(LogTableModel::kColumnMsg,     QHeaderView::Stretch);
+            hh->hide();
 
-    mModeBtn = new QPushButton();
-        mModeBtn->setText(toString(LogTableModel::kDataFormatHex));
-        mModeBtn->setFixedSize(64, 32);
+    // ---------[BUTTONS]---------- //
+    m_clear_btn = new QPushButton();
+        m_clear_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
+        m_clear_btn->setToolTip("Clear log window");
+
+    m_mode_btn = new QPushButton();
+        m_mode_btn->setText(toString(m_model->formatter()->messageFormat()));
+        m_mode_btn->setFixedSize(64, 32);
 
     m_run = new QPushButton();
         m_run->setIcon(QIcon(":/icons/run.svg"));
         m_run->setIconSize(QSize(24,24));
         m_run->setFixedSize(32, 32);
 
-    mConfigBtn = new QPushButton();
-        mConfigBtn->setText("115200, none, 8, 1");
-        mConfigBtn->setFixedSize(136, 32);
+    m_config_btn = new QPushButton();
+        m_config_btn->setText("115200, none, 8, 1");
+        m_config_btn->setFixedSize(136, 32);
 
     // ---------[LINE EDIT]---------- //
-    mFindLe = new QLineEdit();
-        mFindLe->setPlaceholderText(tr("Find sequence"));
-        mFindLe->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+    m_find_le = new QLineEdit();
+        m_find_le->setPlaceholderText(tr("Find sequence"));
+        m_find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
 
-    mMessageLe = new QLineEdit();
-        mMessageLe->setPlaceholderText("Print your message");
+    m_msg_le = new QLineEdit();
+        m_msg_le->setPlaceholderText("Print your message");
 
 
     // ---------[COMBO BOX]---------- //
@@ -80,52 +101,30 @@ void LogWidget::createGui()
         editor->setSuffix("ms");
         editor->setSpecialValueText(QObject::tr("No delay"));
 
-    // ---------[TEXT LOG]---------- //
-    mLogView = new QTableView();
-    mLogModel = new LogTableModel(mLogView);
-        mLogModel->setDataFormat(LogTableModel::kDataFormatHex);
-        mLogView->setItemDelegate(new LogItemDelegate());
-        mLogView->setModel(mLogModel);
-        mLogView->setWordWrap(true);
-        mLogView->hideColumn(LogTableModel::kColumnUser);
-        mLogView->setSelectionBehavior(QAbstractItemView::SelectRows);
-        mLogView->setShowGrid(false);
-        mLogView->verticalHeader()->hide();
-        mLogView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        auto headerView = mLogView->horizontalHeader();
-            headerView->setSectionResizeMode(LogTableModel::kColumnTimestamp, QHeaderView::ResizeToContents);
-            headerView->setSectionResizeMode(LogTableModel::kColumnChannel,   QHeaderView::ResizeToContents);
-            headerView->setSectionResizeMode(LogTableModel::kColumnBytes,     QHeaderView::Stretch);
-            headerView->hide();
-
-
     // ---------[LAYOUT]---------- //
     auto top_layout = new QHBoxLayout();
-        top_layout->addWidget(mClrBtn);
-        top_layout->addWidget(mFindLe);
+        top_layout->addWidget(m_clear_btn);
+        top_layout->addWidget(m_find_le);
         top_layout->addWidget(m_run);
-        top_layout->addWidget(mModeBtn);
-        top_layout->addWidget(mConfigBtn);
+        top_layout->addWidget(m_mode_btn);
+        top_layout->addWidget(m_config_btn);
 
     auto bottom_layout = new QHBoxLayout();
-        bottom_layout->addWidget(mMessageLe);
+        bottom_layout->addWidget(m_msg_le);
         bottom_layout->addWidget(edit_mode_cmb);
         bottom_layout->addWidget(editor);
 
     QGridLayout* layout = new QGridLayout();
       layout->addLayout(top_layout, 0, 0);
-      layout->addWidget(mLogView, 1, 0);
+      layout->addWidget(m_view, 1, 0);
       layout->addLayout(bottom_layout, 2, 0);
 
     setLayout(layout);
 
     // --------[TEST]-------- //
-    auto eventFirst = Event{ .channel = 0, .timestamp = QDateTime::currentDateTime(), .bytes = QByteArray(12, '1'), .userData = QStringList()  };
-
-    auto eventSecond = Event{ .channel = 1, .timestamp = QDateTime::currentDateTime(), .bytes = QByteArray(90, '7'), .userData = QStringList()  };
-
-    mLogModel->append(eventFirst);
-    mLogModel->append(eventSecond);
+        m_log->print(Logger::kFirstChannel, QByteArray(12, '1'));
+        m_log->print(Logger::kCommentChannel, QByteArray("Test comment string:\n    byte[0] = 7\n    byte[1] = 7\n    byte[2] = 8"));
+        m_log->print(Logger::kSecondChannel, QByteArray(90, '7'));
 }
 
 void LogWidget::connectSignals()
@@ -143,36 +142,17 @@ void LogWidget::connectSignals()
         }
     });
 
-    connect(mClrBtn, &QPushButton::released, this, [this] {
-        QMessageBox msgbox;
-        {
-            msgbox.setText( tr("Clear log?") );
-            msgbox.setInformativeText( tr("All sequence will be removed") );
-            msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-            msgbox.setDefaultButton(QMessageBox::No);
-            msgbox.setIcon(QMessageBox::Icon::Warning);
-            msgbox.setFixedSize( QSize(680, 240) );
 
-                msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-                msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
-        }
-
-        if (msgbox.exec() == QMessageBox::Yes) {
-            mLogModel->clear();
-        }
+    connect(m_clear_btn, &QPushButton::released, this, [this] {
+        m_log->clear();
     });
 
-    connect(mModeBtn, &QPushButton::released, this, [this]() {
-       auto format = mLogModel->dataFormat();
-       format = (format == LogTableModel::kDataFormatHex) ?
-                   LogTableModel::kDataFormatAscii : LogTableModel::kDataFormatHex;
-
-       mLogModel->setDataFormat(format);
-       mModeBtn->setText(toString(format));
+    connect(m_mode_btn, &QPushButton::released, this, [this]() {
+       m_mode_btn->setText(toString(m_model->formatter()->nextMessageFormat()));
     });
 
 
-    connect(mConfigBtn, &QPushButton::released, this, [this]() {
+    connect(m_config_btn, &QPushButton::released, this, [this]() {
         m_conn_dialog->show();
     });
 }

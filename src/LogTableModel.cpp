@@ -1,16 +1,21 @@
+#include <iostream>
 #include <QColor>
+
+#include "Logger.h"
+#include "LogItemFormatter.h"
 #include "LogTableModel.h"
 
 LogTableModel::LogTableModel(QObject* parent)
     : QAbstractTableModel(parent)
-    , mDataFormat(kDataFormatHex)
+    , m_formatter(nullptr)
+    , m_logger(nullptr)
 {
-
+     setFormatter( new LogItemFormatter() );
 }
 
 int LogTableModel::rowCount(const QModelIndex& aParent) const
 {
-    return mLog.count();
+    return (m_logger != nullptr) ? m_logger->count() : 0;
 }
 
 int LogTableModel::columnCount(const QModelIndex& aParent) const
@@ -18,58 +23,46 @@ int LogTableModel::columnCount(const QModelIndex& aParent) const
     return kColumnCount;
 }
 
-QVariant LogTableModel::data(const QModelIndex& aIndex, int aRole) const
+QVariant LogTableModel::data(const QModelIndex& index, int role) const
 {
-    auto row = aIndex.row();
-    auto col = aIndex.column();
+    auto row = index.row();
+    auto col = index.column();
 
+    if (m_logger == nullptr)
+        return QVariant();
 
-    if (checkIndex(aIndex)) {
-        auto& event = mLog.at(row);
+    if (!checkIndex(index))
+        return QVariant();
 
-        if (aRole == Qt::DisplayRole) {
-            switch (col) {
-                case kColumnTimestamp:
-                    return event.timestamp.time().toString();
+    if (role == Qt::DisplayRole) {
+        auto& item = m_logger->at(row);
 
-                case kColumnChannel:
-                    return (event.channel == 0) ? QString(">>>") : QString("<<<");
+        switch (col) {
+            case kColumnTimestamp:
+                return m_formatter->timestamp(item);
 
-                case kColumnBytes:
-                    return (mDataFormat == kDataFormatHex) ? event.bytes.toHex(' ') : event.bytes;
-
-                case kColumnUser:
-                    return event.userData;
-                default:
-                    break;
+            case kColumnChannel: {
+                return m_formatter->channel(item);
             }
-        }
 
-        if (aRole == Qt::ForegroundRole) {
-            switch (col) {
-                case kColumnTimestamp:
-                    return QColor(Qt::darkGreen);
+            case kColumnMsg:
+                return m_formatter->message(item);
 
-                case kColumnChannel:
-                    return QColor(Qt::darkGreen);
-
-                case kColumnBytes:
-                    return (event.channel == 0) ? QColor(Qt::red) : QColor(Qt::blue);
-
-                case kColumnUser:
-                    return QColor(Qt::darkYellow);
-                default:
-                    break;
-            }
-        }
-
-        if (aRole == Qt::TextAlignmentRole) {
-            return (col == kColumnBytes) ? 0x81 : Qt::AlignCenter;
+            default:
+                break;
         }
     }
 
+    if (role == Qt::ForegroundRole) {
+        return (col == kColumnMsg) ? m_formatter->color(m_logger->at(row)) :
+                                     m_formatter->attributeColor();
+    }
 
-   return QVariant();
+    if (role == Qt::TextAlignmentRole) {
+        return (col == kColumnMsg) ? 0x81 : Qt::AlignCenter;
+    }
+
+    return QVariant();
 }
 
 QVariant LogTableModel::headerData(int aSection, Qt::Orientation aOrientation, int aRole) const
@@ -80,8 +73,7 @@ QVariant LogTableModel::headerData(int aSection, Qt::Orientation aOrientation, i
             switch (aSection) {
                 case kColumnTimestamp: return QString(tr(""));
                 case kColumnChannel: return QString(tr(""));
-                case kColumnBytes: return QString(tr("Bytes"));
-                case kColumnUser: return QString(tr("User Comment"));
+                case kColumnMsg: return QString(tr("Bytes"));
                 default: break;
             }
         }
@@ -109,47 +101,56 @@ bool LogTableModel::removeRows(int row, int count, const QModelIndex& parent)
     return false;
 }
 
-void LogTableModel::append(const Event& event)
+void LogTableModel::setLogger(Logger* logger)
 {
-    beginInsertRows(QModelIndex(), mLog.size(), 1);
-        mLog.append(event);
-    endInsertRows();
-}
+    if (m_logger != logger) {
+        if (m_logger != nullptr) {
+            disconnect(m_logger);
+        }
 
-void LogTableModel::clear()
-{
-    beginRemoveRows(QModelIndex(), 0, mLog.size() - 1);
-        mLog.clear();
-    endRemoveRows();
-}
+        m_logger = logger;
 
-LogTableModel::DataFormat LogTableModel::dataFormat()
-{
-    return mDataFormat;
-}
+        connect(m_logger, &Logger::appended, this, [this]() {
+            auto row = m_logger->count() - 1;
 
-void LogTableModel::setDataFormat(DataFormat aFormat)
-{
-    if (aFormat != mDataFormat) {
-        mDataFormat = aFormat;
-        emit dataChanged(index(0, kColumnBytes), index(mLog.size()-1, kColumnBytes));
+            beginInsertRows(QModelIndex(), row, row);
+            endInsertRows();
+        });
+
+        connect(m_logger, &Logger::cleared, this, [this]() {
+            QModelIndex index = createIndex(0, 2);
+
+            beginRemoveRows(index, 0, 0);
+            endRemoveRows();
+            emit dataChanged(index, index);
+        });
     }
 }
 
-const QString& toString(LogTableModel::DataFormat format)
+void LogTableModel::setFormatter(LogItemFormatter* a_decorator)
 {
-    static const QString hexFormatName("HEX");
-    static const QString asciiFormatName("ASCII");
-    static const QString unknownFormatName("ERR");
+    if (m_formatter != a_decorator) {
 
-    switch(format) {
-        case LogTableModel::kDataFormatHex:
-            return hexFormatName;
-        case LogTableModel::kDataFormatAscii:
-            return asciiFormatName;
-        default:
-            break;
+        if (m_formatter != nullptr) {
+            disconnect(m_formatter);
+            delete m_formatter;
+        }
+
+        m_formatter = a_decorator;
+        m_formatter->setParent(this);
+        connect(m_formatter, &LogItemFormatter::changed, this, [this]() {
+            if (m_logger != nullptr)
+                emit dataChanged(index(0, kColumnMsg), index(m_logger->count()-1, kColumnMsg));
+        });
     }
+}
 
-    return unknownFormatName;
+Logger* LogTableModel::logger() const
+{
+    return m_logger;
+}
+
+LogItemFormatter* LogTableModel::formatter() const
+{
+    return m_formatter;
 }

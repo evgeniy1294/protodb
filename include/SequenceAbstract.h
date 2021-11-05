@@ -5,12 +5,13 @@
 #include <QByteArray>
 #include <QUuid>
 
-class SequenceProcessor;
+class DslProcessor;
 
 class Sequence {
 
 public:
-  friend class SequenceProcessor;
+  friend class DslProcessor;
+
   Sequence()
    : m_uuid(QUuid::createUuid())
    , m_name()

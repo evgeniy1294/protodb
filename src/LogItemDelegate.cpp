@@ -15,6 +15,7 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
     // -------[TEXT COLOR]------- //
     auto color = index.model()->data(index, Qt::ForegroundRole).value<QColor>();
+
         painter->setPen(color);
         m_option.palette.setColor(QPalette::HighlightedText, color);
 
