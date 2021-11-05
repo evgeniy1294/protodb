@@ -8,14 +8,13 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-
+#include "singleton.h"
 #include "LogWidget.h"
 #include "Logger.h"
 #include "LogTableModel.h"
 #include "LogItemDelegate.h"
 #include "LogItemFormatter.h"
 #include "ConnectionConfigDialog.h"
-#include "event.h"
 
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
@@ -36,10 +35,9 @@ LogWidget::~LogWidget()
 void LogWidget::createGui()
 {
     // ---------[LOG VIEW]---------- //
-    m_log = new Logger();
     m_view = new QTableView();
         m_model = new LogTableModel(m_view);
-            m_model->setLogger(m_log);
+            m_model->setLogger(Singleton::instance().m_core.logger());
         m_view->setModel(m_model);
         m_view->setItemDelegate(new LogItemDelegate());
         m_view->setWordWrap(true);
@@ -120,11 +118,6 @@ void LogWidget::createGui()
       layout->addLayout(bottom_layout, 2, 0);
 
     setLayout(layout);
-
-    // --------[TEST]-------- //
-        m_log->print(Logger::kFirstChannel, QByteArray(12, '1'));
-        m_log->print(Logger::kCommentChannel, QByteArray("Test comment string:\n    byte[0] = 7\n    byte[1] = 7\n    byte[2] = 8"));
-        m_log->print(Logger::kSecondChannel, QByteArray(90, '7'));
 }
 
 void LogWidget::connectSignals()
@@ -132,11 +125,13 @@ void LogWidget::connectSignals()
     connect(m_run, &QPushButton::released, this, [this]() {
         static bool state = true;
         if (state) {
+            Singleton::instance().m_core.start();
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));;
             state = false;
         }
         else
         {
+            Singleton::instance().m_core.stop();
             m_run->setIcon(QIcon(":/icons/run.svg"));
             state = true;
         }
@@ -144,7 +139,7 @@ void LogWidget::connectSignals()
 
 
     connect(m_clear_btn, &QPushButton::released, this, [this] {
-        m_log->clear();
+        m_model->logger()->clear();
     });
 
     connect(m_mode_btn, &QPushButton::released, this, [this]() {

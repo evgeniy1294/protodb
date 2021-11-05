@@ -38,7 +38,7 @@ void ConnectionConfigDialog::createGui()
 
     // --------[LOG FILE]--------- //
     m_file_button = new QPushButton();
-        m_file_button->setIcon(QIcon(":/icons/file_search.svg"));
+        m_file_button->setIcon(QIcon(":/icons/folder.svg"));
         m_file_button->setToolTip(tr("Show File Dialog"));
 
     m_logfile = new QLineEdit();

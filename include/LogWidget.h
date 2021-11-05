@@ -32,7 +32,5 @@ private:
   QLineEdit* m_msg_le;
   ConnectionConfigDialog* m_conn_dialog;
   LogTableModel* m_model;
-
-  Logger* m_log;
 };
 

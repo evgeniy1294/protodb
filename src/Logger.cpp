@@ -13,6 +13,16 @@ void Logger::print(Channels channel, const QByteArray& msg)
     emit appended();
 }
 
+void Logger::comment(const QByteArray& msg)
+{
+    print(kCommentChannel, msg);
+}
+
+void Logger::comment(const char* str)
+{
+    print(kCommentChannel, QByteArray(str));
+}
+
 void Logger::clear()
 {
     m_log.clear();
@@ -40,7 +50,6 @@ const Logger::LogItem& Logger::at(int i) const
                                         .channel = kCommentChannel,
                                         .message = "Protocol Debugger: Internal Error"};
     if (i < m_log.size()) {
-        std::cout << "Log at: " << i << std::endl;
         return m_log.at(i);
     }
 

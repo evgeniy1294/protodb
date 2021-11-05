@@ -111,14 +111,14 @@ void LogTableModel::setLogger(Logger* logger)
         m_logger = logger;
 
         connect(m_logger, &Logger::appended, this, [this]() {
-            auto row = m_logger->count() - 1;
+            auto row = rowCount() - 1;
 
             beginInsertRows(QModelIndex(), row, row);
             endInsertRows();
         });
 
         connect(m_logger, &Logger::cleared, this, [this]() {
-            QModelIndex index = createIndex(0, 2);
+            QModelIndex index = createIndex(0, 0);
 
             beginRemoveRows(index, 0, 0);
             endRemoveRows();
@@ -139,8 +139,7 @@ void LogTableModel::setFormatter(LogItemFormatter* a_decorator)
         m_formatter = a_decorator;
         m_formatter->setParent(this);
         connect(m_formatter, &LogItemFormatter::changed, this, [this]() {
-            if (m_logger != nullptr)
-                emit dataChanged(index(0, kColumnMsg), index(m_logger->count()-1, kColumnMsg));
+            emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
         });
     }
 }

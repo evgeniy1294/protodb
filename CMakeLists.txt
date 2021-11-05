@@ -11,6 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(Lua REQUIRED)
 find_package(QT NAMES Qt5 COMPONENTS Core Widgets SerialPort REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets SerialPort REQUIRED)
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
@@ -89,10 +90,11 @@ else()
     endif()
 endif()
 
+target_link_libraries(protodb PRIVATE ${LUA_LIBRARIES})
 target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort)
 target_link_libraries(protodb PRIVATE qtadvanceddocking)
-target_include_directories(protodb PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(protodb PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include" ${LUA_INCLUDE_DIR})
 
 set_target_properties(protodb PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

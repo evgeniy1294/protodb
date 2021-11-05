@@ -27,6 +27,8 @@ public:
     Logger(QObject* parent = nullptr);
 
     void print(Channels channel, const QByteArray& msg);
+    void comment(const QByteArray& msg);
+    void comment(const char* str);
     void clear();
 
     bool empty() const;

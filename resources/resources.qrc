@@ -24,5 +24,8 @@
         <file alias="arrow.svg">icons/arrow_enter.svg</file>
         <file alias="stop_rect.svg">icons/stop_rect.svg</file>
         <file alias="run.svg">icons/run.svg</file>
+        <file alias="file.svg">icons/file.svg</file>
+        <file alias="folder.svg">icons/folder.svg</file>
+        <file alias="floppy.svg">icons/floppy.svg</file>
     </qresource>
 </RCC>
