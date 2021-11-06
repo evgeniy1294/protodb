@@ -1,15 +1,18 @@
 #include <QWidget>
 #include <QLayout>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QLineEdit>
 #include <QFileDialog>
+#include <QTextDocument>
+#include <QTextStream>
+#include <QMessageBox>
+#include <CodeEditorWidget.h>
 
 #include "script_widget.h"
 
 ScriptWidget::ScriptWidget(QWidget* parent)
   : QWidget(parent)
-  , m_file(new QFile())
 {
     createGui();
     connectSignals();
@@ -18,8 +21,7 @@ ScriptWidget::ScriptWidget(QWidget* parent)
 void ScriptWidget::createGui()
 {
     // ---------[EDITOR]---------- //
-    m_text = new QTextEdit();
-        m_text->setText(tr("Scripting"));
+    m_editor = new QPlainTextEdit();
 
     // ---------[BUTTONS]--------- //
     m_new_btn = new QPushButton();
@@ -42,6 +44,7 @@ void ScriptWidget::createGui()
         m_file_le->setPlaceholderText("Path to script file");
         m_file_le->setReadOnly(true);
 
+    m_code = new CodeEditor;
     // ---------[LAYOUT]---------- //
     auto tool_layout = new QHBoxLayout();
         tool_layout->addWidget(m_new_btn);
@@ -52,7 +55,7 @@ void ScriptWidget::createGui()
 
     auto main_layout = new QGridLayout();
         main_layout->addLayout(tool_layout, 0, 0);
-        main_layout->addWidget(m_text, 1, 0);
+        main_layout->addWidget(m_code, 1, 0);
 
         setLayout(main_layout);
 }
@@ -77,15 +80,17 @@ void ScriptWidget::create()
 
         if (fileNames.size() != 0) {
             auto path = fileNames.back();
+            m_file_le->setText(path);
 
-            if (m_file->isOpen()) {
-                m_file->close();
+            QFile file(path);
+            if (file.open(QIODevice::Text | QIODevice::Truncate)) {
+                m_code->setPlainText("");
+            }
+            else {
+                showFileError(file, "Error while create file");
             }
 
-            m_file_le->setText(path);
-            m_file->open(QIODevice::ReadWrite);
-            m_file->resize(0);
-            m_text->setText(m_file->readAll());
+            file.close();
         }
     }
 }
@@ -99,30 +104,57 @@ void ScriptWidget::open()
 
     QStringList fileNames;
     if (fileDialog.exec()) {
-      fileNames = fileDialog.selectedFiles();
+        fileNames = fileDialog.selectedFiles();
 
-      if (fileNames.size() != 0) {
+        if (fileNames.size() != 0) {
             auto path = fileNames.back();
+            m_file_le->setText(path);
 
-            if (m_file->isOpen()) {
-                m_file->close();
+            QFile file(path);
+            if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
+                QString content;
+
+                while(!file.atEnd()) {
+                    content.append(file.readLine());
+                }
+
+                m_code->setPlainText(content);
+
+                auto higlighter = new Highlighter(m_code->document());
+
+            }
+            else {
+                showFileError(file, "Error while open file");
             }
 
-            m_file_le->setText(path);
-            m_file->setFileName(path);
-            m_file->open(QIODevice::ReadWrite);
-            m_text->clear();
-            m_text->setText(m_file->readAll());
-      }
+            file.close();
+        }
     }
 }
 
 void ScriptWidget::save()
 {
-    if (m_file->isOpen() && m_file->isWritable()) {
-        if (m_file->resize(0)) {
-            m_file->write(m_text->toPlainText().toLatin1());
-        }
+    QFile file(m_file_le->text());
+
+    if (file.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QTextStream out(&file);
+        out << m_code->toPlainText();
     }
+    else {
+        showFileError(file, "Error while saving file");
+    }
+
+    file.close();
 }
 
+void ScriptWidget::showFileError(const QFile& file, const QString& text)
+{
+    QMessageBox box;
+        box.setIcon(QMessageBox::Critical);
+
+    QString message = tr("%1: %2: %3").
+            arg(text, file.fileName(), file.errorString());
+
+    box.setText(message);
+    box.exec();
+}

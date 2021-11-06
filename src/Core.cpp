@@ -1,3 +1,4 @@
+#include <QFile>
 #include "Logger.h"
 #include "Core.h"
 
@@ -24,14 +25,16 @@ void Core::init()
 
 void Core::start()
 {
-    m_lua.script_file("my_script.lua");
-    m_lua_start  = m_lua["start"];
-    m_lua_stop   = m_lua["stop"];
-    m_lua_input  = m_lua["input"];
-    m_lua_output = m_lua["output"];
+    if (QFile::exists("my_script.lua")) {
+        m_lua.script_file("my_script.lua");
+        m_lua_start  = m_lua["start"];
+        m_lua_stop   = m_lua["stop"];
+        m_lua_input  = m_lua["input"];
+        m_lua_output = m_lua["output"];
 
-    if (m_lua_start.valid()) {
-        m_lua_start();
+        if (m_lua_start.valid()) {
+            m_lua_start();
+        }
     }
 }
 

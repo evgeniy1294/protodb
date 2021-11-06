@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
         src/LogItemFormatter.cpp
         src/SerialConfigWidget.cpp
         src/ConnectionConfigDialog.cpp
+        src/CodeEditorWidget.cpp
 
         include/Core.h
         include/mainwindow.h
@@ -64,6 +65,7 @@ set(PROJECT_SOURCES
         include/CellButtonDelegate.h
         include/CellSpinBoxDelegate.h
         include/CellCheckBoxDelegate.h
+        include/CodeEditorWidget.h
         resources/resources.qrc
 )
 

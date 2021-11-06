@@ -2,10 +2,12 @@
 
 #include <QWidget>
 
-class QTextEdit;
+class QPlainTextEdit;
+class QTextDocument;
 class QPushButton;
 class QLineEdit;
 class QFile;
+class CodeEditor;
 
 class ScriptWidget: public QWidget
 {
@@ -18,6 +20,7 @@ public:
 private:
     void createGui();
     void connectSignals();
+    void showFileError(const QFile& file, const QString& text);
 
 private slots:
     void create();
@@ -25,12 +28,14 @@ private slots:
     void save();
 
 private:
-    QTextEdit* m_text;
+    QPlainTextEdit* m_editor;
     QPushButton* m_new_btn;
     QPushButton* m_open_btn;
     QPushButton* m_save_btn;
     QLineEdit* m_file_le;
-    QFile* m_file;
+    QTextDocument* m_doc;
+
+    CodeEditor* m_code;
 };
 
 

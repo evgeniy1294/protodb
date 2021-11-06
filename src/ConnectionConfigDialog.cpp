@@ -24,25 +24,33 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 void ConnectionConfigDialog::createGui()
 {
     // --------[BUTTONS]--------- //
-    m_dialog_buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel );
+    m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel );
 
     auto serial_radio  = new QRadioButton(tr("Serial"));
         serial_radio->setChecked(true);
     auto network_radio = new QRadioButton(tr("Network"));
     auto bridge_radio  = new QRadioButton(tr("Bridge"));
 
-    m_mode_selector = new QButtonGroup();
-        m_mode_selector->addButton(serial_radio, 0);
-        m_mode_selector->addButton(network_radio, 0);
-        m_mode_selector->addButton(bridge_radio, 0);
+    m_mode_group = new QButtonGroup();
+        m_mode_group->addButton(serial_radio, 0);
+        m_mode_group->addButton(network_radio, 0);
+        m_mode_group->addButton(bridge_radio, 0);
 
     // --------[LOG FILE]--------- //
-    m_file_button = new QPushButton();
-        m_file_button->setIcon(QIcon(":/icons/folder.svg"));
-        m_file_button->setToolTip(tr("Show File Dialog"));
+    m_log_btn = new QPushButton();
+        m_log_btn->setIcon(QIcon(":/icons/folder.svg"));
+        m_log_btn->setToolTip(tr("Show File Dialog"));
 
-    m_logfile = new QLineEdit();
-        m_logfile->setPlaceholderText(tr("Path to log file"));
+    m_log_le = new QLineEdit();
+        m_log_le->setPlaceholderText(tr("Path to log file"));
+
+    // --------[SCRIPT FILE]--------- //
+    m_scr_btn = new QPushButton();
+        m_scr_btn->setIcon(QIcon(":/icons/folder.svg"));
+        m_scr_btn->setToolTip(tr("Show File Dialog"));
+
+    m_scr_le = new QLineEdit();
+        m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
     auto serial_config_widget = new SerialConfigWidget();
@@ -91,6 +99,7 @@ void ConnectionConfigDialog::createGui()
         logcfg_frame->setFrameShape(QFrame::StyledPanel);
         logcfg_frame->setFrameShadow(QFrame::Raised);
 
+    // ---------[LAYOUT]---------- //
     auto logcfg_layout = new QGridLayout();
         logcfg_layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
         logcfg_layout->addWidget(new QLabel(tr("Log configurations:")), 0, 0, 1, 1);
@@ -113,40 +122,56 @@ void ConnectionConfigDialog::createGui()
 
     logcfg_frame->setLayout(logcfg_layout);
 
-    // ---------[LAYOUT]---------- //
-
     auto main_layout = new QGridLayout();
-        main_layout->addWidget(selector_frame, 0 , 0, 3, 1);
-        main_layout->addWidget(m_file_button, 0 , 2, 1, 1);
-        main_layout->addWidget(m_logfile, 0, 1, 1, 1);
-        main_layout->addWidget(serial_config_widget, 1 ,1, 1, 2);
-        main_layout->addWidget(logcfg_frame, 2 ,1, 1, 2);
-        main_layout->addWidget(m_dialog_buttons, 3, 0, 1, 3);
+        main_layout->addWidget(selector_frame, 0 , 0, 5, 1);
+        main_layout->addWidget(m_scr_le, 1 , 1, 1, 1);
+        main_layout->addWidget(m_scr_btn, 1 , 2, 1, 1);
+        main_layout->addWidget(serial_config_widget, 2 ,1, 1, 2);
+        main_layout->addWidget(m_log_le, 3, 1, 1, 1);
+        main_layout->addWidget(m_log_btn, 3 , 2, 1, 1);
+        main_layout->addWidget(logcfg_frame, 4 ,1, 1, 2);
+        main_layout->addWidget(m_dialog_btn, 5, 0, 1, 3);
         main_layout->setColumnStretch(0, 0);
         main_layout->setColumnStretch(1, 1);
         main_layout->setColumnStretch(2, 0);
+        main_layout->setRowStretch(0, 0);
+        main_layout->setRowStretch(2, 1);
+        main_layout->setRowStretch(3, 0);
+        main_layout->setRowStretch(4, 1);
 
-
-        setLayout(main_layout);
+    setLayout(main_layout);
 }
 
 void ConnectionConfigDialog::connectSignals()
 {
-    connect(m_file_button, &QPushButton::released, this, [this]() {
-        QFileDialog fileDialog;
-        fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-        fileDialog.setFileMode(QFileDialog::AnyFile);
-        fileDialog.setViewMode(QFileDialog::List);
+    connect(m_log_btn, &QPushButton::released, this, [this]() {
+        QString path = m_log_le->text();
+        showFileDialog(path);
 
-        QStringList fileNames;
-        if (fileDialog.exec()) {
-          fileNames = fileDialog.selectedFiles();
+        m_log_le->setText(path);
+    });
 
-          if (fileNames.size() != 0) {
-                m_logfile->setText(fileNames.back());
-          }
-        }
+    connect(m_scr_btn, &QPushButton::released, this, [this]() {
+        QString path = m_scr_le->text();
+        showFileDialog(path);
 
+        m_scr_le->setText(path);
     });
 }
 
+void ConnectionConfigDialog::showFileDialog(QString& path)
+{
+    QFileDialog fileDialog;
+    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+    fileDialog.setFileMode(QFileDialog::AnyFile);
+    fileDialog.setViewMode(QFileDialog::List);
+
+    QStringList fileNames;
+    if (fileDialog.exec()) {
+      fileNames = fileDialog.selectedFiles();
+
+      if (fileNames.size() != 0) {
+            path = fileNames.back();
+      }
+    }
+}
