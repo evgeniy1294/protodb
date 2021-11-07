@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include "singleton.h"
+#include "Core.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,7 +10,7 @@ int main(int argc, char *argv[])
   MainWindow w;
   w.showMaximized();
 
-  Singleton::instance().m_core.init();
+  Singleton::instance().m_core->init();
 
   return a.exec();
 }

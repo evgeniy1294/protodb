@@ -9,6 +9,7 @@
 #include <QMessageBox>
 
 #include "singleton.h"
+#include "Core.h"
 #include "LogWidget.h"
 #include "Logger.h"
 #include "LogTableModel.h"
@@ -37,7 +38,7 @@ void LogWidget::createGui()
     // ---------[LOG VIEW]---------- //
     m_view = new QTableView();
         m_model = new LogTableModel(m_view);
-            m_model->setLogger(Singleton::instance().m_core.logger());
+            m_model->setLogger(Singleton::instance().m_core->logger());
         m_view->setModel(m_model);
         m_view->setItemDelegate(new LogItemDelegate());
         m_view->setWordWrap(true);
@@ -125,13 +126,13 @@ void LogWidget::connectSignals()
     connect(m_run, &QPushButton::released, this, [this]() {
         static bool state = true;
         if (state) {
-            Singleton::instance().m_core.start();
+            Singleton::instance().m_core->start();
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));;
             state = false;
         }
         else
         {
-            Singleton::instance().m_core.stop();
+            Singleton::instance().m_core->stop();
             m_run->setIcon(QIcon(":/icons/run.svg"));
             state = true;
         }

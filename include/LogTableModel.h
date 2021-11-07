@@ -27,8 +27,6 @@ public:
     QVariant data(const QModelIndex& aIndex, int aRole = Qt::DisplayRole) const override;
     QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
     bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
-    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
-    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
     void setLogger(Logger* logger);
     void setFormatter(LogItemFormatter* decorator);

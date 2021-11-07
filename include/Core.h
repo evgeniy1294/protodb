@@ -14,9 +14,11 @@ public:
     void init();
     void start();
     void stop();
+    void setScriptFile(const QString& file);
     Logger* logger();
 
 private:
+    QString m_script_file;
     Logger* m_logger;
     sol::state m_lua;
     sol::function m_lua_start;

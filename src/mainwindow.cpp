@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include "mainwindow.h"
 #include "session_widget.h"
+#include "settings_dialog.h"
 
 
 
@@ -170,7 +171,7 @@ void MainWindow::sessionsOpen() {
 }
 
 void MainWindow::toolsOptions() {
-  Singleton::instance().mSettingsDialog.show();
+  Singleton::instance().m_settings->show();
   return;
 }
 

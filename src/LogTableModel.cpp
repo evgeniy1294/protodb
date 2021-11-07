@@ -91,16 +91,6 @@ bool LogTableModel::setData(const QModelIndex& aIndex, const QVariant& aValue, i
     return false;
 }
 
-bool LogTableModel::insertRows(int row, int count, const QModelIndex& parent)
-{
-    return false;
-}
-
-bool LogTableModel::removeRows(int row, int count, const QModelIndex& parent)
-{
-    return false;
-}
-
 void LogTableModel::setLogger(Logger* logger)
 {
     if (m_logger != logger) {
@@ -118,11 +108,8 @@ void LogTableModel::setLogger(Logger* logger)
         });
 
         connect(m_logger, &Logger::cleared, this, [this]() {
-            QModelIndex index = createIndex(0, 0);
-
-            beginRemoveRows(index, 0, 0);
-            endRemoveRows();
-            emit dataChanged(index, index);
+            beginResetModel();
+            endResetModel();
         });
     }
 }

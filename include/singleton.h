@@ -1,15 +1,15 @@
 #pragma once
 
-#include "settings_dialog.h"
-#include "Core.h"
+class SettingsDialog;
+class Core;
 
 class Singleton
 {
 public:
-    SettingsDialog mSettingsDialog;
-    Core m_core;
+    SettingsDialog* m_settings;
+    Core* m_core;
 
     static Singleton& instance();
 private:
-    Singleton() = default;
+    Singleton();
 };

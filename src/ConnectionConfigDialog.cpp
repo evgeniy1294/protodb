@@ -10,9 +10,10 @@
 #include <QLabel>
 #include <QAction>
 
+#include "singleton.h"
+#include "Core.h"
 #include "ConnectionConfigDialog.h"
 #include "SerialConfigWidget.h"
-#include "log_config_widget.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     : QDialog(aParent)
@@ -156,6 +157,11 @@ void ConnectionConfigDialog::connectSignals()
         showFileDialog(path);
 
         m_scr_le->setText(path);
+    });
+
+    connect(m_scr_le, &QLineEdit::textChanged, this, [](const QString& text) {
+        auto core = Singleton::instance().m_core;
+        core->setScriptFile(text);
     });
 }
 
