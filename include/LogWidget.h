@@ -16,7 +16,7 @@ class LogWidget: public QWidget
 
 public:
   explicit LogWidget(QWidget* parent = nullptr);
-  ~LogWidget();
+  ~LogWidget() = default;
 
 private:
   void createGui();
@@ -30,7 +30,7 @@ private:
   QPushButton* m_config_btn;
   QLineEdit* m_find_le;
   QLineEdit* m_msg_le;
-  ConnectionConfigDialog* m_conn_dialog;
   LogTableModel* m_model;
+  ConnectionConfigDialog* m_conn_dialog;
 };
 

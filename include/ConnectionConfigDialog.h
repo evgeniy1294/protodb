@@ -10,6 +10,8 @@ class QRadioButton;
 class QDialogButtonBox;
 class QLineEdit;
 
+class Core;
+
 class ConnectionConfigDialog: public QDialog {
     Q_OBJECT
 

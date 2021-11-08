@@ -1,16 +1,21 @@
-#include "mainwindow.h"
-
 #include <QApplication>
+
+#include "mainwindow.h"
 #include "singleton.h"
 #include "Core.h"
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);
-  MainWindow w;
-  w.showMaximized();
+    QApplication a(argc, argv);
 
-  Singleton::instance().m_core->init();
+    QCoreApplication::setOrganizationName("protodb");
+    QCoreApplication::setApplicationName("protodb");
 
-  return a.exec();
+    MainWindow w;
+    w.restoreState();
+    w.show();
+
+    Singleton::instance().m_core->init();
+
+    return a.exec();
 }

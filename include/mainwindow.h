@@ -4,43 +4,44 @@
 #include <QMainWindow>
 #include "tool_bar.h"
 
+namespace ads {
+  class CDockManager;
+}
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
   explicit MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  ~MainWindow() = default;
+
+  void restoreState();
+  void saveState();
 
 private slots:
-  void sessionsNew();
-  void sessionsManage();
-  void sessionsSave();
-  void sessionsSaveAs();
-  void sessionsOpen();
-  void toolsOptions();
-  void toolsPlugins();
-  void helpAbout();
-  void helpContent();
   void exit();
 
 private:
   void createGui();
+  void createDock();
   void createActions();
   void createToolBar();
+  void connectSignals();
 
 private:
-  QAction* mSessionsNewAct;
-  QAction* mSessionsSaveAct;
-  QAction* mSessionsSaveAsAct;
-  QAction* mSessionsOpenAct;
-  QAction* mToolsOptionsAct;
-  QAction* mToolsPluginsAct;
-  QAction* mHelpAboutAct;
-  QAction* mHelpAboutQtAct;
-  QAction* mHelpContentsAct;
-  QAction* mExitAct;
-  isa_tool_bar* mIsaToolBar;
+  QAction* m_new;
+  QAction* m_save;
+  QAction* m_save_as;
+  QAction* m_open;
+  QAction* m_options;
+  QAction* m_plugins;
+  QAction* m_about;
+  QAction* m_about_qt;
+  QAction* m_help_content;
+  QAction* m_exit;
+  isa_tool_bar* m_toolbar;
+  ads::CDockManager* m_dock_man;
 };
 
 

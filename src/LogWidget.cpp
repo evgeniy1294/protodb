@@ -26,13 +26,6 @@ LogWidget::LogWidget(QWidget* parent)
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
-
-LogWidget::~LogWidget()
-{
-
-}
-#include <iostream>
-
 void LogWidget::createGui()
 {
     // ---------[LOG VIEW]---------- //

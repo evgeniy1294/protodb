@@ -3,7 +3,7 @@
 #include <QLayout>
 
 #include "settings_dialog.h"
-#include "log_config_widget.h"
+#include "LogConfigWidget.h"
 
 SettingsDialog::SettingsDialog(QWidget* aParent)
     : QDialog(aParent)

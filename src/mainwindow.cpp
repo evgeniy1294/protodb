@@ -7,9 +7,14 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QInputDialog>
+#include <QSettings>
+
+#include <DockManager.h>
+
 #include "mainwindow.h"
-#include "session_widget.h"
 #include "settings_dialog.h"
+#include "sq_table_widget.h"
+#include "LogWidget.h"
 
 
 
@@ -17,188 +22,126 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
   createGui();
-  createActions();
-  createToolBar();
+  connectSignals();
 }
 
 
 void MainWindow::createGui()
 {
-  setWindowTitle("Protocol Debugger");
-  setWindowIcon(QIcon(":/icons/network.svg"));
-  setIconSize({18,18});
+    createActions();
+    createToolBar();
+    createDock();
 
-  mIsaToolBar = new isa_tool_bar( QBoxLayout::TopToBottom );
-  mIsaToolBar->setButtonSize( QSize( 28, 28 ) );
+    setWindowTitle("Protocol Debugger");
+    setWindowIcon(QIcon(":/icons/network.svg"));
+    setIconSize({18,18});
 
-  auto layout = new QHBoxLayout();
-    layout->addWidget(mIsaToolBar);
-    layout->addWidget(new SessionWidget());
+    auto main_layout = new QHBoxLayout();
+        main_layout->addWidget(m_toolbar);
+        main_layout->addWidget(m_dock_man);
 
-  auto wdg = new QWidget();
-    wdg->setLayout(layout);
+    auto central_widget = new QWidget();
+        central_widget->setLayout(main_layout);
 
-  setCentralWidget(wdg);
+    setCentralWidget(central_widget);
 }
 
+void MainWindow::createDock()
+{
+    ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);
+    ads::CDockManager::setConfigFlag(ads::CDockManager::AlwaysShowTabs, true);
+
+    auto log_widget = new ads::CDockWidget("Log");
+        log_widget->setWidget(new LogWidget());
+
+    auto incoming_table_widget = new ads::CDockWidget("Incoming");
+        incoming_table_widget->setWidget(new SqTableWidget(SqTableWidget::kIncomingDisplayMode));
+
+    auto outgoing_table_widget = new ads::CDockWidget("Outgoing");
+        outgoing_table_widget->setWidget(new SqTableWidget(SqTableWidget::kOutgoingDisplayMode));
+
+    m_dock_man = new ads::CDockManager();
+    m_dock_man->addDockWidget(ads::RightDockWidgetArea, log_widget);
+    m_dock_man->addDockWidget(ads::RightDockWidgetArea, outgoing_table_widget);
+    m_dock_man->addDockWidgetTab(ads::BottomDockWidgetArea, incoming_table_widget);
+}
 
 
 void MainWindow::createActions()
 {
-  mSessionsNewAct = new QAction(QIcon(":/icons/new_sessions.svg"), tr("&New..."), this);
-  mSessionsNewAct->setShortcuts(QKeySequence::New);
-  mSessionsNewAct->setStatusTip(tr("Create a new file"));
-  connect(mSessionsNewAct, &QAction::triggered, this, &MainWindow::sessionsNew);
-
-  mSessionsSaveAct = new QAction(QIcon(":/icons/save.svg"), tr("&Save"), this);
-  mSessionsSaveAct->setShortcuts(QKeySequence::Save);
-  mSessionsSaveAct->setStatusTip(tr("Save active session"));
-  connect(mSessionsSaveAct, &QAction::triggered, this, &MainWindow::sessionsSave);
-
-  mSessionsSaveAsAct = new QAction(QIcon(":/icons/save_as.svg"), tr("&Save As..."), this);
-  mSessionsSaveAsAct->setShortcuts(QKeySequence::SaveAs);
-  mSessionsSaveAsAct->setStatusTip(tr("Save active session with parameters"));
-  connect(mSessionsSaveAsAct, &QAction::triggered, this, &MainWindow::sessionsSaveAs);
-
-  mSessionsOpenAct = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
-  mSessionsOpenAct->setShortcut(QKeySequence::Open);
-  mSessionsOpenAct->setStatusTip(tr("Open session"));
-  connect(mSessionsOpenAct, &QAction::triggered, this, &MainWindow::sessionsOpen);
-
-  mToolsOptionsAct = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
-  mToolsOptionsAct->setStatusTip(tr("Options"));
-  connect(mToolsOptionsAct, &QAction::triggered, this, &MainWindow::toolsOptions);
-
-  mToolsPluginsAct = new QAction(tr("&Plugins..."), this);
-  mToolsPluginsAct->setStatusTip("Plugins");
-  connect(mToolsPluginsAct, &QAction::triggered, this, &MainWindow::toolsPlugins);
-
-  mHelpAboutAct = new QAction(tr("&About"), this);
-  mHelpAboutAct->setStatusTip("About");
-  connect(mHelpAboutAct, &QAction::triggered, this, &MainWindow::helpAbout);
-
-  mHelpAboutQtAct = new QAction(tr("&About Qt"), this);
-  mHelpAboutQtAct->setStatusTip("About Qt");
-  connect(mHelpAboutQtAct, &QAction::triggered, &QApplication::aboutQt);
-
-  mHelpContentsAct = new QAction(tr("&Help"), this);
-  mHelpContentsAct->setStatusTip("Help contents");
-  connect(mHelpContentsAct, &QAction::triggered, this, &MainWindow::helpContent);
-
-  mExitAct = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
-  mExitAct->setStatusTip(tr("Close application"));
-  connect(mExitAct, &QAction::triggered, this, &MainWindow::exit);
+    m_new = new QAction(QIcon(":/icons/new_sessions.svg"), tr("&New..."), this);
+    m_save = new QAction(QIcon(":/icons/save.svg"), tr("&Save"), this);
+    m_save_as = new QAction(QIcon(":/icons/save_as.svg"), tr("&Save As..."), this);
+    m_open = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
+    m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
+    m_plugins = new QAction(tr("&Plugins..."), this);
+    m_about = new QAction(tr("&About"), this);
+    m_about_qt = new QAction(tr("&About Qt"), this);
+    m_help_content = new QAction(tr("&Help"), this);
+    m_exit = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
 }
 
 
 
 void MainWindow::createToolBar() {
-  mIsaToolBar->addToolAction(mSessionsNewAct, false);
-  mIsaToolBar->addToolAction(mSessionsOpenAct);
-  mIsaToolBar->addToolAction(mSessionsSaveAct);
-  mIsaToolBar->addToolAction(mSessionsSaveAsAct, false);
-  mIsaToolBar->addMenuSeparator();
-  mIsaToolBar->addToolAction(mToolsOptionsAct, false);
-  mIsaToolBar->addToolAction(mToolsPluginsAct, false);
-  mIsaToolBar->addMenuSeparator();
-  mIsaToolBar->addToolAction(mHelpContentsAct, false);
-  mIsaToolBar->addToolAction(mHelpAboutQtAct, false);
-  mIsaToolBar->addToolAction(mHelpAboutAct, false);
-  mIsaToolBar->addMenuSeparator();
-  mIsaToolBar->addToolAction(mExitAct, false);
+    m_toolbar = new isa_tool_bar( QBoxLayout::TopToBottom );
+    m_toolbar->setButtonSize( QSize( 28, 28 ) );
+
+    m_toolbar->addToolAction(m_new, false);
+    m_toolbar->addToolAction(m_open);
+    m_toolbar->addToolAction(m_save);
+    m_toolbar->addToolAction(m_save_as, false);
+    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_options, false);
+    m_toolbar->addToolAction(m_plugins, false);
+    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_help_content, false);
+    m_toolbar->addToolAction(m_about_qt, false);
+    m_toolbar->addToolAction(m_about, false);
+    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_exit, false);
 }
 
-MainWindow::~MainWindow()
+void MainWindow::connectSignals()
 {
+    connect(m_exit, &QAction::triggered, this, &MainWindow::exit);
+    connect(m_about_qt, &QAction::triggered, &QApplication::aboutQt);
+
+    connect(m_about, &QAction::triggered, this, [this]() {
+        QMessageBox box;
+        box.setText("Protocol debugger is powerful terminal software.\n"
+                    "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
+        box.setIcon(QMessageBox::Icon::Information);
+        box.exec();
+    });
+
 }
 
-void MainWindow::sessionsNew() {
-  bool ok;
+void MainWindow::saveState()
+{
+    QSettings settings;
 
-  QString sessionName = QInputDialog::getText(this, tr("Create new session"),
-                                              tr("Enter new session name:"), QLineEdit::Normal,
-                                              tr("New session"), &ok);
-  if (ok && !sessionName.isEmpty())
-  {
-   /* SessionWidget* session_wdg = new SessionWidget();
-    ads::CDockWidget* dock_wdg = new ads::CDockWidget(sessionName);
-    dock_wdg->setWidget(session_wdg);
-
-    mDockManager->addDockWidgetTab(ads::TopDockWidgetArea, dock_wdg);*/
-  }
-
-  return;
+    settings.setValue("MainWindow/Geometry", saveGeometry());
+    settings.setValue("MainWindow/DockingState", m_dock_man->saveState());
 }
 
-void MainWindow::sessionsManage() {
-  return;
-}
+void MainWindow::restoreState()
+{
+    QSettings settings;
 
-void MainWindow::sessionsSave() {
-  return;
-}
+    if (settings.contains("MainWindow/Geometry")) {
+        auto geometry = settings.value("MainWindow/Geometry").toByteArray();
+            restoreGeometry(geometry);
+    }
 
-void MainWindow::sessionsSaveAs() {
-  QFileDialog fileDialog;
-  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-  fileDialog.setFileMode(QFileDialog::AnyFile);
-  fileDialog.setViewMode(QFileDialog::Detail);
-
-  QStringList fileNames;
-  if (fileDialog.exec()) {
-    fileNames = fileDialog.selectedFiles();
-  }
-
-  // Do something
-
-  return;
-}
-
-void MainWindow::sessionsOpen() {
-  QFileDialog fileDialog;
-  fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-  fileDialog.setFileMode(QFileDialog::AnyFile);
-  fileDialog.setViewMode(QFileDialog::Detail);
-
-  QStringList fileNames;
-  if (fileDialog.exec()) {
-    fileNames = fileDialog.selectedFiles();
-  }
-
-  // Do something
-
-  return;
-}
-
-void MainWindow::toolsOptions() {
-  Singleton::instance().m_settings->show();
-  return;
-}
-
-void MainWindow::toolsPlugins(){
-  return;
-}
-
-void MainWindow::helpAbout(){
-  QMessageBox messageBox;
-  messageBox.setText("Protocol debugger is powerful terminal software.\n"
-                     "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
-  messageBox.setStandardButtons(QMessageBox::Ok);
-  messageBox.setDefaultButton(QMessageBox::Ok);
-  messageBox.setIcon(QMessageBox::Icon::Information);
-  messageBox.exec();
-
-  return;
-}
-
-
-
-void MainWindow::helpContent(){
-  return;
+    if (settings.contains("MainWindow/DockingState")) {
+        auto state = settings.value("MainWindow/DockingState").toByteArray();
+          m_dock_man->restoreState(state);
+    }
 }
 
 void MainWindow::exit(){
-  // TODO: Save session
+  saveState();
   QApplication::exit(0);
 
   return;

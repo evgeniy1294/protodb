@@ -23,7 +23,6 @@ set(PROJECT_SOURCES
         src/CellButtonDelegate.cpp
         src/CellCheckBoxDelegate.cpp
         src/mainwindow.cpp
-        src/session_widget.cpp
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
@@ -31,7 +30,7 @@ set(PROJECT_SOURCES
         src/sq_table_widget.cpp
         src/SequenceTableModel.cpp
         src/sq_table_dialog.cpp
-        src/log_config_widget.cpp
+        src/LogConfigWidget.cpp
         src/settings_dialog.cpp
         src/Logger.cpp
         src/LogWidget.cpp
@@ -44,7 +43,6 @@ set(PROJECT_SOURCES
 
         include/Core.h
         include/mainwindow.h
-        include/session_widget.h
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
@@ -53,7 +51,7 @@ set(PROJECT_SOURCES
         include/sq_table_widget.h
         include/SequenceTableModel.h
         include/sq_table_dialog.h
-        include/log_config_widget.h
+        include/LogConfigWidget.h
         include/settings_dialog.h
         include/Logger.h
         include/LogTableModel.h
