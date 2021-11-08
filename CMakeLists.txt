@@ -19,6 +19,7 @@ find_library(ADS NAMES qtadvanceddocking REQUIRED)
 set(PROJECT_SOURCES
         src/main.cpp
         src/Core.cpp
+        src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
         src/CellButtonDelegate.cpp
         src/CellCheckBoxDelegate.cpp
@@ -42,6 +43,7 @@ set(PROJECT_SOURCES
         src/CodeEditorWidget.cpp
 
         include/Core.h
+        include/Worker.h
         include/mainwindow.h
         include/script_widget.h
         include/menu.h

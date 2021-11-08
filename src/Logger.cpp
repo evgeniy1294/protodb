@@ -7,15 +7,10 @@ Logger::Logger(QObject* parent)
 {
 }
 
-void Logger::print(Channels channel, const QByteArray& msg)
+void Logger::print(Channel channel, const QByteArray& msg)
 {
     m_log.append({.timestamp = QDateTime::currentDateTime(), .channel = channel, .message = msg});
     emit appended();
-}
-
-void Logger::comment(const QByteArray& msg)
-{
-    print(kCommentChannel, msg);
 }
 
 void Logger::comment(const char* str)
@@ -27,6 +22,16 @@ void Logger::clear()
 {
     m_log.clear();
     emit cleared();
+}
+
+void Logger::setEnableChannel(Channel channel)
+{
+
+}
+
+void Logger::setDisableChannel(Channel channel)
+{
+
 }
 
 bool Logger::empty() const

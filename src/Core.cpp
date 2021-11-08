@@ -17,7 +17,7 @@ void Core::init()
 
     auto log = m_lua["log"].get_or_create<sol::table>();
         log.new_usertype<Logger>("log",
-            "print", static_cast<void (Logger::*)(const char *)>(&Logger::comment),
+            "print", &Logger::comment,
             "clear", &Logger::clear);
 
     m_lua["log"] = m_logger;
