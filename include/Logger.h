@@ -7,29 +7,31 @@ class Logger: public QObject {
     Q_OBJECT
 
 public:
-    enum Channels {
+    enum Channel {
         kFirstChannel,
         kSecondChannel,
         kCommentChannel,
 
         kChannelsNum
     };
-    Q_ENUM(Channels)
+    Q_ENUM(Channel)
 
     struct LogItem
     {
         QDateTime  timestamp;
-        Channels   channel;
+        Channel   channel;
         QByteArray message;
     };
 
 public:
     Logger(QObject* parent = nullptr);
 
-    void print(Channels channel, const QByteArray& msg);
-    void comment(const QByteArray& msg);
-    void comment(const char* str);
+    void print(Channel channel, const QByteArray& msg);
+    void comment(const char* str); // <- Перенести в
     void clear();
+
+    void setEnableChannel(Channel channel);
+    void setDisableChannel(Channel channel);
 
     bool empty() const;
     int count() const;

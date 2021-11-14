@@ -51,7 +51,7 @@ QColor LogItemFormatter::attributeColor() const
     return m_attr_color;
 }
 
-void LogItemFormatter::setChannelColor(Logger::Channels ch, const QColor& color)
+void LogItemFormatter::setChannelColor(Logger::Channel ch, const QColor& color)
 {
     if (ch < Logger::kChannelsNum) {
         m_ch_colors[ch] = color;
@@ -59,7 +59,7 @@ void LogItemFormatter::setChannelColor(Logger::Channels ch, const QColor& color)
     }
 }
 
-void LogItemFormatter::setChannelFont(Logger::Channels ch, const QFont& font)
+void LogItemFormatter::setChannelFont(Logger::Channel ch, const QFont& font)
 {
     if (ch < Logger::kChannelsNum) {
         m_ch_fonts[ch] = font;
@@ -123,7 +123,7 @@ QFont LogItemFormatter::font(const Logger::LogItem& item) const
     return channelFont(item.channel);
 }
 
-QColor LogItemFormatter::channelColor(Logger::Channels ch) const
+QColor LogItemFormatter::channelColor(Logger::Channel ch) const
 {
     if (ch < Logger::kChannelsNum) {
         return m_ch_colors[ch];
@@ -143,7 +143,7 @@ QFont LogItemFormatter::attributeFont() const
     return m_attr_font;
 }
 
-QFont LogItemFormatter::channelFont(Logger::Channels ch) const
+QFont LogItemFormatter::channelFont(Logger::Channel ch) const
 {
     if (ch < Logger::kChannelsNum) {
         return m_ch_fonts[ch];
@@ -152,7 +152,7 @@ QFont LogItemFormatter::channelFont(Logger::Channels ch) const
     return {};
 }
 
-void LogItemFormatter::setChannelName(Logger::Channels channel, const QString& name)
+void LogItemFormatter::setChannelName(Logger::Channel channel, const QString& name)
 {
     if (channel < Logger::kChannelsNum) {
         m_ch_names[channel] = name;
@@ -160,7 +160,7 @@ void LogItemFormatter::setChannelName(Logger::Channels channel, const QString& n
     }
 }
 
-QString LogItemFormatter::channelName(Logger::Channels channel) const
+QString LogItemFormatter::channelName(Logger::Channel channel) const
 {
     static const QString default_name = "[ERR]";
 
