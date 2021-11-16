@@ -17,9 +17,6 @@ public:
 
     void setText(const QString& text) { m_text = text; }
 
-signals:
-    void triggered(const QModelIndex &index);
-
 private:
     int   m_active_row;
     QString m_text;

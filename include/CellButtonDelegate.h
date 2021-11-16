@@ -11,7 +11,7 @@ public:
     };
 
 public:
-    CellButtonDelegate(QObject *parent = 0);
+    CellButtonDelegate(QObject *parent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
