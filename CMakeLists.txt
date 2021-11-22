@@ -18,6 +18,10 @@ find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/Configurable.cpp
+        src/FabricAbstract.cpp
+        src/ConfigFrameFabric.cpp
+        src/IoDeviceFabric.cpp
         src/Core.cpp
         src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
@@ -42,6 +46,14 @@ set(PROJECT_SOURCES
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
 
+        include/Configurable.h
+        include/FabricAbstract.h
+        include/CreatorAbstract.h
+        include/ConfigFrame.h
+        include/ConfigFrameCreator.h
+        include/ConfigFrameFabric.h
+        include/IoDeviceCreator.h
+        include/IoDeviceFabric.h
         include/Core.h
         include/Worker.h
         include/mainwindow.h
