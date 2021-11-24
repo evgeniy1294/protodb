@@ -15,7 +15,7 @@ void Configurable::setDefaultConfig()
     nlohmann::json json;
 
     defaultConfig( json );
-    toJson(json);
+    fromJson(json);
 }
 
 void Configurable::defaultConfig(nlohmann::json& json) const

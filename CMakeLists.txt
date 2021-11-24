@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         src/FabricAbstract.cpp
         src/ConfigFrameFabric.cpp
         src/IoDeviceFabric.cpp
+        src/LogDecorator.cpp
         src/Core.cpp
         src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
@@ -54,6 +55,7 @@ set(PROJECT_SOURCES
         include/ConfigFrameFabric.h
         include/IoDeviceCreator.h
         include/IoDeviceFabric.h
+        include/LogDecorator.h
         include/Core.h
         include/Worker.h
         include/mainwindow.h

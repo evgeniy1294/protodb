@@ -10,6 +10,13 @@ class LogTableModel: public QAbstractTableModel {
     friend class Logger;
 
 public:
+    enum Channel {
+        FirstChannel,
+        SecondChannel,
+        CommentChannel
+    };
+
+
     enum ColumnNames {
         kColumnTimestamp = 0,
         kColumnChannel   = 1,
