@@ -27,7 +27,7 @@ public:
     Logger(QObject* parent = nullptr);
 
     void print(Channel channel, const QByteArray& msg);
-    void comment(const char* str); // <- Перенести в
+    void comment(const char* str); // <- Перенести
     void clear();
 
     void setEnableChannel(Channel channel);

@@ -4,7 +4,7 @@
 #include <QColor>
 #include <QFont>
 #include "Configurable.h"
-#include "LogTableModel.h"
+#include "logging.h"
 
 
 
@@ -21,11 +21,11 @@ public:
     void setAttributeFont(const QFont& font);
     QFont attributeFont() const;
 
-    void setChannelColor(LogTableModel::Channel channel, const QColor& color);
-    QColor channelColor(LogTableModel::Channel channel) const;
+    void setChannelColor(LogChannel channel, const QColor& color);
+    QColor channelColor(LogChannel channel) const;
 
-    void setChannelFont(LogTableModel::Channel channel, const QFont& font);
-    QFont channelFont(LogTableModel::Channel channel) const;
+    void setChannelFont(LogChannel channel, const QFont& font);
+    QFont channelFont(LogChannel channel) const;
 
     void defaultConfig(nlohmann::json &json) const override;
     void fromJson(nlohmann::json &json) override;
@@ -37,6 +37,6 @@ signals:
 private:
     QColor m_attr_color;
     QFont  m_attr_font;
-    QMap<LogTableModel::Channel, QColor> m_ch_colors;
-    QMap<LogTableModel::Channel, QFont>  m_ch_fonts;
+    QMap<LogChannel, QColor> m_ch_colors;
+    QMap<LogChannel, QFont>  m_ch_fonts;
 };

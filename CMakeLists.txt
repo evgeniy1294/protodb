@@ -18,6 +18,7 @@ find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/qnlohmann.cpp
         src/Configurable.cpp
         src/FabricAbstract.cpp
         src/ConfigFrameFabric.cpp
@@ -47,6 +48,8 @@ set(PROJECT_SOURCES
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
 
+        include/qnlohmann.h
+        include/logging.h
         include/Configurable.h
         include/FabricAbstract.h
         include/CreatorAbstract.h
