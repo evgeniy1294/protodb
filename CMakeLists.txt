@@ -27,6 +27,7 @@ set(PROJECT_SOURCES
         src/LogFormatter.cpp
         src/LogModel.cpp
         src/LogTableView.cpp
+        src/SequenceTableView.cpp
         src/Core.cpp
         src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
@@ -63,6 +64,7 @@ set(PROJECT_SOURCES
         include/LogFormatter.h
         include/LogModel.h
         include/LogTableView.h
+        include/SequenceTableView.h
         include/Core.h
         include/Worker.h
         include/mainwindow.h

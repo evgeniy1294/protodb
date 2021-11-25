@@ -3,8 +3,6 @@
 #include <QTableView>
 #include "logging.h"
 
-class LogItemDelegate;
-
 class LogTableView: public QTableView
 {
     Q_OBJECT
