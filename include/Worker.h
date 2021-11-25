@@ -4,12 +4,7 @@
 
 class QAbstractTableModel;
 class SequenceTableModel;
-class LogTableModel;
-class LogStyle;
-class LogConfigs;
 
-struct LogStyle{};
-struct LogConfigs{};
 
 class Worker: public QObject {
     Q_OBJECT
@@ -20,13 +15,7 @@ public:
 
     QAbstractTableModel* incomingSequences();
     QAbstractTableModel* outgoingSequences();
-    QAbstractTableModel* log();
 
-    LogStyle logStyle();
-    void setLogStyle(const LogStyle& style);
-
-    LogConfigs logConfigs();
-    void setLogConfigs(const LogConfigs& configs);
 
 public slots:
     void onReceived(const QDateTime&, const QByteArray&);
@@ -39,5 +28,5 @@ signals:
 private:
     SequenceTableModel* m_inc_sequences;
     SequenceTableModel* m_out_sequences;
-    LogTableModel* m_log;
+    //LogTableModel* m_log;
 };

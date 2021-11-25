@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QStyledItemDelegate>
-#include "LogTableModel.h"
 
 class LogItemDelegate: public QStyledItemDelegate
 {

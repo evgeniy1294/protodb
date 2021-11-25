@@ -9,6 +9,15 @@ LogDecorator::LogDecorator(QObject* parent)
     setDefaultConfig();
 }
 
+LogDecorator::LogDecorator(const LogDecorator &other, QObject *parent)
+    : QObject(parent)
+{
+    m_attr_color = other.m_attr_color;
+    m_attr_font  = other.m_attr_font;
+    m_ch_colors  = other.m_ch_colors;
+    m_ch_fonts   = other.m_ch_fonts;
+}
+
 void LogDecorator::setAttributeColor(const QColor& color)
 {
     m_attr_color = color;
@@ -42,6 +51,11 @@ QColor LogDecorator::channelColor(LogChannel channel) const
     return m_ch_colors[channel];
 }
 
+QColor LogDecorator::channelColor(const LogEvent &event) const
+{
+    return channelColor(event.channel);
+}
+
 void LogDecorator::setChannelFont(LogChannel channel, const QFont& font)
 {
     m_ch_fonts[channel] = font;
@@ -53,11 +67,16 @@ QFont LogDecorator::channelFont(LogChannel channel) const
     return m_ch_fonts[channel];
 }
 
+QFont LogDecorator::channelFont(const LogEvent &event) const
+{
+    return channelFont(event.channel);
+}
+
 #include <iostream>
 
 void LogDecorator::defaultConfig(nlohmann::json& json) const
 {
-    json["AttributeColor"]      = QColor(Qt::green);
+    json["AttributeColor"]      = QColor(Qt::darkGreen);
     json["AttributeFont"]       = QApplication::font();
     json["FirstChannelColor"]   = QColor(Qt::red);
     json["FirstChannelFont"]    = QApplication::font();

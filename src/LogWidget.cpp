@@ -8,50 +8,43 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-#include "singleton.h"
-#include "Core.h"
 #include "LogWidget.h"
-#include "Logger.h"
-#include "LogTableModel.h"
-#include "LogItemDelegate.h"
-#include "LogItemFormatter.h"
+#include "LogTableView.h"
+#include "LogModel.h"
 #include "ConnectionConfigDialog.h"
 
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {
     createGui();
-    connectSignals();
+    createConnections();
     m_conn_dialog = new ConnectionConfigDialog();
-        m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+    m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+}
+
+void LogWidget::setModel(LogModel *model)
+{
+    m_view->setModel(model);
+}
+
+LogModel LogWidget::model() const
+{
+    auto model = m_view->model();
+    return dynamic_cast<LogModel*>(model) ? static_cast<LogModel*>(model) : nullptr;
 }
 
 void LogWidget::createGui()
 {
     // ---------[LOG VIEW]---------- //
-    m_view = new QTableView();
-        m_model = new LogTableModel(m_view);
-            m_model->setLogger(Singleton::instance().m_core->logger());
-        m_view->setModel(m_model);
-        m_view->setItemDelegate(new LogItemDelegate());
-        m_view->setWordWrap(true);
-        m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-        m_view->setShowGrid(false);
-        m_view->verticalHeader()->hide();
-        m_view->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        auto hh = m_view->horizontalHeader();
-            hh->setSectionResizeMode(LogTableModel::kColumnTimestamp, QHeaderView::ResizeToContents);
-            hh->setSectionResizeMode(LogTableModel::kColumnChannel,   QHeaderView::ResizeToContents);
-            hh->setSectionResizeMode(LogTableModel::kColumnMsg,     QHeaderView::Stretch);
-            hh->hide();
+    m_view = new LogTableView();
 
     // ---------[BUTTONS]---------- //
-    m_clear_btn = new QPushButton();
-        m_clear_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
-        m_clear_btn->setToolTip("Clear log window");
+    m_clr_btn = new QPushButton();
+        m_clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
+        m_clr_btn->setToolTip("Clear log window");
 
     m_mode_btn = new QPushButton();
-        m_mode_btn->setText(toString(m_model->formatter()->messageFormat()));
+        m_mode_btn->setText("HEX");
         m_mode_btn->setFixedSize(64, 32);
 
     m_run = new QPushButton();
@@ -59,9 +52,9 @@ void LogWidget::createGui()
         m_run->setIconSize(QSize(24,24));
         m_run->setFixedSize(32, 32);
 
-    m_config_btn = new QPushButton();
-        m_config_btn->setText("115200, none, 8, 1");
-        m_config_btn->setFixedSize(136, 32);
+    m_cfg_btn = new QPushButton();
+        m_cfg_btn->setText("115200, none, 8, 1");
+        m_cfg_btn->setFixedSize(136, 32);
 
     // ---------[LINE EDIT]---------- //
     m_find_le = new QLineEdit();
@@ -95,11 +88,11 @@ void LogWidget::createGui()
 
     // ---------[LAYOUT]---------- //
     auto top_layout = new QHBoxLayout();
-        top_layout->addWidget(m_clear_btn);
+        top_layout->addWidget(m_clr_btn);
         top_layout->addWidget(m_find_le);
         top_layout->addWidget(m_run);
         top_layout->addWidget(m_mode_btn);
-        top_layout->addWidget(m_config_btn);
+        top_layout->addWidget(m_cfg_btn);
 
     auto bottom_layout = new QHBoxLayout();
         bottom_layout->addWidget(m_msg_le);
@@ -114,34 +107,45 @@ void LogWidget::createGui()
     setLayout(layout);
 }
 
-void LogWidget::connectSignals()
+void LogWidget::createConnections()
 {
     connect(m_run, &QPushButton::released, this, [this]() {
         static bool state = true;
         if (state) {
-            Singleton::instance().m_core->start();
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));;
-            state = false;
         }
         else
         {
-            Singleton::instance().m_core->stop();
             m_run->setIcon(QIcon(":/icons/run.svg"));
-            state = true;
+        }
+        state = !state;
+    });
+
+
+    connect(m_clr_btn, &QPushButton::released, this, [this] {
+        auto model = m_view->model();
+
+        if (dynamic_cast<LogModel*>(model)) {
+            auto log_model = static_cast<LogModel*>(model);
+            log_model->clear();
         }
     });
 
-
-    connect(m_clear_btn, &QPushButton::released, this, [this] {
-        m_model->logger()->clear();
-    });
-
     connect(m_mode_btn, &QPushButton::released, this, [this]() {
-       m_mode_btn->setText(toString(m_model->formatter()->nextMessageFormat()));
+       static bool state = true;
+
+       if (state) {
+           m_mode_btn->setText("ASCII");
+       }
+       else {
+           m_mode_btn->setText("HEX");
+       }
+
+       state = !state;
     });
 
 
-    connect(m_config_btn, &QPushButton::released, this, [this]() {
+    connect(m_cfg_btn, &QPushButton::released, this, [this]() {
         m_conn_dialog->show();
     });
 }

@@ -4,7 +4,6 @@
 #include "singleton.h"
 #include "Core.h"
 
-void jsonTest();
 
 int main(int argc, char *argv[])
 {
@@ -13,26 +12,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("protodb");
     QCoreApplication::setApplicationName("protodb");
 
-    jsonTest();
+    MainWindow w;
+    w.restoreState();
+    w.show();
 
-    //MainWindow w;
-    //w.restoreState();
-    //w.show();
+    Singleton::instance().m_core->init();
 
-    //Singleton::instance().m_core->init();
-
-    return 0;//a.exec();
+    return a.exec();
 }
 
-#include <nlohmann/json.hpp>
-#include "LogDecorator.h"
-
-void jsonTest() {
-    LogDecorator decorator;
-
-    nlohmann::json json;
-    json["LogDecorations"] = nlohmann::json();
-    decorator.toJson(json["LogDecorations"]);
-
-    std::cout << json.dump(4);
-}

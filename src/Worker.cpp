@@ -1,6 +1,5 @@
 #include "Worker.h"
 #include "SequenceTableModel.h"
-#include "LogTableModel.h"
 
 
 
@@ -20,30 +19,7 @@ QAbstractTableModel *Worker::outgoingSequences()
     return m_out_sequences;
 }
 
-QAbstractTableModel *Worker::log()
-{
-    return m_log;
-}
 
-LogStyle Worker::logStyle()
-{
-    return {};
-}
-
-void Worker::setLogStyle(const LogStyle &style)
-{
-
-}
-
-LogConfigs Worker::logConfigs()
-{
-
-}
-
-void Worker::setLogConfigs(const LogConfigs &configs)
-{
-
-}
 
 void Worker::onReceived(const QDateTime &, const QByteArray &)
 {

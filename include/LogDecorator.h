@@ -14,6 +14,7 @@ class LogDecorator: public QObject, public Configurable
 
 public:
     LogDecorator(QObject* parent = nullptr);
+    LogDecorator(const LogDecorator& other, QObject* parent = nullptr);
 
     void setAttributeColor(const QColor& color);
     QColor attributeColor() const;
@@ -23,9 +24,11 @@ public:
 
     void setChannelColor(LogChannel channel, const QColor& color);
     QColor channelColor(LogChannel channel) const;
+    QColor channelColor(const LogEvent& event) const;
 
     void setChannelFont(LogChannel channel, const QFont& font);
     QFont channelFont(LogChannel channel) const;
+    QFont channelFont(const LogEvent& event) const;
 
     void defaultConfig(nlohmann::json &json) const override;
     void fromJson(nlohmann::json &json) override;

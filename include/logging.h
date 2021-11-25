@@ -10,8 +10,12 @@ enum LogChannel {
     kLogChannelsNum
 };
 
+enum ByteFormat {
+    kHexFormat,
+    kAsciiFormat,
+};
 
-struct LogItem
+struct LogEvent
 {
     QDateTime  timestamp;
     LogChannel channel;

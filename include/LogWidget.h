@@ -2,35 +2,37 @@
 
 #include <QWidget>
 
+class LogTableView;
 class QTableView;
 class QPushButton;
 class QLabel;
 class QLineEdit;
 class ConnectionConfigDialog;
-class LogTableModel;
-class Logger;
+class LogModel;
 
 class LogWidget: public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit LogWidget(QWidget* parent = nullptr);
-  ~LogWidget() = default;
+    explicit LogWidget(QWidget* parent = nullptr);
+    ~LogWidget() = default;
+
+    void setModel(LogModel* model);
+    LogModel model() const;
 
 private:
-  void createGui();
-  void connectSignals();
+    void createGui();
+    void createConnections();
 
 private:
-  QTableView* m_view;
-  QPushButton* m_mode_btn;
-  QPushButton* m_clear_btn;
-  QPushButton* m_run;
-  QPushButton* m_config_btn;
-  QLineEdit* m_find_le;
-  QLineEdit* m_msg_le;
-  LogTableModel* m_model;
-  ConnectionConfigDialog* m_conn_dialog;
+     QPushButton* m_mode_btn;
+     QPushButton* m_clr_btn;
+     QPushButton* m_run;
+     QPushButton* m_cfg_btn;
+     QLineEdit* m_find_le;
+     QLineEdit* m_msg_le;
+     LogTableView* m_view;
+     ConnectionConfigDialog* m_conn_dialog;
 };
 

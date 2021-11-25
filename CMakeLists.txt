@@ -24,6 +24,9 @@ set(PROJECT_SOURCES
         src/ConfigFrameFabric.cpp
         src/IoDeviceFabric.cpp
         src/LogDecorator.cpp
+        src/LogFormatter.cpp
+        src/LogModel.cpp
+        src/LogTableView.cpp
         src/Core.cpp
         src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
@@ -41,9 +44,7 @@ set(PROJECT_SOURCES
         src/settings_dialog.cpp
         src/Logger.cpp
         src/LogWidget.cpp
-        src/LogTableModel.cpp
         src/LogItemDelegate.cpp
-        src/LogItemFormatter.cpp
         src/SerialConfigWidget.cpp
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
@@ -59,6 +60,9 @@ set(PROJECT_SOURCES
         include/IoDeviceCreator.h
         include/IoDeviceFabric.h
         include/LogDecorator.h
+        include/LogFormatter.h
+        include/LogModel.h
+        include/LogTableView.h
         include/Core.h
         include/Worker.h
         include/mainwindow.h
@@ -73,10 +77,8 @@ set(PROJECT_SOURCES
         include/LogConfigWidget.h
         include/settings_dialog.h
         include/Logger.h
-        include/LogTableModel.h
         include/LogItemDelegate.h
         include/LogWidget.h
-        include/LogItemFormatter.h
         include/SerialConfigWidget.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h

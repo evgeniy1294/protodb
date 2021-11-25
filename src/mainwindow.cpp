@@ -16,7 +16,7 @@
 #include "sq_table_widget.h"
 #include "LogWidget.h"
 
-
+#include "LogModel.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
