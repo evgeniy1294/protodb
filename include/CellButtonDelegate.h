@@ -16,8 +16,7 @@ public:
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
     void setIcon(const QIcon& icon);
-    void setCheckedIcon(const QIcon& icon);
-    void setUncheckedIcon(const QIcon& icon);
+    void setAlternateIcon(const QIcon& icon);
     void setText(const QString& text);
 
     void setCheckable(bool checkable);
@@ -27,10 +26,10 @@ public:
     bool isFlat();
 
 private:
-    bool  m_flat;
-    bool  m_checkable;
-    int   m_active_row;
     QIcon m_icon;
-    QIcon m_checked_icon;
+    QIcon m_alt_icon;
     QString m_text;
+    bool  m_checkable;
+    bool  m_flat;
+    int   m_active_row;
 };

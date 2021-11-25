@@ -10,7 +10,7 @@ class QMenu;
 class QPushButton;
 class QLineEdit;
 class QSortFilterProxyModel;
-class SequenceTableModel;
+class SequenceModel;
 class SqTableDialog;
 
 class SqTableWidget: public QWidget {
@@ -53,7 +53,7 @@ private:
     QSortFilterProxyModel* mFilter;
     QMenu* mMenu;
 
-    SequenceTableModel* mSqModel;
+    SequenceModel* mSqModel;
     SqTableDialog* mDialog;
 };
 

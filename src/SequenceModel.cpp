@@ -3,36 +3,36 @@
 #include <QPointer>
 #include <QDebug>
 
-#include "SequenceTableModel.h"
+#include "SequenceModel.h"
 #include <iostream>
 
-SequenceTableModel::SequenceTableModel(QObject* parent)
+SequenceModel::SequenceModel(QObject* parent)
     : QAbstractTableModel(parent)
-    , m_mode(DisplayMode::kOutgoingDisplayMode)
+    , m_mode(false)
 {
 
 }
 
 
-int SequenceTableModel::rowCount(const QModelIndex& parent) const
+int SequenceModel::rowCount(const QModelIndex& parent) const
 {
-    return m_list.size();
+    return m_sequences.size();
 }
 
-int SequenceTableModel::columnCount(const QModelIndex& parent) const
+int SequenceModel::columnCount(const QModelIndex& parent) const
 {
     return kColumnCount;
 }
 
 
-QVariant SequenceTableModel::data(const QModelIndex& index, int role) const
+QVariant SequenceModel::data(const QModelIndex& index, int role) const
 {
     auto row = index.row();
     auto col = index.column();
 
 
     if (checkIndex(index)) {
-        auto& sq = m_list.at(row);
+        auto& sq = m_sequences.at(row);
 
         if (role == Qt::DisplayRole) {
             switch (col) {
@@ -44,7 +44,7 @@ QVariant SequenceTableModel::data(const QModelIndex& index, int role) const
 
                 case kColumnPeriod: {
                     quint32 period  = sq.period();
-                    QString special = (m_mode == kIncomingDisplayMode) ?
+                    QString special = (isModeIncoming()) ?
                                             tr("No Delay") : tr("No Repeat");
 
                     return (sq.period() == 0) ? special : QString("%1ms").arg(period);
@@ -88,18 +88,18 @@ QVariant SequenceTableModel::data(const QModelIndex& index, int role) const
    return QVariant();
 }
 
-QVariant SequenceTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant SequenceModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
 
         if (orientation == Qt::Horizontal) {
             switch (section) {
                 case kColumnName: return QString(tr("Name"));
-                case kColumnBindedName: return (m_mode == kIncomingDisplayMode) ? QString(tr("Triggered")) : QString();
-                case kColumnPeriod: return (m_mode == kIncomingDisplayMode) ? QString(tr("Delay")) : QString(tr("Repeat"));
+                case kColumnBindedName: return (isModeIncoming()) ? QString(tr("Triggered")) : QString();
+                case kColumnPeriod: return (isModeIncoming()) ? QString(tr("Delay")) : QString(tr("Repeat"));
                 case kColumnDescription: return QString(tr("Description"));
                 case kColumnDsl: return QString(tr("Sequence"));
-                case kColumnActiveFlag: return (m_mode == kIncomingDisplayMode) ? QString(tr("Use")): QString("");
+                case kColumnActiveFlag: return (isModeIncoming()) ? QString(tr("Use")): QString("");
                 default: break;
             }
         }
@@ -113,7 +113,7 @@ QVariant SequenceTableModel::headerData(int section, Qt::Orientation orientation
 }
 
 
-bool SequenceTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     bool ret = false;
 
@@ -123,7 +123,7 @@ bool SequenceTableModel::setData(const QModelIndex& index, const QVariant& value
     if ( checkIndex(index) )
     {
         ret = true;
-        auto& sq = m_list[row];
+        auto& sq = m_sequences[row];
 
         if (role == Qt::EditRole)
         {
@@ -165,7 +165,7 @@ bool SequenceTableModel::setData(const QModelIndex& index, const QVariant& value
     return ret;
 }
 
-Qt::ItemFlags SequenceTableModel::flags(const QModelIndex& index) const
+Qt::ItemFlags SequenceModel::flags(const QModelIndex& index) const
 {
     int row[[maybe_unused]] = index.row();
     int col = index.column();
@@ -179,13 +179,13 @@ Qt::ItemFlags SequenceTableModel::flags(const QModelIndex& index) const
     return flags;
 }
 
-bool SequenceTableModel::insertRows(int row, int count, const QModelIndex& parent)
+bool SequenceModel::insertRows(int row, int count, const QModelIndex& parent)
 {
     Sequence sq;
     beginInsertRows(QModelIndex(), row, row + count - 1);
 
-    sq.setName(tr("Sequence %1").arg(m_list.size()+1));
-    m_list.insert(row, sq);
+    sq.setName(tr("Sequence %1").arg(m_sequences.size()+1));
+    m_sequences.insert(row, sq);
 
     endInsertRows();
 
@@ -193,19 +193,19 @@ bool SequenceTableModel::insertRows(int row, int count, const QModelIndex& paren
     return true;
 }
 
-bool SequenceTableModel::removeRows(int row, int count, const QModelIndex &parent)
+bool SequenceModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (row >= 0 && row < m_list.size()) {
-      count = ((row + count) > m_list.size()) ? m_list.size() - row : count;
+    if (row >= 0 && row < m_sequences.size()) {
+      count = ((row + count) > m_sequences.size()) ? m_sequences.size() - row : count;
       beginRemoveRows(QModelIndex(), row, row + count - 1);
 
-      if (row == 0 && count == m_list.size()) {
-        m_list.clear();
+      if (row == 0 && count == m_sequences.size()) {
+        m_sequences.clear();
       }
       else
       {
         for (int i = 0; i < count; i++) {
-          m_list.removeAt(row);
+          m_sequences.removeAt(row);
         }
 
       }
@@ -214,6 +214,21 @@ bool SequenceTableModel::removeRows(int row, int count, const QModelIndex &paren
     }
 
     return true;
+}
+
+void SequenceModel::setIncomingMode()
+{
+    m_mode = true;
+}
+
+void SequenceModel::setOutgoingMode()
+{
+    m_mode = false;
+}
+
+bool SequenceModel::isModeIncoming() const
+{
+    return m_mode;
 }
 
 

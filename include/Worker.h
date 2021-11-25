@@ -3,7 +3,7 @@
 #include <QObject>
 
 class QAbstractTableModel;
-class SequenceTableModel;
+class SequenceModel;
 
 
 class Worker: public QObject {
@@ -26,7 +26,7 @@ signals:
     void transmit(const QUuid&, const QByteArray&);
 
 private:
-    SequenceTableModel* m_inc_sequences;
-    SequenceTableModel* m_out_sequences;
+    SequenceModel* m_inc_sequences;
+    SequenceModel* m_out_sequences;
     //LogTableModel* m_log;
 };

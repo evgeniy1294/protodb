@@ -6,7 +6,7 @@
 
 #include "SequenceAbstract.h"
 
-class SequenceTableModel: public QAbstractTableModel
+class SequenceModel: public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -22,17 +22,12 @@ public:
         kColumnCount
     };
 
-    enum DisplayMode {
-        kIncomingDisplayMode,
-        kOutgoingDisplayMode,
-    };
-
     enum Role {
         kClickRole = Qt::UserRole,
     };
 
 public:
-    SequenceTableModel(QObject* parent = nullptr);
+    SequenceModel(QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -43,12 +38,14 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    DisplayMode displayMode() { return m_mode; }
-    void setDisplayMode(DisplayMode mode) { m_mode = mode; }
+    void setIncomingMode();
+    void setOutgoingMode();
+    bool isModeIncoming() const;
+
 
 private:
-    QList<Sequence> m_list;
-    DisplayMode m_mode;
+    QList<Sequence> m_sequences;
+    bool m_mode;
 };
 
 

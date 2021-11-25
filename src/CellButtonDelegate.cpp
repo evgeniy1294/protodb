@@ -26,7 +26,7 @@ void CellButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     btn.features   |= (m_flat) ? QStyleOptionButton::Flat : QStyleOptionButton::None;
     btn.state       = option.state | QStyle::State_Enabled;
     btn.text        = m_text;
-    btn.icon = (check && m_checkable) ? m_checked_icon : m_icon;
+    btn.icon = (check && m_checkable) ? m_alt_icon : m_icon;
 
     //if (option.state & QStyle::State_MouseOver) {
         btn.state |= ((m_active_row == index.row()) ? QStyle::State_Sunken : QStyle::State_None);
@@ -63,14 +63,9 @@ void CellButtonDelegate::setIcon(const QIcon& icon)
     m_icon = icon;
 }
 
-void CellButtonDelegate::setCheckedIcon(const QIcon& icon)
+void CellButtonDelegate::setAlternateIcon(const QIcon& icon)
 {
-    setIcon(icon);
-}
-
-void CellButtonDelegate::setUncheckedIcon(const QIcon& icon)
-{
-    m_checked_icon = icon;
+    m_alt_icon = icon;
 }
 
 void CellButtonDelegate::setText(const QString& text)

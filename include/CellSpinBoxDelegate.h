@@ -32,7 +32,7 @@ public:
     const QString& suffix() const { return  m_suffix; }
     void setSuffix(const QString& suffix) { m_suffix = suffix; }
 
-    const QString& spetialValueText() const { return m_special_text; }
+    const QString &specialValueText() const { return m_special_text; }
     void setSpecialValueText(const QString& text) { m_special_text = text; }
 
 private:

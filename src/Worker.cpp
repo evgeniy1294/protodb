@@ -1,5 +1,5 @@
 #include "Worker.h"
-#include "SequenceTableModel.h"
+#include "SequenceModel.h"
 
 
 
