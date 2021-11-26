@@ -86,7 +86,7 @@ void LogDecorator::defaultConfig(nlohmann::json& json) const
     json["CommentChannelFont"]  = QApplication::font();
 }
 
-void LogDecorator::fromJson(nlohmann::json& json)
+void LogDecorator::fromJson(const nlohmann::json& json)
 {
     m_attr_color = json["AttributeColor"].get<QColor>();
     m_attr_font  = json["AttributeFont"].get<QFont>();

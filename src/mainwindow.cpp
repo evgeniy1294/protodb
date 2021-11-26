@@ -13,13 +13,15 @@
 
 #include "mainwindow.h"
 #include "settings_dialog.h"
+#include "Worker.h"
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
 
 #include "LogModel.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(Worker* worker, QWidget *parent)
     : QMainWindow(parent)
+    , m_worker(worker)
 {
   createGui();
   connectSignals();
@@ -56,15 +58,10 @@ void MainWindow::createDock()
         log_widget->setWidget(new LogWidget());
 
     auto incoming_table_widget = new ads::CDockWidget("Incoming");
-        auto incModel = new SequenceModel(this);
-            incModel->setIncomingMode();
-
-        incoming_table_widget->setWidget(new SequenceTableWidget(incModel));
+        incoming_table_widget->setWidget(new SequenceTableWidget(m_worker->incomingSequences()));
 
     auto outgoing_table_widget = new ads::CDockWidget("Outgoing");
-        auto outModel = new SequenceModel(this);
-            outModel->setOutgoingMode();
-        outgoing_table_widget->setWidget(new SequenceTableWidget(outModel));
+        outgoing_table_widget->setWidget(new SequenceTableWidget(m_worker->outgoingSequences()));
 
     m_dock_man = new ads::CDockManager();
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, log_widget);

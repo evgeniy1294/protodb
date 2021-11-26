@@ -2,7 +2,7 @@
 
 #include "mainwindow.h"
 #include "singleton.h"
-#include "Core.h"
+#include "Worker.h"
 
 
 int main(int argc, char *argv[])
@@ -12,11 +12,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("protodb");
     QCoreApplication::setApplicationName("protodb");
 
-    MainWindow w;
+    Worker* worker = new Worker();
+    MainWindow w(worker);
     w.restoreState();
     w.show();
-
-    Singleton::instance().m_core->init();
 
     return a.exec();
 }

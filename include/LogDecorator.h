@@ -31,7 +31,7 @@ public:
     QFont channelFont(const LogEvent& event) const;
 
     void defaultConfig(nlohmann::json &json) const override;
-    void fromJson(nlohmann::json &json) override;
+    void fromJson(const nlohmann::json &json) override;
     void toJson(nlohmann::json &json) const override;
 
 signals:

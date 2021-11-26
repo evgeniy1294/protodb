@@ -6,7 +6,7 @@
 class Configurable
 {
 public:
-    virtual void fromJson(nlohmann::json& json);
+    virtual void fromJson(const nlohmann::json& json);
     virtual void toJson(nlohmann::json& json) const;
 
     virtual void setName(const QString& name);

@@ -8,12 +8,14 @@ namespace ads {
   class CDockManager;
 }
 
+class Worker;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
+  explicit MainWindow(Worker* worker, QWidget *parent = nullptr);
   ~MainWindow() = default;
 
   void restoreState();
@@ -42,6 +44,8 @@ private:
   QAction* m_exit;
   isa_tool_bar* m_toolbar;
   ads::CDockManager* m_dock_man;
+
+  Worker* m_worker;
 };
 
 

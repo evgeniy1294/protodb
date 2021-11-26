@@ -1,32 +1,43 @@
 #pragma once
 
 #include <QObject>
+#include "Configurable.h"
 
 class QAbstractTableModel;
 class SequenceModel;
+class LogModel;
 
 
-class Worker: public QObject {
+class Worker: public QObject, public Configurable
+{
     Q_OBJECT
 
 public:
     Worker(QObject* parent = nullptr);
    ~Worker() = default;
 
-    QAbstractTableModel* incomingSequences();
-    QAbstractTableModel* outgoingSequences();
+    SequenceModel* incomingSequences();
+    SequenceModel* outgoingSequences();
+    LogModel*      logModel();
 
+    // void defaultConfig(nlohmann::json& json) const override; -- непонятно, нужна ли данная функция
+    void fromJson(const nlohmann::json& json) override;
+    void toJson(nlohmann::json& json) const override;
 
 public slots:
-    void onReceived(const QDateTime&, const QByteArray&);
-    void onTransmitted(const QDateTime&, const QUuid&);
+    void onStart();
+    void onStop();
+    void onReceived(const QDateTime& timestamp, const QByteArray& data);
+    void onTransmitted(const QDateTime& timestamp, const QByteArray& data, const QUuid& uuid);
+    void onError(const QString&);
 
 signals:
-    void print(const QString&);
-    void transmit(const QUuid&, const QByteArray&);
+    void sStart(); // Передавать QIoDevice или конфиг?
+    void sStop();
+    void sTransmit(const QUuid&, const QByteArray&);
 
 private:
-    SequenceModel* m_inc_sequences;
-    SequenceModel* m_out_sequences;
-    //LogTableModel* m_log;
+    SequenceModel* m_incoming_sequences;
+    SequenceModel* m_outgoing_sequences;
+    LogModel* m_log_model;
 };

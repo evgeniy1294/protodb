@@ -1,6 +1,6 @@
 #include "Configurable.h"
 
-void Configurable::fromJson(nlohmann::json &json)
+void Configurable::fromJson(const nlohmann::json &json)
 {
     Q_UNUSED(json);
 }

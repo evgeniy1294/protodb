@@ -57,7 +57,7 @@ void LogFormatter::defaultConfig(nlohmann::json &json) const
     json["CommentChannelName"] = "[LUA]";
 }
 
-void LogFormatter::fromJson(nlohmann::json &json)
+void LogFormatter::fromJson(const nlohmann::json &json)
 {
     m_separator   = json["Separator"].get<char>();
     m_time_format = json["TimestampFormat"].get<QString>();
