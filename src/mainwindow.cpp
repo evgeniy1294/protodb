@@ -13,7 +13,7 @@
 
 #include "mainwindow.h"
 #include "settings_dialog.h"
-#include "sq_table_widget.h"
+#include "SequenceTableWidget.h"
 #include "LogWidget.h"
 
 #include "LogModel.h"
@@ -46,6 +46,7 @@ void MainWindow::createGui()
     setCentralWidget(central_widget);
 }
 
+#include "SequenceModel.h"
 void MainWindow::createDock()
 {
     ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);
@@ -55,10 +56,15 @@ void MainWindow::createDock()
         log_widget->setWidget(new LogWidget());
 
     auto incoming_table_widget = new ads::CDockWidget("Incoming");
-        incoming_table_widget->setWidget(new SqTableWidget(SqTableWidget::kIncomingDisplayMode));
+        auto incModel = new SequenceModel(this);
+            incModel->setIncomingMode();
+
+        incoming_table_widget->setWidget(new SequenceTableWidget(incModel));
 
     auto outgoing_table_widget = new ads::CDockWidget("Outgoing");
-        outgoing_table_widget->setWidget(new SqTableWidget(SqTableWidget::kOutgoingDisplayMode));
+        auto outModel = new SequenceModel(this);
+            outModel->setOutgoingMode();
+        outgoing_table_widget->setWidget(new SequenceTableWidget(outModel));
 
     m_dock_man = new ads::CDockManager();
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, log_widget);

@@ -38,7 +38,7 @@ set(PROJECT_SOURCES
         src/menu.cpp
         src/tool_bar.cpp
         src/singleton.cpp
-        src/sq_table_widget.cpp
+        src/SequenceTableWidget.cpp
         src/SequenceModel.cpp
         src/sq_table_dialog.cpp
         src/LogConfigWidget.cpp
@@ -73,7 +73,7 @@ set(PROJECT_SOURCES
         include/tool_bar.h
         include/SequenceAbstract.h
         include/singleton.h
-        include/sq_table_widget.h
+        include/SequenceTableWidget.h
         include/SequenceModel.h
         include/sq_table_dialog.h
         include/LogConfigWidget.h

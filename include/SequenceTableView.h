@@ -12,7 +12,7 @@ class SequenceTableView: public QTableView
 
 public:
     SequenceTableView(QWidget* parent = nullptr);
-    void setModel(QAbstractItemModel *model) override;
+    void setSequenceModel(QAbstractItemModel *model, bool incomingMode);
 
 private:
     CellButtonDelegate*   m_btn_delegate;

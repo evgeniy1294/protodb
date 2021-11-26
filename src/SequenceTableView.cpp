@@ -28,25 +28,33 @@ SequenceTableView::SequenceTableView(QWidget *parent)
     setSelectionBehavior(QAbstractItemView::SelectRows);
     auto vh = verticalHeader();
         vh->setSectionResizeMode(QHeaderView::Fixed);
-
-     //   setItemDelegateForColumn(SequenceModel::kColumnPeriod, cell_spinbox);
-
-     //   mTblView->setColumnWidth(SequenceModel::kColumnActiveFlag, 0);
-     //   mTblView->hideColumn(SequenceModel::kColumnDescription);
-     //   mTblView->hideColumn(SequenceModel::kColumnDsl);
-
-     //   auto headerView = mTblView->horizontalHeader();
-     //       headerView->setSectionResizeMode(SequenceModel::kColumnName,       QHeaderView::Stretch);
-     //       headerView->setSectionResizeMode(SequenceModel::kColumnBindedName, QHeaderView::Stretch);
-     //       headerView->setSectionResizeMode(SequenceModel::kColumnPeriod,     QHeaderView::Fixed);
-     //       headerView->setSectionResizeMode(SequenceModel::kColumnActiveFlag, QHeaderView::ResizeToContents);
 }
 
-void SequenceTableView::setModel(QAbstractItemModel *model)
+void SequenceTableView::setSequenceModel(QAbstractItemModel *model, bool incomingMode)
 {
-    if (dynamic_cast<SequenceModel*>(model)) {
-        QTableView::setModel(model);
-        QHeaderView* hh = horizontalHeader();
+    QTableView::setModel(model);
+        setItemDelegateForColumn(SequenceModel::kColumnPeriod, m_spinbox_delegate);
+        setColumnWidth(SequenceModel::kColumnActiveFlag, 0);
+        hideColumn(SequenceModel::kColumnDescription);
+        hideColumn(SequenceModel::kColumnDsl);
 
+    QHeaderView* hh = horizontalHeader();
+        hh->setSectionResizeMode(SequenceModel::kColumnName, QHeaderView::Stretch);
+        hh->setSectionResizeMode(SequenceModel::kColumnBindedName, QHeaderView::Stretch);
+        hh->setSectionResizeMode(SequenceModel::kColumnPeriod, QHeaderView::Fixed);
+        hh->setSectionResizeMode(SequenceModel::kColumnActiveFlag, QHeaderView::ResizeToContents);
+
+    if (incomingMode) {
+        m_spinbox_delegate->setSpecialValueText(tr("No Delay"));
+        showColumn(SequenceModel::kColumnBindedName);
+        setItemDelegateForColumn(SequenceModel::kColumnActiveFlag, m_checkbox_delegate);
     }
+    else
+    {
+        m_spinbox_delegate->setSpecialValueText(tr("No Repeat"));
+        hideColumn(SequenceModel::kColumnBindedName);
+        setItemDelegateForColumn(SequenceModel::kColumnActiveFlag, m_btn_delegate);
+    }
+
+    return;
 }
