@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include "SequenceTableWidget.h"
-#include "sq_table_dialog.h"
+#include "SequenceEditDialog.h"
 #include "SequenceTableView.h"
 #include "SequenceModel.h"
 
@@ -49,7 +49,7 @@ void SequenceTableWidget::setSequenceModel(SequenceModel *model)
         m_mapper->setCurrentIndex(0);
     m_view->setSequenceModel(m_search_model, model->isModeIncoming());
     m_edit_dialog->setMapper(m_mapper);
-    m_edit_dialog->wipe();
+    m_edit_dialog->reload();
 }
 
 SequenceModel* SequenceTableWidget::sequenceModel() const
@@ -99,9 +99,9 @@ void SequenceTableWidget::createGui()
     // ---------[TABLE VIEW]---------- //
     m_view = new SequenceTableView();
 
-    m_edit_dialog = new SqTableDialog();
+    m_edit_dialog = new SequenceEditDialog();
         m_edit_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        m_edit_dialog->wipe();
+        m_edit_dialog->reload();
 
     m_view = new SequenceTableView();
 
@@ -194,7 +194,7 @@ void SequenceTableWidget::onClickRemove()
             }
 
             if (m_model->rowCount() == 0) {
-                m_edit_dialog->wipe();
+                m_edit_dialog->reload();
             }
             else
             {
@@ -221,7 +221,7 @@ void SequenceTableWidget::onClickClear()
 
     if (msgbox.exec() == QMessageBox::Yes) {
         m_model->removeRows( 0, m_model->rowCount() );
-        m_edit_dialog->wipe();
+        m_edit_dialog->reload();
     }
 }
 

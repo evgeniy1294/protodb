@@ -11,7 +11,7 @@ class QLineEdit;
 class QSortFilterProxyModel;
 class SequenceModel;
 class SequenceTableView;
-class SqTableDialog;
+class SequenceEditDialog;
 
 class SequenceTableWidget: public QWidget {
     Q_OBJECT
@@ -51,7 +51,7 @@ private:
     QMenu* m_menu;
 
     SequenceModel* m_model;
-    SqTableDialog* m_edit_dialog;
+    SequenceEditDialog* m_edit_dialog;
 };
 
 

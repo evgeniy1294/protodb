@@ -40,7 +40,7 @@ set(PROJECT_SOURCES
         src/singleton.cpp
         src/SequenceTableWidget.cpp
         src/SequenceModel.cpp
-        src/sq_table_dialog.cpp
+        src/SequenceEditDialog.cpp
         src/LogConfigWidget.cpp
         src/settings_dialog.cpp
         src/Logger.cpp
@@ -75,7 +75,7 @@ set(PROJECT_SOURCES
         include/singleton.h
         include/SequenceTableWidget.h
         include/SequenceModel.h
-        include/sq_table_dialog.h
+        include/SequenceEditDialog.h
         include/LogConfigWidget.h
         include/settings_dialog.h
         include/Logger.h
