@@ -9,6 +9,7 @@ class QLabel;
 class QLineEdit;
 class ConnectionConfigDialog;
 class LogModel;
+class LuaApi;
 
 class LogWidget: public QWidget
 {
@@ -34,5 +35,8 @@ private:
      QLineEdit* m_msg_le;
      LogTableView* m_view;
      ConnectionConfigDialog* m_conn_dialog;
+
+     LuaApi* m_lua_api;
+     LogModel* m_log_model;
 };
 

@@ -12,7 +12,14 @@
 LuaApi::LuaApi(QObject* parent)
     : QObject(parent)
 {
-    m_lua.open_libraries(sol::lib::base, sol::lib::math);
+    m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
+
+    auto log = m_lua["log"].get_or_create<sol::table>();
+    log.new_usertype<LuaApi>("log",
+        "print", &LuaApi::logPrint,
+        "clear", &LuaApi::logClear);
+
+    m_lua["log"] = this;
 }
 
 void LuaApi::setScriptFile(const QString& path)
@@ -86,4 +93,14 @@ void LuaApi::buildMessage(QByteArray& data)
         m_lua["__msg"] = data;
         m_build_message(m_lua["__msg"]);
     }
+}
+
+void LuaApi::logPrint(const char *c_str)
+{
+    emit sLogPrint(QByteArray(c_str));
+}
+
+void LuaApi::logClear()
+{
+    emit sLogClear();
 }

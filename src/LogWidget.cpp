@@ -13,6 +13,8 @@
 #include "LogModel.h"
 #include "ConnectionConfigDialog.h"
 
+#include "LuaApi.h"
+
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {
@@ -20,6 +22,17 @@ LogWidget::LogWidget(QWidget* parent)
     createConnections();
     m_conn_dialog = new ConnectionConfigDialog();
     m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    // ------- Test --------
+    m_log_model = new LogModel(this);
+    m_lua_api = new LuaApi(this);
+        m_lua_api->setScriptFile("/home/evgen/workspace/protodb/script.lua");
+
+    connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
+    connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &LogModel::clear);
+
+    setModel(m_log_model);
+    // ------- Test --------
 }
 
 void LogWidget::setModel(LogModel *model)
@@ -112,11 +125,23 @@ void LogWidget::createConnections()
     connect(m_run, &QPushButton::released, this, [this]() {
         static bool state = true;
         if (state) {
-            m_run->setIcon(QIcon(":/icons/stop_rect.svg"));;
+            m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
+
+            m_lua_api->loadScript();
+            m_lua_api->start();
+
+            QByteArray msg;
+            msg.push_back(0x31);
+            msg.push_back(0x32);
+            msg.push_back(0x33);
+            msg.push_back(0x13);
+
+            m_lua_api->beforeTransmit(msg);
         }
         else
         {
             m_run->setIcon(QIcon(":/icons/run.svg"));
+            m_lua_api->stop();
         }
         state = !state;
     });

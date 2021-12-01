@@ -7,7 +7,7 @@
 
 #include "SequenceAbstract.h"
 
-class LuaApi: public QObject {
+class LuaApi final: public QObject {
     Q_OBJECT
 
 public:
@@ -27,8 +27,14 @@ public:
     void afterReceive(QByteArray& data);
     void buildMessage(QByteArray& data);
 
-    //---------- [C++ API] ----------//
-    void print();
+signals:
+    void sLogPrint(const QByteArray&);
+    void sLogClear();
+
+private:
+    //--------- [C API] -----------//
+    void logPrint(const char* c_str);
+    void logClear();
 
 private:
     sol::state m_lua;
