@@ -78,12 +78,14 @@ void LogDecorator::defaultConfig(nlohmann::json& json) const
 {
     json["AttributeColor"]      = QColor(Qt::darkGreen);
     json["AttributeFont"]       = QApplication::font();
-    json["FirstChannelColor"]   = QColor(Qt::red);
+    json["FirstChannelColor"]   = QColor(Qt::darkMagenta);
     json["FirstChannelFont"]    = QApplication::font();
     json["SecondChannelColor"]  = QColor(Qt::blue);
     json["SecondChannelFont"]   = QApplication::font();
     json["CommentChannelColor"] = QColor(Qt::darkYellow);
     json["CommentChannelFont"]  = QApplication::font();
+    json["ErrorChannelColor"]   = QColor(Qt::red);
+    json["ErrorChannelFont"]    = QApplication::font();
 }
 
 void LogDecorator::fromJson(const nlohmann::json& json)
@@ -91,11 +93,13 @@ void LogDecorator::fromJson(const nlohmann::json& json)
     m_attr_color = json["AttributeColor"].get<QColor>();
     m_attr_font  = json["AttributeFont"].get<QFont>();
     m_ch_colors[kFirstLogChannel]   = json["FirstChannelColor"].get<QColor>();
-    m_ch_colors[kSecondLogChannel]  = json["SecondChannelColor"].get<QColor>();
-    m_ch_colors[kCommentLogChannel] = json["CommentChannelColor"].get<QColor>();
     m_ch_fonts [kFirstLogChannel]   = json["FirstChannelFont"].get<QFont>();
     m_ch_fonts [kSecondLogChannel]  = json["SecondChannelFont"].get<QFont>();
+    m_ch_colors[kSecondLogChannel]  = json["SecondChannelColor"].get<QColor>();
+    m_ch_colors[kCommentLogChannel] = json["CommentChannelColor"].get<QColor>();
     m_ch_fonts [kCommentLogChannel] = json["CommentChannelFont"].get<QFont>();
+    m_ch_colors[kErrorLogChannel]   = json["ErrorChannelColor"].get<QColor>();
+    m_ch_fonts [kErrorLogChannel]   = json["ErrorChannelFont"].get<QFont>();
 
     emit sConfigChanged();
 }
@@ -110,4 +114,6 @@ void LogDecorator::toJson(nlohmann::json& json) const
     json["SecondChannelFont"]   = m_ch_fonts [kSecondLogChannel];
     json["CommentChannelColor"] = m_ch_colors[kCommentLogChannel];
     json["CommentChannelFont"]  = m_ch_fonts [kCommentLogChannel];
+    json["ErrorChannelColor"]   = m_ch_colors[kErrorLogChannel];
+    json["ErrorChannelFont"]    = m_ch_fonts [kErrorLogChannel];
 }

@@ -34,6 +34,7 @@ LogWidget::LogWidget(QWidget* parent)
         m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
     connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
+    connect(m_lua_api, &LuaApi::sLogError, m_log_model, &LogModel::error);
     connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &LogModel::clear);
 
     setModel(m_log_model);

@@ -6,6 +6,7 @@ enum LogChannel {
     kFirstLogChannel,
     kSecondLogChannel,
     kCommentLogChannel,
+    kErrorLogChannel,
 
     kLogChannelsNum
 };

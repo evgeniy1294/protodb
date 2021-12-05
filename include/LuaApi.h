@@ -28,6 +28,7 @@ public:
     void buildMessage(QByteArray& data);
 
 signals:
+    void sLogError(const QByteArray&);
     void sLogPrint(const QByteArray&);
     void sLogClear();
 

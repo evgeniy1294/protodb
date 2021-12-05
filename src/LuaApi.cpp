@@ -77,7 +77,7 @@ bool LuaApi::loadScript()
         }
         else {
             sol::error err = pfr;
-            emit sLogPrint(err.what());
+            emit sLogError(err.what());
         }
     }
 
@@ -105,7 +105,7 @@ void LuaApi::start()
 
        if (!pfr.valid()) {
            sol::error err = pfr;
-           emit sLogPrint(err.what());
+           emit sLogError(err.what());
        }
     }
 }
@@ -118,7 +118,7 @@ void LuaApi::stop()
 
         if (!pfr.valid()) {
             sol::error err = pfr;
-            emit sLogPrint(err.what());
+            emit sLogError(err.what());
         }
      }
 }
@@ -130,7 +130,7 @@ void LuaApi::beforeTransmit(QVector<uint8_t>& data)
 
         if (!pfr.valid()) {
             sol::error err = pfr;
-            emit sLogPrint(err.what());
+            emit sLogError(err.what());
         }
      }
 }
@@ -142,7 +142,7 @@ void LuaApi::afterReceive(QByteArray& data)
 
         if (!pfr.valid()) {
             sol::error err = pfr;
-            emit sLogPrint(err.what());
+            emit sLogError(err.what());
         }
      }
 }
@@ -154,7 +154,7 @@ void LuaApi::buildMessage(QByteArray& data)
 
         if (!pfr.valid()) {
             sol::error err = pfr;
-            emit sLogPrint(err.what());
+            emit sLogError(err.what());
         }
      }
 }

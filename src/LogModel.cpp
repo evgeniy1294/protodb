@@ -72,6 +72,12 @@ void LogModel::comment(const QByteArray &text)
     log(event);
 }
 
+void LogModel::error(const QByteArray& text)
+{
+    LogEvent event = {.timestamp = QDateTime::currentDateTime(), .channel = kErrorLogChannel, .message = text};
+    log(event);
+}
+
 void LogModel::clear()
 {
     beginResetModel();

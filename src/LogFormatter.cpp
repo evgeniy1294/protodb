@@ -55,6 +55,7 @@ void LogFormatter::defaultConfig(nlohmann::json &json) const
     json["FirstChannelName"]   = "[RX]";
     json["SecondChannelName"]  = "[TX]";
     json["CommentChannelName"] = "[LUA]";
+    json["ErrorChannelName"]   = "[ERR]";
 }
 
 void LogFormatter::fromJson(const nlohmann::json &json)
@@ -64,6 +65,7 @@ void LogFormatter::fromJson(const nlohmann::json &json)
     m_names[kFirstLogChannel]   = json["FirstChannelName"].get<QString>();
     m_names[kSecondLogChannel]  = json["SecondChannelName"].get<QString>();
     m_names[kCommentLogChannel] = json["CommentChannelName"].get<QString>();
+    m_names[kCommentLogChannel] = json["ErrorChannelName"].get<QString>();
 
     emit sConfigChanged();
 }
@@ -75,6 +77,7 @@ void LogFormatter::toJson(nlohmann::json &json) const
     json["FirstChannelName"]   = m_names[kFirstLogChannel];
     json["SecondChannelName"]  = m_names[kSecondLogChannel];
     json["CommentChannelName"] = m_names[kCommentLogChannel];
+    json["ErrorChannelName"]   = m_names[kErrorLogChannel];
 }
 
 QString LogFormatter::channelName(const LogEvent &event) const
@@ -89,7 +92,7 @@ QString LogFormatter::timestamp(const LogEvent &event) const
 
 QString LogFormatter::data(const LogEvent &event, ByteFormat format) const
 {
-    bool ascii = event.channel == kCommentLogChannel || format == kAsciiFormat;
+    bool ascii = event.channel == kCommentLogChannel || event.channel == kErrorLogChannel || format == kAsciiFormat;
     return ascii ? event.message : event.message.toHex(m_separator);
 }
 

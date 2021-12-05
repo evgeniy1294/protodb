@@ -39,6 +39,7 @@ public:
     void log(const LogEvent& event);
     void log(LogChannel ch, const QByteArray& data);
     void comment(const QByteArray& text);
+    void error(const QByteArray& text);
 
 signals:
     void sPrint(const QString& text);
