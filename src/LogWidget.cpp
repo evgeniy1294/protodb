@@ -15,6 +15,11 @@
 
 #include "LuaApi.h"
 
+
+
+
+
+
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {
@@ -26,7 +31,7 @@ LogWidget::LogWidget(QWidget* parent)
     // ------- Test --------
     m_log_model = new LogModel(this);
     m_lua_api = new LuaApi(this);
-        m_lua_api->setScriptFile("/home/evgen/workspace/protodb/script.lua");
+        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
     connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
     connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &LogModel::clear);
@@ -130,13 +135,16 @@ void LogWidget::createConnections()
             m_lua_api->loadScript();
             m_lua_api->start();
 
-            QByteArray msg;
-            msg.push_back(0x31);
-            msg.push_back(0x32);
-            msg.push_back(0x33);
-            msg.push_back(0x13);
+            // Test
+            QVector<uint8_t> msg{0x31, 0x32, 0x33, 0x34};
 
             m_lua_api->beforeTransmit(msg);
+            std::cout << std::hex << (uint64_t)msg[0] << std::endl;
+
+            QByteArray array(5, 0x32);
+
+            m_lua_api->afterReceive(array);
+            std::cout << std::hex << (uint64_t)array[0] << std::endl;
         }
         else
         {

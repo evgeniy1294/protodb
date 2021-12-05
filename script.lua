@@ -4,20 +4,21 @@ function start()
 end
 
 function stop()
-    log:clear()
+    --log:clear()
 end
 
 function beforeTransmit(msg)
-    __tx[1] = 0x12
-    text = "Byte[0] = "..string.format("%x", string.byte(msg[1]))..'\n'
-    text = text.."Byte[1] = "..string.format("%x", string.byte(msg[2]))..'\n'
-    text = text.."Byte[2] = "..string.format("%x", string.byte(msg[3]))..'\n'
-    text = text.."Byte[3] = "..string.format("%x", string.byte(msg[4]))
+    msg[1] = 0x17
+    text = "Byte[0] = "..string.format("%x", msg[1])..'\n'
+    text = text.."Byte[1] = "..string.format("%x", msg[2])..'\n'
+    text = text.."Byte[2] = "..string.format("%x", msg[3])..'\n'
+    text = text.."Byte[3] = "..string.format("%x", msg[4])
     log:print(text)
 end
 
 function afterReceive(msg)
-    --log:print("Example: After receive", msg[1], msg[2], msg[3])
+    --msg[1] = 0x31
+    log:print("Example: After receive")
 end
 
 function buildMessage(msg)

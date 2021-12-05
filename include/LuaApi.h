@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QtCore>
+#include <QVector>
 
-#define SOL_ALL_SAFETIES_ON 1
 #include <sol/sol.hpp>
 
 #include "SequenceAbstract.h"
@@ -23,7 +23,7 @@ public:
     //--------- [LUA API] -----------//
     void start();
     void stop();
-    void beforeTransmit(QByteArray& data);
+    void beforeTransmit(QVector<uint8_t>& data);
     void afterReceive(QByteArray& data);
     void buildMessage(QByteArray& data);
 
@@ -40,9 +40,9 @@ private:
     sol::state m_lua;
     QString m_file_path;
 
-    sol::function m_start;
-    sol::function m_stop;
-    sol::function m_before_transmit;
-    sol::function m_after_receive;
-    sol::function m_build_message;
+    sol::protected_function m_start;
+    sol::protected_function m_stop;
+    sol::protected_function m_before_transmit;
+    sol::protected_function m_after_receive;
+    sol::protected_function m_build_message;
 };
