@@ -8,6 +8,7 @@ class QAbstractButton;
 class QPushButton;
 class QDialogButtonBox;
 class QFontComboBox;
+class QComboBox;
 
 class LogDecorator;
 
@@ -59,4 +60,10 @@ private:
     QFontComboBox* m_error_font_cmbx;
     QFontComboBox* m_ch1_font_cmbx;
     QFontComboBox* m_ch2_font_cmbx;
+
+    QComboBox* m_attr_font_size_cmbx;
+    QComboBox* m_comment_font_size_cmbx;
+    QComboBox* m_error_font_size_cmbx;
+    QComboBox* m_ch1_font_size_cmbx;
+    QComboBox* m_ch2_font_size_cmbx;
 };

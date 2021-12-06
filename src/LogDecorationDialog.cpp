@@ -4,6 +4,8 @@
 #include <QDialogButtonBox>
 #include <QFontComboBox>
 #include <QColorDialog>
+#include <QMessageBox>
+#include <QCheckBox>
 #include "qnlohmann.h"
 #include "LogDecorationDialog.h"
 #include "LogDecorator.h"
@@ -18,8 +20,16 @@ LogDecorationDialog::LogDecorationDialog(QWidget *parent)
 
 void LogDecorationDialog::setDecorator(LogDecorator *decorator)
 {
-    m_decorator = decorator;
-    resetGui();
+    if (m_decorator != decorator) {
+
+        if (m_decorator != nullptr) {
+            disconnect(m_decorator);
+        }
+
+        m_decorator = decorator;
+        resetGui();
+        connect(m_decorator, &LogDecorator::sConfigChanged, this, &LogDecorationDialog::resetGui);
+    }
 }
 
 void LogDecorationDialog::resetGui()
@@ -48,11 +58,20 @@ void LogDecorationDialog::resetGui()
     m_error_color_btn->setIcon(pixmap);
 
     // Font combo boxes
-    m_attr_font_cmbx->setFont(m_decorator->attributeFont());
-    m_comment_font_cmbx->setFont(m_decorator->channelFont(kCommentLogChannel));
-    m_error_font_cmbx->setFont(m_decorator->channelFont(kErrorLogChannel));
-    m_ch1_font_cmbx->setFont(m_decorator->channelFont(kFirstLogChannel));
-    m_ch2_font_cmbx->setFont(m_decorator->channelFont(kSecondLogChannel));
+    QFont font = m_decorator->channelFont(kFirstLogChannel);
+    m_ch1_font_cmbx->setCurrentFont(font);
+
+    font = m_decorator->channelFont(kSecondLogChannel);
+    m_ch2_font_cmbx->setCurrentFont(font);
+
+    font = m_decorator->channelFont(kCommentLogChannel);
+    m_comment_font_cmbx->setCurrentFont(font);
+
+    font = m_decorator->channelFont(kErrorLogChannel);
+    m_error_font_cmbx->setCurrentFont(font);
+
+    font = m_decorator->attributeFont();
+    m_attr_font_cmbx->setCurrentFont(font);
 }
 
 void LogDecorationDialog::applyConfig()
@@ -60,28 +79,32 @@ void LogDecorationDialog::applyConfig()
     nlohmann::json json;
 
     json["AttributeColor"]      = m_attr_color;
-    json["AttributeFont"]       = m_attr_font_cmbx->font();
+    json["AttributeFont"]       = m_attr_font_cmbx->currentFont();
 
     json["FirstChannelColor"]   = m_ch1_color;
-    json["FirstChannelFont"]    = m_ch1_font_cmbx->font();
+    json["FirstChannelFont"]    = m_ch1_font_cmbx->currentFont();
 
     json["SecondChannelColor"]  = m_ch2_color;
-    json["SecondChannelFont"]   = m_ch2_font_cmbx->font();
+    json["SecondChannelFont"]   = m_ch2_font_cmbx->currentFont();
 
     json["CommentChannelColor"] = m_comment_color;
-    json["CommentChannelFont"]  = m_comment_font_cmbx->font();
+    json["CommentChannelFont"]  = m_comment_font_cmbx->currentFont();
 
     json["ErrorChannelColor"]   = m_error_color;
-    json["ErrorChannelFont"]    = m_error_font_cmbx->font();
+    json["ErrorChannelFont"]    = m_error_font_cmbx->currentFont();
 
     m_decorator->fromJson(json);
 }
 
 void LogDecorationDialog::createGui()
 {
+    static const QStringList font_size_list = { "6",  "7",  "8",  "9", "10", "11", "12", "14", "16",
+                                               "18", "20", "22", "24", "26", "28", "36", "48", "72"};
+
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
                                          QDialogButtonBox::Apply |
                                          QDialogButtonBox::Cancel |
+                                         QDialogButtonBox::RestoreDefaults |
                                          QDialogButtonBox::Reset );
 
     // Color buttons
@@ -98,30 +121,78 @@ void LogDecorationDialog::createGui()
     m_ch1_font_cmbx = new QFontComboBox();
     m_ch2_font_cmbx = new QFontComboBox();
 
+    // Font size ComboBoxes
+    m_attr_font_size_cmbx = new QComboBox();
+        m_attr_font_size_cmbx->addItems(font_size_list);
+
+    m_comment_font_size_cmbx = new QComboBox();
+        m_comment_font_size_cmbx->addItems(font_size_list);
+
+    m_error_font_size_cmbx   = new QComboBox();
+        m_error_font_size_cmbx->addItems(font_size_list);
+
+    m_ch1_font_size_cmbx = new QComboBox();
+        m_ch1_font_size_cmbx->addItems(font_size_list);
+
+    m_ch2_font_size_cmbx = new QComboBox();
+        m_ch2_font_size_cmbx->addItems(font_size_list);
+
+    // Font style CheckBoxes
+    auto m_attr_font_bold_cb = new QCheckBox("B");
+        auto font = m_attr_font_bold_cb->font();
+        font.setBold(true);
+    m_attr_font_bold_cb->setFont(font);
+
+    auto m_attr_font_italic_cb = new QCheckBox("I");
+        font = m_attr_font_italic_cb->font();
+        font.setItalic(true);
+    m_attr_font_italic_cb->setFont(font);
+
+    auto m_attr_font_underline_cb = new QCheckBox("U");
+        font = m_attr_font_underline_cb->font();
+        font.setUnderline(true);
+    m_attr_font_underline_cb->setFont(font);
+
     // Layout
-    auto main_layout = new QGridLayout();
-        main_layout->addWidget( new QLabel(tr("First channel")), 0, 0 );
-        main_layout->addWidget(m_ch1_color_btn, 0, 1);
-        main_layout->addWidget(m_ch1_font_cmbx, 0, 2);
+    auto inner_layout = new QGridLayout();
+        inner_layout->addWidget( new QLabel(tr("First channel")), 0, 0 );
+        inner_layout->addWidget(m_ch1_color_btn, 0, 1);
+        inner_layout->addWidget(m_ch1_font_cmbx, 0, 2);
+        inner_layout->addWidget(m_ch1_font_size_cmbx, 0, 3);
+        inner_layout->addWidget(m_attr_font_bold_cb, 0, 4);
+        inner_layout->addWidget(m_attr_font_italic_cb, 0, 5);
+        inner_layout->addWidget(m_attr_font_underline_cb, 0, 6);
 
-        main_layout->addWidget( new QLabel(tr("Second channel")), 1, 0 );
-        main_layout->addWidget(m_ch2_color_btn, 1, 1);
-        main_layout->addWidget(m_ch2_font_cmbx, 1, 2);
+        inner_layout->addWidget( new QLabel(tr("Second channel")), 1, 0 );
+        inner_layout->addWidget(m_ch2_color_btn, 1, 1);
+        inner_layout->addWidget(m_ch2_font_cmbx, 1, 2);
+        inner_layout->addWidget(m_ch2_font_size_cmbx, 1, 3);
 
-        main_layout->addWidget( new QLabel(tr("Attribute")), 2, 0 );
-        main_layout->addWidget(m_attr_color_btn, 2, 1);
-        main_layout->addWidget(m_attr_font_cmbx, 2, 2);
+        inner_layout->addWidget( new QLabel(tr("Attribute")), 2, 0 );
+        inner_layout->addWidget(m_attr_color_btn, 2, 1);
+        inner_layout->addWidget(m_attr_font_cmbx, 2, 2);
+        inner_layout->addWidget(m_attr_font_size_cmbx, 2, 3);
 
-        main_layout->addWidget( new QLabel(tr("Comments")), 3, 0 );
-        main_layout->addWidget(m_comment_color_btn, 3, 1);
-        main_layout->addWidget(m_comment_font_cmbx, 3, 2);
+        inner_layout->addWidget( new QLabel(tr("Comments")), 3, 0 );
+        inner_layout->addWidget(m_comment_color_btn, 3, 1);
+        inner_layout->addWidget(m_comment_font_cmbx, 3, 2);
+        inner_layout->addWidget(m_comment_font_size_cmbx, 3, 3);
 
-        main_layout->addWidget( new QLabel(tr("Errors")), 4, 0 );
-        main_layout->addWidget(m_error_color_btn, 4, 1);
-        main_layout->addWidget(m_error_font_cmbx, 4, 2);
+        inner_layout->addWidget( new QLabel(tr("Errors")), 4, 0 );
+        inner_layout->addWidget(m_error_color_btn, 4, 1);
+        inner_layout->addWidget(m_error_font_cmbx, 4, 2);
+        inner_layout->addWidget(m_error_font_size_cmbx, 4, 3);
 
-        main_layout->addWidget(m_dialog_btn, 5, 0, 1, 3);
 
+        inner_layout->setAlignment(Qt::AlignTop);
+        inner_layout->setColumnStretch(0, 0);
+        inner_layout->setColumnStretch(1, 0);
+        inner_layout->setColumnStretch(2, 1);
+        inner_layout->setColumnStretch(3, 0);
+
+    auto main_layout = new QVBoxLayout();
+        main_layout->addLayout(inner_layout);
+        main_layout->addWidget(m_dialog_btn);
     setLayout(main_layout);
 }
 
@@ -149,8 +220,26 @@ void LogDecorationDialog::onDialogButtonClicked(QAbstractButton* btn)
             break;
 
         case QDialogButtonBox::Reset:
-            resetGui(); // Может стоит использовать настройки по-умолчанию? Есть кнопка RestoreDefaults
+            resetGui();
             break;
+
+        case QDialogButtonBox::RestoreDefaults: {
+            QMessageBox msgbox;
+            {
+                msgbox.setText( tr("Reset configurations to default") );
+                msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                msgbox.setDefaultButton(QMessageBox::No);
+                msgbox.setIcon(QMessageBox::Icon::Warning);
+                msgbox.setFixedSize( QSize(680, 240) );
+
+                    msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+                    msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
+            }
+
+            if (msgbox.exec() == QMessageBox::Yes) {
+                m_decorator->setDefaultConfig();
+            }
+        } break;
 
         case QDialogButtonBox::Cancel:
             hide();
