@@ -19,6 +19,7 @@ end
 function afterReceive(msg)
     --msg[1] = 0x31
     log:print("Example: After receive")
+    error("TEST ERROR")
 end
 
 function buildMessage(msg)

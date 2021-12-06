@@ -65,7 +65,7 @@ void LogFormatter::fromJson(const nlohmann::json &json)
     m_names[kFirstLogChannel]   = json["FirstChannelName"].get<QString>();
     m_names[kSecondLogChannel]  = json["SecondChannelName"].get<QString>();
     m_names[kCommentLogChannel] = json["CommentChannelName"].get<QString>();
-    m_names[kCommentLogChannel] = json["ErrorChannelName"].get<QString>();
+    m_names[kErrorLogChannel]   = json["ErrorChannelName"].get<QString>();
 
     emit sConfigChanged();
 }

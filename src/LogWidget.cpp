@@ -12,6 +12,7 @@
 #include "LogTableView.h"
 #include "LogModel.h"
 #include "ConnectionConfigDialog.h"
+#include "LogDecorationDialog.h"
 
 #include "LuaApi.h"
 
@@ -28,10 +29,13 @@ LogWidget::LogWidget(QWidget* parent)
     m_conn_dialog = new ConnectionConfigDialog();
     m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    m_decoration_dialog = new LogDecorationDialog();
+    m_decoration_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+
     // ------- Test --------
     m_log_model = new LogModel(this);
     m_lua_api = new LuaApi(this);
-        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
+        m_lua_api->setScriptFile("/home/evgen/workspace/protodb/script.lua");
 
     connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
     connect(m_lua_api, &LuaApi::sLogError, m_log_model, &LogModel::error);
@@ -44,6 +48,7 @@ LogWidget::LogWidget(QWidget* parent)
 void LogWidget::setModel(LogModel *model)
 {
     m_view->setModel(model);
+    m_decoration_dialog->setDecorator(model->decorator());
 }
 
 LogModel LogWidget::model() const
@@ -180,7 +185,7 @@ void LogWidget::createConnections()
 
 
     connect(m_cfg_btn, &QPushButton::released, this, [this]() {
-        m_conn_dialog->show();
+        m_decoration_dialog->show();
     });
 }
 
