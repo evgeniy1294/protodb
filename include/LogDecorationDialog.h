@@ -7,8 +7,7 @@
 class QAbstractButton;
 class QPushButton;
 class QDialogButtonBox;
-class QFontComboBox;
-class QComboBox;
+class QLineEdit;
 
 class LogDecorator;
 
@@ -35,35 +34,42 @@ private:
 private slots:
     void onDialogButtonClicked(QAbstractButton* btn);
     void onColorButtonClicked();
+    void onFontButtonClicked();
 
 private:
     LogDecorator* m_decorator;
 
     QColor m_attr_color;
-    QColor m_comment_color;
-    QColor m_error_color;
+    QColor m_cmt_color;
+    QColor m_err_color;
     QColor m_ch1_color;
     QColor m_ch2_color;
+
+    QFont m_attr_font;
+    QFont m_cmt_font;
+    QFont m_err_font;
+    QFont m_ch1_font;
+    QFont m_ch2_font;
 
 private:
 
     QDialogButtonBox* m_dialog_btn;
 
-    QPushButton* m_attr_color_btn;
-    QPushButton* m_comment_color_btn;
-    QPushButton* m_error_color_btn;
     QPushButton* m_ch1_color_btn;
     QPushButton* m_ch2_color_btn;
+    QPushButton* m_cmt_color_btn;
+    QPushButton* m_attr_color_btn;
+    QPushButton* m_err_color_btn;
 
-    QFontComboBox* m_attr_font_cmbx;
-    QFontComboBox* m_comment_font_cmbx;
-    QFontComboBox* m_error_font_cmbx;
-    QFontComboBox* m_ch1_font_cmbx;
-    QFontComboBox* m_ch2_font_cmbx;
+    QPushButton* m_ch1_font_btn;
+    QPushButton* m_ch2_font_btn;
+    QPushButton* m_cmt_font_btn;
+    QPushButton* m_attr_font_btn;
+    QPushButton* m_err_font_btn;
 
-    QComboBox* m_attr_font_size_cmbx;
-    QComboBox* m_comment_font_size_cmbx;
-    QComboBox* m_error_font_size_cmbx;
-    QComboBox* m_ch1_font_size_cmbx;
-    QComboBox* m_ch2_font_size_cmbx;
+    QLineEdit* m_ch1_font_le;
+    QLineEdit* m_ch2_font_le;
+    QLineEdit* m_err_font_le;
+    QLineEdit* m_cmt_font_le;
+    QLineEdit* m_attr_font_le;
 };
