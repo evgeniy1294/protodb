@@ -185,7 +185,7 @@ void LogWidget::createConnections()
 
 
     connect(m_cfg_btn, &QPushButton::released, this, [this]() {
-        m_decoration_dialog->show();
+        m_conn_dialog->show();
     });
 }
 

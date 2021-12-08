@@ -28,6 +28,7 @@ set(PROJECT_SOURCES
         src/LogFormatter.cpp
         src/LogModel.cpp
         src/LogTableView.cpp
+        src/LogFormatFrame.cpp
         src/LogDecorationDialog.cpp
         src/SequenceTableView.cpp
         src/Core.cpp
@@ -67,6 +68,7 @@ set(PROJECT_SOURCES
         include/LogFormatter.h
         include/LogModel.h
         include/LogTableView.h
+        include/LogFormatFrame.h
         include/LogDecorationDialog.h
         include/SequenceTableView.h
         include/Core.h

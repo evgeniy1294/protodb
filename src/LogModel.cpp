@@ -53,11 +53,13 @@ LogDecorator *LogModel::decorator() const
 
 void LogModel::log(const LogEvent &event)
 {
-    auto row = rowCount() - 1;
+    if (m_flags[event.channel]) {
+        auto row = rowCount() - 1;
 
-    beginInsertRows(QModelIndex(), row, row); // row, rowCount() ???
-        m_log.append(event);
-    endInsertRows();
+        beginInsertRows(QModelIndex(), row, row);
+            m_log.append(event);
+        endInsertRows();
+    }
 }
 
 void LogModel::log(LogChannel ch, const QByteArray &data)
@@ -171,3 +173,13 @@ bool LogModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aR
     return false;
 }
 
+
+void LogModel::setChannelEnabled(LogChannel channel)
+{
+    m_flags[channel] = true;
+}
+
+void LogModel::setChannelDisabled(LogChannel channel)
+{
+    m_flags[channel] = false;
+}

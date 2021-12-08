@@ -14,7 +14,7 @@
 #include "Core.h"
 #include "ConnectionConfigDialog.h"
 #include "SerialConfigWidget.h"
-#include "LogConfigWidget.h"
+#include "LogFormatFrame.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     : QDialog(aParent)
@@ -58,7 +58,7 @@ void ConnectionConfigDialog::createGui()
     auto serial_config_widget = new SerialConfigWidget();
         m_widgets.append(serial_config_widget);
 
-    auto log_congfig_widget = new LogConfigWidget();
+    auto log_config_frame = new LogFormatFrame();
 
     // ---------[SELECTOR FRAME]---------//
     auto selector_frame = new QFrame();
@@ -81,7 +81,7 @@ void ConnectionConfigDialog::createGui()
         main_layout->addWidget(serial_config_widget, 2 ,1, 1, 2);
         main_layout->addWidget(m_log_le, 3, 1, 1, 1);
         main_layout->addWidget(m_log_btn, 3 , 2, 1, 1);
-        main_layout->addWidget(log_congfig_widget, 4 ,1, 1, 2);
+        main_layout->addWidget(log_config_frame, 4 ,1, 1, 2);
         main_layout->addWidget(m_dialog_btn, 5, 0, 1, 3);
         main_layout->setColumnStretch(0, 0);
         main_layout->setColumnStretch(1, 1);

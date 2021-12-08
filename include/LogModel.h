@@ -41,6 +41,9 @@ public:
     void comment(const QByteArray& text);
     void error(const QByteArray& text);
 
+    void setChannelEnabled(LogChannel channel);
+    void setChannelDisabled(LogChannel channel);
+
 signals:
     void sPrint(const QString& text);
 
@@ -52,6 +55,7 @@ private:
     LogFormatter* m_formatter;
     LogDecorator* m_decorator;
     QList<LogEvent> m_log;
+    QMap<LogChannel, bool> m_flags;
 };
 
 
