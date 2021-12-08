@@ -26,7 +26,11 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 void ConnectionConfigDialog::createGui()
 {
     // --------[BUTTONS]--------- //
-    m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel );
+    m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
+                                         QDialogButtonBox::Apply |
+                                         QDialogButtonBox::Cancel |
+                                         QDialogButtonBox::Reset |
+                                         QDialogButtonBox::RestoreDefaults);
 
     auto serial_radio  = new QRadioButton(tr("Serial"));
         serial_radio->setChecked(true);
@@ -75,21 +79,22 @@ void ConnectionConfigDialog::createGui()
     selector_frame->setLayout(selector_layout);
 
     auto main_layout = new QGridLayout();
-        main_layout->addWidget(selector_frame, 0 , 0, 5, 1);
-        main_layout->addWidget(m_scr_le, 1 , 1, 1, 1);
-        main_layout->addWidget(m_scr_btn, 1 , 2, 1, 1);
-        main_layout->addWidget(serial_config_widget, 2 ,1, 1, 2);
-        main_layout->addWidget(m_log_le, 3, 1, 1, 1);
-        main_layout->addWidget(m_log_btn, 3 , 2, 1, 1);
-        main_layout->addWidget(log_config_frame, 4 ,1, 1, 2);
-        main_layout->addWidget(m_dialog_btn, 5, 0, 1, 3);
+        main_layout->addWidget(selector_frame, 0 , 0, 4, 1);
+        main_layout->addWidget(m_scr_le, 0 , 1, 1, 1);
+        main_layout->addWidget(m_scr_btn, 0 , 2, 1, 1);
+        main_layout->addWidget(serial_config_widget, 1 ,1, 1, 2);
+        main_layout->addWidget(m_log_le, 2, 1, 1, 1);
+        main_layout->addWidget(m_log_btn, 2 , 2, 1, 1);
+        main_layout->addWidget(log_config_frame, 3 ,1, 1, 2);
+        main_layout->addWidget(m_dialog_btn, 4, 0, 1, 3);
         main_layout->setColumnStretch(0, 0);
         main_layout->setColumnStretch(1, 1);
         main_layout->setColumnStretch(2, 0);
         main_layout->setRowStretch(0, 0);
-        main_layout->setRowStretch(2, 1);
-        main_layout->setRowStretch(3, 0);
-        main_layout->setRowStretch(4, 1);
+        main_layout->setRowStretch(1, 1);
+        main_layout->setRowStretch(2, 0);
+        main_layout->setRowStretch(3, 1);
+        main_layout->setRowStretch(4, 0);
 
     setLayout(main_layout);
 }

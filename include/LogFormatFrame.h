@@ -27,9 +27,9 @@ private:
     QCheckBox* m_timestamp_en;
     QCheckBox* m_ch1_en;
     QCheckBox* m_ch2_en;
-    QCheckBox* m_comment_en;
     QLineEdit* m_timestamp_format;
     QLineEdit* m_ch1_name;
     QLineEdit* m_ch2_name;
+    QLineEdit* m_separator;
 };
 

@@ -2,7 +2,9 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <qnlohmann.h>
 #include "LogFormatFrame.h"
+#include "LogFormatter.h"
 
 LogFormatFrame::LogFormatFrame(QWidget* aParent)
     : ConfigFrame(aParent)
@@ -13,17 +15,23 @@ LogFormatFrame::LogFormatFrame(QWidget* aParent)
 
 void LogFormatFrame::defaultConfig(nlohmann::json &json) const
 {
-
+    LogFormatter::formatterDefaultConfig(json);
 }
 
 void LogFormatFrame::fromJson(const nlohmann::json &json)
 {
-
+    m_separator->setText(QString(json["Separator"].get<char>()));
+    m_timestamp_format->setText(json["TimestampFormat"].get<QString>());
+    m_ch1_name->setText(json["FirstChannelName"].get<QString>());
+    m_ch2_name->setText(json["SecondChannelName"].get<QString>());
 }
 
 void LogFormatFrame::toJson(nlohmann::json &json) const
 {
-
+    json["Separator"]          = ' ';
+    json["TimestampFormat"]    = m_timestamp_format->text();
+    json["FirstChannelName"]   = m_ch1_name->text();
+    json["SecondChannelName"]  = m_ch2_name->text();
 }
 
 
@@ -41,14 +49,13 @@ void LogFormatFrame::createGui() {
     m_ch2_en = new QCheckBox(tr("Enable channel 2"));
         m_ch2_en->setChecked(true);
 
-    m_comment_en = new QCheckBox(tr("Enable comments"));
-        m_comment_en->setChecked(true);
-
     m_timestamp_format = new QLineEdit();
         m_timestamp_format->setPlaceholderText("yyyy.mm.dd hh:mm:ss.sss");
 
     m_ch1_name = new QLineEdit();
+        m_ch1_name->setText("[RX]");
     m_ch2_name = new QLineEdit();
+        m_ch2_name->setText("[TX]");
 
     // ---------[LAYOUT]---------- //
     auto main_layout = new QGridLayout();
@@ -58,7 +65,6 @@ void LogFormatFrame::createGui() {
         main_layout->addWidget(m_timestamp_en, 2, 0, 1, 1);
         main_layout->addWidget(m_ch1_en, 1, 1, 1, 1);
         main_layout->addWidget(m_ch2_en, 2, 1, 1, 1);
-        main_layout->addWidget(m_comment_en, 1, 3, 1, 1);
         main_layout->addWidget(new QLabel(tr("Timestamp format")), 3, 0, 1, 1);
         main_layout->addWidget(m_timestamp_format, 3, 1, 1, 1);
         main_layout->addWidget(new QLabel(tr("Channel 1 label")), 4, 0, 1, 1);

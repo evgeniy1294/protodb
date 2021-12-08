@@ -28,6 +28,8 @@ public:
     void fromJson(const nlohmann::json& json) override;
     void toJson(nlohmann::json& json) const override;
 
+    static void formatterDefaultConfig(nlohmann::json& json);
+
     QString channelName(const LogEvent& event) const;
     QString timestamp(const LogEvent& event) const;
     QString data(const LogEvent& event, ByteFormat format) const;

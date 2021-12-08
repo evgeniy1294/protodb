@@ -50,12 +50,7 @@ char LogFormatter::separator() const
 
 void LogFormatter::defaultConfig(nlohmann::json &json) const
 {
-    json["Separator"]          = ' ';
-    json["TimestampFormat"]    = "hh:mm:ss.zzz";
-    json["FirstChannelName"]   = "[RX]";
-    json["SecondChannelName"]  = "[TX]";
-    json["CommentChannelName"] = "[LUA]";
-    json["ErrorChannelName"]   = "[ERR]";
+    formatterDefaultConfig(json);
 }
 
 void LogFormatter::fromJson(const nlohmann::json &json)
@@ -78,6 +73,16 @@ void LogFormatter::toJson(nlohmann::json &json) const
     json["SecondChannelName"]  = m_names[kSecondLogChannel];
     json["CommentChannelName"] = m_names[kCommentLogChannel];
     json["ErrorChannelName"]   = m_names[kErrorLogChannel];
+}
+
+void LogFormatter::formatterDefaultConfig(nlohmann::json& json)
+{
+    json["Separator"]          = ' ';
+    json["TimestampFormat"]    = "hh:mm:ss.zzz";
+    json["FirstChannelName"]   = "[RX]";
+    json["SecondChannelName"]  = "[TX]";
+    json["CommentChannelName"] = "[LUA]";
+    json["ErrorChannelName"]   = "[ERR]";
 }
 
 QString LogFormatter::channelName(const LogEvent &event) const
