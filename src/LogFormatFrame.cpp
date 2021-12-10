@@ -13,8 +13,6 @@ LogFormatFrame::LogFormatFrame(QWidget* aParent)
     connectSignals();
 }
 
-/// TODO: Отключение каналов производится в LogModel, нужно запрашивать конфиг и от неё
-/// Либо хранить дефолтный конфиг именно здесь, а в модели и форматтере включать всё.
 void LogFormatFrame::defaultConfig(nlohmann::json &json) const
 {
     json["CharSeparator"]        = ' ';
@@ -68,9 +66,9 @@ void LogFormatFrame::createGui() {
         m_timestamp_format->setText("hh:mm:ss.sss");
 
     m_ch1_name = new QLineEdit();
-        m_ch1_name->setText("[RX]");
+        m_ch1_name->setText("RX");
     m_ch2_name = new QLineEdit();
-        m_ch2_name->setText("[TX]");
+        m_ch2_name->setText("TX");
 
     // ---------[LAYOUT]---------- //
     auto main_layout = new QGridLayout();

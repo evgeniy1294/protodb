@@ -1,22 +1,24 @@
 #include <QComboBox>
+#include <QLineEdit>
 #include <QLabel>
 #include <QLayout>
 #include <QSerialPortInfo>
 #include <QIntValidator>
 
 
-#include "SerialConfigWidget.h"
+#include "SerialConfigFrame.h"
 
 
-SerialConfigWidget::SerialConfigWidget(QWidget* parent)
-    : QFrame(parent)
+SerialConfigFrame::SerialConfigFrame(QWidget* parent)
+    : ConfigFrame(parent)
 {
     createGui();
+    connectSignals();
 }
 
-void SerialConfigWidget::createGui()
+void SerialConfigFrame::createGui()
 {
-    static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200" };
+    static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };
     static const QStringList databits_list   = { "5", "6", "7", "8" };
     static const QStringList flow_ctrl_list  = { "None", "Software", "Hardware" };
     static const QStringList parity_list     = { "None", "Even", "Odd", "Space", "Mark" };
@@ -24,12 +26,11 @@ void SerialConfigWidget::createGui()
     static const QStringList open_mode_list  = { "Send/Receive", "Monitoring" };
 
     // --------[COMBO BOXES] --------- //
-    auto validator = new QIntValidator(0, 10000000, this);
-
+    m_baudrate_validator = new QIntValidator(0, 10000000, this);
     m_baudrate  = new QComboBox();
-        m_baudrate->setEditable(true);
-        m_baudrate->setValidator(validator);
         m_baudrate->addItems(baudrate_list);
+        m_baudrate->setInsertPolicy(QComboBox::InsertAtCurrent);
+
     m_data_bits = new QComboBox();
         m_data_bits->addItems(databits_list);
     m_flow_ctrl = new QComboBox();
@@ -87,4 +88,25 @@ void SerialConfigWidget::createGui()
     setLayout(main_layout);
     setFrameShape(QFrame::StyledPanel);
     setFrameShadow(QFrame::Raised);
+}
+
+void SerialConfigFrame::connectSignals()
+{
+    connect(m_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
+        if (index == m_baudrate->count() - 1) {
+            m_baudrate->setEditable(true);
+            m_baudrate->setValidator(m_baudrate_validator);
+            m_baudrate->lineEdit()->selectAll();
+        }
+        else {
+            m_baudrate->setEditable(false);
+        }
+    });
+
+
+}
+
+void SerialConfigFrame::test(int)
+{
+
 }

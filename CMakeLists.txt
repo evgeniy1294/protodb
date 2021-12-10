@@ -49,7 +49,7 @@ set(PROJECT_SOURCES
         src/Logger.cpp
         src/LogWidget.cpp
         src/LogItemDelegate.cpp
-        src/SerialConfigWidget.cpp
+        src/SerialConfigFrame.cpp
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
 
@@ -87,7 +87,7 @@ set(PROJECT_SOURCES
         include/Logger.h
         include/LogItemDelegate.h
         include/LogWidget.h
-        include/SerialConfigWidget.h
+        include/SerialConfigFrame.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h
         include/CellSpinBoxDelegate.h

@@ -13,7 +13,7 @@
 #include "singleton.h"
 #include "Core.h"
 #include "ConnectionConfigDialog.h"
-#include "SerialConfigWidget.h"
+#include "SerialConfigFrame.h"
 #include "LogFormatFrame.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
@@ -59,7 +59,7 @@ void ConnectionConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
-    auto serial_config_widget = new SerialConfigWidget();
+    auto serial_config_widget = new SerialConfigFrame();
         m_widgets.append(serial_config_widget);
 
     auto log_config_frame = new LogFormatFrame();

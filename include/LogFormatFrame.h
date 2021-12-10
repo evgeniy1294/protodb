@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QFrame>
 #include "ConfigFrame.h"
 
 class QCheckBox;

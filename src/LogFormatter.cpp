@@ -52,10 +52,10 @@ void LogFormatter::defaultConfig(nlohmann::json &json) const
 {
     json["CharSeparator"]      = ' ';
     json["TimestampFormat"]    = "hh:mm:ss.zzz";
-    json["FirstChannelName"]   = "[RX]";
-    json["SecondChannelName"]  = "[TX]";
-    json["CommentChannelName"] = "[LUA]";
-    json["ErrorChannelName"]   = "[ERR]";
+    json["FirstChannelName"]   = "RX";
+    json["SecondChannelName"]  = "TX";
+    json["CommentChannelName"] = "LUA";
+    json["ErrorChannelName"]   = "ERR";
 }
 
 void LogFormatter::fromJson(const nlohmann::json &json)
