@@ -13,10 +13,13 @@ public:
     SerialConfigFrame(QWidget *parent = nullptr);
     ~SerialConfigFrame() = default;
 
+    void defaultConfig(nlohmann::json &json) const;
+    void toJson(nlohmann::json &json) const;
+    void fromJson(const nlohmann::json &json);
+
 private:
     void createGui();
     void connectSignals();
-    void test(int);
 
 private:
     QValidator* m_baudrate_validator;

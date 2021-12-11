@@ -5,7 +5,7 @@
 #include <QSerialPortInfo>
 #include <QIntValidator>
 
-
+#include "qnlohmann.h"
 #include "SerialConfigFrame.h"
 
 
@@ -16,6 +16,45 @@ SerialConfigFrame::SerialConfigFrame(QWidget* parent)
     connectSignals();
 }
 
+
+void SerialConfigFrame::defaultConfig(nlohmann::json &json) const
+{
+    json["Device"]      = "";
+    json["OpenMode"]    = "Communication";
+    json["Baudrate"]    = "115200";
+    json["DataBits"]    = "8";
+    json["Parity"]      = "None";
+    json["StopBits"]    = "1";
+    json["FlowControl"] = "None";
+}
+
+void SerialConfigFrame::toJson(nlohmann::json &json) const
+{
+    json["Device"]      = m_device->currentText();
+    json["OpenMode"]    = m_open_mode->currentText();
+    json["Baudrate"]    = m_baudrate->currentText();
+    json["DataBits"]    = m_data_bits->currentText();
+    json["Parity"]      = m_parity->currentText();
+    json["StopBits"]    = m_stop_bits->currentText();
+    json["FlowControl"] = m_flow_ctrl->currentText();
+}
+
+void SerialConfigFrame::fromJson(const nlohmann::json &json)
+{
+    QString baudrate = json["Baudrate"].get<QString>();
+    if (m_baudrate->findText(baudrate) == -1) {
+        m_baudrate->setItemText(m_baudrate->count() - 1,baudrate);
+    }
+    m_baudrate->setCurrentText(baudrate);
+
+    m_device->setCurrentText(json["Device"].get<QString>());
+    m_open_mode->setCurrentText(json["OpenMode"].get<QString>());
+    m_data_bits->setCurrentText(json["DataBits"].get<QString>());
+    m_parity->setCurrentText(json["Parity"].get<QString>());
+    m_stop_bits->setCurrentText(json["StopBits"].get<QString>());
+    m_flow_ctrl->setCurrentText(json["FlowControl"].get<QString>());
+}
+
 void SerialConfigFrame::createGui()
 {
     static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };
@@ -23,7 +62,7 @@ void SerialConfigFrame::createGui()
     static const QStringList flow_ctrl_list  = { "None", "Software", "Hardware" };
     static const QStringList parity_list     = { "None", "Even", "Odd", "Space", "Mark" };
     static const QStringList stop_bits_list  = { "1", "2" };
-    static const QStringList open_mode_list  = { "Send/Receive", "Monitoring" };
+    static const QStringList open_mode_list  = { "Communication", "Monitoring" };
 
     // --------[COMBO BOXES] --------- //
     m_baudrate_validator = new QIntValidator(0, 10000000, this);
@@ -103,10 +142,5 @@ void SerialConfigFrame::connectSignals()
         }
     });
 
-
-}
-
-void SerialConfigFrame::test(int)
-{
 
 }
