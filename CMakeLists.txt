@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Lua REQUIRED)
 find_package(QT NAMES Qt5 COMPONENTS Core Widgets SerialPort REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets SerialPort REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets SerialPort Network REQUIRED)
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
 
 set(PROJECT_SOURCES
@@ -44,12 +44,11 @@ set(PROJECT_SOURCES
         src/SequenceTableWidget.cpp
         src/SequenceModel.cpp
         src/SequenceEditDialog.cpp
-        src/LogConfigWidget.cpp
-        src/settings_dialog.cpp
         src/Logger.cpp
         src/LogWidget.cpp
         src/LogItemDelegate.cpp
         src/SerialConfigFrame.cpp
+        src/NetConfigFrame.cpp
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
 
@@ -82,12 +81,11 @@ set(PROJECT_SOURCES
         include/SequenceTableWidget.h
         include/SequenceModel.h
         include/SequenceEditDialog.h
-        include/LogConfigWidget.h
-        include/settings_dialog.h
         include/Logger.h
         include/LogItemDelegate.h
         include/LogWidget.h
         include/SerialConfigFrame.h
+        include/NetConfigFrame.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h
         include/CellSpinBoxDelegate.h
@@ -122,6 +120,7 @@ endif()
 target_link_libraries(protodb PRIVATE ${LUA_LIBRARIES})
 target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort)
+target_link_libraries(protodb PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 target_link_libraries(protodb PRIVATE qtadvanceddocking)
 target_include_directories(protodb PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include" ${LUA_INCLUDE_DIR})
 

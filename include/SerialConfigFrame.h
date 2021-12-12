@@ -13,10 +13,11 @@ public:
     SerialConfigFrame(QWidget *parent = nullptr);
     ~SerialConfigFrame() = default;
 
-    void defaultConfig(nlohmann::json &json) const;
-    void toJson(nlohmann::json &json) const;
-    void fromJson(const nlohmann::json &json);
+    void defaultConfig(nlohmann::json &json) const override;
+    void toJson(nlohmann::json &json) const override;
+    void fromJson(const nlohmann::json &json) override;
 
+    const QString& jsonPrefix() const override;
 private:
     void createGui();
     void connectSignals();

@@ -74,10 +74,6 @@ QFont LogDecorator::channelFont(const LogEvent &event) const
 
 void LogDecorator::defaultConfig(nlohmann::json& json) const
 {
-    defaultJson(json);
-}
-
-void LogDecorator::defaultJson(nlohmann::json &json) {
     json["AttributeColor"]      = QColor(Qt::darkGreen);
     json["AttributeFont"]       = QApplication::font();
     json["FirstChannelColor"]   = QColor(Qt::darkMagenta);
@@ -88,6 +84,12 @@ void LogDecorator::defaultJson(nlohmann::json &json) {
     json["CommentChannelFont"]  = QApplication::font();
     json["ErrorChannelColor"]   = QColor(Qt::red);
     json["ErrorChannelFont"]    = QApplication::font();
+}
+
+const QString& LogDecorator::jsonPrefix() const
+{
+    static const QString m_prefix("LogStyle");
+    return m_prefix;
 }
 
 void LogDecorator::fromJson(const nlohmann::json& json)

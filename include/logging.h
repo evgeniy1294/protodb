@@ -3,8 +3,11 @@
 #include <QtCore>
 
 enum LogChannel {
+    /// Data channels
     kFirstLogChannel,
     kSecondLogChannel,
+
+    /// Info channels
     kCommentLogChannel,
     kErrorLogChannel,
 

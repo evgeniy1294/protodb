@@ -20,6 +20,14 @@ public:
         kColumnCount
     };
 
+    enum Role {
+        ChannelRole = Qt::UserRole,
+        HexDisplayRole,
+        AsciiDisplayRole,
+        EventDisplayRole,
+        AnalyzeRole,
+    };
+
 public:
     LogModel(QObject* parent = nullptr);
 

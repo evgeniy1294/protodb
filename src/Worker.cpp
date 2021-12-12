@@ -67,3 +67,9 @@ void Worker::toJson(nlohmann::json &json) const
     m_log_model->decorator()->toJson(json);
     m_log_model->formatter()->toJson(json);
 }
+
+const QString& Worker::jsonPrefix() const
+{
+    static const QString m_prefix("Configurations");
+    return m_prefix;
+}

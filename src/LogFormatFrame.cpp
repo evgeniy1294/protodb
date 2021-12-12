@@ -46,6 +46,12 @@ void LogFormatFrame::toJson(nlohmann::json &json) const
     json["SecondChannelName"]    = m_ch2_name->text();
 }
 
+const QString& LogFormatFrame::jsonPrefix() const
+{
+    static const QString m_cfg_id("LogFormat");
+    return m_cfg_id;
+}
+
 
 void LogFormatFrame::createGui() {
     // ----------[WIDGETS]------------ //

@@ -55,6 +55,12 @@ void SerialConfigFrame::fromJson(const nlohmann::json &json)
     m_flow_ctrl->setCurrentText(json["FlowControl"].get<QString>());
 }
 
+const QString& SerialConfigFrame::jsonPrefix() const
+{
+    static const QString m_prefix("Serial");
+    return m_prefix;
+}
+
 void SerialConfigFrame::createGui()
 {
     static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };

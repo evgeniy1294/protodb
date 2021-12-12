@@ -9,6 +9,11 @@ LogModel::LogModel(QObject *parent)
 {
     setDecorator( new LogDecorator() );
     setFormatter( new LogFormatter() );
+
+    m_flags[kFirstLogChannel]   = true;
+    m_flags[kSecondLogChannel]  = true;
+    m_flags[kCommentLogChannel] = true;
+    m_flags[kErrorLogChannel]   = true;
 }
 
 void LogModel::setFormatter(LogFormatter* formatter)
@@ -129,6 +134,38 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
                 break;
         }
     }
+
+    if (role == ChannelRole) {
+        auto& item = m_log.at(row);
+        return item.channel;
+    }
+
+    if (role == HexDisplayRole) {
+        auto& item = m_log.at(row);
+        return m_formatter->data(item, kHexFormat);
+    }
+
+    if (role == AsciiDisplayRole) {
+        auto& item = m_log.at(row);
+        return m_formatter->data(item, kAsciiFormat);
+    }
+
+    if (role == EventDisplayRole) {
+        auto& item = m_log.at(row);
+
+        QString msg = QString("%1 %2 %3").arg(m_formatter->timestamp(item),
+                                              m_formatter->channelName(item),
+                                              m_formatter->data(item, kHexFormat));
+        return msg;
+    }
+
+    if (role == AnalyzeRole) {
+        auto& item = m_log.at(row);
+        if (item.channel == kFirstLogChannel || item.channel == kSecondLogChannel) {
+            return item.message;
+        }
+    }
+
 
     if (role == Qt::ForegroundRole) {
         return (col == kColumnMsg) ? m_decorator->channelColor(m_log.at(row)) :

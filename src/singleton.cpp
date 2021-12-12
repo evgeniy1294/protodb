@@ -10,7 +10,7 @@ Singleton & Singleton::instance()
 
 Singleton::Singleton()
 {
-    m_settings = new SettingsDialog();
+    // m_settings = new SettingsDialog();
     m_core = new Core();
 }
 

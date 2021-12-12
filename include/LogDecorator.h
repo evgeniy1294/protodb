@@ -34,7 +34,7 @@ public:
     void fromJson(const nlohmann::json &json) override;
     void toJson(nlohmann::json &json) const override;
 
-    static void defaultJson(nlohmann::json &json);
+    const QString& jsonPrefix() const override;
 
 signals:
     void sConfigChanged();

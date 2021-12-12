@@ -36,7 +36,7 @@ LogWidget::LogWidget(QWidget* parent)
     // ------- Test --------
     m_log_model = new LogModel(this);
     m_lua_api = new LuaApi(this);
-        m_lua_api->setScriptFile("/home/evgen/workspace/protodb/script.lua");
+        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
     connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
     connect(m_lua_api, &LuaApi::sLogError, m_log_model, &LogModel::error);
@@ -143,15 +143,26 @@ void LogWidget::createConnections()
             m_lua_api->start();
 
             // Test
+            QByteArray array;
+                array.push_back(0x31);
+                array.push_back(0x32);
+                array.push_back(0x33);
+                array.push_back(0x34);
+
             QVector<uint8_t> msg{0x31, 0x32, 0x33, 0x34};
-
             m_lua_api->beforeTransmit(msg);
-            std::cout << std::hex << (uint64_t)msg[0] << std::endl;
+            m_log_model->log(kSecondLogChannel, array);
+            //std::cout << std::hex << (uint64_t)msg[0] << std::endl;
 
-            QByteArray array(5, 0x32);
-
+            array.clear();
+            array.push_back(0x35);
+            array.push_back(0x36);
+            array.push_back(0x37);
+            array.push_back(0x38);
+            m_log_model->log(kFirstLogChannel, array);
             m_lua_api->afterReceive(array);
-            std::cout << std::hex << (uint64_t)array[0] << std::endl;
+
+            //std::cout << std::hex << (uint64_t)array[0] << std::endl;
         }
         else
         {
