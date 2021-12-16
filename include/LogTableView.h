@@ -6,6 +6,7 @@
 class QMenu;
 class QAction;
 class LogDecorationDialog;
+class LogItemDelegate;
 
 class LogTableView: public QTableView
 {
@@ -37,4 +38,5 @@ private:
     QAction* m_options;
 
     LogDecorationDialog* m_dec_dialog;
+    LogItemDelegate* m_item_delegate;
 };

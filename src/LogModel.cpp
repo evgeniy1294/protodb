@@ -116,9 +116,8 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
     if (!checkIndex(index))
         return QVariant();
 
-    if (role == Qt::DisplayRole) {
+    if ( role == Qt::DisplayRole || role == HexDisplayRole || role == AsciiDisplayRole ) {
         auto& item = m_log.at(row);
-
         switch (col) {
             case kColumnTimestamp:
                 return m_formatter->timestamp(item);
@@ -127,8 +126,10 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
                 return m_formatter->channelName(item);
             }
 
-            case kColumnMsg:
-                return m_formatter->data(item, kHexFormat);
+            case kColumnMsg: {
+                auto format = (role == AsciiDisplayRole) ? kAsciiFormat : kHexFormat;
+                return m_formatter->data(item, format);
+            }
 
             default:
                 break;
@@ -140,22 +141,21 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
         return item.channel;
     }
 
-    if (role == HexDisplayRole) {
-        auto& item = m_log.at(row);
-        return m_formatter->data(item, kHexFormat);
-    }
-
-    if (role == AsciiDisplayRole) {
-        auto& item = m_log.at(row);
-        return m_formatter->data(item, kAsciiFormat);
-    }
-
-    if (role == EventDisplayRole) {
+    if (role == EventHexDisplayRole) {
         auto& item = m_log.at(row);
 
         QString msg = QString("%1 %2 %3").arg(m_formatter->timestamp(item),
                                               m_formatter->channelName(item),
                                               m_formatter->data(item, kHexFormat));
+        return msg;
+    }
+
+    if (role == EventAsciiDisplayRole) {
+        auto& item = m_log.at(row);
+
+        QString msg = QString("%1 %2 %3").arg(m_formatter->timestamp(item),
+                                              m_formatter->channelName(item),
+                                              m_formatter->data(item, kAsciiFormat));
         return msg;
     }
 

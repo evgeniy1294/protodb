@@ -69,8 +69,9 @@ void LogWidget::createGui()
         m_clr_btn->setToolTip("Clear log window");
 
     m_mode_btn = new QPushButton();
-        m_mode_btn->setText("HEX");
-        m_mode_btn->setFixedSize(64, 32);
+    m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
+    m_mode_btn->setIconSize(QSize(24,24));
+    m_mode_btn->setFixedSize(32, 32);
 
     m_run = new QPushButton();
         m_run->setIcon(QIcon(":/icons/run.svg"));
@@ -78,8 +79,9 @@ void LogWidget::createGui()
         m_run->setFixedSize(32, 32);
 
     m_cfg_btn = new QPushButton();
-        m_cfg_btn->setText("115200, none, 8, 1");
-        m_cfg_btn->setFixedSize(136, 32);
+        m_cfg_btn->setIcon(QIcon(":/icons/settings_gear.svg"));
+        m_cfg_btn->setIconSize(QSize(18,18));
+        m_cfg_btn->setFixedSize(32, 32);
 
     // ---------[LINE EDIT]---------- //
     m_find_le = new QLineEdit();
@@ -91,10 +93,6 @@ void LogWidget::createGui()
 
 
     // ---------[COMBO BOX]---------- //
-    auto tool_mode_cmb = new QComboBox();
-        tool_mode_cmb->addItem("HEX");
-        tool_mode_cmb->addItem("ASCII");
-
     auto edit_mode_cmb = new QComboBox();
         edit_mode_cmb->addItem("HEX");
         edit_mode_cmb->addItem("LF");
@@ -102,14 +100,6 @@ void LogWidget::createGui()
         edit_mode_cmb->addItem("CR/LF");
         edit_mode_cmb->addItem("None");
         edit_mode_cmb->addItem("DSL");
-
-    // ---------[SPIN BOX]---------- //
-    auto editor = new QSpinBox();
-        editor->setMinimum(0);
-        editor->setMaximum(120);
-        editor->setSingleStep(1);
-        editor->setSuffix("ms");
-        editor->setSpecialValueText(QObject::tr("No delay"));
 
     // ---------[LAYOUT]---------- //
     auto top_layout = new QHBoxLayout();
@@ -122,7 +112,6 @@ void LogWidget::createGui()
     auto bottom_layout = new QHBoxLayout();
         bottom_layout->addWidget(m_msg_le);
         bottom_layout->addWidget(edit_mode_cmb);
-        bottom_layout->addWidget(editor);
 
     QGridLayout* layout = new QGridLayout();
       layout->addLayout(top_layout, 0, 0);
@@ -186,10 +175,14 @@ void LogWidget::createConnections()
        static bool state = true;
 
        if (state) {
-           m_mode_btn->setText("ASCII");
+           m_view->setByteFormat(ByteFormat::kAsciiFormat);
+           m_view->reset();
+           m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
-           m_mode_btn->setText("HEX");
+           m_view->setByteFormat(ByteFormat::kHexFormat);
+           m_view->reset();
+           m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }
 
        state = !state;

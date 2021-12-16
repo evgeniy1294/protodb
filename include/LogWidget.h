@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include "logging.h"
 
 class LogTableView;
 class QTableView;
@@ -22,6 +23,9 @@ public:
 
     void setModel(LogModel* model);
     LogModel model() const;
+
+signals:
+    void sByteFormatChanged(ByteFormat format);
 
 private:
     void createGui();

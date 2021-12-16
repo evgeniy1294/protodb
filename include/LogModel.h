@@ -24,7 +24,8 @@ public:
         ChannelRole = Qt::UserRole,
         HexDisplayRole,
         AsciiDisplayRole,
-        EventDisplayRole,
+        EventAsciiDisplayRole,
+        EventHexDisplayRole,
         AnalyzeRole,
     };
 

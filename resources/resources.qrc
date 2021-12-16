@@ -27,5 +27,8 @@
         <file alias="file.svg">icons/file.svg</file>
         <file alias="folder.svg">icons/folder.svg</file>
         <file alias="floppy.svg">icons/floppy.svg</file>
+        <file alias="settings_gear.svg">icons/settings_gear.svg</file>
+        <file alias="ascii.svg">icons/ascii.svg</file>
+        <file alias="hex.svg">icons/hex.svg</file>
     </qresource>
 </RCC>

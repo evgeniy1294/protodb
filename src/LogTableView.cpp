@@ -12,7 +12,8 @@ LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    setItemDelegate(new LogItemDelegate());
+    m_item_delegate = new LogItemDelegate();
+    setItemDelegate(m_item_delegate);
     setWordWrap(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setShowGrid(false);
@@ -47,7 +48,7 @@ void LogTableView::setModel(QAbstractItemModel *model)
 
 void LogTableView::setByteFormat(ByteFormat format)
 {
-    Q_UNUSED(format);
+    m_item_delegate->setByteFormat(format);
 }
 
 void LogTableView::createMenu()
@@ -80,7 +81,6 @@ void LogTableView::createActions()
     m_options = new QAction(tr("Options"));
 }
 
-#include <iostream>
 void LogTableView::connectSignals()
 {
     connect(this, &QTableView::customContextMenuRequested, this, [this](QPoint pos) {
@@ -98,7 +98,11 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(LogModel::EventDisplayRole).toString();
+        auto format = m_item_delegate->byteFormat();
+        int role = (format == ByteFormat::kAsciiFormat) ? LogModel::EventAsciiDisplayRole :
+                                                          LogModel::EventHexDisplayRole;
+
+        auto msg = currentIndex().data(role).toString();
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
