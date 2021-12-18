@@ -138,8 +138,7 @@ void LogWidget::createConnections()
                 array.push_back(0x33);
                 array.push_back(0x34);
 
-            QVector<uint8_t> msg{0x31, 0x32, 0x33, 0x34};
-            m_lua_api->beforeTransmit(msg);
+            m_lua_api->beforeTransmit(array);
             m_log_model->log(kSecondLogChannel, array);
             //std::cout << std::hex << (uint64_t)msg[0] << std::endl;
 

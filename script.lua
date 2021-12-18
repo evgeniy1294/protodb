@@ -16,7 +16,11 @@ function beforeTransmit(msg)
 end
 
 function afterReceive(msg)
-    error("TEST ERROR")
+    text = "Byte[0] = "..string.format("%x", msg[1])..'\n'
+    text = text.."Byte[1] = "..string.format("%x", msg[2])..'\n'
+    text = text.."Byte[2] = "..string.format("%x", msg[3])..'\n'
+    text = text.."Byte[3] = "..string.format("%x", msg[4])
+    log:print(text)
 end
 
 function buildMessage(msg)

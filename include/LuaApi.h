@@ -23,7 +23,7 @@ public:
     //--------- [LUA API] -----------//
     void start();
     void stop();
-    void beforeTransmit(QVector<uint8_t>& data);
+    void beforeTransmit(QByteArray& data);
     void afterReceive(QByteArray& data);
     void buildMessage(QByteArray& data);
 

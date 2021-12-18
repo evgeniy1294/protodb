@@ -1,4 +1,5 @@
 #include "LuaApi.h"
+#include "SolByteArrayWrapper.h"
 
 #include <iostream>
 
@@ -123,10 +124,11 @@ void LuaApi::stop()
      }
 }
 
-void LuaApi::beforeTransmit(QVector<uint8_t>& data)
+void LuaApi::beforeTransmit(QByteArray& data)
 {
     if (m_before_transmit.valid()) {
-        sol::protected_function_result pfr = m_before_transmit(data);
+        SolByteArrayWrapper wrapper(data);
+        sol::protected_function_result pfr = m_before_transmit(wrapper);
 
         if (!pfr.valid()) {
             sol::error err = pfr;
@@ -138,7 +140,8 @@ void LuaApi::beforeTransmit(QVector<uint8_t>& data)
 void LuaApi::afterReceive(QByteArray& data)
 {
     if (m_after_receive.valid()) {
-        sol::protected_function_result pfr = m_after_receive(data);
+        SolByteArrayWrapper wrapper(data);
+        sol::protected_function_result pfr = m_after_receive(wrapper);
 
         if (!pfr.valid()) {
             sol::error err = pfr;
@@ -150,7 +153,8 @@ void LuaApi::afterReceive(QByteArray& data)
 void LuaApi::buildMessage(QByteArray& data)
 {
     if (m_build_message.valid()) {
-        sol::protected_function_result pfr = m_build_message(data);
+        SolByteArrayWrapper wrapper(data);
+        sol::protected_function_result pfr = m_build_message(wrapper);
 
         if (!pfr.valid()) {
             sol::error err = pfr;
