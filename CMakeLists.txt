@@ -52,6 +52,7 @@ set(PROJECT_SOURCES
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
         src/SolByteArrayWrapper.cpp
+        src/PluginAbstract.cpp
 
         include/qnlohmann.h
         include/logging.h
@@ -93,6 +94,7 @@ set(PROJECT_SOURCES
         include/CellCheckBoxDelegate.h
         include/CodeEditorWidget.h
         include/SolByteArrayWrapper.h
+        include/PluginAbstract.h
         resources/resources.qrc
 )
 
