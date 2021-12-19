@@ -37,8 +37,8 @@ public:
     inline void push_front(const_reference a);
 
     iterator insert(iterator pos, reference value);
-    iterator insert( const_iterator pos, rvalue_reference value );
-    iterator insert( const_iterator pos, size_type count, reference value );
+    iterator insert(const_iterator pos, rvalue_reference value);
+    iterator insert(const_iterator pos, size_type count, reference value);
 
     inline value_type at(int i) const;
 
