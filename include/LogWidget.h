@@ -11,6 +11,7 @@ class QLineEdit;
 class ConnectionConfigDialog;
 class LogModel;
 class LogDecorationDialog;
+class LogProxyModel;
 class LuaApi;
 
 class LogWidget: public QWidget
@@ -40,9 +41,10 @@ private:
      QLineEdit* m_msg_le;
      LogTableView* m_view;
      ConnectionConfigDialog* m_conn_dialog;
-     LogDecorationDialog* m_decoration_dialog;
+    // LogDecorationDialog* m_decoration_dialog;
 
      LuaApi* m_lua_api;
      LogModel* m_log_model;
+     LogProxyModel* m_log_proxy_model;
 };
 

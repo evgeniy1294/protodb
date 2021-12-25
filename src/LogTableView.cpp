@@ -32,18 +32,19 @@ LogTableView::LogTableView(QWidget *parent)
     connectSignals();
 }
 
+
 void LogTableView::setModel(QAbstractItemModel *model)
 {
-    if (dynamic_cast<LogModel*>(model)) {
-        auto decorator = static_cast<LogModel*>(model)->decorator();
-        m_dec_dialog->setDecorator(decorator);
+    QTableView::setModel(model);
+    QHeaderView* hh = horizontalHeader();
+        hh->setSectionResizeMode(LogModel::kColumnTimestamp, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(LogModel::kColumnChannel,   QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(LogModel::kColumnMsg,       QHeaderView::Stretch);
+}
 
-        QTableView::setModel(model);
-        QHeaderView* hh = horizontalHeader();
-            hh->setSectionResizeMode(LogModel::kColumnTimestamp, QHeaderView::ResizeToContents);
-            hh->setSectionResizeMode(LogModel::kColumnChannel,   QHeaderView::ResizeToContents);
-            hh->setSectionResizeMode(LogModel::kColumnMsg,       QHeaderView::Stretch);
-    }
+void LogTableView::setDecorator(LogDecorator* decorator)
+{
+    m_dec_dialog->setDecorator(decorator);
 }
 
 void LogTableView::setByteFormat(ByteFormat format)

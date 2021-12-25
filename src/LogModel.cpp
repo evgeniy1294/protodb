@@ -166,7 +166,6 @@ QVariant LogModel::data(const QModelIndex& index, int role) const
         }
     }
 
-
     if (role == Qt::ForegroundRole) {
         return (col == kColumnMsg) ? m_decorator->channelColor(m_log.at(row)) :
                                      m_decorator->attributeColor();

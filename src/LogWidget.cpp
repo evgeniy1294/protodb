@@ -13,6 +13,7 @@
 #include "LogModel.h"
 #include "ConnectionConfigDialog.h"
 #include "LogDecorationDialog.h"
+#include "LogProxyModel.h"
 
 #include "LuaApi.h"
 
@@ -30,8 +31,7 @@ LogWidget::LogWidget(QWidget* parent)
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         m_conn_dialog->setMinimumSize(QSize(640, 540));
 
-    m_decoration_dialog = new LogDecorationDialog();
-    m_decoration_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+    m_log_proxy_model = new LogProxyModel(this);
 
     // ------- Test --------
     m_log_model = new LogModel(this);
@@ -48,13 +48,14 @@ LogWidget::LogWidget(QWidget* parent)
 
 void LogWidget::setModel(LogModel *model)
 {
-    m_view->setModel(model);
-    m_decoration_dialog->setDecorator(model->decorator());
+    m_log_proxy_model->setSourceModel(model);
+    m_view->setModel(m_log_proxy_model);
+    m_view->setDecorator(model->decorator());
 }
 
 LogModel LogWidget::model() const
 {
-    auto model = m_view->model();
+    auto model = m_log_proxy_model->sourceModel();
     return dynamic_cast<LogModel*>(model) ? static_cast<LogModel*>(model) : nullptr;
 }
 
@@ -190,6 +191,14 @@ void LogWidget::createConnections()
 
     connect(m_cfg_btn, &QPushButton::released, this, [this]() {
         m_conn_dialog->show();
+    });
+
+    connect(m_find_le, &QLineEdit::editingFinished, this, [this]() {
+        bool valid = m_log_proxy_model->setFilterExpression(m_find_le->text());
+
+        if (!valid) {
+            m_find_le->clear();
+        }
     });
 }
 
