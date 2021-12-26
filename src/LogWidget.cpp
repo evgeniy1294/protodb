@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QLayout>
 #include <QTableView>
 #include <QPushButton>
@@ -17,16 +18,11 @@
 
 #include "LuaApi.h"
 
-
-
-
-
-
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {
     createGui();
-    createConnections();
+
     m_conn_dialog = new ConnectionConfigDialog();
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         m_conn_dialog->setMinimumSize(QSize(640, 540));
@@ -44,11 +40,15 @@ LogWidget::LogWidget(QWidget* parent)
 
     setModel(m_log_model);
     // ------- Test --------
+
+    createConnections();
 }
 
 void LogWidget::setModel(LogModel *model)
 {
     m_log_proxy_model->setSourceModel(model);
+        m_log_proxy_model->invalidate();
+
     m_view->setModel(m_log_proxy_model);
     m_view->setDecorator(model->decorator());
 }
@@ -163,7 +163,11 @@ void LogWidget::createConnections()
 
 
     connect(m_clr_btn, &QPushButton::released, this, [this] {
-        auto model = m_view->model();
+        auto model = m_log_proxy_model->sourceModel();
+
+        if (dynamic_cast<QSortFilterProxyModel*>(model)) {
+            model = static_cast<QSortFilterProxyModel*>(model)->sourceModel();
+        }
 
         if (dynamic_cast<LogModel*>(model)) {
             auto log_model = static_cast<LogModel*>(model);
@@ -196,10 +200,14 @@ void LogWidget::createConnections()
     connect(m_find_le, &QLineEdit::editingFinished, this, [this]() {
         bool valid = m_log_proxy_model->setFilterExpression(m_find_le->text());
 
+        auto palette = QApplication::palette();
         if (!valid) {
-            m_find_le->clear();
+            palette.setColor(QPalette::Base, QColor(0xffcece));
         }
+
+        m_find_le->setPalette(palette);
     });
+
 }
 
 

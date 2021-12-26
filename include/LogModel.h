@@ -39,10 +39,10 @@ public:
     QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
     bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
 
-    void setFormatter(LogFormatter* formatter);
+    void setFormatter(LogFormatter* formatter); // TODO: запретить замену?
     LogFormatter* formatter() const;
 
-    void setDecorator(LogDecorator* decorator);
+    void setDecorator(LogDecorator* decorator); // TODO: запретить замену?
     LogDecorator* decorator() const;
 
     void log(const LogEvent& event);

@@ -1,11 +1,11 @@
 #include "LogProxyModel.h"
 #include "LogModel.h"
+#include "LogFormatter.h"
 #include "SolByteArrayWrapper.h"
-
-#include <iostream>
 
 LogProxyModel::LogProxyModel(QObject* parent)
     : QSortFilterProxyModel(parent)
+    , m_bypass(true)
 {
     m_lua.open_libraries(sol::lib::base);
     createBaseConstant();
@@ -13,47 +13,52 @@ LogProxyModel::LogProxyModel(QObject* parent)
 
 void LogProxyModel::createBaseConstant()
 {
-    m_lua.script(R"(
-        function bypass(channel, msg)
-          return true
-        end
-    )");
-
-    m_accept = m_lua["bypass"];
-
     m_lua["RX"]  = kFirstLogChannel;
     m_lua["TX"]  = kSecondLogChannel;
     m_lua["LUA"] = kCommentLogChannel;
     m_lua["ERR"] = kErrorLogChannel;
 }
 
+
 bool LogProxyModel::setFilterExpression(const QString& str)
 {
-    static const std::array<int, 5> checkArray = {};
+    static const QByteArray checkArray(5, '0');
     static const QString filterTemplate = {
         "function accept(channel, msg) \n return %1 \n end"
     };
 
-    bool ret = false;
+    bool ret = true;
 
-    sol::protected_function_result pfr =
-            m_lua.safe_script(filterTemplate.arg(str).toStdString(), &sol::script_pass_on_error);
+    if (str.length() != 0) {
+        sol::protected_function_result pfr =
+                m_lua.safe_script(filterTemplate.arg(str).toStdString(), &sol::script_pass_on_error);
 
-    if (pfr.valid()) {
-        pfr = m_lua["accept"](0, checkArray);
+        ret = pfr.valid();
 
-        if (pfr.get_type() == sol::type::boolean) {
-            ret = true;
+        if (pfr.valid()) {
+            pfr = m_lua["accept"](0, checkArray); // Нужно тестировать на все каналы?
+            ret = pfr.get_type() == sol::type::boolean;
+
+            m_accept = m_lua["accept"];
         }
+
+        m_bypass = !ret;
+    }
+    else {
+        m_bypass = true;
     }
 
-    m_accept = ret ? m_lua["accept"] : m_lua["bypass"];
     invalidate();
 
     return ret;
 }
 
-void LogProxyModel::addFilterConstant(const QString& name, quint32 value)
+void LogProxyModel::addNamedConstant(const QString& name, quint32 value)
+{
+
+}
+
+void LogProxyModel::removeNamedConstant(const QString& name)
 {
 
 }
@@ -72,17 +77,29 @@ bool LogProxyModel::filterAcceptsColumn(int source_column, const QModelIndex& so
 
 bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
-    auto index   = sourceModel()->index(source_row, 0);
-    auto channel = index.data(LogModel::ChannelRole).toInt();
-    auto data    = index.data(LogModel::AnalyzeRole).toByteArray();
-        SolByteArrayWrapper dataWrapper(data);
+    bool ret = true;
 
-     sol::protected_function_result pfr = m_accept(channel, dataWrapper);
+    if (!m_bypass) {
+        auto index   = sourceModel()->index(source_row, 0, source_parent);
+        auto channel = index.data(LogModel::ChannelRole).toInt();
+        auto data    = index.data(LogModel::AnalyzeRole).toByteArray();
+            SolByteArrayWrapper dataWrapper(data);
 
-     return pfr.get<bool>();
+        sol::protected_function_result pfr = m_accept(channel, dataWrapper);
+
+        if (pfr.valid()) {
+            if (pfr.get_type() == sol::type::boolean) {
+                ret = pfr.get<bool>();
+            }
+        }
+        else {
+            sol::error err = pfr;
+            qDebug() << err.what();
+        }
+    }
+
+    return ret;
 }
-
-
 
 
 

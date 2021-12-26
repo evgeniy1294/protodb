@@ -7,7 +7,7 @@
 #include "Configurable.h"
 
 class PluginAbstract;
-
+/*
 class PluginManager: public QAbstractTableModel, public Configurable
 {
     Q_OBJECT
@@ -47,3 +47,4 @@ private:
     QList<PluginAbstract*> m_plugins;
     QMap<QString, bool>    m_load;
 };
+*/

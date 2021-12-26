@@ -4,6 +4,8 @@
 #include <sol/sol.hpp>
 #include "logging.h"
 
+class LogFormatter;
+
 class LogProxyModel: public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -13,7 +15,8 @@ public:
     ~LogProxyModel() = default;
 
     bool setFilterExpression(const QString& str);
-    void addFilterConstant(const QString& name, quint32 value);
+    void addNamedConstant(const QString& name, quint32 value);
+    void removeNamedConstant(const QString& name);
 
     void setSourceModel(QAbstractItemModel* model) override;
 
@@ -27,4 +30,7 @@ private:
 private:
     sol::state m_lua;
     sol::protected_function m_accept;
+    bool m_bypass;
+
+    LogFormatter* m_formatter;
 };

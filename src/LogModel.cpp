@@ -59,9 +59,7 @@ LogDecorator *LogModel::decorator() const
 void LogModel::log(const LogEvent &event)
 {
     if (m_flags[event.channel]) {
-        auto row = rowCount() - 1;
-
-        beginInsertRows(QModelIndex(), row, row);
+        beginInsertRows(QModelIndex(), rowCount() - 1, rowCount());
             m_log.append(event);
         endInsertRows();
     }
