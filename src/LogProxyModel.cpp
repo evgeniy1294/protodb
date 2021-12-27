@@ -7,7 +7,6 @@ LogProxyModel::LogProxyModel(QObject* parent)
     : QSortFilterProxyModel(parent)
     , m_bypass(true)
 {
-    m_lua.open_libraries(sol::lib::base);
     createBaseConstant();
 }
 
@@ -80,21 +79,17 @@ bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_p
     bool ret = true;
 
     if (!m_bypass) {
+        sol::protected_function_result pfr;
+
         auto index   = sourceModel()->index(source_row, 0, source_parent);
         auto channel = index.data(LogModel::ChannelRole).toInt();
-        auto data    = index.data(LogModel::AnalyzeRole).toByteArray();
-            SolByteArrayWrapper dataWrapper(data);
+        auto msg = index.data(LogModel::AnalyzeRole).toByteArray();
 
-        sol::protected_function_result pfr = m_accept(channel, dataWrapper);
-
+        pfr = m_accept(channel, SolByteArrayWrapper(msg));
         if (pfr.valid()) {
             if (pfr.get_type() == sol::type::boolean) {
                 ret = pfr.get<bool>();
             }
-        }
-        else {
-            sol::error err = pfr;
-            qDebug() << err.what();
         }
     }
 
