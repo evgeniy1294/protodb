@@ -4,9 +4,11 @@
 #include <QIODevice>
 #include "CreatorAbstract.h"
 
-class IoDeviceCreator: public CreatorAbstract
+class IODeviceCreatorInterface: public CreatorAbstract
 {
 public:
+    virtual ~IODeviceCreatorInterface() override = default;
+
+    virtual QIODevice* create() const = 0;
     virtual QIODevice* create(const nlohmann::json&) const = 0;
 };
-

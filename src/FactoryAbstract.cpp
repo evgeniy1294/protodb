@@ -16,11 +16,6 @@ QPointer<FactoryAbstract> FactoryAbstract::globalInstance(const QString& fid)
     return GlobalFactoryStorage::getFactory(fid);
 }
 
-QString FactoryAbstract::fid() const
-{
-    return QString();
-}
-
 bool FactoryAbstract::addCreator(const QSharedPointer<CreatorAbstract>& creator)
 {
     if ( m_creators.contains(creator->cid()) ) {

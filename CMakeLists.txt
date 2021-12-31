@@ -24,7 +24,7 @@ set(PROJECT_SOURCES
         src/FactoryAbstract.cpp
         src/GlobalFactoryStorage.cpp
         src/ConfigFrameFabric.cpp
-        src/IoDeviceFabric.cpp
+        src/IODeviceFactory.cpp
         src/LogDecorator.cpp
         src/LogFormatter.cpp
         src/LogModel.cpp
@@ -67,8 +67,8 @@ set(PROJECT_SOURCES
         include/ConfigFrame.h
         include/ConfigFrameCreator.h
         include/ConfigFrameFabric.h
-        include/IoDeviceCreator.h
-        include/IoDeviceFabric.h
+        include/IODeviceCreatorInterface.h
+        include/IODeviceFactory.h
         include/LogDecorator.h
         include/LogFormatter.h
         include/LogModel.h

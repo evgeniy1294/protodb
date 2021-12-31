@@ -12,8 +12,6 @@ public:
     static QPointer< FactoryAbstract > globalInstance( const QString& fid );
 
     // ----------[Fabric interface]------------ //
-    virtual QString fid() const;
-
     bool addCreator(const QSharedPointer< CreatorAbstract >& creator);
 
     void removeCreator(const QString& cid);
