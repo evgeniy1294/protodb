@@ -21,7 +21,8 @@ set(PROJECT_SOURCES
         src/qnlohmann.cpp
         src/LuaApi.cpp
         src/Configurable.cpp
-        src/FabricAbstract.cpp
+        src/FactoryAbstract.cpp
+        src/GlobalFactoryStorage.cpp
         src/ConfigFrameFabric.cpp
         src/IoDeviceFabric.cpp
         src/LogDecorator.cpp
@@ -60,8 +61,9 @@ set(PROJECT_SOURCES
         include/logging.h
         include/LuaApi.h
         include/Configurable.h
-        include/FabricAbstract.h
+        include/FactoryAbstract.h
         include/CreatorAbstract.h
+        include/GlobalFactoryStorage.h
         include/ConfigFrame.h
         include/ConfigFrameCreator.h
         include/ConfigFrameFabric.h
