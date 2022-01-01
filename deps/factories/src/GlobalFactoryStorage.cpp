@@ -1,5 +1,5 @@
-#include "GlobalFactoryStorage.h"
-#include "FactoryAbstract.h"
+#include <protodb/factories/GlobalFactoryStorage.h>
+#include <protodb/factories/FactoryAbstract.h>
 
 bool GlobalFactoryStorage::addFactory(const QString& name, const QPointer<FactoryAbstract>& factory)
 {

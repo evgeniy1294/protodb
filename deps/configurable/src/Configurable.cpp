@@ -1,4 +1,4 @@
-#include "Configurable.h"
+#include <protodb/configurable/Configurable.h>
 
 void Configurable::fromJson(const nlohmann::json &json)
 {

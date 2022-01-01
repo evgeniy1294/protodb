@@ -1,5 +1,5 @@
-#include "qnlohmann.h"
-#include "LogFormatter.h"
+#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/LogFormatter.h>
 
 LogFormatter::LogFormatter(QObject *parent)
     : QObject(parent)

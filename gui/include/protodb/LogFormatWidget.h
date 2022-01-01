@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include <Configurable.h>
+#include <protodb/configurable/Configurable.h>
 
 class QCheckBox;
 class QLineEdit;

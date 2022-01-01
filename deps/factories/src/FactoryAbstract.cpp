@@ -1,6 +1,6 @@
-#include "FactoryAbstract.h"
-#include "CreatorAbstract.h"
-#include "GlobalFactoryStorage.h"
+#include <protodb/factories/FactoryAbstract.h>
+#include <protodb/factories/CreatorAbstract.h>
+#include <protodb/factories/GlobalFactoryStorage.h>
 
 FactoryAbstract::FactoryAbstract(QObject* parent)
     : QObject(parent)
@@ -74,8 +74,8 @@ QSharedPointer<CreatorAbstract> FactoryAbstract::operator[](const QString& cid) 
     return nullptr;
 }
 
-QSet<QString> FactoryAbstract::getAllCid() const
+QStringList FactoryAbstract::getAllCid() const
 {
-
+    return m_creators.keys();
 }
 

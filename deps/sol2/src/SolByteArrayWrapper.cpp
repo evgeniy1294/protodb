@@ -1,4 +1,4 @@
-#include "SolByteArrayWrapper.h"
+#include <protodb/sol2/SolByteArrayWrapper.h>
 
 SolByteArrayWrapper::SolByteArrayWrapper(QByteArray& byteArray)
     : m_byte_array(&byteArray) { }

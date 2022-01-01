@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.5)
+
+#set(CMAKE_AUTOUIC ON)
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#find_package(QT NAMES Qt5 COMPONENTS Core REQUIRED)
+#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+
+set(GLOBAL_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/protodb/global/)
+set(GLOBAL_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(GLOBAL_HEADERS
+        ${GLOBAL_HEADERS_DIR}/LogTypes.h
+)
+
+set(GLOBAL_SOURCES
+
+)
+
+#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+#    qt_add_library(Global STATIC ${GLOBAL_SOURCES} ${GLOBAL_HEADERS})
+#else()
+    add_library(Global INTERFACE ${GLOBAL_SOURCES} ${GLOBAL_HEADERS})
+#endif()
+
+target_include_directories(Global INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+
+

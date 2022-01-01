@@ -1,9 +1,9 @@
 #include <QHeaderView>
-#include "SequenceModel.h"
-#include "SequenceTableView.h"
-#include "CellSpinBoxDelegate.h"
-#include "CellCheckBoxDelegate.h"
-#include "CellButtonDelegate.h"
+#include <protodb/SequenceModel.h>
+#include <protodb/SequenceTableView.h>
+#include <protodb/CellSpinBoxDelegate.h>
+#include <protodb/CellCheckBoxDelegate.h>
+#include <protodb/CellButtonDelegate.h>
 
 SequenceTableView::SequenceTableView(QWidget *parent)
 {

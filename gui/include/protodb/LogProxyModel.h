@@ -2,7 +2,7 @@
 
 #include <QSortFilterProxyModel>
 #include <sol/sol.hpp>
-#include "logging.h"
+#include <protodb/global/LogTypes.h>
 
 class LogFormatter;
 

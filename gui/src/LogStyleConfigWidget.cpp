@@ -8,10 +8,7 @@
 #include <QStringList>
 
 
-#include "LogConfigWidget.h"
-
-static const QStringList font_size_list = { "6",  "7",  "8",  "9", "10", "11", "12", "14", "16",
-                                           "18", "20", "22", "24", "26", "28", "36", "48", "72"};
+#include <protodb/LogStyleConfigWidget.h>
 
 LogConfigWidget::LogConfigWidget(QWidget* aParent)
     : QFrame(aParent)
@@ -24,6 +21,8 @@ LogConfigWidget::LogConfigWidget(QWidget* aParent)
 
 
 void LogConfigWidget::createGui() {
+    static const QStringList font_size_list = { "6",  "7",  "8",  "9", "10", "11", "12", "14", "16",
+                                               "18", "20", "22", "24", "26", "28", "36", "48", "72"};
 
     auto channel_label_1       = new QLabel(tr("Channel 1 color"));
     auto channel_label_2       = new QLabel(tr("Channel 2 color"));

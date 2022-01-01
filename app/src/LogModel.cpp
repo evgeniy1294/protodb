@@ -1,6 +1,6 @@
-#include "LogFormatter.h"
-#include "LogDecorator.h"
-#include "LogModel.h"
+#include <protodb/LogFormatter.h>
+#include <protodb/LogDecorator.h>
+#include <protodb/LogModel.h>
 
 LogModel::LogModel(QObject *parent)
     : QAbstractTableModel(parent)

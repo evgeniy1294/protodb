@@ -1,8 +1,8 @@
-#include "Worker.h"
-#include "SequenceModel.h"
-#include "LogModel.h"
-#include "LogFormatter.h"
-#include "LogDecorator.h"
+#include <protodb/Worker.h>
+#include <protodb/SequenceModel.h>
+#include <protodb/LogModel.h>
+#include <protodb/LogFormatter.h>
+#include <protodb/LogDecorator.h>
 
 Worker::Worker(QObject *parent)
     : QObject(parent)

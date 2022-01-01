@@ -11,13 +11,13 @@
 
 #include <DockManager.h>
 
-#include "mainwindow.h"
-#include "settings_dialog.h"
-#include "Worker.h"
-#include "SequenceTableWidget.h"
-#include "LogWidget.h"
+#include <protodb/Worker.h>
 
-#include "LogModel.h"
+#include <protodb/mainwindow.h>
+#include <protodb/SequenceTableWidget.h>
+#include <protodb/LogWidget.h>
+
+#include <protodb/LogModel.h>
 
 MainWindow::MainWindow(Worker* worker, QWidget *parent)
     : QMainWindow(parent)
@@ -48,7 +48,6 @@ void MainWindow::createGui()
     setCentralWidget(central_widget);
 }
 
-#include "SequenceModel.h"
 void MainWindow::createDock()
 {
     ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);

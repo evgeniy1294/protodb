@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QStyledItemDelegate>
-#include "logging.h"
+#include <protodb/global/LogTypes.h>
 
 class LogItemDelegate: public QStyledItemDelegate
 {

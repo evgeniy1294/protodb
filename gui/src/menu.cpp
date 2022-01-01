@@ -1,5 +1,5 @@
 #include <QMouseEvent>
-#include "menu.h"
+#include <protodb/menu.h>
 
 isa_menu::isa_menu(QWidget *parent)
     : QMenu(parent)

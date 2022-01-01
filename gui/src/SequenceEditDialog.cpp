@@ -9,8 +9,8 @@
 #include <QAction>
 #include <QDialogButtonBox>
 
-#include "SequenceModel.h"
-#include "SequenceEditDialog.h"
+#include <protodb/SequenceModel.h>
+#include <protodb/SequenceEditDialog.h>
 
 SequenceEditDialog::SequenceEditDialog(QWidget* aParent)
     : QDialog(aParent)

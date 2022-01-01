@@ -3,10 +3,10 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QAction>
-#include "LogTableView.h"
-#include "LogDecorationDialog.h"
-#include "LogItemDelegate.h"
-#include "LogModel.h"
+#include <protodb/LogTableView.h>
+#include <protodb/LogDecorationDialog.h>
+#include <protodb/LogItemDelegate.h>
+#include <protodb/LogModel.h>
 
 LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)

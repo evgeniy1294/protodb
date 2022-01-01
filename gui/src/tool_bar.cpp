@@ -1,8 +1,8 @@
 #include <QToolButton>
 #include <QMenu>
 
-#include "tool_bar.h"
-#include "menu.h"
+#include <protodb/tool_bar.h>
+#include <protodb/menu.h>
 
 
 

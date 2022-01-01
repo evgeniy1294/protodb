@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include "Configurable.h"
+#include <protodb/configurable/Configurable.h>
 
 class QAbstractTableModel;
 class SequenceModel;

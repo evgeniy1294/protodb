@@ -1,7 +1,7 @@
 #include <QApplication>
 
-#include "mainwindow.h"
-#include "Worker.h"
+#include <protodb/mainwindow.h>
+#include <protodb/Worker.h>
 
 
 int main(int argc, char *argv[])

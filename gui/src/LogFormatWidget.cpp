@@ -2,8 +2,8 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
-#include <qnlohmann.h>
-#include "LogFormatWidget.h"
+#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/LogFormatWidget.h>
 
 LogFormatWidget::LogFormatWidget(QWidget* aParent)
     : QWidget(aParent)

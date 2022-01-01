@@ -10,10 +10,10 @@
 #include <QLabel>
 #include <QAction>
 
-#include "ConnectionConfigDialog.h"
-#include "SerialIOWidget.h"
-#include "NetIOWidget.h"
-#include "LogFormatWidget.h"
+#include <protodb/ConnectionConfigDialog.h>
+//#include "SerialIOWidget.h"
+//#include "NetIOWidget.h"
+#include "protodb/LogFormatWidget.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     : QDialog(aParent)
@@ -58,7 +58,7 @@ void ConnectionConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
-    auto serial_config_widget = new NetIOWidget();
+    auto serial_config_widget = new QWidget();//NetIOWidget();
         m_widgets.append(serial_config_widget);
 
     auto log_config_frame = new LogFormatWidget();

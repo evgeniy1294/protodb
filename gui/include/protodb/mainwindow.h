@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "tool_bar.h"
+#include <protodb/tool_bar.h>
 
 namespace ads {
   class CDockManager;

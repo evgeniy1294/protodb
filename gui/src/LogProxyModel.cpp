@@ -1,7 +1,7 @@
-#include "LogProxyModel.h"
-#include "LogModel.h"
-#include "LogFormatter.h"
-#include "SolByteArrayWrapper.h"
+#include <protodb/LogProxyModel.h>
+#include <protodb/LogModel.h>
+#include <protodb/LogFormatter.h>
+#include <protodb/sol2/SolByteArrayWrapper.h>
 
 LogProxyModel::LogProxyModel(QObject* parent)
     : QSortFilterProxyModel(parent)

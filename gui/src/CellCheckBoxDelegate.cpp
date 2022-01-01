@@ -1,6 +1,6 @@
 #include <QApplication>
 
-#include "CellCheckBoxDelegate.h"
+#include <protodb/CellCheckBoxDelegate.h>
 
 CellCheckBoxDelegate::CellCheckBoxDelegate(QObject* parent)
     : QStyledItemDelegate(parent)

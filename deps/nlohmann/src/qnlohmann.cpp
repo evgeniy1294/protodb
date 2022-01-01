@@ -1,6 +1,6 @@
 #include <QColor>
 #include <QFont>
-#include "qnlohmann.h"
+#include <protodb/nlohmann/qnlohmann.h>
 
 void to_json(nlohmann::json& j, const QString& str) {
     j = str.toStdString();

@@ -8,9 +8,9 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QLineEdit>
-#include "qnlohmann.h"
-#include "LogDecorationDialog.h"
-#include "LogDecorator.h"
+#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/LogDecorationDialog.h>
+#include <protodb/LogDecorator.h>
 
 LogDecorationDialog::LogDecorationDialog(QWidget *parent)
     : QDialog(parent)

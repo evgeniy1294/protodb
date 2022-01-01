@@ -1,5 +1,5 @@
-#include "LuaApi.h"
-#include "SolByteArrayWrapper.h"
+#include <protodb/LuaApi.h>
+#include <protodb/sol2/SolByteArrayWrapper.h>
 
 #include <iostream>
 

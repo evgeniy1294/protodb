@@ -3,8 +3,7 @@
 #include <QPointer>
 #include <QDebug>
 
-#include "SequenceModel.h"
-#include <iostream>
+#include <protodb/SequenceModel.h>
 
 SequenceModel::SequenceModel(QObject* parent)
     : QAbstractTableModel(parent)

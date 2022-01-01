@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "logging.h"
+#include <protodb/global/LogTypes.h>
 
 class LogTableView;
 class QTableView;

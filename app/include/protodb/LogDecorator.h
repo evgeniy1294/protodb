@@ -3,8 +3,8 @@
 #include <QtCore>
 #include <QColor>
 #include <QFont>
-#include "Configurable.h"
-#include "logging.h"
+#include <protodb/configurable/Configurable.h>
+#include <protodb/global/LogTypes.h>
 
 
 

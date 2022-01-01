@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "qnlohmann.h"
-#include "LogDecorator.h"
+#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/LogDecorator.h>
 
 
 LogDecorator::LogDecorator(QObject* parent)

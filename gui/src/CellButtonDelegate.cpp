@@ -2,7 +2,7 @@
 #include <QPushButton>
 #include <QPainter>
 #include <iostream>
-#include "CellButtonDelegate.h"
+#include <protodb/CellButtonDelegate.h>
 
 
 CellButtonDelegate::CellButtonDelegate(QObject *parent)

@@ -12,10 +12,10 @@
 
 #include <iostream>
 
-#include "SequenceTableWidget.h"
-#include "SequenceEditDialog.h"
-#include "SequenceTableView.h"
-#include "SequenceModel.h"
+#include <protodb/SequenceTableWidget.h>
+#include <protodb/SequenceEditDialog.h>
+#include <protodb/SequenceTableView.h>
+#include <protodb/SequenceModel.h>
 
 SequenceTableWidget::SequenceTableWidget(QWidget* parent)
     : QWidget(parent)

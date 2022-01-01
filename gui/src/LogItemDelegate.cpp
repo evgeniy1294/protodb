@@ -1,7 +1,7 @@
 #include <QtGui>
 #include <QApplication>
-#include "LogModel.h"
-#include "LogItemDelegate.h"
+#include <protodb/LogModel.h>
+#include <protodb/LogItemDelegate.h>
 
 LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)

@@ -23,7 +23,7 @@ public:
     QSharedPointer< CreatorAbstract > getCreator(const QString& cid) const;
     QSharedPointer< CreatorAbstract > operator[](const QString& cid) const;
 
-    QSet< QString > getAllCid() const;
+    QStringList getAllCid() const;
 
 signals:
     void sCreatorAdded( QString cid );

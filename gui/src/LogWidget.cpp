@@ -9,14 +9,14 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-#include "LogWidget.h"
-#include "LogTableView.h"
-#include "LogModel.h"
-#include "ConnectionConfigDialog.h"
-#include "LogDecorationDialog.h"
-#include "LogProxyModel.h"
+#include <protodb/LogWidget.h>
+#include <protodb/LogTableView.h>
+#include <protodb/LogModel.h>
+#include <protodb/ConnectionConfigDialog.h>
+#include <protodb/LogDecorationDialog.h>
+#include <protodb/LogProxyModel.h>
 
-#include "LuaApi.h"
+#include <protodb/LuaApi.h>
 
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QTableView>
-#include "logging.h"
+#include <protodb/global/LogTypes.h>
 
 class QMenu;
 class QAction;

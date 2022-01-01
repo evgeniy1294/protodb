@@ -1,0 +1,5 @@
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/configurable)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/factories)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/global)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/nlohmann)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sol2)

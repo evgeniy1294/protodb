@@ -1,5 +1,5 @@
 #include <QSpinBox>
-#include "CellSpinBoxDelegate.h"
+#include <protodb/CellSpinBoxDelegate.h>
 
 CellSpinBoxDelegate::CellSpinBoxDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
