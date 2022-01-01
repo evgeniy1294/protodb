@@ -1,0 +1,20 @@
+set
+(
+	GUI_HEADERS
+		CellButtonDelegate.h
+		CellCheckBoxDelegate.h
+		CellSpinBoxDelegate.h
+		ConnectionConfigDialog.h
+		LogDecorationDialog.h
+		LogFormatWidget.h
+		LogItemDelegate.h
+		LogStyleConfigWidget.h
+		LogTableView.h
+		LogWidget.h
+		mainwindow.h
+		menu.h
+		SequenceEditDialog.h
+		SequenceTableView.h
+		SequenceTableWidget.h
+		tool_bar.h
+)
