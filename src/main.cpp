@@ -1,7 +1,6 @@
 #include <QApplication>
 
 #include "mainwindow.h"
-#include "singleton.h"
 #include "Worker.h"
 
 

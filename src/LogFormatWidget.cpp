@@ -3,17 +3,16 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <qnlohmann.h>
-#include "LogFormatFrame.h"
-#include "LogFormatter.h"
+#include "LogFormatWidget.h"
 
-LogFormatFrame::LogFormatFrame(QWidget* aParent)
-    : ConfigFrame(aParent)
+LogFormatWidget::LogFormatWidget(QWidget* aParent)
+    : QWidget(aParent)
 {
     createGui();
     connectSignals();
 }
 
-void LogFormatFrame::defaultConfig(nlohmann::json &json) const
+void LogFormatWidget::defaultConfig(nlohmann::json &json) const
 {
     json["CharSeparator"]        = ' ';
     json["TimestampEnabled"]     = true;
@@ -24,7 +23,7 @@ void LogFormatFrame::defaultConfig(nlohmann::json &json) const
     json["SecondChannelName"]    = QString("TX");
 }
 
-void LogFormatFrame::fromJson(const nlohmann::json &json)
+void LogFormatWidget::fromJson(const nlohmann::json &json)
 {
     m_separator->setText(QString(json["CharSeparator"].get<char>()));
     m_timestamp_en->setCheckState(json["TimestampEnabled"].get<bool>() ? Qt::Checked : Qt::Unchecked);
@@ -35,7 +34,7 @@ void LogFormatFrame::fromJson(const nlohmann::json &json)
     m_ch2_name->setText(json["SecondChannelName"].get<QString>());
 }
 
-void LogFormatFrame::toJson(nlohmann::json &json) const
+void LogFormatWidget::toJson(nlohmann::json &json) const
 {
     json["CharSeparator"]        = ' '; /// TODO: Задействовать
     json["TimestampEnabled"]     = m_timestamp_en->checkState() == Qt::Checked;
@@ -46,14 +45,7 @@ void LogFormatFrame::toJson(nlohmann::json &json) const
     json["SecondChannelName"]    = m_ch2_name->text();
 }
 
-const QString& LogFormatFrame::jsonPrefix() const
-{
-    static const QString m_cfg_id("LogFormat");
-    return m_cfg_id;
-}
-
-
-void LogFormatFrame::createGui() {
+void LogFormatWidget::createGui() {
     // ----------[WIDGETS]------------ //
     m_append_en = new QCheckBox(tr("Append file"));
         m_append_en->setChecked(true);
@@ -91,11 +83,9 @@ void LogFormatFrame::createGui() {
         main_layout->setColumnStretch(1, 1);
 
     setLayout(main_layout);
-    setFrameShape(QFrame::StyledPanel);
-    setFrameShadow(QFrame::Raised);
 }
 
-void LogFormatFrame::connectSignals()
+void LogFormatWidget::connectSignals()
 {
     connect(m_timestamp_en, &QCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::Checked) {
@@ -124,5 +114,6 @@ void LogFormatFrame::connectSignals()
         }
     });
 }
+
 
 

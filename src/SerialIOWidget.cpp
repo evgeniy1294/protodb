@@ -6,18 +6,18 @@
 #include <QIntValidator>
 
 #include "qnlohmann.h"
-#include "SerialConfigFrame.h"
+#include "SerialIOWidget.h"
 
 
-SerialConfigFrame::SerialConfigFrame(QWidget* parent)
-    : ConfigFrame(parent)
+SerialIOWIdget::SerialIOWIdget(QWidget* parent)
+    : IOWidget(parent)
 {
     createGui();
     connectSignals();
 }
 
 
-void SerialConfigFrame::defaultConfig(nlohmann::json &json) const
+void SerialIOWIdget::defaultConfig(nlohmann::json &json) const
 {
     json["Device"]      = "";
     json["OpenMode"]    = "Communication";
@@ -28,7 +28,7 @@ void SerialConfigFrame::defaultConfig(nlohmann::json &json) const
     json["FlowControl"] = "None";
 }
 
-void SerialConfigFrame::toJson(nlohmann::json &json) const
+void SerialIOWIdget::toJson(nlohmann::json &json) const
 {
     json["Device"]      = m_device->currentText();
     json["OpenMode"]    = m_open_mode->currentText();
@@ -39,7 +39,7 @@ void SerialConfigFrame::toJson(nlohmann::json &json) const
     json["FlowControl"] = m_flow_ctrl->currentText();
 }
 
-void SerialConfigFrame::fromJson(const nlohmann::json &json)
+void SerialIOWIdget::fromJson(const nlohmann::json &json)
 {
     QString baudrate = json["Baudrate"].get<QString>();
     if (m_baudrate->findText(baudrate) == -1) {
@@ -55,13 +55,7 @@ void SerialConfigFrame::fromJson(const nlohmann::json &json)
     m_flow_ctrl->setCurrentText(json["FlowControl"].get<QString>());
 }
 
-const QString& SerialConfigFrame::jsonPrefix() const
-{
-    static const QString m_prefix("Serial");
-    return m_prefix;
-}
-
-void SerialConfigFrame::createGui()
+void SerialIOWIdget::createGui()
 {
     static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };
     static const QStringList databits_list   = { "5", "6", "7", "8" };
@@ -131,11 +125,9 @@ void SerialConfigFrame::createGui()
         main_layout->addLayout(cfg_layout);
 
     setLayout(main_layout);
-    setFrameShape(QFrame::StyledPanel);
-    setFrameShadow(QFrame::Raised);
 }
 
-void SerialConfigFrame::connectSignals()
+void SerialIOWIdget::connectSignals()
 {
     connect(m_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         if (index == m_baudrate->count() - 1) {

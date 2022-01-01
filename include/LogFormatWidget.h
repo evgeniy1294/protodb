@@ -1,23 +1,21 @@
 #pragma once
 
-#include "ConfigFrame.h"
+#include <QWidget>
+#include <Configurable.h>
 
 class QCheckBox;
 class QLineEdit;
 
-class LogFormatFrame: public ConfigFrame
+class LogFormatWidget: public QWidget, Configurable
 {
-    Q_OBJECT
-
 public:
-    LogFormatFrame(QWidget* aParent = nullptr);
-    ~LogFormatFrame() = default;
+    explicit LogFormatWidget(QWidget* parent = nullptr);
+    virtual ~LogFormatWidget() = default;
 
     void defaultConfig(nlohmann::json& json) const override;
     void fromJson(const nlohmann::json& json) override;
     void toJson(nlohmann::json& json) const override;
 
-    const QString& jsonPrefix() const override;
 private:
     void createGui();
     void connectSignals();

@@ -23,17 +23,16 @@ set(PROJECT_SOURCES
         src/Configurable.cpp
         src/FactoryAbstract.cpp
         src/GlobalFactoryStorage.cpp
-        src/ConfigFrameFabric.cpp
         src/IODeviceFactory.cpp
+        src/IOWidgetFactory.cpp
         src/LogDecorator.cpp
         src/LogFormatter.cpp
         src/LogModel.cpp
         src/LogTableView.cpp
-        src/LogFormatFrame.cpp
+        src/LogFormatWidget.cpp
         src/LogDecorationDialog.cpp
         src/LogProxyModel.cpp
         src/SequenceTableView.cpp
-        src/Core.cpp
         src/Worker.cpp
         src/CellSpinBoxDelegate.cpp
         src/CellButtonDelegate.cpp
@@ -42,15 +41,13 @@ set(PROJECT_SOURCES
         src/script_widget.cpp
         src/menu.cpp
         src/tool_bar.cpp
-        src/singleton.cpp
         src/SequenceTableWidget.cpp
         src/SequenceModel.cpp
         src/SequenceEditDialog.cpp
-        src/Logger.cpp
         src/LogWidget.cpp
         src/LogItemDelegate.cpp
-        src/SerialConfigFrame.cpp
-        src/NetConfigFrame.cpp
+        src/SerialIOWidget.cpp
+        src/NetIOWidget.cpp
         src/ConnectionConfigDialog.cpp
         src/CodeEditorWidget.cpp
         src/SolByteArrayWrapper.cpp
@@ -64,35 +61,32 @@ set(PROJECT_SOURCES
         include/FactoryAbstract.h
         include/CreatorAbstract.h
         include/GlobalFactoryStorage.h
-        include/ConfigFrame.h
-        include/ConfigFrameCreator.h
-        include/ConfigFrameFabric.h
         include/IODeviceCreatorInterface.h
         include/IODeviceFactory.h
+        include/IOWidgetCreatorInterface.h
+        include/IOWidgetFactory.h
+        include/IOWidget.h
         include/LogDecorator.h
         include/LogFormatter.h
         include/LogModel.h
         include/LogTableView.h
-        include/LogFormatFrame.h
+        include/LogFormatWidget.h
         include/LogDecorationDialog.h
         include/LogProxyModel.h
         include/SequenceTableView.h
-        include/Core.h
         include/Worker.h
         include/mainwindow.h
         include/script_widget.h
         include/menu.h
         include/tool_bar.h
         include/SequenceAbstract.h
-        include/singleton.h
         include/SequenceTableWidget.h
         include/SequenceModel.h
         include/SequenceEditDialog.h
-        include/Logger.h
         include/LogItemDelegate.h
         include/LogWidget.h
-        include/SerialConfigFrame.h
-        include/NetConfigFrame.h
+        include/SerialIOWidget.h
+        include/NetIOWidget.h
         include/ConnectionConfigDialog.h
         include/CellButtonDelegate.h
         include/CellSpinBoxDelegate.h

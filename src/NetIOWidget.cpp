@@ -6,43 +6,37 @@
 #include <QHostAddress>
 
 #include "qnlohmann.h"
-#include "NetConfigFrame.h"
+#include "NetIOWidget.h"
 
-NetConfigFrame::NetConfigFrame(QWidget* parent)
-    : ConfigFrame(parent)
+NetIOWidget::NetIOWidget(QWidget* parent)
+    : IOWidget(parent)
 {
     createGui();
     connectSignals();
 }
 
-void NetConfigFrame::defaultConfig(nlohmann::json& json) const
+void NetIOWidget::defaultConfig(nlohmann::json& json) const
 {
     json["RemoteIp"] = "127.0.0.1";
     json["Port"]     = "1";
     json["Protocol"] = "TCP";
 }
 
-void NetConfigFrame::toJson(nlohmann::json& json) const
+void NetIOWidget::toJson(nlohmann::json& json) const
 {
     json["RemoteIp"] = m_ip->text();
     json["Port"]     = m_port->text();
     json["Protocol"] = m_protocol->currentText();
 }
 
-void NetConfigFrame::fromJson(const nlohmann::json& json)
+void NetIOWidget::fromJson(const nlohmann::json& json)
 {
     m_ip->setText(json["RemoteIp"].get<QString>());
     m_port->setText(json["Port"].get<QString>());
     m_protocol->setCurrentText(json["Protocol"].get<QString>());
 }
 
-const QString& NetConfigFrame::jsonPrefix() const
-{
-    static const QString m_prefix("Network");
-    return m_prefix;
-}
-
-void NetConfigFrame::createGui()
+void NetIOWidget::createGui()
 {
     m_ip = new QLineEdit();
         m_ip->setPlaceholderText(tr("IPv4 or IPv6"));
@@ -66,11 +60,9 @@ void NetConfigFrame::createGui()
         main_layout->addWidget(m_port, 2, 1);
 
     setLayout(main_layout);
-    setFrameShape(QFrame::StyledPanel);
-    setFrameShadow(QFrame::Raised);
 }
 
-void NetConfigFrame::connectSignals()
+void NetIOWidget::connectSignals()
 {
     connect(m_ip, &QLineEdit::editingFinished, this, [this]() {
         QHostAddress address =  QHostAddress(m_ip->text());

@@ -1,23 +1,22 @@
 #pragma once
 
-#include "ConfigFrame.h"
+#include "IOWidget.h"
 
 class QComboBox;
 class QValidator;
 
-class SerialConfigFrame: public ConfigFrame
+class SerialIOWIdget: public IOWidget
 {
   Q_OBJECT
 
 public:
-    SerialConfigFrame(QWidget *parent = nullptr);
-    ~SerialConfigFrame() = default;
+    SerialIOWIdget(QWidget *parent = nullptr);
+    ~SerialIOWIdget() = default;
 
     void defaultConfig(nlohmann::json &json) const override;
     void toJson(nlohmann::json &json) const override;
     void fromJson(const nlohmann::json &json) override;
 
-    const QString& jsonPrefix() const override;
 private:
     void createGui();
     void connectSignals();

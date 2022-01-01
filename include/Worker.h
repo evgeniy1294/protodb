@@ -24,8 +24,6 @@ public:
     void fromJson(const nlohmann::json& json) override;
     void toJson(nlohmann::json& json) const override;
 
-    const QString& jsonPrefix() const override;
-
 public slots:
     void onStart();
     void onStop();

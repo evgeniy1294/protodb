@@ -10,12 +10,10 @@
 #include <QLabel>
 #include <QAction>
 
-#include "singleton.h"
-#include "Core.h"
 #include "ConnectionConfigDialog.h"
-#include "SerialConfigFrame.h"
-#include "NetConfigFrame.h"
-#include "LogFormatFrame.h"
+#include "SerialIOWidget.h"
+#include "NetIOWidget.h"
+#include "LogFormatWidget.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     : QDialog(aParent)
@@ -60,10 +58,10 @@ void ConnectionConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
-    auto serial_config_widget = new NetConfigFrame();
+    auto serial_config_widget = new NetIOWidget();
         m_widgets.append(serial_config_widget);
 
-    auto log_config_frame = new LogFormatFrame();
+    auto log_config_frame = new LogFormatWidget();
 
     // ---------[SELECTOR FRAME]---------//
     auto selector_frame = new QFrame();
@@ -117,8 +115,7 @@ void ConnectionConfigDialog::connectSignals()
     });
 
     connect(m_scr_le, &QLineEdit::textChanged, this, [](const QString& text) {
-        auto core = Singleton::instance().m_core;
-        core->setScriptFile(text);
+
     });
 }
 

@@ -80,12 +80,6 @@ void LogFormatter::toJson(nlohmann::json &json) const
     json["ErrorChannelName"]   = m_names[kErrorLogChannel];
 }
 
-const QString& LogFormatter::jsonPrefix() const
-{
-    static const QString m_prefix("LogFormat");
-    return m_prefix;
-}
-
 QString LogFormatter::channelName(const LogEvent &event) const
 {
     return m_names[event.channel];

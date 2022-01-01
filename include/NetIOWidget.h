@@ -1,23 +1,21 @@
 #pragma once
 
-#include "ConfigFrame.h"
+#include "IOWidget.h"
 
 class QLineEdit;
 class QComboBox;
 
-class NetConfigFrame: public ConfigFrame
+class NetIOWidget: public IOWidget
 {
   Q_OBJECT
 
 public:
-    NetConfigFrame(QWidget *parent = nullptr);
-    ~NetConfigFrame() = default;
+    NetIOWidget(QWidget *parent = nullptr);
+    ~NetIOWidget() = default;
 
     void defaultConfig(nlohmann::json &json) const override;
     void toJson(nlohmann::json &json) const override;
     void fromJson(const nlohmann::json &json) override;
-
-    const QString& jsonPrefix() const override;
 
 private:
     void createGui();
