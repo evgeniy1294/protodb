@@ -9,6 +9,8 @@ class QButtonGroup;
 class QRadioButton;
 class QDialogButtonBox;
 class QLineEdit;
+class IOWidgetFactory;
+class IOWidget;
 
 class Core;
 
@@ -34,6 +36,6 @@ private:
     QLineEdit* m_scr_le;
     QDialogButtonBox* m_dialog_btn;
 
-    QList<QWidget*> m_widgets;
+    QList<IOWidget*> m_widgets;
 };
 

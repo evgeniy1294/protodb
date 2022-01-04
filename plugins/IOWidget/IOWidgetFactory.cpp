@@ -1,7 +1,7 @@
 #include "IOWidgetCreatorInterface.h"
 #include "IOWidgetFactory.h"
 
-#include "GlobalFactoryStorage.h"
+#include <protodb/factories/GlobalFactoryStorage.h>
 
 IOWidgetFactory::IOWidgetFactory(QObject* parent)
     : FactoryAbstract(parent)
@@ -98,6 +98,17 @@ QPointer<IOWidgetFactory> IOWidgetFactory::globalInstance()
 QString IOWidgetFactory::fid()
 {
     return QString("IOWidgetFactory");
+}
+
+bool IOWidgetFactory::addCreator(const QSharedPointer<IOWidgetCreatorInterface>& creator)
+{
+    if (!creator || containsCreator(creator->cid())) {
+        return false;
+    }
+
+    m_creators[ creator->cid() ] = creator;
+
+    return true;
 }
 
 

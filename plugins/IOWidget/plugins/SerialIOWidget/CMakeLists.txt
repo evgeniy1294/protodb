@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.5)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(QT NAMES Qt5 COMPONENTS SerialPort REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS SerialPort REQUIRED)
+
+set(SERIAL_IOWIDGET_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SERIAL_IOWIDGET_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(SERIAL_IOWIDGET_HEADERS
+        ${SERIAL_IOWIDGET_HEADERS_DIR}/SerialIOWidget.h
+        ${SERIAL_IOWIDGET_HEADERS_DIR}/SerialIOWidgetCreator.h
+)
+
+set(SERIAL_IOWIDGET_SOURCE
+        ${SERIAL_IOWIDGET_SOURCE_DIR}/SerialIOWidget.cpp
+        ${SERIAL_IOWIDGET_SOURCE_DIR}/SerialIOWidgetCreator.cpp
+)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_library(SerialIoWidget SHARED ${SERIAL_IOWIDGET_SOURCE} ${SERIAL_IOWIDGET_HEADERS})
+else()
+    add_library(SerialIoWidget SHARED ${SERIAL_IOWIDGET_SOURCE} ${SERIAL_IOWIDGET_HEADERS})
+endif()
+
+target_include_directories(SerialIoWidget PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(SerialIoWidget PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort)
+
+target_link_libraries(SerialIoWidget PRIVATE ProtodbIoWidget)
+
+
+

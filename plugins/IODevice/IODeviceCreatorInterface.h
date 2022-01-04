@@ -1,7 +1,7 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include "CreatorAbstract.h"
+#include <protodb/factories/CreatorAbstract.h>
 
 class QIODevice;
 

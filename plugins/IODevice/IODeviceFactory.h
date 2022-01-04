@@ -1,7 +1,9 @@
 #pragma once
 
+#include <QString>
+#include <QSharedPointer>
 #include <nlohmann/json.hpp>
-#include "FactoryAbstract.h"
+#include <protodb/factories/FactoryAbstract.h>
 
 class IODeviceCreatorInterface;
 class QIODevice;

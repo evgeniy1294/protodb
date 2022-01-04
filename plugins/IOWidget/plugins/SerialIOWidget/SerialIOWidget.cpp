@@ -5,7 +5,7 @@
 #include <QSerialPortInfo>
 #include <QIntValidator>
 
-#include "qnlohmann.h"
+#include <protodb/nlohmann/qnlohmann.h>
 #include "SerialIOWidget.h"
 
 

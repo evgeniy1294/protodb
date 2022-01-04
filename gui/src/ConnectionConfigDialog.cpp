@@ -10,9 +10,11 @@
 #include <QLabel>
 #include <QAction>
 
+#include <IOWidget.h>
+#include <IOWidgetFactory.h>
+#include <IOWidgetCreatorInterface.h>
+#include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/ConnectionConfigDialog.h>
-//#include "SerialIOWidget.h"
-//#include "NetIOWidget.h"
 #include "protodb/LogFormatWidget.h"
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
@@ -24,6 +26,20 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 
 void ConnectionConfigDialog::createGui()
 {
+    // --------[CREATE IO WIDGETS]--------- //
+    auto factory = IOWidgetFactory::globalInstance();
+    if (factory) {
+        auto creators = factory->getAllCreators();
+        for(auto &it: creators) {
+            if (it) {
+                m_widgets.append( it.data()->create() );
+            }
+        }
+    }
+    else {
+        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+    }
+
     // --------[BUTTONS]--------- //
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
                                          QDialogButtonBox::Apply |
@@ -58,8 +74,7 @@ void ConnectionConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
-    auto serial_config_widget = new QWidget();//NetIOWidget();
-        m_widgets.append(serial_config_widget);
+    auto serial_config_widget = m_widgets.empty() ? new QWidget() : m_widgets.first();
 
     auto log_config_frame = new LogFormatWidget();
 

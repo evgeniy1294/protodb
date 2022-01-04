@@ -1,7 +1,7 @@
 #include "IODeviceCreatorInterface.h"
 #include "IODeviceFactory.h"
 
-#include "GlobalFactoryStorage.h"
+#include <protodb/factories/GlobalFactoryStorage.h>
 
 IODeviceFactory::IODeviceFactory(QObject* parent)
     : FactoryAbstract(parent)
