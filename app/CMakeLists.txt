@@ -22,6 +22,7 @@ set(APP_HEADERS
         ${APP_HEADERS_DIR}/SequenceAbstract.h
         ${APP_HEADERS_DIR}/SequenceModel.h
         ${APP_HEADERS_DIR}/Worker.h
+        ${APP_HEADERS_DIR}/PluginManager.h
 )
 
 set(APP_SOURCES
@@ -31,6 +32,7 @@ set(APP_SOURCES
         ${APP_SOURCE_DIR}/LuaApi.cpp
         ${APP_SOURCE_DIR}/SequenceModel.cpp
         ${APP_SOURCE_DIR}/Worker.cpp
+        ${APP_SOURCE_DIR}/PluginManager.cpp
 )
  
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

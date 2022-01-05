@@ -30,5 +30,6 @@
         <file alias="settings_gear.svg">icons/settings_gear.svg</file>
         <file alias="ascii.svg">icons/ascii.svg</file>
         <file alias="hex.svg">icons/hex.svg</file>
+        <file alias="plugin.svg">icons/plugin.svg</file>
     </qresource>
 </RCC>

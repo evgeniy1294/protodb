@@ -32,6 +32,9 @@ set(GUI_HEADERS
         ${GUI_HEADERS_DIR}/SequenceEditDialog.h
         ${GUI_HEADERS_DIR}/SequenceTableView.h
         ${GUI_HEADERS_DIR}/SequenceTableWidget.h
+        ${GUI_HEADERS_DIR}/PluginManagerDialog.h
+        ${GUI_HEADERS_DIR}/PluginDetailDialog.h
+        ${GUI_HEADERS_DIR}/PluginTreeView.h
         ${GUI_HEADERS_DIR}/tool_bar.h
 )
 
@@ -53,6 +56,9 @@ set(GUI_SOURCES
         ${GUI_SOURCE_DIR}/SequenceEditDialog.cpp
         ${GUI_SOURCE_DIR}/SequenceTableView.cpp
         ${GUI_SOURCE_DIR}/SequenceTableWidget.cpp
+        ${GUI_SOURCE_DIR}/PluginManagerDialog.cpp
+        ${GUI_SOURCE_DIR}/PluginDetailDialog.cpp
+        ${GUI_SOURCE_DIR}/PluginTreeView.cpp
         ${GUI_SOURCE_DIR}/tool_bar.cpp
 
         ${CMAKE_SOURCE_DIR}/resources/resources.qrc

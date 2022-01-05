@@ -5,7 +5,7 @@
 class NetIOWIdgetCreator: public QObject, public IOWidgetCreatorInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "ProtoDb.IOWidgetCreatorInterface")
+    Q_PLUGIN_METADATA(IID "ProtoDb.NetIOWidgetCreatorInterface" FILE "NetIOWidgetPluginMetadata.json")
     Q_INTERFACES(IOWidgetCreatorInterface)
 
 public:

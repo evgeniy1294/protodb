@@ -17,7 +17,13 @@ int main(int argc, char *argv[])
     QPluginLoader loader1("/tmp/protodb_debug/gui/plugins/libSerialIoWidget.so");
     if (auto instance = loader1.instance()) {
         if (auto plugin = qobject_cast<IOWidgetCreatorInterface*>(instance)) {
-            qDebug() << "Success!!!";
+
+            auto md = loader1.metaData();
+            auto user_data = md["MetaData"].toObject();
+            auto group = user_data["group"].toString();
+            auto name  = user_data["name"].toString();
+
+            qDebug() << name << group;
 
             GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory());
 
@@ -35,9 +41,14 @@ int main(int argc, char *argv[])
     // load second plugin
     QPluginLoader loader2("/tmp/protodb_debug/gui/plugins/libNetIoWidget.so");
     if (auto instance = loader2.instance()) {
-        if (auto plugin = qobject_cast<IOWidgetCreatorInterface*>(instance)) {
-            qDebug() << "Success!!!";
+        auto md = loader2.metaData();
+        auto user_data = md["MetaData"].toObject();
+        auto group = user_data["group"].toString();
+        auto name  = user_data["name"].toString();
 
+        if (auto plugin = qobject_cast<IOWidgetCreatorInterface*>(instance)) {
+
+            qDebug() << name << group;
             auto factory = IOWidgetFactory::globalInstance();
             factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(plugin));
         }

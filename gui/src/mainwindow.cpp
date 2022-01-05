@@ -16,8 +16,8 @@
 #include <protodb/mainwindow.h>
 #include <protodb/SequenceTableWidget.h>
 #include <protodb/LogWidget.h>
+#include <protodb/PluginManagerDialog.h>
 
-#include <protodb/LogModel.h>
 
 MainWindow::MainWindow(Worker* worker, QWidget *parent)
     : QMainWindow(parent)
@@ -46,6 +46,8 @@ void MainWindow::createGui()
         central_widget->setLayout(main_layout);
 
     setCentralWidget(central_widget);
+
+    m_plugin_manager_dialog = new PluginManagerDialog(this);
 }
 
 void MainWindow::createDock()
@@ -76,7 +78,7 @@ void MainWindow::createActions()
     m_save_as = new QAction(QIcon(":/icons/save_as.svg"), tr("&Save As..."), this);
     m_open = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
     m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
-    m_plugins = new QAction(tr("&Plugins..."), this);
+    m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_about = new QAction(tr("&About"), this);
     m_about_qt = new QAction(tr("&About Qt"), this);
     m_help_content = new QAction(tr("&Help"), this);
@@ -108,6 +110,10 @@ void MainWindow::connectSignals()
 {
     connect(m_exit, &QAction::triggered, this, &MainWindow::exit);
     connect(m_about_qt, &QAction::triggered, &QApplication::aboutQt);
+
+    connect(m_plugins, &QAction::triggered, this, [this]() {
+        m_plugin_manager_dialog->show();
+    });
 
     connect(m_about, &QAction::triggered, this, [this]() {
         QMessageBox box;

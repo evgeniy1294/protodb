@@ -23,10 +23,14 @@ set(NET_IOWIDGET_SOURCE
         ${NET_IOWIDGET_SOURCE_DIR}/NetIOWidgetCreator.cpp
 )
 
+set(NET_IOWIDGET_METADATA
+        ${NET_IOWIDGET_HEADERS_DIR}/NetIOWidgetPluginMetadata.json
+)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(NetIoWidget SHARED ${NET_IOWIDGET_SOURCE} ${NET_IOWIDGET_HEADERS})
+    qt_add_library(NetIoWidget SHARED ${NET_IOWIDGET_SOURCE} ${NET_IOWIDGET_HEADERS} ${NET_IOWIDGET_METADATA})
 else()
-    add_library(NetIoWidget SHARED ${NET_IOWIDGET_SOURCE} ${NET_IOWIDGET_HEADERS})
+    add_library(NetIoWidget SHARED ${NET_IOWIDGET_SOURCE} ${NET_IOWIDGET_HEADERS} ${NET_IOWIDGET_METADATA})
 endif()
 
 target_include_directories(NetIoWidget PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

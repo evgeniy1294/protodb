@@ -1,0 +1,6 @@
+{
+    "group": "IOWidget",
+    "name": "Network IOWidget",
+    "description": "Виджет для настройки TCP/UDP сокетов",
+    "version": "1.0.0"
+}

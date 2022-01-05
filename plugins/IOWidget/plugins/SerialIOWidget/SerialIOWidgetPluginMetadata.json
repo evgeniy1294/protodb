@@ -1,0 +1,6 @@
+{
+    "group": "IOWidget",
+    "name": "Serial IOWidget",
+    "description": "Виджет для настройки последовательного порта",
+    "version": "1.0.0"
+}
