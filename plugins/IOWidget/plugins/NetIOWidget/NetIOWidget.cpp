@@ -5,14 +5,28 @@
 #include <QIntValidator>
 #include <QHostAddress>
 
-#include "qnlohmann.h"
+#include <protodb/nlohmann/qnlohmann.h>
 #include "NetIOWidget.h"
 
 NetIOWidget::NetIOWidget(QWidget* parent)
     : IOWidget(parent)
+    , m_name(QString(tr("Network")))
+    , m_description(QString(tr("Network configuration widget")))
 {
     createGui();
     connectSignals();
+
+    setDefaultConfig();
+}
+
+const QString& NetIOWidget::name() const
+{
+    return m_name;
+}
+
+const QString& NetIOWidget::description() const
+{
+    return m_description;
 }
 
 void NetIOWidget::defaultConfig(nlohmann::json& json) const

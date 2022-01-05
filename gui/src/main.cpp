@@ -12,8 +12,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QPluginLoader loader("/tmp/protodb_debug/gui/plugins/libSerialIoWidget.so");
-    if (auto instance = loader.instance()) {
+
+    // Load first plugin
+    QPluginLoader loader1("/tmp/protodb_debug/gui/plugins/libSerialIoWidget.so");
+    if (auto instance = loader1.instance()) {
         if (auto plugin = qobject_cast<IOWidgetCreatorInterface*>(instance)) {
             qDebug() << "Success!!!";
 
@@ -27,7 +29,24 @@ int main(int argc, char *argv[])
         }
     }
     else {
-        qDebug() << loader.errorString();
+        qDebug() << loader1.errorString();
+    }
+
+    // load second plugin
+    QPluginLoader loader2("/tmp/protodb_debug/gui/plugins/libNetIoWidget.so");
+    if (auto instance = loader2.instance()) {
+        if (auto plugin = qobject_cast<IOWidgetCreatorInterface*>(instance)) {
+            qDebug() << "Success!!!";
+
+            auto factory = IOWidgetFactory::globalInstance();
+            factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(plugin));
+        }
+        else {
+            qDebug() << "qobject_cast failed(((";
+        }
+    }
+    else {
+        qDebug() << loader2.errorString();
     }
 
     QCoreApplication::setOrganizationName("protodb");

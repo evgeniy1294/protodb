@@ -11,11 +11,24 @@
 
 SerialIOWIdget::SerialIOWIdget(QWidget* parent)
     : IOWidget(parent)
+    , m_name(QString(tr("Serial")))
+    , m_description(QString(tr("Serial port configuration widget")))
 {
     createGui();
     connectSignals();
+
+    setDefaultConfig();
 }
 
+const QString& SerialIOWIdget::name() const
+{
+    return m_name;
+}
+
+const QString& SerialIOWIdget::description() const
+{
+    return m_description;
+}
 
 void SerialIOWIdget::defaultConfig(nlohmann::json &json) const
 {

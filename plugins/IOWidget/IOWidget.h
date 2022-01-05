@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <protodb/configurable/Configurable.h>
 
-class IOWidget: public QWidget, Configurable
+class IOWidget: public QWidget, public Configurable
 {
     Q_OBJECT
 

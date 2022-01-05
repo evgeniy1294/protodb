@@ -26,18 +26,31 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 
 void ConnectionConfigDialog::createGui()
 {
+    // --------[CREATE DUMMY WIDGET]--------- //
+    m_dummy_wgt = new QWidget();
+    {
+        auto label = new QLabel(tr("Please, load plugins"));
+        auto laout = new QVBoxLayout();
+            laout->addWidget(label);
+            laout->setAlignment(label, Qt::AlignCenter);
+        m_dummy_wgt->setLayout(laout);
+    }
+
     // --------[CREATE IO WIDGETS]--------- //
     auto factory = IOWidgetFactory::globalInstance();
-    if (factory) {
-        auto creators = factory->getAllCreators();
-        for(auto &it: creators) {
-            if (it) {
-                m_widgets.append( it.data()->create() );
-            }
-        }
-    }
-    else {
+    if (!factory) {
         GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+        factory = IOWidgetFactory::globalInstance();
+    }
+
+    auto creators = factory->getAllCreators();
+    for(auto &it: creators) {
+        if (it) {
+            auto wgt = it.data()->create();
+
+            m_io_widgets[it->cid()] = wgt;
+            m_selection_btns[it->cid()] = new QRadioButton(wgt->name());
+        }
     }
 
     // --------[BUTTONS]--------- //
@@ -47,15 +60,14 @@ void ConnectionConfigDialog::createGui()
                                          QDialogButtonBox::Reset |
                                          QDialogButtonBox::RestoreDefaults);
 
-    auto serial_radio  = new QRadioButton(tr("Serial"));
-        serial_radio->setChecked(true);
-    auto network_radio = new QRadioButton(tr("Network"));
-    auto bridge_radio  = new QRadioButton(tr("Bridge"));
+    m_selection_group = new QButtonGroup();
+    for (auto &it: m_selection_btns) {
+        m_selection_group->addButton(it);
+    }
 
-    m_mode_group = new QButtonGroup();
-        m_mode_group->addButton(serial_radio, 0);
-        m_mode_group->addButton(network_radio, 0);
-        m_mode_group->addButton(bridge_radio, 0);
+    if (!m_selection_btns.empty()) {
+        m_selection_btns.first()->setChecked(true);
+    }
 
     // --------[LOG FILE]--------- //
     m_log_btn = new QPushButton();
@@ -74,47 +86,95 @@ void ConnectionConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
-    auto serial_config_widget = m_widgets.empty() ? new QWidget() : m_widgets.first();
-
-    auto log_config_frame = new LogFormatWidget();
+    m_current_iowiget  = m_io_widgets.empty() ? m_dummy_wgt : m_io_widgets.first();
+    m_log_format_wiget = new LogFormatWidget();
 
     // ---------[SELECTOR FRAME]---------//
     auto selector_frame = new QFrame();
         selector_frame->setFrameShape(QFrame::StyledPanel);
         selector_frame->setFrameShadow(QFrame::Raised);
 
-    auto selector_layout = new QVBoxLayout();
-        selector_layout->setAlignment(Qt::AlignTop);
-        selector_layout->addWidget(new QLabel(tr("Select mode:")));
-        selector_layout->addWidget(serial_radio);
-        selector_layout->addWidget(network_radio);
-        selector_layout->addWidget(bridge_radio);
+    m_selector_layout = new QVBoxLayout();
+        m_selector_layout->setAlignment(Qt::AlignTop);
+        m_selector_layout->addWidget(new QLabel(tr("Select mode:")));
 
-    selector_frame->setLayout(selector_layout);
+        for (auto &btn: m_selection_btns) {
+            m_selector_layout->addWidget(btn);
+        }
 
-    auto main_layout = new QGridLayout();
-        main_layout->addWidget(selector_frame, 0 , 0, 4, 1);
-        main_layout->addWidget(m_scr_le, 0 , 1, 1, 1);
-        main_layout->addWidget(m_scr_btn, 0 , 2, 1, 1);
-        main_layout->addWidget(serial_config_widget, 1 ,1, 1, 2);
-        main_layout->addWidget(m_log_le, 2, 1, 1, 1);
-        main_layout->addWidget(m_log_btn, 2 , 2, 1, 1);
-        main_layout->addWidget(log_config_frame, 3 ,1, 1, 2);
-        main_layout->addWidget(m_dialog_btn, 4, 0, 1, 3);
-        main_layout->setColumnStretch(0, 0);
-        main_layout->setColumnStretch(1, 1);
-        main_layout->setColumnStretch(2, 0);
-        main_layout->setRowStretch(0, 0);
-        main_layout->setRowStretch(1, 1);
-        main_layout->setRowStretch(2, 0);
-        main_layout->setRowStretch(3, 1);
-        main_layout->setRowStretch(4, 0);
 
-    setLayout(main_layout);
+    selector_frame->setLayout(m_selector_layout);
+
+    m_layout = new QGridLayout();
+        m_layout->addWidget(selector_frame, 0 , 0, 4, 1);
+        m_layout->addWidget(m_scr_le, 0 , 1, 1, 1);
+        m_layout->addWidget(m_scr_btn, 0 , 2, 1, 1);
+        m_layout->addWidget(m_current_iowiget, 1 , 1, 1, 2);
+        m_layout->addWidget(m_log_le, 2, 1, 1, 1);
+        m_layout->addWidget(m_log_btn, 2 , 2, 1, 1);
+        m_layout->addWidget(m_log_format_wiget, 3 ,1, 1, 2);
+        m_layout->addWidget(m_dialog_btn, 4, 0, 1, 3);
+        m_layout->setColumnStretch(0, 0);
+        m_layout->setColumnStretch(1, 1);
+        m_layout->setColumnStretch(2, 0);
+        m_layout->setRowStretch(0, 0);
+        m_layout->setRowStretch(1, 1);
+        m_layout->setRowStretch(2, 0);
+        m_layout->setRowStretch(3, 1);
+        m_layout->setRowStretch(4, 0);
+
+    setLayout(m_layout);
 }
 
 void ConnectionConfigDialog::connectSignals()
 {
+    auto factory = GlobalFactoryStorage::getFactory(IOWidgetFactory::fid());
+    connect(factory, &FactoryAbstract::sCreatorAdded, this, [this](QString cid) {
+        auto factory = qobject_cast<IOWidgetFactory*>(QObject::sender());
+
+        if (factory) {
+            auto wgt = factory->createIOWidget(cid);
+            auto btn = new QRadioButton(wgt->name());
+
+            m_io_widgets[ cid ] = wgt;
+            m_selection_btns[ cid ] = btn;
+
+            m_selection_group->addButton(btn);
+            m_selector_layout->addWidget(btn);
+        }
+    });
+
+    connect(factory, &FactoryAbstract::sCreatorRemoved, this, [this](QString cid) {
+        auto factory = qobject_cast<IOWidgetFactory*>(QObject::sender());
+
+        if (factory) {
+            auto wgt = m_io_widgets.take(cid);
+            auto btn = m_selection_btns.take(cid);
+
+            if (wgt == m_current_iowiget) {
+                if (!m_io_widgets.empty()) {
+                    auto cid = m_io_widgets.firstKey();
+
+                    m_selection_btns[ cid ]->setChecked(true);
+                    replaceIOWiget(m_io_widgets.firstKey());
+                }
+            }
+
+            m_selector_layout->removeWidget(btn);
+            m_selection_group->removeButton(btn);
+
+            delete wgt;
+            delete btn;
+        }
+    });
+
+    connect(m_selection_group,
+            QOverload<QAbstractButton *>::of(&QButtonGroup::buttonReleased), this, [this](QAbstractButton* btn)
+    {
+        auto cid  = m_selection_btns.key(btn, QString());
+        replaceIOWiget(cid);
+    });
+
     connect(m_log_btn, &QPushButton::released, this, [this]() {
         QString path = m_log_le->text();
         showFileDialog(path);
@@ -132,6 +192,22 @@ void ConnectionConfigDialog::connectSignals()
     connect(m_scr_le, &QLineEdit::textChanged, this, [](const QString& text) {
 
     });
+}
+
+void ConnectionConfigDialog::replaceIOWiget(const QString& cid)
+{
+    auto wgt = cid.isEmpty() ? m_dummy_wgt : m_io_widgets.value(cid, nullptr);
+
+    if (wgt) {
+        auto item = m_layout->replaceWidget(m_current_iowiget, wgt);
+        if (item) {
+            m_current_iowiget->hide();
+                wgt->show();
+            m_current_iowiget = wgt;
+
+            delete item;
+        }
+    }
 }
 
 void ConnectionConfigDialog::showFileDialog(QString& path)
