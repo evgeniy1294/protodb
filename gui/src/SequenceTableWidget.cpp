@@ -44,6 +44,7 @@ void SequenceTableWidget::setSequenceModel(SequenceModel *model)
 {
     m_model = model;
     m_search_model->setSourceModel(model);
+        m_search_model->setFilterKeyColumn(SequenceModel::kColumnName);
     m_mapper->setModel(model);
         m_mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
         m_mapper->setCurrentIndex(0);

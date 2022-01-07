@@ -3,39 +3,54 @@
 #include <QAbstractItemModel>
 #include <QPluginLoader>
 
+class PluginManagerPrivate;
+
 class PluginManager: public QAbstractItemModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PluginManager)
 
 public:
-    enum ColumnNames {
-        kColumnName         = 0,
-        kColumnLoad         = 1,
-        kColumnVersion      = 2,
-        kColumnVendor       = 3,
-        kColumnLocation     = 4,
-        kColumnGroup        = 5,
-        kColumnDescription  = 6,
-        kCOlumnDependencies = 7,
+    enum Columns {
+        kColumnName = 0,
+        kColumnPluginEnabled,
+        kColumnPluginId,
+        kColumnVersion,
+        kColumnVendor,
+        kColumnLocation,
+        kColumnDescription,
+        kColumnDependencies,
+        kColumnLoaded,
 
         kColumnCount
     };
-/*
+
 public:
     static PluginManager& instance();
 
+    void loadPlugins();
+    void unloadPlugins();
+
+    void setDirectories(const QStringList& dirs);
     void addDirectory(const QString& dir);
     void removeDirectory(const QString& dir);
     QStringList getDirectories() const;
 
-    // ???
-    void addGroup(const QString& group);
-    void removeGroup(const QString& group);
-    QStringList getGroups() const;
-    // ???
+    void setUserDirectories(const QStringList& dirs);
+    void addUserDirectory(const QString& path);
+    void removeUserDirectory(const QString& path);
+    QStringList getUserDirectories() const;
 
+    void setGroupName(const QString& group, const QString& name);
+
+    template <typename T> QList<T*> getPlugins( const QString &group = QString() );
+
+    bool hasBrokenDependencies() const;
     bool hasConflict() const;
-    QList<QPluginLoader> getLoaders(const QString& group = QString());
+    QStringList getDisabledIds() const;
+    void setDisabledIds(const QStringList& ids);
+
+    QList<QPluginLoader*> getLoaders(const QString& group = QString());
 
     // --------- [ MODEL INTERFACE ] ---------- //
     int rowCount( const QModelIndex &parent ) const override;
@@ -50,12 +65,39 @@ public:
     bool hasChildren( const QModelIndex &parent = QModelIndex() ) const override;
     QModelIndex sibling( int row, int column, const QModelIndex &index ) const override;
 
-private:
-    Q_DISABLE_COPY(PluginManager)
+signals:
+    void sConflictDetected(QString id);
+    void sBrokenDependencyDetected(QString id);
 
+private:
     PluginManager(QObject* parent = nullptr);
     ~PluginManager();
+    void mark_loaded(const QString& group, QPluginLoader* loader); // ?
 
 private:
-    QStringList m_directories;*/
+    Q_DECLARE_PRIVATE(PluginManager)
+    PluginManagerPrivate* const d_ptr;
 };
+
+template <typename T>
+QList<T*> PluginManager::getPlugins( const QString &group )
+{
+    QList<T*> ret;
+    auto loaders = getLoaders(group);
+    for(const auto &it : loaders)
+    {
+        auto obj = it->instance();
+        if(!obj)
+        {
+            it->unload();  // Удалить из списка?
+            continue;
+        }
+        auto plugin = qobject_cast<T*>(obj);
+        if( plugin )
+        {
+            mark_loaded(group, it);
+            ret.append(plugin);
+        }
+    }
+    return ret;
+}

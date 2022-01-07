@@ -2,9 +2,9 @@
 
 #include <QDialog>
 
-class QTreeWidget;
 class QDialogButtonBox;
 class QLineEdit;
+class PluginTreeView;
 
 class PluginManagerDialog: public QDialog
 {
@@ -19,7 +19,7 @@ private:
     void connectSignals();
 
 private:
-    QTreeWidget* m_tree;
+    PluginTreeView* m_view;
     QDialogButtonBox* m_dialog_buttons;
     QLineEdit* m_filter_line;
 };
