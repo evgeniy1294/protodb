@@ -2,6 +2,7 @@
 
 #include <QTreeView>
 
+class QDataWidgetMapper;
 class QSortFilterProxyModel;
 class PluginManager;
 class PluginDetailDialog;
@@ -15,7 +16,6 @@ public:
    ~PluginTreeView() = default;
 
     void setModel(QAbstractItemModel *model) override;
-    QSortFilterProxyModel* getFilterModel() const;
 
 public slots:
     void setFilterFixedString(const QString& pattern);
@@ -27,6 +27,7 @@ private:
 
 private:
     QSortFilterProxyModel* m_fm;
+    QDataWidgetMapper* m_mapper;
     PluginManager* m_pm;
     PluginDetailDialog* m_detail_dialog;
 };

@@ -1,7 +1,9 @@
 {
-    "group": "IOWidget",
-    "name": "Serial IOWidget",
-    "description": "Виджет для настройки последовательного порта",
+    "group": "Widgets",
+    "name": "Serial Port Configurator",
     "version": "1.0.0",
-    "vendor": "Evgenii Fedoseev"
+    "vendor": "Evgenii Fedoseev",
+    "description": "Виджет для настройки последовательного порта",
+    "platform": "All",
+    "dependencies": [ "Core", "Serial Port" ]
 }

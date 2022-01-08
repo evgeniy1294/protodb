@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QBrush>
+#include <QJsonArray>
 #include <protodb/PluginManager.h>
 
 class PluginManagerPrivate
@@ -18,6 +19,7 @@ private:
         QString description;
         QString version;
         QString vendor;
+        QStringList deps;
 
         bool conflict = false;
         bool used = false;
@@ -172,9 +174,11 @@ int PluginManager::rowCount(const QModelIndex& parent) const
         ret = d->m_groups.size();
     }
     else {
-        int p_row = parent.row();
-        if( p_row >= 0 && p_row < d->m_groups.size() )
-            ret = d->m_groups.at( p_row ).plugins.size();
+        if (hasChildren(parent)) {
+            int p_row = parent.row();
+            if( p_row >= 0 && p_row < d->m_groups.size() )
+                ret = d->m_groups.at( p_row ).plugins.size();
+        }
     }
 
     return ret;
@@ -194,10 +198,10 @@ QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int
             switch(section) {
                 case kColumnName:
                     return tr("Name");
-                case kColumnPluginEnabled:
-                    return tr("Enable");
                 case kColumnPluginId:
                     return tr("IID");
+                case kColumnGroup:
+                    return tr("Group");
                 case kColumnVersion:
                     return tr("Version");
                 case kColumnVendor:
@@ -225,8 +229,9 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
 {
     Q_D(const PluginManager);
 
-    if ( !index.isValid() )
+    if ( !index.isValid() ) {
         return QVariant();
+    }
 
     if (index.parent().isValid()) {
         // Это плагин
@@ -242,15 +247,17 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
 
         switch ( role )
         {
-            case Qt::BackgroundRole: {
+            case Qt::BackgroundRole:
+            {
                 if( plugin.conflict )
                     return QBrush(QColor("red"));
                 else
                     return {};
             }
+
+            case Qt::EditRole: [[fallthrough]];
             case Qt::DisplayRole:
-            case Qt::ToolTipRole:
-            case Qt::EditRole: {
+            {
                 switch( index.column() )
                 {
                     case kColumnName:
@@ -258,19 +265,14 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
                             return plugin.id;
                         return plugin.name;
 
-                    case kColumnPluginEnabled:
-                        if( role == Qt::EditRole )
-                        {
-                            auto disabled = d->m_disabled_ids.contains( plugin.id );
-                            return disabled ? Qt::Unchecked : Qt::Checked;
-                        }
-                        break;
-
                     case kColumnPluginId:
                         return plugin.id;
 
+                    case kColumnGroup:
+                        return group.name;
+
                     case kColumnVersion:
-                        return plugin.version; // <- опечатка в isa
+                        return plugin.version;
 
                     case kColumnVendor:
                         return plugin.vendor;
@@ -282,7 +284,7 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
                         return plugin.description;
 
                     case kColumnDependencies:
-                        return QString("Not implemented");
+                        return plugin.deps;
 
                     case kColumnLoaded:
                         return plugin.used ? tr("Load") : tr("Unload");
@@ -294,7 +296,7 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
             }
 
             case Qt::CheckStateRole: {
-                if( index.column() == kColumnPluginEnabled )
+                if( index.column() == kColumnName )
                 {
                     auto disabled = d->m_disabled_ids.contains( plugin.id );
                     return disabled ? Qt::Unchecked : Qt::Checked;
@@ -329,7 +331,7 @@ bool PluginManager::setData(const QModelIndex& index, const QVariant& value, int
     if( Qt::CheckStateRole != role )
         return false;
 
-    if( index.column() != kColumnPluginEnabled )
+    if( index.column() != kColumnName )
         return false;
 
     if( index.parent().isValid() )
@@ -369,7 +371,7 @@ bool PluginManager::setData(const QModelIndex& index, const QVariant& value, int
                         if( j_plugin.id == plugin.id )
                         {
                             auto parent = PluginManager::index( i, 0 );
-                            auto i_index = PluginManager::index( j, kColumnPluginEnabled, parent );
+                            auto i_index = PluginManager::index( j, kColumnName, parent );
                             emit dataChanged( i_index, i_index, {Qt::CheckStateRole} );
                         }
                     }
@@ -452,9 +454,9 @@ QModelIndex PluginManager::index( int row, int col, const QModelIndex &parent ) 
 
 Qt::ItemFlags PluginManager::flags(const QModelIndex& index) const
 {
-    if( index.internalId() )
+    if( index.internalId() > 0)
     {
-        if( index.column() == kColumnPluginEnabled )
+        if( index.column() == kColumnName )
             return Qt::ItemIsEnabled |
                    Qt::ItemIsSelectable |
                    Qt::ItemNeverHasChildren |
@@ -565,16 +567,25 @@ void PluginManagerPrivate::LoadPlugins(const QString& path)
         plugin.description = user_data[ "description" ].toString();
         plugin.vendor  = user_data["vendor"].toString();
 
+        auto depsArray = user_data["dependencies"].toArray();
+        for (const auto& dep: depsArray) {
+            auto str = dep.toString();
+
+            if (!str.isEmpty()) {
+                plugin.deps.append(str);
+            }
+        }
+
         for( int i = 0; i < m_groups.size(); ++i )
         {
             auto &i_group = m_groups[ i ];
             for( int j = 0; j < i_group.plugins.size(); ++ j )
             {
-                auto &j_plugon = i_group.plugins[ j ];
-                if( j_plugon.id == plugin.id )
+                auto &j_plugin = i_group.plugins[ j ];
+                if( j_plugin.id == plugin.id )
                 {
                     plugin.conflict = true;
-                    j_plugon.conflict = true;
+                    j_plugin.conflict = true;
                     auto parent = q->index( i, 0 );
                     emit q->dataChanged( q->index(j, 0, parent ),
                                          q->index(j, PluginManager::kColumnCount-1, parent ),

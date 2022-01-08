@@ -1,7 +1,9 @@
 {
-    "group": "IOWidget",
-    "name": "Network IOWidget",
-    "description": "Виджет для настройки TCP/UDP сокетов",
+    "group": "Widgets",
+    "name": "Network Socket Configurator",
     "version": "1.0.0",
-    "vendor": "Evgenii Fedoseev"
+    "vendor": "Evgenii Fedoseev",
+    "description": "Виджет для настройки TCP/UDP сокетов",
+    "platform": "All",
+    "dependencies": [ "Core", "Network" ]
 }

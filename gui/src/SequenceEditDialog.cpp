@@ -29,27 +29,24 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* aMapper)
 {
     if (m_mapper != aMapper) {
         if ( m_mapper != nullptr ) {
-            m_mapper->removeMapping(m_name_edit);
-            m_mapper->removeMapping(m_desc_editor);
-            m_mapper->removeMapping(m_dsl_editor);
+            m_mapper->clearMapping();
             disconnect(m_mapper);
         }
 
         m_mapper = aMapper;
-        m_mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
         m_mapper->addMapping(m_name_edit, SequenceModel::kColumnName);
         m_mapper->addMapping(m_desc_editor, SequenceModel::kColumnDescription);
         m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);
 
-        auto onIndexChanged = [this]() {
+        auto onIndexChanged = [this](int idx) {
             if (m_mapper->model()->rowCount() > 0) {
-                m_item_label->setText(QString("%1/%2").arg(m_mapper->currentIndex()+1).arg(m_mapper->model()->rowCount()));
+                m_item_label->setText(QString("%1/%2").arg(idx+1).arg(m_mapper->model()->rowCount()));
 
                 m_name_edit->setDisabled(false);
                 m_desc_editor->setDisabled(false);
                 m_dsl_editor->setDisabled(false);
 
-                if (m_mapper->currentIndex() <= 0) {
+                if (idx <= 0) {
                     m_back_btn->setDisabled(true);
                     m_prev_btn->setDisabled(true);
                 }
@@ -59,7 +56,7 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* aMapper)
                     m_prev_btn->setDisabled(false);
                 }
 
-                if (m_mapper->currentIndex() >= (m_mapper->model()->rowCount() - 1)) {
+                if (idx >= (m_mapper->model()->rowCount() - 1)) {
                     m_next_btn->setDisabled(true);
                     m_front_btn->setDisabled(true);
                 }
@@ -72,7 +69,7 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* aMapper)
         };
 
         connect(m_mapper, &QDataWidgetMapper::currentIndexChanged, this, onIndexChanged);
-        onIndexChanged();
+        onIndexChanged(m_mapper->currentIndex());
     }
 }
 

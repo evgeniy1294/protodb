@@ -13,8 +13,8 @@ class PluginManager: public QAbstractItemModel
 public:
     enum Columns {
         kColumnName = 0,
-        kColumnPluginEnabled,
         kColumnPluginId,
+        kColumnGroup,
         kColumnVersion,
         kColumnVendor,
         kColumnLocation,

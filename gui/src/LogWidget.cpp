@@ -25,7 +25,7 @@ LogWidget::LogWidget(QWidget* parent)
 
     m_conn_dialog = new ConnectionConfigDialog();
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        m_conn_dialog->setMinimumSize(QSize(640, 540));
+        m_conn_dialog->resize(QSize(640, 540));
 
     m_log_proxy_model = new LogProxyModel(this);
 

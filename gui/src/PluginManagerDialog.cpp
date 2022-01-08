@@ -13,7 +13,8 @@ PluginManagerDialog::PluginManagerDialog(QWidget* parent)
     createGui();
     connectSignals();
 
-    setMinimumSize(640, 480);
+    resize(640, 480);
+    setWindowTitle("Plugins");
 }
 
 void PluginManagerDialog::createGui()
@@ -38,5 +39,5 @@ void PluginManagerDialog::createGui()
 
 void PluginManagerDialog::connectSignals()
 {
-    connect(m_filter_line, &QLineEdit::textChanged, m_view->getFilterModel(), &QSortFilterProxyModel::setFilterFixedString);
+    connect(m_filter_line, &QLineEdit::textChanged, m_view, &PluginTreeView::setFilterFixedString);
 }
