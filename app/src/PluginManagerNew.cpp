@@ -190,6 +190,8 @@ void PluginManagerNewPrivate::checkPluginConflicts(PluginInfo &plugin, int grp, 
                     emit q->dataChanged( q->index(j, 0, parent ),
                                          q->index(j, PluginManagerNew::kColCount-1, parent ),
                                          {Qt::BackgroundRole});
+
+                    return;
                 }
             }
         }
@@ -209,5 +211,7 @@ void PluginManagerNewPrivate::checkPluginDependencies(PluginInfo &plugin, int gr
     for (auto& dep: plugin.deps) {
 
     }
+
+    return;
 }
 
