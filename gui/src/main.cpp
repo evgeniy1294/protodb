@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("ProtoDb");
 
-    PluginManager::instance().addDirectory("/tmp/protodb_debug/gui/plugins/");
+    PluginManager::instance().addDirectory("/tmp/protodb/gui/plugins/");
     PluginManager::instance().setBaseDirectory("/tmp/protodb_debug/gui/plugins/");
     PluginManager::instance().setManualInstallDirectory("/tmp/test/");
     PluginManager::instance().loadPlugins();

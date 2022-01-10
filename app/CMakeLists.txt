@@ -23,6 +23,7 @@ set(APP_HEADERS
         ${APP_HEADERS_DIR}/SequenceModel.h
         ${APP_HEADERS_DIR}/Worker.h
         ${APP_HEADERS_DIR}/PluginManager.h
+        ${APP_HEADERS_DIR}/PluginManagerNew.h
 )
 
 set(APP_SOURCES
@@ -33,6 +34,7 @@ set(APP_SOURCES
         ${APP_SOURCE_DIR}/SequenceModel.cpp
         ${APP_SOURCE_DIR}/Worker.cpp
         ${APP_SOURCE_DIR}/PluginManager.cpp
+        ${APP_SOURCE_DIR}/PluginManagerNew.cpp
 )
  
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

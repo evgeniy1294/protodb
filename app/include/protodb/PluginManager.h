@@ -84,8 +84,6 @@ private:
 private:
     Q_DECLARE_PRIVATE(PluginManager)
     PluginManagerPrivate* const d_ptr;
-
-
 };
 
 template <typename T>
