@@ -1,6 +1,7 @@
 #include <QDir>
 #include <QBrush>
 #include <QJsonArray>
+#include <QApplication>
 #include <protodb/PluginManager.h>
 
 class PluginManagerPrivate
@@ -10,10 +11,15 @@ public:
    ~PluginManagerPrivate() = default;
 
     void LoadPlugins(const QString& path);
+
+    // New API
+    void searchPlugins();
+
+
 private:
     struct PluginInfo {
         QString id;
-        QString file_name;
+        QString file_name; // Под удаление
         QString path;
         QString name;
         QString description;
@@ -29,7 +35,7 @@ private:
     };
 
     struct Group {
-        QString group;
+        QString id;
         QString name;
         QList<PluginInfo> plugins;
     };
@@ -45,6 +51,10 @@ private:
     QList<Group> m_groups;
 
     bool m_has_conflict;
+
+private: // New API
+    QString m_base_directory;
+    QString m_manual_install_directory;
 };
 
 PluginManager& PluginManager::instance()
@@ -115,7 +125,7 @@ void PluginManager::setGroupName(const QString& group, const QString& name)
 
     for( int i = 0; i < d->m_groups.size(); ++i )
     {
-        if( d->m_groups.at(i).group != group )
+        if( d->m_groups.at(i).id != group )
             continue;
 
         d->m_groups[i].name = name;
@@ -155,7 +165,7 @@ QList<QPluginLoader*> PluginManager::getLoaders(const QString &group)
     QList< QPluginLoader *> ret;
 
     for (auto &it: d->m_groups)  {
-        if (group.isEmpty() || group == it.group) {
+        if (group.isEmpty() || group == it.id) {
             for (auto&& plugin: qAsConst(it.plugins)) {
                 ret.append(plugin.loader);
             }
@@ -250,7 +260,7 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
             case Qt::BackgroundRole:
             {
                 if( plugin.conflict )
-                    return QBrush(QColor("red"));
+                    return QBrush(Qt::red);
                 else
                     return {};
             }
@@ -402,25 +412,6 @@ void PluginManager::mark_loaded(const QString& group, QPluginLoader* loader)
 {
     Q_D(PluginManager);
 
-   /* for (auto& it: d->m_groups) {
-        if (it.group == group) {
-            for (auto& pl: it.plugins) {
-                if (pl.loader == loader) {
-                    pl.used = true;
-
-                    auto parent = index( i, 0 );
-                    auto j_index = index( j, kColumnLoaded, parent );
-                    emit dataChanged( j_index, j_index, {Qt::DisplayRole} );
-                    emit dataChanged( index( j, 0, parent ),
-                                      index( j, kColumnLoaded, parent ),
-                                      { Qt::BackgroundRole} );
-
-                    return;
-                }
-            }
-        }
-    } */
-
     for( int i = 0; i < d->m_groups.size(); ++i )
     {
         auto &i_group = d->m_groups[ i ];
@@ -485,6 +476,30 @@ QModelIndex PluginManager::sibling(int row, int column, const QModelIndex &index
     return createIndex( row, column, index.internalId() );
 }
 
+void PluginManager::setBaseDirectory(const QString& dir)
+{
+    Q_D(PluginManager);
+    d->m_base_directory = dir;
+}
+
+void PluginManager::setManualInstallDirectory(const QString& dir)
+{
+    Q_D(PluginManager);
+    d->m_manual_install_directory = dir;
+}
+
+QString PluginManager::baseDirectory() const
+{
+    Q_D(const PluginManager);
+    return d->m_base_directory;
+}
+
+QString PluginManager::manualInstallDirectory() const
+{
+    Q_D(const PluginManager);
+    return d->m_manual_install_directory;
+}
+
 void PluginManager::loadPlugins()
 {
     Q_D(PluginManager);
@@ -493,7 +508,6 @@ void PluginManager::loadPlugins()
 
     for(QString &dir_path: d->m_app_directory_list)
         d->LoadPlugins(dir_path);
-
 }
 
 void PluginManager::unloadPlugins()
@@ -516,48 +530,49 @@ void PluginManagerPrivate::LoadPlugins(const QString& path)
     Q_Q(PluginManager);
 
     QDir dir(path);
+        dir.setNameFilters(QStringList() << "*.so" << "*.dll");
     auto files = dir.entryList(QDir::Files);
+
 
     for (const auto& file: qAsConst(files)) {
         PluginInfo plugin;
-
         plugin.loader = new QPluginLoader(dir.absoluteFilePath(file));
 
         auto md = plugin.loader->metaData();
             plugin.id = md["IID"].toString();
-        auto user_data = md["MetaData"].toObject();
-        auto group = user_data["group"].toString();
 
+        if (!plugin.id.contains(QApplication::applicationName())) {
+            plugin.loader->deleteLater();
+            continue;
+        }
+
+        auto user_data = md["MetaData"].toObject();
+        auto group_id = user_data["group"].toString();
+
+        // Поиск группы среди известных
         int group_index = -1;
         for (int i = 0; i < m_groups.size(); ++i) {
-            if( m_groups.at( i ).group == group )
+            if( m_groups.at( i ).id == group_id )
             {
                 group_index = i;
                 break;
             }
         }
 
+        // Если группа неизвестна, добавляем новую
         if( group_index == -1 )
         {
             Group new_group;
-            new_group.group = group;
-            if( group.isEmpty() )
+            new_group.id = group_id;
+            if( group_id.isEmpty() )
                 new_group.name = QObject::tr("No groups");
             else
-                new_group.name = group;
+                new_group.name = group_id;
 
             group_index = m_groups.size();
             q->beginInsertRows( QModelIndex(), group_index, group_index );
             m_groups.append( new_group );
             q->endInsertRows();
-        }
-
-        bool load = ! m_disabled_ids.contains( plugin.id );
-
-        if (load) {
-            if (!plugin.loader->load()) {
-                plugin.loader->deleteLater(); // А сам плагин останется + останется группа
-            }
         }
 
         plugin.file_name = file;
@@ -576,6 +591,15 @@ void PluginManagerPrivate::LoadPlugins(const QString& path)
             }
         }
 
+        bool load = ! m_disabled_ids.contains( plugin.id );
+
+        if (load) {
+            if (!plugin.loader->load()) {
+                plugin.loader->deleteLater(); // А сам плагин останется + останется группа
+            }
+        }
+
+        // Поиск конфликта
         for( int i = 0; i < m_groups.size(); ++i )
         {
             auto &i_group = m_groups[ i ];
@@ -596,9 +620,96 @@ void PluginManagerPrivate::LoadPlugins(const QString& path)
             }
         }
 
+        // Добавление в модель плагина
         Group &cur_group = m_groups[ group_index ];
         q->beginInsertRows( q->index( group_index, 0), cur_group.plugins.size(), cur_group.plugins.size() );
         cur_group.plugins.append( plugin );
         q->endInsertRows();
+    }
+}
+
+void PluginManagerPrivate::searchPlugins()
+{
+    Q_Q(PluginManager);
+
+    QDir dir;
+        dir.setNameFilters({"*.so", "*.dll"});
+        dir.setSorting(QDir::NoSort);
+        dir.setFilter(QDir::Files);
+
+    QStringList filePathList;
+
+    if (!m_base_directory.isEmpty()) {
+       dir.setPath(m_base_directory);
+       for(auto& file: dir.entryList()) {
+           filePathList << dir.absoluteFilePath(file);
+       }
+    }
+
+    if (!m_manual_install_directory.isEmpty() &&
+            m_manual_install_directory != m_base_directory)
+    {
+        dir.setPath(m_manual_install_directory);
+        for(auto& file: dir.entryList()) {
+            filePathList << dir.absoluteFilePath(file);
+        }
+    }
+
+    for (const auto& pathToFile: qAsConst(filePathList)) {
+        PluginInfo plugin;
+        plugin.loader = new QPluginLoader(pathToFile);
+
+
+        auto md = plugin.loader->metaData();
+            plugin.id = md["IID"].toString();
+
+        if (!plugin.id.contains(QApplication::applicationName())) {
+            plugin.loader->deleteLater();
+            continue;
+        }
+
+        auto user_data = md["MetaData"].toObject();
+        auto group_id = user_data["group"].toString();
+
+        // Поиск группы среди известных
+        int group_index = -1;
+        for (int i = 0; i < m_groups.size(); ++i) {
+            if( m_groups.at( i ).id == group_id )
+            {
+                group_index = i;
+                break;
+            }
+        }
+
+        // Если группа неизвестна, добавляем новую
+        if( group_index == -1 )
+        {
+            Group new_group;
+            new_group.id = group_id;
+            if( group_id.isEmpty() )
+                new_group.name = QObject::tr("No groups");
+            else
+                new_group.name = group_id;
+
+            group_index = m_groups.size();
+            q->beginInsertRows( QModelIndex(), group_index, group_index );
+            m_groups.append( new_group );
+            q->endInsertRows();
+        }
+
+        plugin.path        = pathToFile;
+        plugin.name        = user_data["name"].toString();
+        plugin.version     = user_data["version"].toString();
+        plugin.description = user_data[ "description" ].toString();
+        plugin.vendor      = user_data["vendor"].toString();
+
+        auto depsArray = user_data["dependencies"].toArray();
+        for (const auto& dep: depsArray) {
+            auto str = dep.toString();
+
+            if (!str.isEmpty()) {
+                plugin.deps.append(str);
+            }
+        }
     }
 }

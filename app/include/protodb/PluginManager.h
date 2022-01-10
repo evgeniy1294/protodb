@@ -65,6 +65,13 @@ public:
     bool hasChildren( const QModelIndex &parent = QModelIndex() ) const override;
     QModelIndex sibling( int row, int column, const QModelIndex &index ) const override;
 
+    // ------------ [ NEW INTERFACE ] ------------- //
+    void setBaseDirectory(const QString& dir);
+    void setManualInstallDirectory(const QString& dir);
+
+    QString baseDirectory() const;
+    QString manualInstallDirectory() const;
+
 signals:
     void sConflictDetected(QString id);
     void sBrokenDependencyDetected(QString id);
@@ -77,6 +84,8 @@ private:
 private:
     Q_DECLARE_PRIVATE(PluginManager)
     PluginManagerPrivate* const d_ptr;
+
+
 };
 
 template <typename T>
