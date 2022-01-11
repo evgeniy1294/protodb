@@ -40,10 +40,10 @@ public:
     PluginManagerNewPrivate();
    ~PluginManagerNewPrivate() = default;
 
-    void loadPlugins();
+    void loadPlugins(const QStringList& disabledByUser);
     void searchPlugins();
-    void enablePlugin (const QPair<int, int>& index);
-    void disablePlugin(const QPair<int, int>& index);
+    void enablePlugin (PluginInfo &plugin);
+    void disablePlugin(PluginInfo &plugin, bool force = false);
 
     bool isEnabled(const PluginInfo& plugin) const;
     bool isDisabled(const PluginInfo& plugin) const;
@@ -159,18 +159,45 @@ void PluginManagerNewPrivate::searchPlugins()
     }
 }
 
-void PluginManagerNewPrivate::enablePlugin(const QPair<int, int> &index)
+void PluginManagerNewPrivate::enablePlugin(PluginInfo &plugin)
 {
-    Q_Q(PluginManagerNew);
-
-    auto [grp, idx] = index;
-    auto plugin = m_groups[grp].plugins.at(idx);
-
-    if (testFlag(State_Enabled)) {
+    if (isEnabled(plugin)) {
         return;
     }
 
+    auto conflicts = findConflicts(plugin, true);
 
+    if (!conflicts.empty()) {
+        // Сохранить список конфликтов?
+        return;
+    }
+
+    auto brokenDeps = findBrokenDependencies(plugin);
+
+    if (!brokenDeps.empty()) {
+        // Сохранить список сломанных зависимостей
+        return;
+    }
+
+    plugin.state |= State_Enabled;
+
+    return;
+}
+
+void PluginManagerNewPrivate::disablePlugin(PluginInfo& plugin, bool force)
+{
+    if (isEnabled(plugin)) {
+        return;
+    }
+
+    if (!plugin.relations.empty()) {
+        // Вернуть список ломаемых зависимостей?
+        return;
+    }
+
+    plugin.state &= ~State_Enabled;
+
+    return;
 }
 
 bool PluginManagerNewPrivate::isEnabled(const PluginInfo &plugin) const
@@ -256,7 +283,7 @@ void PluginManagerNewPrivate::loadPlugin(PluginInfo &plugin)
     if (isDisabled(plugin))
         return;
 
-    if (!findConflicts(plugin, false).empty()) {
+    if (!findConflicts(plugin).empty()) {
         plugin.state |= State_Fault;
         plugin.fault = QObject::tr("Has conflict");
 
