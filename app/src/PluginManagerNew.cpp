@@ -6,25 +6,6 @@
 
 class PluginManagerNewPrivate
 {
-public:
-    enum PluginState: int {
-        Enabled,
-        Disabled,
-        Loaded,
-        Fault,
-    };
-
-public:
-    PluginManagerNewPrivate();
-   ~PluginManagerNewPrivate() = default;
-
-    void loadPlugins();
-    void searchPlugins();
-    bool enablePlugin(const QString& iid);
-    bool disablePlugin(const QString& iid);
-
-
-private:
     struct PluginInfo { // Нужен конструктор по-умолчанию
         QString file;
         QString iid;
@@ -47,23 +28,45 @@ private:
         QList<PluginInfo> plugins;
     };
 
-    struct Index { int grp; int idx; };
+public:
+    enum StateFlag: int {
+        State_Enabled = 0x00000001,
+        State_Loaded  = 0x00000002,
+        State_Fault   = 0x00000004,
+    };
+    Q_DECLARE_FLAGS(State, StateFlag)
+
+public:
+    PluginManagerNewPrivate();
+   ~PluginManagerNewPrivate() = default;
+
+    void loadPlugins();
+    void searchPlugins();
+    void enablePlugin (const QPair<int, int>& index);
+    void disablePlugin(const QPair<int, int>& index);
+
+    bool isEnabled(const PluginInfo& plugin) const;
+    bool isDisabled(const PluginInfo& plugin) const;
+    bool isFault(const PluginInfo& plugin) const;
+    bool isLoaded(const PluginInfo& plugin) const;
 
 private:
     Q_DECLARE_PUBLIC(PluginManagerNew);
     PluginManagerNew* q_ptr;
 
 private:
-    PluginInfo& getPluginByIid(const QString& iid) const;
-    PluginInfo& getPluginByName(const QString& name) const;
-    void checkPluginConflicts(PluginInfo& plugin, int grp, int idx);
-    void checkPluginDependencies(PluginInfo& plugin, int grp, int idx);
+    QPair<int /*group*/, int /*plugin*/> findPluginByIid(const QString& iid) const;
+    QStringList findConflicts(const PluginInfo& plugin, bool pedantic = false) const;
+    QStringList findBrokenDependencies(const PluginInfo& plugin) const;
+    void loadPlugin(PluginInfo& plugin);
 
     QStringList m_disabled_ids;
     QString m_main_directory;
     QString m_manual_install_directory;
     QList<Group> m_groups;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(PluginManagerNewPrivate::State)
 
 
 void PluginManagerNewPrivate::searchPlugins()
@@ -156,13 +159,47 @@ void PluginManagerNewPrivate::searchPlugins()
     }
 }
 
-void PluginManagerNewPrivate::checkPluginConflicts(PluginInfo &plugin, int grp, int idx)
+void PluginManagerNewPrivate::enablePlugin(const QPair<int, int> &index)
 {
     Q_Q(PluginManagerNew);
-    static const QString fault_str("Conflict with ");
 
-    if (plugin.state != Enabled)
+    auto [grp, idx] = index;
+    auto plugin = m_groups[grp].plugins.at(idx);
+
+    if (testFlag(State_Enabled)) {
         return;
+    }
+
+
+}
+
+bool PluginManagerNewPrivate::isEnabled(const PluginInfo &plugin) const
+{
+    return (plugin.state & State_Enabled) != 0;
+}
+
+bool PluginManagerNewPrivate::isDisabled(const PluginInfo &plugin) const
+{
+    return (plugin.state & State_Enabled) == 0;
+}
+
+bool PluginManagerNewPrivate::isFault(const PluginInfo &plugin) const
+{
+    return (plugin.state & State_Fault) != 0;
+}
+
+bool PluginManagerNewPrivate::isLoaded(const PluginInfo &plugin) const
+{
+    return (plugin.state & State_Loaded) != 0;
+}
+
+QStringList PluginManagerNewPrivate::findConflicts(const PluginInfo& plugin, bool pedantic) const
+{
+    Q_Q(const PluginManagerNew);
+    QStringList ret;
+
+    if (isEnabled(plugin))
+        return ret;
 
     for( int i = 0; i < m_groups.size(); i++ )
     {
@@ -170,46 +207,93 @@ void PluginManagerNewPrivate::checkPluginConflicts(PluginInfo &plugin, int grp, 
 
         for( int j = 0; j < group.plugins.size(); j++ )
         {
-            if (i == grp && j == idx)
+            auto& j_plugin = group.plugins.at(j);
+
+            if (plugin.file == j_plugin.file) {
                 continue;
+            }
 
-            auto &j_plugin = group.plugins[j];
-
-            if (j_plugin.state == Enabled) {
-
-                if (j_plugin.iid == plugin.iid)
-                {
-                    // Возможно, имеет смысл включать плагин из main, а из manual ставить Fault
-                    plugin.state   = Fault;
-                    j_plugin.state = Fault;
-
-                    plugin.fault = fault_str + j_plugin.file;
-                    j_plugin.fault = fault_str + plugin.file;
-
-                    auto parent = q->index( i, 0 );
-                    emit q->dataChanged( q->index(j, 0, parent ),
-                                         q->index(j, PluginManagerNew::kColCount-1, parent ),
-                                         {Qt::BackgroundRole});
-
-                    return;
-                }
+            if (isEnabled(j_plugin) && j_plugin.iid == plugin.iid) {
+                ret << j_plugin.file;
+                if (!pedantic) return ret;
             }
         }
     }
 
-    return;
+    return ret;
 }
 
-void PluginManagerNewPrivate::checkPluginDependencies(PluginInfo &plugin, int grp, int idx)
+QStringList PluginManagerNewPrivate::findBrokenDependencies(const PluginInfo& plugin) const
+{
+    Q_Q(const PluginManagerNew);
+    QStringList ret;
+
+    if (plugin.deps.contains(plugin.iid)) {
+        return ret << QObject::tr("Invalid dependency list (%1)").arg(plugin.name);
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto dependency = m_groups[grp].plugins.at(idx);
+
+            if (isEnabled(dependency)) {
+                continue;
+            }
+        }
+
+        ret << plugin.name;
+    }
+
+    return ret;
+}
+
+void PluginManagerNewPrivate::loadPlugin(PluginInfo &plugin)
 {
     Q_Q(PluginManagerNew);
-    static const QString fault_str("Broken dependencies: ");
 
-    if (plugin.state != Enabled)
+    if (isDisabled(plugin))
         return;
 
-    for (auto& dep: plugin.deps) {
+    if (!findConflicts(plugin, false).empty()) {
+        plugin.state |= State_Fault;
+        plugin.fault = QObject::tr("Has conflict");
 
+        return;
+    }
+
+    if (plugin.deps.contains(plugin.iid)) {
+        plugin.state |= State_Fault;
+        plugin.fault = QObject::tr("Invalid dependencies");
+
+        return;
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto dependency = m_groups[grp].plugins.at(idx);
+            loadPlugin(dependency);
+
+            if (isLoaded(dependency)) {
+                if (!dependency.relations.contains(plugin.iid)) {
+                    dependency.relations << plugin.iid;
+                }
+                continue;
+            }
+        }
+
+        plugin.state |= State_Fault;
+        plugin.fault = QObject::tr("Broken dependencies") + iid;
+
+        return;
+    }
+
+    if (!plugin.loader->load()) {
+        plugin.state = State_Fault;
+        plugin.fault = QObject::tr("Load failed");
     }
 
     return;
