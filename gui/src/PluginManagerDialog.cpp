@@ -3,7 +3,6 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QSortFilterProxyModel>
-#include <protodb/PluginManager.h>
 #include <protodb/PluginTreeView.h>
 #include <protodb/PluginManagerDialog.h>
 

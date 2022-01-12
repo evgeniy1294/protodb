@@ -14,6 +14,7 @@ public:
     enum Columns {
         kColumnName = 0,
         kColumnPluginId,
+        kColumnPluginEnabled,
         kColumnGroup,
         kColumnVersion,
         kColumnVendor,
@@ -65,12 +66,6 @@ public:
     bool hasChildren( const QModelIndex &parent = QModelIndex() ) const override;
     QModelIndex sibling( int row, int column, const QModelIndex &index ) const override;
 
-    // ------------ [ NEW INTERFACE ] ------------- //
-    void setBaseDirectory(const QString& dir);
-    void setManualInstallDirectory(const QString& dir);
-
-    QString baseDirectory() const;
-    QString manualInstallDirectory() const;
 
 signals:
     void sConflictDetected(QString id);

@@ -1,9 +1,9 @@
 {
-    "group": "Widgets",
-    "name": "Serial Port Configurator",
-    "version": "1.0.0",
-    "vendor": "Evgenii Fedoseev",
-    "description": "Виджет для настройки последовательного порта",
-    "platform": "All",
-    "dependencies": [ "Core", "Serial Port" ]
+    "Group": "Widgets",
+    "Name": "Serial Port Configurator",
+    "Version": "1.0.0",
+    "Vendor": "Evgenii Fedoseev",
+    "Description": "Виджет для настройки последовательного порта",
+    "Platform": "All",
+    "Dependencies": []
 }

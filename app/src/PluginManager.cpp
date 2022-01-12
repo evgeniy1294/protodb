@@ -400,25 +400,6 @@ void PluginManager::mark_loaded(const QString& group, QPluginLoader* loader)
 {
     Q_D(PluginManager);
 
-   /* for (auto& it: d->m_groups) {
-        if (it.group == group) {
-            for (auto& pl: it.plugins) {
-                if (pl.loader == loader) {
-                    pl.used = true;
-
-                    auto parent = index( i, 0 );
-                    auto j_index = index( j, kColumnLoaded, parent );
-                    emit dataChanged( j_index, j_index, {Qt::DisplayRole} );
-                    emit dataChanged( index( j, 0, parent ),
-                                      index( j, kColumnLoaded, parent ),
-                                      { Qt::BackgroundRole} );
-
-                    return;
-                }
-            }
-        }
-    } */
-
     for( int i = 0; i < d->m_groups.size(); ++i )
     {
         auto &i_group = d->m_groups[ i ];

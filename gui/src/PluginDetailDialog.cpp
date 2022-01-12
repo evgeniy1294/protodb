@@ -8,7 +8,7 @@
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 
-#include <protodb/PluginManager.h>
+#include <protodb/PluginManagerNew.h>
 #include <protodb/PluginDetailDialog.h>
 
 
@@ -39,16 +39,11 @@ void PluginDetailDialog::createGui()
     m_descr = new QTextBrowser();
         m_descr->setReadOnly(true);
         m_descr->setToolTip(tr("Description"));
-    m_deps = new QListWidget();
-       // m_deps->insertItem(0, deps[0]);
-      //  m_deps->insertItem(1, deps[1]);
-        m_deps->setToolTip(tr("Dependencies"));
 
     auto m_layout = new QGridLayout();
         m_layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
         m_layout->addWidget(new QLabel(tr("Name")), 0, 0, 1, 1);
         m_layout->addWidget(m_name, 0, 1, 1, 1);
-        m_layout->addWidget(m_deps, 0, 2, 4, 1);
         m_layout->addWidget(new QLabel(tr("Version")), 1, 0, 1, 1);
         m_layout->addWidget(m_version, 1, 1, 1, 1);
         m_layout->addWidget(new QLabel(tr("Vendor")), 2, 0, 1, 1);
@@ -56,10 +51,10 @@ void PluginDetailDialog::createGui()
         m_layout->addWidget(new QLabel(tr("Group")), 3, 0, 1, 1);
         m_layout->addWidget(m_group, 3, 1, 1, 1);
         m_layout->addWidget(new QLabel(tr("Location")), 4, 0, 1, 1);
-        m_layout->addWidget(m_location, 4, 1, 1, 2);
-        m_layout->addWidget(m_descr, 5, 0, 1, 3);
+        m_layout->addWidget(m_location, 4, 1, 1, 1);
+        m_layout->addWidget(m_descr, 5, 0, 1, 2);
 
-        m_layout->addWidget(m_btn_box, 6, 0, 1, 3);
+        m_layout->addWidget(m_btn_box, 6, 0, 1, 2);
 
     setLayout(m_layout);
 }
@@ -83,26 +78,12 @@ void PluginDetailDialog::setMapper(QDataWidgetMapper* mapper)
         }
 
         m_mapper = mapper;
-        m_mapper->addMapping(m_name, PluginManager::kColumnName);
-        m_mapper->addMapping(m_version, PluginManager::kColumnVersion);
-        m_mapper->addMapping(m_vendor, PluginManager::kColumnVendor);
-        m_mapper->addMapping(m_group, PluginManager::kColumnGroup);
-        m_mapper->addMapping(m_location, PluginManager::kColumnLocation);
-        m_mapper->addMapping(m_descr, PluginManager::kColumnDescription);
-
-        auto onIndexChanged = [this](int idx) {
-            auto index = m_mapper->model()->index(idx, PluginManager::kColumnDependencies, m_mapper->rootIndex());
-            auto deps = m_mapper->model()->data(index, Qt::DisplayRole).toStringList();
-
-            m_deps->clear();
-
-            for (auto& d: deps) {
-                m_deps->addItem(d);
-            }
-        };
-
-        connect(m_mapper, &QDataWidgetMapper::currentIndexChanged, this, onIndexChanged);
-        onIndexChanged(m_mapper->currentIndex());
+        m_mapper->addMapping(m_name, PluginManagerNew::kColName);
+        m_mapper->addMapping(m_version, PluginManagerNew::kColVersion);
+        m_mapper->addMapping(m_vendor, PluginManagerNew::kColVendor);
+        m_mapper->addMapping(m_group, PluginManagerNew::kColGroup);
+        m_mapper->addMapping(m_location, PluginManagerNew::kColFile);
+        m_mapper->addMapping(m_descr, PluginManagerNew::kColDescription);
     }
 }
 

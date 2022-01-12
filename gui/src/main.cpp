@@ -6,7 +6,7 @@
 #include <protodb/Worker.h>
 #include <IOWidgetCreatorInterface.h>
 
-#include <protodb/PluginManager.h>
+#include <protodb/PluginManagerNew.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <IOWidgetFactory.h>
 
@@ -15,10 +15,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("ProtoDb");
 
-    PluginManager::instance().addDirectory("/tmp/protodb/gui/plugins/");
-    PluginManager::instance().setBaseDirectory("/tmp/protodb_debug/gui/plugins/");
-    PluginManager::instance().setManualInstallDirectory("/tmp/test/");
-    PluginManager::instance().loadPlugins();
+    PluginManagerNew::instance().setMainDirectory("/tmp/protodb/gui/plugins/");
+    PluginManagerNew::instance().setManualInstallDirectory("/tmp/test/");
+    PluginManagerNew::instance().loadPlugins(QMap<QString, bool>());
 
     Worker* worker = new Worker();
     MainWindow w(worker);

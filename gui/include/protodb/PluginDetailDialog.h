@@ -6,7 +6,6 @@ class QDataWidgetMapper;
 class QDialogButtonBox;
 class QLineEdit;
 class QTextBrowser;
-class QListWidget;
 class QAbstractButton;
 
 class PluginDetailDialog: public QDialog
@@ -36,5 +35,4 @@ private:
     QLineEdit* m_group;
     QLineEdit* m_location;
     QTextBrowser* m_descr;
-    QListWidget* m_deps;
 };
