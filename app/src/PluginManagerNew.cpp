@@ -447,9 +447,11 @@ int PluginManagerNew::rowCount(const QModelIndex &parent) const
         ret = d->m_groups.size();
     }
     else {
-        int p_row = parent.row();
-        if( p_row >= 0 && p_row < d->m_groups.size() )
-            ret = d->m_groups.at( p_row ).plugins.size();
+        if (hasChildren(parent)) {
+            int p_row = parent.row();
+            if( p_row >= 0 && p_row < d->m_groups.size() )
+                ret = d->m_groups.at( p_row ).plugins.size();
+        }
     }
 
     return ret;
@@ -515,12 +517,14 @@ QVariant PluginManagerNew::data(const QModelIndex &index, int role) const
 
         switch ( role )
         {
-            case Qt::BackgroundRole: {
+            case Qt::ForegroundRole: {
+
                 if( d->isFault(plugin) )
-                    return QBrush(QColor("red"));
+                    return QColor(Qt::red);
                 else
                     return {};
             }
+
             case Qt::DisplayRole:
             case Qt::ToolTipRole:
             case Qt::EditRole: {
@@ -683,5 +687,5 @@ PluginManagerNew::PluginManagerNew(QObject *parent)
 
 PluginManagerNew::~PluginManagerNew()
 {
-
+    // Через new были созданы QPluginLoader'ы, их нужно грохнуть
 }

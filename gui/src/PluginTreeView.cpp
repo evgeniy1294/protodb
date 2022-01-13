@@ -44,6 +44,7 @@ PluginTreeView::PluginTreeView(QWidget* parent)
         m_detail_dialog->resize(540, 480);
         m_detail_dialog->setMapper(m_mapper);
 
+    expandAll();
     connectSignals();
 }
 
