@@ -31,5 +31,8 @@
         <file alias="ascii.svg">icons/ascii.svg</file>
         <file alias="hex.svg">icons/hex.svg</file>
         <file alias="plugin.svg">icons/plugin.svg</file>
+        <file alias="check.svg">icons/check.svg</file>
+        <file alias="red_cross.svg">icons/red_cross.svg</file>
+        <file alias="orange_minus.svg">icons/orange_minus.svg</file>
     </qresource>
 </RCC>

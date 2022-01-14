@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QBrush>
 #include <QDir>
+#include <QIcon>
 #include <QJsonArray>
 
 class PluginManagerNewPrivate
@@ -517,6 +518,22 @@ QVariant PluginManagerNew::data(const QModelIndex &index, int role) const
 
         switch ( role )
         {
+            case Qt::DecorationRole: {
+                if (index.column() == kColName) {
+                    if ( d->isLoaded(plugin) ) {
+                        return QIcon(":/icons/check.svg");
+                    }
+                    else if ( d->isFault(plugin) ) {
+                        return QIcon(":/icons/red_cross.svg");
+                    }
+                    else {
+                        return QIcon(":/icons/orange_minus.svg");
+                    }
+                }
+
+                break;
+            }
+
             case Qt::ForegroundRole: {
 
                 if( d->isFault(plugin) )
