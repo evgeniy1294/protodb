@@ -2,7 +2,7 @@
 #include <QSortFilterProxyModel>
 #include <QDataWidgetMapper>
 
-#include <protodb/PluginManagerNew.h>
+#include <protodb/PluginManager.h>
 #include <protodb/PluginManagerDialog.h>
 #include <protodb/PluginDetailDialog.h>
 #include <protodb/PluginTreeView.h>
@@ -10,11 +10,11 @@
 PluginTreeView::PluginTreeView(QWidget* parent)
     : QTreeView(parent)
 {
-    m_pm = &PluginManagerNew::instance();
+    m_pm = &PluginManager::instance();
     m_fm = new QSortFilterProxyModel();
         m_fm->setSourceModel(m_pm);
         m_fm->setRecursiveFilteringEnabled(true);
-        m_fm->setFilterKeyColumn(PluginManagerNew::kColName);
+        m_fm->setFilterKeyColumn(PluginManager::kColName);
         m_fm->setFilterCaseSensitivity(Qt::CaseInsensitive);
     QTreeView::setModel(m_fm);
 
@@ -27,14 +27,14 @@ PluginTreeView::PluginTreeView(QWidget* parent)
         hh->setStretchLastSection(false);
         hh->setDefaultAlignment(Qt::AlignCenter);
         hh->setSectionResizeMode(QHeaderView::Fixed);
-        hh->setSectionResizeMode(PluginManagerNew::kColName, QHeaderView::Stretch);
-        hh->setSectionResizeMode(PluginManagerNew::kColEnabled, QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(PluginManagerNew::kColVersion, QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(PluginManagerNew::kColVendor, QHeaderView::ResizeToContents);
-        hh->hideSection(PluginManagerNew::kColIid);
-        hh->hideSection(PluginManagerNew::kColGroup);
-        hh->hideSection(PluginManagerNew::kColFile);
-        hh->hideSection(PluginManagerNew::kColDescription);
+        hh->setSectionResizeMode(PluginManager::kColName, QHeaderView::Stretch);
+        hh->setSectionResizeMode(PluginManager::kColEnabled, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(PluginManager::kColVersion, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(PluginManager::kColVendor, QHeaderView::ResizeToContents);
+        hh->hideSection(PluginManager::kColIid);
+        hh->hideSection(PluginManager::kColGroup);
+        hh->hideSection(PluginManager::kColFile);
+        hh->hideSection(PluginManager::kColDescription);
 
     m_mapper = new QDataWidgetMapper(this);
         m_mapper->setModel(m_pm);

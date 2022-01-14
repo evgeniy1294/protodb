@@ -4,7 +4,7 @@
 
 class QDataWidgetMapper;
 class QSortFilterProxyModel;
-class PluginManagerNew;
+class PluginManager;
 class PluginDetailDialog;
 
 class PluginTreeView: public QTreeView
@@ -28,6 +28,6 @@ private:
 private:
     QSortFilterProxyModel* m_fm;
     QDataWidgetMapper* m_mapper;
-    PluginManagerNew* m_pm;
+    PluginManager* m_pm;
     PluginDetailDialog* m_detail_dialog;
 };

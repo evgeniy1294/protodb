@@ -6,18 +6,24 @@
 #include <protodb/Worker.h>
 #include <IOWidgetCreatorInterface.h>
 
-#include <protodb/PluginManagerNew.h>
+#include <protodb/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <IOWidgetFactory.h>
+
+void testPlugins();
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("ProtoDb");
 
-    PluginManagerNew::instance().setMainDirectory("/tmp/protodb/gui/plugins/");
-    PluginManagerNew::instance().setManualInstallDirectory("/tmp/test/");
-    PluginManagerNew::instance().loadPlugins(QMap<QString, bool>());
+    PluginManager::instance().setMainDirectory("/tmp/protodb/gui/plugins/");
+    PluginManager::instance().setManualInstallDirectory("/tmp/test/");
+    PluginManager::instance().loadPlugins(QMap<QString, bool>());
+
+    //---------- TEST PLUGINS ----------
+    testPlugins();
+    //----------------------------------
 
     Worker* worker = new Worker();
     MainWindow w(worker);
@@ -27,3 +33,18 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
+void testPlugins() {
+    auto factory = IOWidgetFactory::globalInstance();
+    if (!factory) {
+        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+        factory = IOWidgetFactory::globalInstance();
+    }
+
+
+    auto creators = PluginManager::instance().getPlugins<IOWidgetCreatorInterface>();
+
+    for (auto& it: creators) {
+        factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
+    }
+
+}

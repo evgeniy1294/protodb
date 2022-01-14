@@ -12,44 +12,33 @@ class PluginManager: public QAbstractItemModel
 
 public:
     enum Columns {
-        kColumnName = 0,
-        kColumnPluginId,
-        kColumnPluginEnabled,
-        kColumnGroup,
-        kColumnVersion,
-        kColumnVendor,
-        kColumnLocation,
-        kColumnDescription,
-        kColumnDependencies,
-        kColumnLoaded,
+        kColName = 0,
+        kColEnabled,
+        kColGroup,
+        kColIid,
+        kColVersion,
+        kColVendor,
+        kColDescription,
+        kColFile,
 
-        kColumnCount
+        kColCount
     };
 
 public:
     static PluginManager& instance();
 
-    void loadPlugins();
-    void unloadPlugins();
+    void loadPlugins(QMap<QString, bool> iids);
+    QMap<QString, bool> getPluginsState() const;
 
-    void setDirectories(const QStringList& dirs);
-    void addDirectory(const QString& dir);
-    void removeDirectory(const QString& dir);
-    QStringList getDirectories() const;
+    void setMainDirectory(const QString& dir);
+    void setManualInstallDirectory(const QString& dir);
 
-    void setUserDirectories(const QStringList& dirs);
-    void addUserDirectory(const QString& path);
-    void removeUserDirectory(const QString& path);
-    QStringList getUserDirectories() const;
+    QString mainDirectory() const;
+    QString manualInstallDirectory() const;
 
-    void setGroupName(const QString& group, const QString& name);
+    void setGroupName(const QString& group_id, const QString& name);
 
     template <typename T> QList<T*> getPlugins( const QString &group = QString() );
-
-    bool hasBrokenDependencies() const;
-    bool hasConflict() const;
-    QStringList getDisabledIds() const;
-    void setDisabledIds(const QStringList& ids);
 
     QList<QPluginLoader*> getLoaders(const QString& group = QString());
 
@@ -66,16 +55,11 @@ public:
     bool hasChildren( const QModelIndex &parent = QModelIndex() ) const override;
     QModelIndex sibling( int row, int column, const QModelIndex &index ) const override;
 
-
-signals:
-    void sConflictDetected(QString id);
-    void sBrokenDependencyDetected(QString id);
-
 private:
     PluginManager(QObject* parent = nullptr);
-    ~PluginManager();
-    void mark_loaded(const QString& group, QPluginLoader* loader); // ?
+   ~PluginManager();
 
+    void mark_fault(const QString& group, QPluginLoader* loader);
 private:
     Q_DECLARE_PRIVATE(PluginManager)
     PluginManagerPrivate* const d_ptr;
@@ -86,20 +70,24 @@ QList<T*> PluginManager::getPlugins( const QString &group )
 {
     QList<T*> ret;
     auto loaders = getLoaders(group);
+
     for(const auto &it : loaders)
     {
         auto obj = it->instance();
         if(!obj)
         {
-            it->unload();  // Удалить из списка?
+            it->unload();
+            mark_fault(group, it);
+
             continue;
         }
+
         auto plugin = qobject_cast<T*>(obj);
         if( plugin )
         {
-            mark_loaded(group, it);
             ret.append(plugin);
         }
     }
+
     return ret;
 }

@@ -8,7 +8,7 @@
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 
-#include <protodb/PluginManagerNew.h>
+#include <protodb/PluginManager.h>
 #include <protodb/PluginDetailDialog.h>
 
 
@@ -78,12 +78,12 @@ void PluginDetailDialog::setMapper(QDataWidgetMapper* mapper)
         }
 
         m_mapper = mapper;
-        m_mapper->addMapping(m_name, PluginManagerNew::kColName);
-        m_mapper->addMapping(m_version, PluginManagerNew::kColVersion);
-        m_mapper->addMapping(m_vendor, PluginManagerNew::kColVendor);
-        m_mapper->addMapping(m_group, PluginManagerNew::kColGroup);
-        m_mapper->addMapping(m_location, PluginManagerNew::kColFile);
-        m_mapper->addMapping(m_descr, PluginManagerNew::kColDescription);
+        m_mapper->addMapping(m_name, PluginManager::kColName);
+        m_mapper->addMapping(m_version, PluginManager::kColVersion);
+        m_mapper->addMapping(m_vendor, PluginManager::kColVendor);
+        m_mapper->addMapping(m_group, PluginManager::kColGroup);
+        m_mapper->addMapping(m_location, PluginManager::kColFile);
+        m_mapper->addMapping(m_descr, PluginManager::kColDescription);
     }
 }
 

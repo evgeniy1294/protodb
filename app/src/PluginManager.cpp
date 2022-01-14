@@ -1,161 +1,269 @@
-#include <QDir>
-#include <QBrush>
 #include <protodb/PluginManager.h>
+
+#include <QApplication>
+#include <QBrush>
+#include <QDir>
+#include <QIcon>
+#include <QJsonArray>
 
 class PluginManagerPrivate
 {
-public:
-    PluginManagerPrivate();
-   ~PluginManagerPrivate() = default;
-
-    void LoadPlugins(const QString& path);
-private:
     struct PluginInfo {
-        QString id;
-        QString file_name;
-        QString path;
+        QString file;
+        QString iid;
         QString name;
-        QString description;
         QString version;
         QString vendor;
+        QString description;
+        QStringList relations;
+        QStringList deps;
 
-        bool conflict = false;
-        bool used = false;
-        bool broken_dependency = false;
+        bool enabled;
+        bool loaded;
+        bool fault;
 
         QPluginLoader* loader;
     };
 
     struct Group {
-        QString group;
+        QString id;
         QString name;
         QList<PluginInfo> plugins;
     };
 
+public:
+    PluginManagerPrivate();
+   ~PluginManagerPrivate() = default;
+
+    void loadPlugins(const QMap<QString, bool>& iids);
+    void searchPlugins();
+    bool enablePlugin (PluginInfo &plugin);
+    bool disablePlugin(PluginInfo &plugin);
+
+private:
+    QPair<int /*group*/, int /*plugin*/> findPluginByIid(const QString& iid) const;
+    QStringList findConflicts(const PluginInfo& plugin, bool pedantic = false) const;
+    QStringList findBrokenDependencies(const PluginInfo& plugin) const;
+    void loadPlugin(PluginInfo& plugin, const QMap<QString, bool>& iids);
+
+private:
+    bool m_latch;
+
+    QString m_main_directory;
+    QString m_manual_install_directory;
+    QString m_last_error;
+    QList<Group> m_groups;
+
 private:
     Q_DECLARE_PUBLIC(PluginManager);
     PluginManager* q_ptr;
-
-private:
-    QStringList m_disabled_ids;
-    QStringList m_app_directory_list;
-    QStringList m_user_directory_list;
-    QList<Group> m_groups;
-
-    bool m_has_conflict;
 };
 
-PluginManager& PluginManager::instance()
+
+PluginManagerPrivate::PluginManagerPrivate()
+    : q_ptr(nullptr)
+    , m_latch(false)
 {
-    static PluginManager manager;
-    return manager;
+
 }
 
-void PluginManager::setDirectories(const QStringList& dirs)
+void PluginManagerPrivate::loadPlugins(const QMap<QString, bool> &iids)
 {
-    Q_D(PluginManager);
-    d->m_app_directory_list = dirs;
-}
-
-void PluginManager::addDirectory(const QString& dir)
-{
-    Q_D(PluginManager);
-    if (!d->m_app_directory_list.contains(dir)) {
-        d->m_app_directory_list.append(dir); // Теоретически можно запихать одну и ту же директорию. Нужно делать через absolute path
-    }
-}
-
-void PluginManager::removeDirectory(const QString& dir)
-{
-    Q_D(PluginManager);
-    if (d->m_app_directory_list.contains(dir)) {
-        d->m_app_directory_list.removeAll(dir);
-    }
-}
-
-QStringList PluginManager::getDirectories() const
-{
-    Q_D(const PluginManager);
-    return d->m_app_directory_list;
-}
-
-void PluginManager::setUserDirectories(const QStringList& dirs)
-{
-    Q_D(PluginManager);
-    d->m_user_directory_list = dirs;
-}
-
-void PluginManager::addUserDirectory(const QString& dir)
-{
-    Q_D(PluginManager);
-    if (!d->m_user_directory_list.contains(dir)) {
-        d->m_user_directory_list.append(dir); // Теоретически можно запихать одну и ту же директорию. Нужно делать через absolute path
-    }
-}
-
-void PluginManager::removeUserDirectory(const QString& dir)
-{
-    Q_D(PluginManager);
-    if (d->m_user_directory_list.contains(dir)) {
-        d->m_user_directory_list.removeAll(dir);
-    }
-}
-
-QStringList PluginManager::getUserDirectories() const
-{
-    Q_D(const PluginManager);
-    return d->m_user_directory_list;
-}
-
-void PluginManager::setGroupName(const QString& group, const QString& name)
-{
-    Q_D(PluginManager);
-
-    for( int i = 0; i < d->m_groups.size(); ++i )
-    {
-        if( d->m_groups.at(i).group != group )
-            continue;
-
-        d->m_groups[i].name = name;
-        emit dataChanged( index( i, PluginManager::kColumnName ),
-                          index( i, PluginManager::kColumnName ),
-                          QVector<int>() << Qt::DisplayRole );
+    if (m_latch) {
         return;
     }
+
+    searchPlugins();
+
+    for (auto& group: m_groups) {
+        for (auto& plugin: group.plugins) {
+            loadPlugin(plugin, iids);
+        }
+    }
+
+    m_latch = true;
+    return;
 }
 
-bool PluginManager::hasBrokenDependencies() const
+void PluginManagerPrivate::searchPlugins()
 {
-    return false;
+    Q_Q(PluginManager);
+
+    QDir dir;
+        dir.setSorting(QDir::NoSort);
+        dir.setFilter(QDir::Files);
+
+    QStringList filePathList;
+
+    dir.setPath(m_main_directory);
+    if (dir.exists()) {
+       for(auto& file: dir.entryList()) {
+           filePathList << dir.absoluteFilePath(file);
+       }
+    }
+
+    dir.setPath(m_manual_install_directory);
+    if (!dir.exists() && m_manual_install_directory != m_main_directory)
+    {
+        for(auto& file: dir.entryList()) {
+            filePathList << dir.absoluteFilePath(file);
+        }
+    }
+
+    for (const auto& pathToFile: qAsConst(filePathList)) {
+        PluginInfo plugin;
+        plugin.loader = new QPluginLoader(pathToFile, q);
+
+        auto md = plugin.loader->metaData();
+            plugin.iid = md["IID"].toString();
+
+        if (!plugin.iid.contains(QApplication::applicationName())) {
+            plugin.loader->deleteLater();
+            continue;
+        }
+
+        auto user_data = md["MetaData"].toObject();
+            plugin.file        =  pathToFile;
+            plugin.name        =  user_data["Name"].toString(plugin.iid);
+            plugin.version     =  user_data["Version"].toString();
+            plugin.vendor      =  user_data["Vendor"].toString();
+            plugin.description =  user_data["Description"].toString();
+            plugin.enabled     = !user_data["DisabledByDefault"].toBool(false);
+
+            auto depsArray = user_data["Dependencies"].toArray();
+            for (const auto& dep: depsArray) {
+                auto str = dep.toString();
+
+                if (!str.isEmpty()) {
+                    plugin.deps.append(str);
+                }
+            }
+
+        auto group = user_data["Group"].toString();
+
+        int gidx = -1;
+        for (int i = 0; i < m_groups.size(); ++i) {
+            if( m_groups.at(i).id == group )
+            {
+                gidx = i;
+                break;
+            }
+        }
+
+        if( gidx == -1 )
+        {
+            Group new_group;
+                new_group.id = group;
+
+            if(group.isEmpty())
+                new_group.name = QObject::tr("No groups");
+            else
+                new_group.name = group;
+
+            gidx = m_groups.size();
+
+            q->beginInsertRows(QModelIndex(), gidx, gidx);
+                m_groups.append(new_group);
+            q->endInsertRows();
+        }
+
+        Group &cur_group = m_groups[gidx];
+        q->beginInsertRows(q->index(gidx, 0), cur_group.plugins.size(), cur_group.plugins.size());
+            cur_group.plugins.append(plugin);
+        q->endInsertRows();
+    }
 }
 
-bool PluginManager::hasConflict() const
+bool PluginManagerPrivate::enablePlugin(PluginInfo &plugin)
 {
-    Q_D(const PluginManager);
-    return d->m_has_conflict;
+    if (plugin.enabled) {
+        return true;
+    }
+
+    auto conflicts = findConflicts(plugin, true);
+
+    if (!conflicts.empty()) {
+        m_last_error = "Plugin can't be enabled, because the plugin has conflict:";
+
+        for (auto& it: conflicts)
+            m_last_error.append(' ' + it);
+
+        return false;
+    }
+
+    auto brokenDeps = findBrokenDependencies(plugin);
+
+    if (!brokenDeps.empty()) {
+        m_last_error = "Plugin can't be enabled, because the plugin has unresolved dependency:";
+
+        for (auto& it: brokenDeps)
+            m_last_error.append(' ' + it);
+
+        return false;
+    }
+
+    plugin.enabled = true;
+
+    return true;
 }
 
-QStringList PluginManager::getDisabledIds() const
+bool PluginManagerPrivate::disablePlugin(PluginInfo& plugin)
 {
-    Q_D(const PluginManager);
-    return d->m_disabled_ids;
+    if (!plugin.enabled) {
+        return true;
+    }
+
+    if (!plugin.relations.empty()) {
+        m_last_error = "Plugin can't be enabled, because the plugin has many relations:";
+
+        for (auto& it: plugin.relations)
+            m_last_error.append(' ' + it);
+
+        return false;
+    }
+
+    plugin.enabled = false;
+
+    return true;
 }
 
-void PluginManager::setDisabledIds(const QStringList& ids)
+QPair<int, int> PluginManagerPrivate::findPluginByIid(const QString &iid) const
 {
-    Q_D(PluginManager);
-    d->m_disabled_ids = ids;
+    for (int i = 0; i < m_groups.size(); i++) {
+        auto& group = m_groups[i];
+
+        for (int j = 0; j < group.plugins.size(); j++) {
+            auto& plugin = group.plugins[j];
+
+            if (plugin.iid == iid) {
+                return {i, j};
+            }
+        }
+    }
+
+    return {-1, -1};
 }
 
-QList<QPluginLoader*> PluginManager::getLoaders(const QString &group)
+QStringList PluginManagerPrivate::findConflicts(const PluginInfo& plugin, bool pedantic) const
 {
-    Q_D(PluginManager);
-    QList< QPluginLoader *> ret;
+    Q_Q(const PluginManager);
+    QStringList ret;
 
-    for (auto &it: d->m_groups)  {
-        if (group.isEmpty() || group == it.group) {
-            for (auto&& plugin: qAsConst(it.plugins)) {
-                ret.append(plugin.loader);
+    for( int i = 0; i < m_groups.size(); i++ )
+    {
+        auto &group = m_groups[i];
+
+        for( int j = 0; j < group.plugins.size(); j++ )
+        {
+            auto& j_plugin = group.plugins.at(j);
+
+            if (plugin.file == j_plugin.file) {
+                continue;
+            }
+
+            if (j_plugin.iid == plugin.iid) {
+                ret << j_plugin.file;
+                if (!pedantic) return ret;
             }
         }
     }
@@ -163,7 +271,172 @@ QList<QPluginLoader*> PluginManager::getLoaders(const QString &group)
     return ret;
 }
 
-int PluginManager::rowCount(const QModelIndex& parent) const
+QStringList PluginManagerPrivate::findBrokenDependencies(const PluginInfo& plugin) const
+{
+    Q_Q(const PluginManager);
+    QStringList ret;
+
+    if (plugin.deps.contains(plugin.iid)) {
+        return ret << QObject::tr("Invalid dependency list");
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto dependency = m_groups[grp].plugins.at(idx);
+
+            if (dependency.enabled) {
+                continue;
+            }
+        }
+
+        ret << plugin.name;
+    }
+
+    return ret;
+}
+
+void PluginManagerPrivate::loadPlugin(PluginInfo &plugin, const QMap<QString, bool>& iids)
+{
+    Q_Q(PluginManager);
+
+    if (iids.contains(plugin.iid)) {
+        plugin.enabled = iids[plugin.iid];
+    }
+
+    if (!plugin.enabled)
+        return;
+
+    plugin.enabled = false;
+
+    if (!findConflicts(plugin).empty()) {
+        plugin.fault = true;
+        return;
+    }
+
+    // TODO: сделать полную проверку на отсутствие циклических зависимостей
+    if (plugin.deps.contains(plugin.iid)) {
+        plugin.fault = true;
+        return;
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto dependency = m_groups[grp].plugins.at(idx);
+            loadPlugin(dependency, iids);
+
+            if (dependency.loaded) {
+                if (!dependency.relations.contains(plugin.iid)) {
+                    dependency.relations << plugin.iid;
+                }
+                continue;
+            }
+        }
+
+        return;
+    }
+
+    plugin.loaded  =  plugin.loader->load();
+    plugin.enabled =  plugin.loaded;
+    plugin.fault   = !plugin.loaded;
+
+    return;
+}
+
+PluginManager& PluginManager::instance()
+{
+    static PluginManager _instance;
+    return _instance;
+}
+
+void PluginManager::loadPlugins(QMap<QString, bool> iids)
+{
+    Q_D(PluginManager);
+
+    beginResetModel();
+        d->loadPlugins(iids);
+    endResetModel();
+}
+
+QMap<QString, bool> PluginManager::getPluginsState() const
+{
+    Q_D(const PluginManager);
+    QMap<QString, bool> ret;
+
+    for (auto& group: d->m_groups) {
+        for (auto& plugin: group.plugins) {
+            if (!plugin.fault) {
+                ret[plugin.iid] = plugin.enabled;
+            }
+        }
+    }
+
+    return ret;
+}
+
+void PluginManager::setMainDirectory(const QString &dir)
+{
+    Q_D(PluginManager);
+    d->m_main_directory = dir;
+}
+
+void PluginManager::setManualInstallDirectory(const QString &dir)
+{
+    Q_D(PluginManager);
+    d->m_manual_install_directory = dir;
+}
+
+QString PluginManager::mainDirectory() const
+{
+    Q_D(const PluginManager);
+    return d->m_main_directory;
+}
+
+QString PluginManager::manualInstallDirectory() const
+{
+    Q_D(const PluginManager);
+    return d->m_manual_install_directory;
+}
+
+void PluginManager::setGroupName(const QString &group_id, const QString &name)
+{
+    Q_D(PluginManager);
+
+    for( int i = 0; i < d->m_groups.size(); ++i )
+    {
+        if( d->m_groups.at(i).id != group_id )
+            continue;
+
+        d->m_groups[i].name = name;
+        emit dataChanged( index( i, PluginManager::kColName ),
+                          index( i, PluginManager::kColName ),
+                          QVector<int>() << Qt::DisplayRole );
+        return;
+    }
+}
+
+QList<QPluginLoader *> PluginManager::getLoaders(const QString &group)
+{
+    Q_D(PluginManager);
+    QList<QPluginLoader*> ret;
+
+    for (auto &it: d->m_groups)  {
+        if (group.isEmpty() || group == it.id) {
+            for (auto&& plugin: qAsConst(it.plugins)) {
+                if (plugin.loaded) {
+                    ret.append(plugin.loader);
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
+int PluginManager::rowCount(const QModelIndex &parent) const
 {
     Q_D(const PluginManager);
     int ret = 0;
@@ -172,18 +445,20 @@ int PluginManager::rowCount(const QModelIndex& parent) const
         ret = d->m_groups.size();
     }
     else {
-        int p_row = parent.row();
-        if( p_row >= 0 && p_row < d->m_groups.size() )
-            ret = d->m_groups.at( p_row ).plugins.size();
+        if (hasChildren(parent)) {
+            int p_row = parent.row();
+            if( p_row >= 0 && p_row < d->m_groups.size() )
+                ret = d->m_groups.at( p_row ).plugins.size();
+        }
     }
 
     return ret;
 }
 
-int PluginManager::columnCount(const QModelIndex& parent) const
+int PluginManager::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return kColumnCount;
+    return kColCount;
 }
 
 QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int role) const
@@ -192,24 +467,22 @@ QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int
 
         if (role == Qt::DisplayRole) {
             switch(section) {
-                case kColumnName:
+                case kColName:
                     return tr("Name");
-                case kColumnPluginEnabled:
+                case kColEnabled:
                     return tr("Enable");
-                case kColumnPluginId:
+                case kColGroup:
+                    return tr("Group");
+                case kColIid:
                     return tr("IID");
-                case kColumnVersion:
+                case kColVersion:
                     return tr("Version");
-                case kColumnVendor:
+                case kColVendor:
                     return tr("Vendor");
-                case kColumnLocation:
+                case kColFile:
                     return tr("Location");
-                case kColumnDescription:
+                case kColDescription:
                     return tr("Description");
-                case kColumnDependencies:
-                    return tr("Dependencies");
-                case kColumnLoaded:
-                    return tr("State");
 
                 default:
                     break;
@@ -221,7 +494,7 @@ QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-QVariant PluginManager::data(const QModelIndex& index, int role) const
+QVariant PluginManager::data(const QModelIndex &index, int role) const
 {
     Q_D(const PluginManager);
 
@@ -242,50 +515,61 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
 
         switch ( role )
         {
-            case Qt::BackgroundRole: {
-                if( plugin.conflict )
-                    return QBrush(QColor("red"));
+            case Qt::DecorationRole: {
+                if (index.column() == kColName) {
+                    if ( plugin.loaded ) {
+                        return QIcon(":/icons/check.svg");
+                    }
+                    else if ( plugin.fault ) {
+                        return QIcon(":/icons/red_cross.svg");
+                    }
+                    else {
+                        return QIcon(":/icons/orange_minus.svg");
+                    }
+                }
+
+                break;
+            }
+
+            case Qt::ForegroundRole: {
+
+                if( plugin.fault )
+                    return QColor(Qt::red);
                 else
                     return {};
             }
+
             case Qt::DisplayRole:
             case Qt::ToolTipRole:
             case Qt::EditRole: {
                 switch( index.column() )
                 {
-                    case kColumnName:
-                        if( plugin.name.isEmpty() && role == Qt::DisplayRole)
-                            return plugin.id;
+                    case kColName:
                         return plugin.name;
 
-                    case kColumnPluginEnabled:
-                        if( role == Qt::EditRole )
-                        {
-                            auto disabled = d->m_disabled_ids.contains( plugin.id );
-                            return disabled ? Qt::Unchecked : Qt::Checked;
+                    case kColEnabled:
+                        if( role == Qt::EditRole ) {
+                            return plugin.enabled ? Qt::Checked : Qt::Unchecked;
                         }
                         break;
 
-                    case kColumnPluginId:
-                        return plugin.id;
+                    case kColIid:
+                        return plugin.iid;
 
-                    case kColumnVersion:
-                        return plugin.version; // <- опечатка в isa
+                    case kColGroup:
+                        return group.name;
 
-                    case kColumnVendor:
+                    case kColVersion:
+                        return plugin.version;
+
+                    case kColVendor:
                         return plugin.vendor;
 
-                    case kColumnLocation:
-                        return plugin.path + "/" + plugin.file_name;
+                    case kColFile:
+                        return plugin.file;
 
-                    case kColumnDescription:
+                    case kColDescription:
                         return plugin.description;
-
-                    case kColumnDependencies:
-                        return QString("Not implemented");
-
-                    case kColumnLoaded:
-                        return plugin.used ? tr("Load") : tr("Unload");
 
                     default:
                         break;
@@ -294,10 +578,9 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
             }
 
             case Qt::CheckStateRole: {
-                if( index.column() == kColumnPluginEnabled )
+                if( index.column() == kColEnabled )
                 {
-                    auto disabled = d->m_disabled_ids.contains( plugin.id );
-                    return disabled ? Qt::Unchecked : Qt::Checked;
+                    return plugin.enabled ? Qt::Checked : Qt::Unchecked;
                 }
                 break;
             }
@@ -310,7 +593,7 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
 
             if( role == Qt::DisplayRole )
             {
-                if( index.column() == kColumnName )
+                if( index.column() == kColName )
                     return group.name;
             }
         }
@@ -319,111 +602,51 @@ QVariant PluginManager::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-bool PluginManager::setData(const QModelIndex& index, const QVariant& value, int role)
+bool PluginManager::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     Q_D( PluginManager );
+    bool ret = false;
 
     if( ! index.isValid() )
-        return false;
+        return ret;
 
     if( Qt::CheckStateRole != role )
-        return false;
+        return ret;
 
-    if( index.column() != kColumnPluginEnabled )
-        return false;
+    if( index.column() != kColEnabled )
+        return ret;
 
     if( index.parent().isValid() )
     {
         int row = index.internalId()-1;
         if( row < 0 || row >= d->m_groups.size() )
-            return false;
+            return ret;
 
-        const auto &group = d->m_groups.at( row );
+        auto& group = d->m_groups[row];
         if( index.row() < 0 || index.row() >= group.plugins.size() )
-            return false;
+            return ret;
 
-        const auto &plugin = group.plugins.at( index.row() );
+        auto& plugin = group.plugins[index.row()];
+        const auto state = value.toInt() == Qt::Checked;
 
-        auto dis_inx = d->m_disabled_ids.indexOf( plugin.id );
-        const auto old_state = dis_inx == -1; // Нет в списке отключенных
-        const auto new_state = value.toInt() == Qt::Checked;
-
-        if( old_state != new_state )
+        if( plugin.enabled != state )
         {
-            if( new_state )
-                d->m_disabled_ids.removeAt( dis_inx );
+            if( state )
+                ret = d->enablePlugin(plugin);
             else
-                d->m_disabled_ids.append( plugin.id );
+                ret = d->disablePlugin(plugin);
 
-            if( ! plugin.conflict )
+            if( ret )
                 emit dataChanged( index, index, {Qt::CheckStateRole} );
-            else
-            {
-                // Поиск конфликтного плагина, для оповещения представления
-                for( int i = 0; i < d->m_groups.size(); ++i )
-                {
-                    auto &i_group = d->m_groups[ i ];
-                    for( int j = 0; j < i_group.plugins.size(); ++ j )
-                    {
-                        auto &j_plugin = i_group.plugins[ j ];
-                        if( j_plugin.id == plugin.id )
-                        {
-                            auto parent = PluginManager::index( i, 0 );
-                            auto i_index = PluginManager::index( j, kColumnPluginEnabled, parent );
-                            emit dataChanged( i_index, i_index, {Qt::CheckStateRole} );
-                        }
-                    }
-                }
-            }
 
-            return true;
+            return ret;
         }
     }
 
-    return false;
+    return ret;
 }
 
-PluginManager::PluginManager(QObject* parent)
-    : QAbstractItemModel(parent)
-    , d_ptr(new PluginManagerPrivate)
-{
-    Q_D(PluginManager);
-    d->q_ptr = this;
-}
-
-PluginManager::~PluginManager()
-{
-    // Выгрузка всех плагинов?
-}
-
-void PluginManager::mark_loaded(const QString& group, QPluginLoader* loader)
-{
-    Q_D(PluginManager);
-
-    for( int i = 0; i < d->m_groups.size(); ++i )
-    {
-        auto &i_group = d->m_groups[ i ];
-        for( int j = 0; j < i_group.plugins.size(); ++ j )
-        {
-            auto &j_plugin = i_group.plugins[ j ];
-            if( j_plugin.loader == loader )
-            {
-                j_plugin.used = true;
-                auto parent = index( i, 0 );
-                auto j_index = index( j, kColumnLoaded, parent );
-                emit dataChanged( j_index, j_index, {Qt::DisplayRole} );
-                emit dataChanged( index( j, 0, parent ),
-                                  index( j, kColumnLoaded, parent ),
-                                  { Qt::BackgroundRole} );
-
-                return;
-            }
-        }
-    }
-}
-
-
-QModelIndex PluginManager::index( int row, int col, const QModelIndex &parent ) const
+QModelIndex PluginManager::index(int row, int col, const QModelIndex &parent) const
 {
     if( ! hasIndex(row, col, parent) )
         return QModelIndex();
@@ -431,11 +654,11 @@ QModelIndex PluginManager::index( int row, int col, const QModelIndex &parent ) 
     return createIndex( row, col, parent.isValid() ? parent.row()+1 : quintptr(0) );
 }
 
-Qt::ItemFlags PluginManager::flags(const QModelIndex& index) const
+Qt::ItemFlags PluginManager::flags(const QModelIndex &index) const
 {
     if( index.internalId() )
     {
-        if( index.column() == kColumnPluginEnabled )
+        if( index.column() == kColEnabled )
             return Qt::ItemIsEnabled |
                    Qt::ItemIsSelectable |
                    Qt::ItemNeverHasChildren |
@@ -464,111 +687,47 @@ QModelIndex PluginManager::sibling(int row, int column, const QModelIndex &index
     return createIndex( row, column, index.internalId() );
 }
 
-void PluginManager::loadPlugins()
+PluginManager::PluginManager(QObject *parent)
+    : QAbstractItemModel( parent )
+    , d_ptr( new PluginManagerPrivate() )
 {
     Q_D(PluginManager);
-    for(QString &dir_path: d->m_user_directory_list)
-        d->LoadPlugins(dir_path);
-
-    for(QString &dir_path: d->m_app_directory_list)
-        d->LoadPlugins(dir_path);
-
+    d->q_ptr = this;
 }
 
-void PluginManager::unloadPlugins()
+PluginManager::~PluginManager()
 {
     Q_D(PluginManager);
-    for( auto it = d->m_groups.cbegin(); it != d->m_groups.cend(); ++it )
-        for( auto jt = it->plugins.cbegin(); jt != it->plugins.cend(); ++jt )
-            jt->loader->unload();
+    delete d;
 }
 
-PluginManagerPrivate::PluginManagerPrivate()
-    : q_ptr(nullptr)
-    , m_has_conflict(false)
+void PluginManager::mark_fault(const QString &group, QPluginLoader *loader)
 {
+    Q_D(PluginManager);
 
-}
+    for( int i = 0; i < d->m_groups.size(); ++i )
+    {
+        auto &i_group = d->m_groups[i];
 
-void PluginManagerPrivate::LoadPlugins(const QString& path)
-{
-    Q_Q(PluginManager);
-
-    QDir dir(path);
-    auto files = dir.entryList(QDir::Files);
-
-    for (const auto& file: qAsConst(files)) {
-        PluginInfo plugin;
-
-        plugin.loader = new QPluginLoader(dir.absoluteFilePath(file));
-
-        auto md = plugin.loader->metaData();
-            plugin.id = md["IID"].toString();
-        auto user_data = md["MetaData"].toObject();
-        auto group = user_data["group"].toString();
-
-        int group_index = -1;
-        for (int i = 0; i < m_groups.size(); ++i) {
-            if( m_groups.at( i ).group == group )
-            {
-                group_index = i;
-                break;
-            }
-        }
-
-        if( group_index == -1 )
+        for( int j = 0; j < i_group.plugins.size(); ++ j )
         {
-            Group new_group;
-            new_group.group = group;
-            if( group.isEmpty() )
-                new_group.name = QObject::tr("No groups");
-            else
-                new_group.name = group;
-
-            group_index = m_groups.size();
-            q->beginInsertRows( QModelIndex(), group_index, group_index );
-            m_groups.append( new_group );
-            q->endInsertRows();
-        }
-
-        bool load = ! m_disabled_ids.contains( plugin.id );
-
-        if (load) {
-            if (!plugin.loader->load()) {
-                plugin.loader->deleteLater(); // А сам плагин останется + останется группа
-            }
-        }
-
-        plugin.file_name = file;
-        plugin.path = path;
-        plugin.name = user_data["name"].toString();
-        plugin.version = user_data["version"].toString();
-        plugin.description = user_data[ "description" ].toString();
-        plugin.vendor  = user_data["vendor"].toString();
-
-        for( int i = 0; i < m_groups.size(); ++i )
-        {
-            auto &i_group = m_groups[ i ];
-            for( int j = 0; j < i_group.plugins.size(); ++ j )
+            auto &j_plugin = i_group.plugins[j];
+            if( j_plugin.loader == loader )
             {
-                auto &j_plugon = i_group.plugins[ j ];
-                if( j_plugon.id == plugin.id )
-                {
-                    plugin.conflict = true;
-                    j_plugon.conflict = true;
-                    auto parent = q->index( i, 0 );
-                    emit q->dataChanged( q->index(j, 0, parent ),
-                                         q->index(j, PluginManager::kColumnCount-1, parent ),
-                                         {Qt::BackgroundRole});
-                    m_has_conflict = true;
-                    emit q->sConflictDetected( plugin.id );
-                }
+                j_plugin.fault   = true;
+                j_plugin.enabled = false;
+                j_plugin.loaded  = false;
+
+                auto parent = index( i, 0 );
+                auto j_index = index( j, kColEnabled, parent );
+
+                emit dataChanged( j_index, j_index, {Qt::DisplayRole} );
+                emit dataChanged( index( j, 0, parent ),
+                                  index( j, kColCount, parent ),
+                                  { Qt::BackgroundRole} );
+
+                return;
             }
         }
-
-        Group &cur_group = m_groups[ group_index ];
-        q->beginInsertRows( q->index( group_index, 0), cur_group.plugins.size(), cur_group.plugins.size() );
-        cur_group.plugins.append( plugin );
-        q->endInsertRows();
     }
 }
