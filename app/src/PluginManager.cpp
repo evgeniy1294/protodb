@@ -18,6 +18,7 @@ class PluginManagerPrivate
         QStringList relations;
         QStringList deps;
 
+        bool saved_state;
         bool enabled;
         bool loaded;
         bool fault;
@@ -390,6 +391,8 @@ void PluginManager::loadPlugins(QMap<QString, bool> iids)
     beginResetModel();
         d->loadPlugins(iids);
     endResetModel();
+
+    saveState();
 }
 
 QMap<QString, bool> PluginManager::getPluginsState() const
@@ -478,6 +481,56 @@ void PluginManager::clearError()
     Q_D(PluginManager);
     d->m_last_error.clear();
 }
+
+void PluginManager::saveState()
+{
+    Q_D(PluginManager);
+
+    for (auto& group: d->m_groups) {
+        for (auto& plugin: group.plugins) {
+            if (!plugin.fault) {
+                plugin.saved_state = plugin.enabled;
+            }
+        }
+    }
+
+    return;
+}
+
+void PluginManager::restoreState()
+{
+    Q_D(PluginManager);
+
+    beginResetModel();
+
+    for (auto& group: d->m_groups) {
+        for (auto& plugin: group.plugins) {
+            if (!plugin.fault) {
+                plugin.enabled = plugin.saved_state;
+            }
+        }
+    }
+
+    endResetModel();
+}
+
+void PluginManager::resetState()
+{
+    Q_D(PluginManager);
+
+    beginResetModel();
+
+    for (auto& group: d->m_groups) {
+        for (auto& plugin: group.plugins) {
+            if (!plugin.fault) {
+                plugin.enabled = plugin.loaded;
+            }
+        }
+    }
+
+    endResetModel();
+}
+
 
 int PluginManager::rowCount(const QModelIndex &parent) const
 {

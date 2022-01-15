@@ -45,6 +45,10 @@ public:
     QString lastError() const;
     void clearError();
 
+    void saveState();
+    void restoreState();
+    void resetState();
+
     // --------- [ MODEL INTERFACE ] ---------- //
     int rowCount( const QModelIndex &parent ) const override;
     int columnCount( const QModelIndex &parent ) const override;

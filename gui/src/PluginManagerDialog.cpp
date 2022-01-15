@@ -1,10 +1,14 @@
+#include <protodb/PluginManager.h>
+#include <protodb/PluginTreeView.h>
+#include <protodb/PluginManagerDialog.h>
+
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QSortFilterProxyModel>
-#include <protodb/PluginTreeView.h>
-#include <protodb/PluginManagerDialog.h>
+#include <QAbstractButton>
+
 
 PluginManagerDialog::PluginManagerDialog(QWidget* parent)
     : QDialog(parent)
@@ -39,4 +43,34 @@ void PluginManagerDialog::createGui()
 void PluginManagerDialog::connectSignals()
 {
     connect(m_filter_line, &QLineEdit::textChanged, m_view, &PluginTreeView::setFilterFixedString);
+    connect(m_dialog_buttons, &QDialogButtonBox::clicked, this, &PluginManagerDialog::onDialogClicked);
+}
+
+
+void PluginManagerDialog::onDialogClicked(QAbstractButton* aBtn)
+{
+    switch( m_dialog_buttons->standardButton( aBtn ) )
+    {
+        case QDialogButtonBox::Apply:
+            PluginManager::instance().saveState();
+            break;
+
+        case QDialogButtonBox::Ok:
+            PluginManager::instance().saveState();
+            hide();
+            break;
+
+        case QDialogButtonBox::Reset:
+            PluginManager::instance().resetState();
+            m_view->expandAll();
+            break;
+
+        case QDialogButtonBox::Cancel:
+            PluginManager::instance().restoreState();
+            hide();
+            break;
+
+        default:
+            break;
+    }
 }

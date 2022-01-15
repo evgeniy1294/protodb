@@ -3,6 +3,7 @@
 #include <QDialog>
 
 class QDialogButtonBox;
+class QAbstractButton;
 class QLineEdit;
 class PluginTreeView;
 
@@ -17,6 +18,9 @@ public:
 private:
     void createGui();
     void connectSignals();
+
+private slots:
+    void onDialogClicked(QAbstractButton* aBtn);
 
 private:
     PluginTreeView* m_view;

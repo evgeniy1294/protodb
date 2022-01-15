@@ -3,6 +3,8 @@
 #include <QDataWidgetMapper>
 #include <QEvent>
 #include <QMessageBox>
+#include <QSpacerItem>
+#include <QGridLayout>
 
 #include <protodb/PluginManager.h>
 #include <protodb/PluginManagerDialog.h>
@@ -60,8 +62,7 @@ void PluginTreeView::setFilterFixedString(const QString& pattern)
     m_fm->setFilterFixedString(std::move(pattern));
 }
 
-#include <QSpacerItem>
-#include <QGridLayout>
+
 bool PluginTreeView::edit(const QModelIndex& index, EditTrigger trigger, QEvent* event)
 {
     bool ret = QTreeView::edit(index, trigger, event);
