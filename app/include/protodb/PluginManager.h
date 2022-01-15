@@ -42,6 +42,9 @@ public:
 
     QList<QPluginLoader*> getLoaders(const QString& group = QString());
 
+    QString lastError() const;
+    void clearError();
+
     // --------- [ MODEL INTERFACE ] ---------- //
     int rowCount( const QModelIndex &parent ) const override;
     int columnCount( const QModelIndex &parent ) const override;

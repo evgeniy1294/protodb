@@ -41,6 +41,7 @@ public:
     bool disablePlugin(PluginInfo &plugin);
 
 private:
+    QString getNameByIid(const QString& iid, const QString& defaultValue );
     QPair<int /*group*/, int /*plugin*/> findPluginByIid(const QString& iid) const;
     QStringList findConflicts(const PluginInfo& plugin, bool pedantic = false) const;
     QStringList findBrokenDependencies(const PluginInfo& plugin) const;
@@ -183,10 +184,10 @@ bool PluginManagerPrivate::enablePlugin(PluginInfo &plugin)
     auto conflicts = findConflicts(plugin, true);
 
     if (!conflicts.empty()) {
-        m_last_error = "Plugin can't be enabled, because the plugin has conflict:";
+        m_last_error = QObject::tr("Plugin can't be enabled, because the plugin has conflict: ");
 
         for (auto& it: conflicts)
-            m_last_error.append(' ' + it);
+            m_last_error.append('\n' + it);
 
         return false;
     }
@@ -197,9 +198,18 @@ bool PluginManagerPrivate::enablePlugin(PluginInfo &plugin)
         m_last_error = "Plugin can't be enabled, because the plugin has unresolved dependency:";
 
         for (auto& it: brokenDeps)
-            m_last_error.append(' ' + it);
+            m_last_error.append('\n' + getNameByIid(it, it));
 
         return false;
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto& dependency = m_groups[grp].plugins[idx];
+            dependency.relations.append(plugin.iid);
+        }
     }
 
     plugin.enabled = true;
@@ -214,17 +224,40 @@ bool PluginManagerPrivate::disablePlugin(PluginInfo& plugin)
     }
 
     if (!plugin.relations.empty()) {
-        m_last_error = "Plugin can't be enabled, because the plugin has many relations:";
+        m_last_error = "Plugin can't be disabled, because the plugin has relations: ";
 
         for (auto& it: plugin.relations)
-            m_last_error.append(' ' + it);
+            m_last_error.append('\n' + getNameByIid(it, it));
 
         return false;
+    }
+
+    for (auto& iid: plugin.deps) {
+        auto [grp, idx] = findPluginByIid(iid);
+
+        if (grp >= 0) {
+            auto& dependency = m_groups[grp].plugins[idx];
+
+            if (dependency.relations.contains(plugin.iid)) {
+                dependency.relations.removeAll(plugin.iid);
+            }
+        }
     }
 
     plugin.enabled = false;
 
     return true;
+}
+
+QString PluginManagerPrivate::getNameByIid(const QString& iid, const QString& defaultValue)
+{
+    auto [grp, idx] = findPluginByIid(iid);
+    if (grp >= 0) {
+        auto& plugin = m_groups[grp].plugins[idx];
+        return plugin.name;
+    }
+
+    return defaultValue;
 }
 
 QPair<int, int> PluginManagerPrivate::findPluginByIid(const QString &iid) const
@@ -284,14 +317,14 @@ QStringList PluginManagerPrivate::findBrokenDependencies(const PluginInfo& plugi
         auto [grp, idx] = findPluginByIid(iid);
 
         if (grp >= 0) {
-            auto dependency = m_groups[grp].plugins.at(idx);
+            auto& dependency = m_groups[grp].plugins[idx];
 
             if (dependency.enabled) {
                 continue;
             }
         }
 
-        ret << plugin.name;
+        ret << iid;
     }
 
     return ret;
@@ -325,13 +358,11 @@ void PluginManagerPrivate::loadPlugin(PluginInfo &plugin, const QMap<QString, bo
         auto [grp, idx] = findPluginByIid(iid);
 
         if (grp >= 0) {
-            auto dependency = m_groups[grp].plugins.at(idx);
+            auto& dependency = m_groups[grp].plugins[idx];
             loadPlugin(dependency, iids);
 
             if (dependency.loaded) {
-                if (!dependency.relations.contains(plugin.iid)) {
-                    dependency.relations << plugin.iid;
-                }
+                dependency.relations.append(plugin.iid);
                 continue;
             }
         }
@@ -434,6 +465,18 @@ QList<QPluginLoader *> PluginManager::getLoaders(const QString &group)
     }
 
     return ret;
+}
+
+QString PluginManager::lastError() const
+{
+    Q_D(const PluginManager);
+    return d->m_last_error;
+}
+
+void PluginManager::clearError()
+{
+    Q_D(PluginManager);
+    d->m_last_error.clear();
 }
 
 int PluginManager::rowCount(const QModelIndex &parent) const
@@ -636,8 +679,9 @@ bool PluginManager::setData(const QModelIndex &index, const QVariant &value, int
             else
                 ret = d->disablePlugin(plugin);
 
-            if( ret )
+            if( ret ) {
                 emit dataChanged( index, index, {Qt::CheckStateRole} );
+            }
 
             return ret;
         }

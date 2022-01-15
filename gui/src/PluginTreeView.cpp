@@ -1,6 +1,8 @@
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
 #include <QDataWidgetMapper>
+#include <QEvent>
+#include <QMessageBox>
 
 #include <protodb/PluginManager.h>
 #include <protodb/PluginManagerDialog.h>
@@ -58,6 +60,37 @@ void PluginTreeView::setFilterFixedString(const QString& pattern)
     m_fm->setFilterFixedString(std::move(pattern));
 }
 
+#include <QSpacerItem>
+#include <QGridLayout>
+bool PluginTreeView::edit(const QModelIndex& index, EditTrigger trigger, QEvent* event)
+{
+    bool ret = QTreeView::edit(index, trigger, event);
+
+    if (!ret) {
+        auto err = m_pm->lastError();
+
+        if (!err.isEmpty()) {
+            QMessageBox msgbox;
+            {
+                msgbox.setText( tr("Warning") );
+                msgbox.setInformativeText( err );
+                msgbox.setStandardButtons(QMessageBox::Yes);
+                msgbox.setDefaultButton(QMessageBox::No);
+                msgbox.setIcon(QMessageBox::Icon::Warning);
+                msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+
+                QSpacerItem* horizontalSpacer = new QSpacerItem(540, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+                QGridLayout* layout = (QGridLayout*)msgbox.layout();
+                layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+            }
+            msgbox.exec();
+
+            m_pm->clearError();
+        }
+    }
+    return ret;
+}
+
 void PluginTreeView::createMenu()
 {
 
@@ -73,7 +106,7 @@ void PluginTreeView::connectSignals()
     connect(this, &PluginTreeView::doubleClicked, this, [this](const QModelIndex &a_index) {
         auto index = m_fm->mapToSource(a_index);
 
-        if (!m_pm->hasChildren(index)) {
+        if (!m_pm->hasChildren(index) && index.column() == PluginManager::kColName) {
             m_mapper->setRootIndex(index.parent());
             m_mapper->setCurrentModelIndex(index);
 

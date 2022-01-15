@@ -1,1 +1,40 @@
- 
+cmake_minimum_required(VERSION 3.5)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(QT NAMES Qt5 COMPONENTS SerialPort REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS SerialPort REQUIRED)
+
+set(SERIAL_IODEVICE_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SERIAL_IODEVICE_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(SERIAL_IODEVICE_HEADERS
+        ${SERIAL_IODEVICE_HEADERS_DIR}/SerialIODeviceCreator.h
+)
+
+set(SERIAL_IODEVICE_SOURCE
+        ${SERIAL_IODEVICE_SOURCE_DIR}/SerialIODeviceCreator.cpp
+)
+
+set(SERIAL_IODEVICE_METADATA
+        ${SERIAL_IODEVICE_HEADERS_DIR}/SerialIODevicePluginMetadata.json
+)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_library(SerialIoDevice SHARED ${SERIAL_IODEVICE_SOURCE} ${SERIAL_IODEVICE_HEADERS} ${SERIAL_IODEVICE_METADATA})
+else()
+    add_library(SerialIoDevice SHARED ${SERIAL_IODEVICE_SOURCE} ${SERIAL_IODEVICE_HEADERS} ${SERIAL_IODEVICE_METADATA})
+endif()
+
+target_include_directories(SerialIoDevice PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(SerialIoDevice PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort)
+
+target_link_libraries(SerialIoDevice PRIVATE ProtodbIoDevice)
+
+
+

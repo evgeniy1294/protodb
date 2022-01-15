@@ -5,5 +5,5 @@
     "Vendor": "Evgenii Fedoseev",
     "Description": "Виджет для настройки последовательного порта",
     "Platform": "All",
-    "Dependencies": []
+    "Dependencies": ["ProtoDb.SerialIODeviceCreator"]
 }

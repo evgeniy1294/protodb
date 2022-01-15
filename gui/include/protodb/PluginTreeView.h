@@ -20,10 +20,13 @@ public:
 public slots:
     void setFilterFixedString(const QString& pattern);
 
+
 private:
     void createMenu();
     void createActions();
     void connectSignals();
+
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
 private:
     QSortFilterProxyModel* m_fm;

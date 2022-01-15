@@ -215,7 +215,7 @@ void SequenceTableWidget::onClickClear()
         msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgbox.setDefaultButton(QMessageBox::No);
         msgbox.setIcon(QMessageBox::Icon::Warning);
-        msgbox.setFixedSize( QSize(680, 240) );
+        msgbox.resize( 680, 240 );
 
             msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
             msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
