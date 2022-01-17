@@ -75,10 +75,9 @@ bool PluginTreeView::edit(const QModelIndex& index, EditTrigger trigger, QEvent*
             {
                 msgbox.setText( tr("Warning") );
                 msgbox.setInformativeText( err );
-                msgbox.setStandardButtons(QMessageBox::Yes);
-                msgbox.setDefaultButton(QMessageBox::No);
+                msgbox.setStandardButtons(QMessageBox::Ok);
+                msgbox.setDefaultButton(QMessageBox::Ok);
                 msgbox.setIcon(QMessageBox::Icon::Warning);
-                msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
 
                 QSpacerItem* horizontalSpacer = new QSpacerItem(540, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
                 QGridLayout* layout = (QGridLayout*)msgbox.layout();

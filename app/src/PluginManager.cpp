@@ -79,6 +79,14 @@ void PluginManagerPrivate::loadPlugins(const QMap<QString, bool> &iids)
 
     for (auto& group: m_groups) {
         for (auto& plugin: group.plugins) {
+            if (iids.contains(plugin.iid)) {
+                plugin.enabled = iids[plugin.iid];
+            }
+        }
+    }
+
+    for (auto& group: m_groups) {
+        for (auto& plugin: group.plugins) {
             loadPlugin(plugin, iids);
         }
     }
@@ -334,10 +342,6 @@ QStringList PluginManagerPrivate::findBrokenDependencies(const PluginInfo& plugi
 void PluginManagerPrivate::loadPlugin(PluginInfo &plugin, const QMap<QString, bool>& iids)
 {
     Q_Q(PluginManager);
-
-    if (iids.contains(plugin.iid)) {
-        plugin.enabled = iids[plugin.iid];
-    }
 
     if (!plugin.enabled)
         return;
