@@ -2,10 +2,11 @@
 #include <protodb/PluginTreeView.h>
 #include <protodb/PluginManagerDialog.h>
 
+#include <QPushButton>
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QTreeWidget>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QSortFilterProxyModel>
 #include <QAbstractButton>
 
@@ -29,13 +30,20 @@ void PluginManagerDialog::createGui()
 
     m_filter_line = new QLineEdit();
         m_filter_line->setPlaceholderText(tr("Find plugin"));
+        m_filter_line->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
 
     m_view = new PluginTreeView();
 
-    auto m_layout = new QVBoxLayout();
-        m_layout->addWidget(m_filter_line);
-        m_layout->addWidget(m_view);
-        m_layout->addWidget(m_dialog_buttons);
+    m_detail_btn = new QPushButton();
+        m_detail_btn->setIcon(QIcon(":/icons/info.svg"));
+        m_detail_btn->setIconSize(QSize(22,22));
+        m_detail_btn->setFixedSize(32, 32);
+
+    auto m_layout = new QGridLayout();
+        m_layout->addWidget(m_filter_line, 0, 0, 1, 1);
+        m_layout->addWidget(m_detail_btn, 0, 1, 1, 1);
+        m_layout->addWidget(m_view, 1, 0, 1, 2);
+        m_layout->addWidget(m_dialog_buttons, 2, 0, 1, 2);
 
     setLayout(m_layout);
 }

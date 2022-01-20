@@ -6,13 +6,12 @@
 void to_json(nlohmann::json& j, const QString& str);
 void to_json(nlohmann::json& j, const QColor& color);
 void to_json(nlohmann::json& j, const QFont& font);
+void to_json(nlohmann::json& j, const QJsonValue& value);
+void to_json(nlohmann::json& j, const QJsonObject& qjson);
 
 void from_json(const nlohmann::json& j, QString& str);
 void from_json(const nlohmann::json& j, QColor& color);
 void from_json(const nlohmann::json& j, QFont& font);
+void from_json(const nlohmann::json& j, QJsonValue& value);
+void from_json(const nlohmann::json& j, QJsonObject& qjson);
 
-void toQJsonObject(QJsonObject& to, const nlohmann::json& from);
-void fromQJsonObject(nlohmann::json& to, const QJsonObject& from);
-
-QJsonValue toQJsonValue(const nlohmann::json& json);
-nlohmann::json toNlohmannJson(const QJsonValue& value);

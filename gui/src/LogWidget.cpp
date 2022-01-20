@@ -70,9 +70,9 @@ void LogWidget::createGui()
         m_clr_btn->setToolTip("Clear log window");
 
     m_mode_btn = new QPushButton();
-    m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
-    m_mode_btn->setIconSize(QSize(24,24));
-    m_mode_btn->setFixedSize(32, 32);
+        m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
+        m_mode_btn->setIconSize(QSize(24,24));
+        m_mode_btn->setFixedSize(32, 32);
 
     m_run = new QPushButton();
         m_run->setIcon(QIcon(":/icons/run.svg"));

@@ -10,6 +10,9 @@
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <IOWidgetFactory.h>
 
+#include <iostream>
+#include <protodb/nlohmann/qnlohmann.h>
+
 void testPlugins();
 
 int main(int argc, char *argv[])

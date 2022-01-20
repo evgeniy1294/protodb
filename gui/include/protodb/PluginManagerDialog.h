@@ -2,6 +2,7 @@
 
 #include <QDialog>
 
+class QPushButton;
 class QDialogButtonBox;
 class QAbstractButton;
 class QLineEdit;
@@ -26,4 +27,5 @@ private:
     PluginTreeView* m_view;
     QDialogButtonBox* m_dialog_buttons;
     QLineEdit* m_filter_line;
+    QPushButton* m_detail_btn;
 };
