@@ -33,7 +33,7 @@ target_include_directories(ProtodbIoWidget PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(ProtodbIoWidget PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(ProtodbIoWidget PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(ProtodbIoWidget PUBLIC Configurable Factories qnlohmann)
+target_link_libraries(ProtodbIoWidget PUBLIC Configurable Factories JsonUtils)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins)
 

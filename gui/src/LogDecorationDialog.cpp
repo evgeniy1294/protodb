@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QLineEdit>
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 #include <protodb/LogDecorationDialog.h>
 #include <protodb/LogDecorator.h>
 

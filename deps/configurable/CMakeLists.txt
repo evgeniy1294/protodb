@@ -30,4 +30,5 @@ endif()
 target_include_directories(Configurable PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 target_link_libraries(Configurable PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(Configurable PRIVATE JsonUtils)
 

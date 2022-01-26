@@ -1,20 +1,24 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <protodb/JsonUtils/JsonUtils.h>
 #include <QtCore>
 
 class Configurable
 {
 public:
-    virtual void fromJson(const nlohmann::json& json);
-    virtual void toJson(nlohmann::json& json) const;
-
-    virtual void setName(const QString& name);
-    virtual const QString& name() const;
-
-    virtual void setDescription(const QString& text);
-    virtual const QString& description() const;
-
     void setDefaultConfig();
-    virtual void defaultConfig(nlohmann::json& json) const; 
+    virtual void setConfig(const nlohmann::json& json);
+    virtual void config(nlohmann::json& json) const;
+    virtual void defaultConfig(nlohmann::json& json) const;
+
+    void setDefaultState();
+    virtual void setState(const nlohmann::json& json);
+    virtual void state(nlohmann::json& json) const;
+    virtual void defaultState(nlohmann::json& json) const;
+
+    virtual bool writeConfig( const QString &path, const QString &extension = "json" ) const;
+    virtual bool readConfig( const QString &path, const QString &extension = "json" );
+
+    virtual bool writeState( const QString &path, const QString &extension = "json") const;
+    virtual bool readState( const QString &path, const QString &extension = "json");
 };

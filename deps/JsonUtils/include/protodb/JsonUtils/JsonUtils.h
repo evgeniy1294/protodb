@@ -15,3 +15,5 @@ void from_json(const nlohmann::json& j, QFont& font);
 void from_json(const nlohmann::json& j, QJsonValue& value);
 void from_json(const nlohmann::json& j, QJsonObject& qjson);
 
+bool readFromFile( const QString& path, nlohmann::json& json );
+bool writeToFile ( const QString& path, const nlohmann::json& json );

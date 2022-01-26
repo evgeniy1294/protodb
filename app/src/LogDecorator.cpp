@@ -1,5 +1,5 @@
 #include <QApplication>
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 #include <protodb/LogDecorator.h>
 
 

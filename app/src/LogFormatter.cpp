@@ -1,4 +1,4 @@
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 #include <protodb/LogFormatter.h>
 
 LogFormatter::LogFormatter(QObject *parent)

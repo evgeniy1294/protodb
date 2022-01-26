@@ -1,21 +1,21 @@
 #include <protodb/configurable/Configurable.h>
 
-void Configurable::fromJson(const nlohmann::json &json)
-{
-    Q_UNUSED(json);
-}
-
-void Configurable::toJson(nlohmann::json& json) const
-{
-    Q_UNUSED(json);
-}
 
 void Configurable::setDefaultConfig()
 {
     nlohmann::json json;
+        defaultConfig( json );
+        setConfig(json);
+}
 
-    defaultConfig( json );
-    fromJson(json);
+void Configurable::setConfig(const nlohmann::json &json)
+{
+    Q_UNUSED(json);
+}
+
+void Configurable::config(nlohmann::json& json) const
+{
+    Q_UNUSED(json);
 }
 
 void Configurable::defaultConfig(nlohmann::json& json) const
@@ -23,26 +23,64 @@ void Configurable::defaultConfig(nlohmann::json& json) const
     Q_UNUSED(json);
 }
 
-void Configurable::setName(const QString &name)
+void Configurable::setDefaultState()
 {
-    Q_UNUSED(name);
+    nlohmann::json json;
+        defaultState( json );
+        setConfig(json);
 }
 
-const QString& Configurable::name() const
+void Configurable::setState(const nlohmann::json &json)
 {
-    static QString dummyName;
-
-    return dummyName;
+    Q_UNUSED(json);
 }
 
-void Configurable::setDescription(const QString &text)
+void Configurable::state(nlohmann::json& json) const
 {
-    Q_UNUSED(text);
+    Q_UNUSED(json);
 }
 
-const QString& Configurable::description() const
+void Configurable::defaultState(nlohmann::json& json) const
 {
-    static QString dummyDescription;
+    Q_UNUSED(json);
+}
 
-    return dummyDescription;
+bool Configurable::writeConfig( const QString &path, const QString& extension ) const
+{
+    nlohmann::json json;
+        config( json );
+
+    return writeToFile( path + (extension.isEmpty() ? "" : ("." + extension)), json );
+}
+
+bool Configurable::readConfig( const QString &path, const QString &extension )
+{
+    nlohmann::json json;
+
+    bool success = readFromFile( path + (extension.isEmpty() ? "" : ("." + extension)), json );
+    if (success) {
+        setConfig(json);
+    }
+
+    return success;
+}
+
+bool Configurable::writeState( const QString &path, const QString &extension ) const
+{
+    nlohmann::json json;
+        state( json );
+
+    return writeToFile( path + (extension.isEmpty() ? "" : ("." + extension)), json );
+}
+
+bool Configurable::readState( const QString &path, const QString &extension )
+{
+    nlohmann::json json;
+
+    bool success = readFromFile( path + (extension.isEmpty() ? "" : ("." + extension)), json );
+    if (success) {
+        setState(json);
+    }
+
+    return success;
 }

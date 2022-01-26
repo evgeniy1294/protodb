@@ -1,4 +1,4 @@
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 
 #include <QColor>
 #include <QFont>
@@ -131,4 +131,14 @@ void to_json(nlohmann::json& j, const QJsonObject& qjson)
     for (auto& key: qjson.keys()) {
         j[key.toStdString()] = qjson[key];
     }
+}
+
+bool readFromFile( QString& path, nlohmann::json& json )
+{
+    return true;
+}
+
+bool writeToFile ( QString& path, const nlohmann::json& json )
+{
+    return true;
 }

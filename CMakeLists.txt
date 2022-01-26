@@ -19,9 +19,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/)
 
 add_dependencies(ProtodbGui ProtodbApp)
-add_dependencies(ProtodbApp ProtodbIoDevice ProtodbIoWidget Configurable Factories Global qnlohmann qsol2)
+add_dependencies(ProtodbApp ProtodbIoDevice ProtodbIoWidget Configurable Factories Global JsonUtils qsol2)
 add_dependencies(ProtodbIoDevice Configurable Factories)
 add_dependencies(ProtodbIoWidget Configurable Factories)
 
-target_link_libraries(ProtodbApp PUBLIC  Configurable Factories Global qnlohmann qsol2)
+target_link_libraries(ProtodbApp PUBLIC  Configurable Factories Global JsonUtils qsol2)
 target_link_libraries(ProtodbGui PRIVATE ProtodbApp ProtodbIoWidget)

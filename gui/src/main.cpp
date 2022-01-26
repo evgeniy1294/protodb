@@ -11,7 +11,7 @@
 #include <IOWidgetFactory.h>
 
 #include <iostream>
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 
 void testPlugins();
 

@@ -5,7 +5,7 @@
 #include <QIntValidator>
 #include <QHostAddress>
 
-#include <protodb/nlohmann/qnlohmann.h>
+#include <protodb/JsonUtils/JsonUtils.h>
 #include "NetIOWidget.h"
 
 NetIOWidget::NetIOWidget(QWidget* parent)
