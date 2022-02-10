@@ -13,10 +13,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 cmake_policy(SET CMP0079 NEW)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/app/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/gui/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/)
+add_subdirectory(apps/)
+add_subdirectory(gui/)
+add_subdirectory(deps/)
+add_subdirectory(plugins/)
 
 add_dependencies(ProtodbGui ProtodbApp)
 add_dependencies(ProtodbApp ProtodbIoDevice ProtodbIoWidget Configurable Factories Global JsonUtils qsol2)
