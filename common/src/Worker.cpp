@@ -1,8 +1,6 @@
 #include <protodb/Worker.h>
 #include <protodb/SequenceModel.h>
-#include <protodb/LogModel.h>
-#include <protodb/LogFormatter.h>
-#include <protodb/LogDecorator.h>
+#include <protodb/Logger.h>
 
 Worker::Worker(QObject *parent)
     : QObject(parent)
@@ -54,16 +52,4 @@ void Worker::onTransmitted(const QDateTime& timestamp, const QByteArray& data, c
 void Worker::onError(const QString &)
 {
     emit sStop();
-}
-
-void Worker::fromJson(const nlohmann::json &json)
-{
-    m_log_model->decorator()->fromJson(json);
-    m_log_model->formatter()->fromJson(json);
-}
-
-void Worker::toJson(nlohmann::json &json) const
-{
-    m_log_model->decorator()->toJson(json);
-    m_log_model->formatter()->toJson(json);
 }

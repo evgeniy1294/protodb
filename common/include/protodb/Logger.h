@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QAbstractTableModel>
-#include <protodb/global/LogTypes.h>
+#include <protodb/shared_types/LogTypes.h>
 #include <protodb/configurable/Configurable.h>
 
 class LogFormatter;

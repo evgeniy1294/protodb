@@ -1,4 +1,4 @@
-#include <protodb/JsonUtils/JsonUtils.h>
+#include <protodb/utils/JsonUtils.h>
 
 #include <QColor>
 #include <QFont>

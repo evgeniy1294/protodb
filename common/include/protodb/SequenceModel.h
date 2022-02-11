@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <QList>
 
-#include "SequenceAbstract.h"
+#include <protodb/shared_types/Sequence.h>
 
 class SequenceModel: public QAbstractTableModel
 {

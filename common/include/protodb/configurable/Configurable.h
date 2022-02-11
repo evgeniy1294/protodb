@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/JsonUtils/JsonUtils.h>
+#include <protodb/utils/JsonUtils.h>
 #include <QtCore>
 
 class Configurable

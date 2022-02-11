@@ -1,5 +1,3 @@
-#include <QFont>
-#include <QBrush>
 #include <QPointer>
 #include <QDebug>
 

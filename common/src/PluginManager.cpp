@@ -1,6 +1,6 @@
 #include <protodb/PluginManager.h>
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QBrush>
 #include <QDir>
 #include <QIcon>
@@ -127,7 +127,7 @@ void PluginManagerPrivate::searchPlugins()
         auto md = plugin.loader->metaData();
             plugin.iid = md["IID"].toString();
 
-        if (!plugin.iid.contains(QApplication::applicationName())) {
+        if (!plugin.iid.contains(QCoreApplication::applicationName())) {
             plugin.loader->deleteLater();
             continue;
         }
@@ -617,6 +617,7 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
         {
             case Qt::DecorationRole: {
                 if (index.column() == kColName) {
+                    /* Перенести функционал в делегат
                     if ( plugin.loaded ) {
                         return QIcon(":/icons/check.svg");
                     }
@@ -626,17 +627,19 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
                     else {
                         return QIcon(":/icons/orange_minus.svg");
                     }
+                    */
                 }
 
                 break;
             }
 
             case Qt::ForegroundRole: {
-
+                /* Перенести функционал в делегат
                 if( plugin.fault )
                     return QColor(Qt::red);
                 else
                     return {};
+                */
             }
 
             case Qt::DisplayRole:

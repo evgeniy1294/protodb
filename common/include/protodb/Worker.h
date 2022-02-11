@@ -20,10 +20,6 @@ public:
     SequenceModel* outgoingSequences();
     LogModel*      logModel();
 
-    // void defaultConfig(nlohmann::json& json) const override; -- непонятно, нужна ли данная функция
-    void fromJson(const nlohmann::json& json) override;
-    void toJson(nlohmann::json& json) const override;
-
 public slots:
     void onStart();
     void onStop();
