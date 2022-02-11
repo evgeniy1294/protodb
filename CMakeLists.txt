@@ -8,4 +8,6 @@ add_subdirectory(libs/gui)
 add_subdirectory(apps/protodb)
 
 # Plugins
-add_subdirectory(plugins)
+add_subdirectory(plugins/NetIOWidget)
+add_subdirectory(plugins/SerialIOWidget)
+add_subdirectory(plugins/SerialIODevice)
