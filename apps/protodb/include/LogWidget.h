@@ -22,9 +22,6 @@ public:
     explicit LogWidget(QWidget* parent = nullptr);
     ~LogWidget() = default;
 
-    void setModel(Logger* model);
-    Logger model() const;
-
 signals:
     void sByteFormatChanged(ByteFormat format);
 

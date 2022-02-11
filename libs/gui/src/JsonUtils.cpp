@@ -1,3 +1,5 @@
+#include "utils/JsonUtils.h"
+
 #include <QColor>
 #include <QFont>
 

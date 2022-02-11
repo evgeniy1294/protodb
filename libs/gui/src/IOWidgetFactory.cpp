@@ -1,5 +1,5 @@
-#include "IOWidgetCreatorInterface.h"
-#include "IOWidgetFactory.h"
+#include "plugins/IOWidgetCreatorInterface.h"
+#include "plugins/IOWidgetFactory.h"
 
 #include <protodb/factories/GlobalFactoryStorage.h>
 

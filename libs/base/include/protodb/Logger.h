@@ -5,12 +5,10 @@
 
 #include <QAbstractTableModel>
 
-class LogFormatter;
-class LogDecorator;
-
 class Logger: public QAbstractTableModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(Logger)
 
 public:
     enum ColumnNames {
@@ -21,51 +19,50 @@ public:
         kColumnCount
     };
 
-    enum Role {
-        ChannelRole = Qt::UserRole,
-        HexDisplayRole,
-        AsciiDisplayRole,
-        EventAsciiDisplayRole,
-        EventHexDisplayRole,
-        AnalyzeRole,
+    enum Channel {
+        kChannelFirst = 0,
+        kChannelSecond,
+        kChannelComment,
+        kChannelError,
+
+        kLogChannelsNum
+    };
+
+    struct Event
+    {
+        QDateTime timestamp;
+        Channel channel;
+        QByteArray message;
     };
 
 public:
-    Logger(QObject* parent = nullptr);
+    static Logger& instance();
+
+    static void log(Channel ch, const QByteArray& data, const QDateTime timestamp = QDateTime::currentDateTime());
+    static void comment(const QByteArray& text);
+    static void error(const QByteArray& text);
+
+    static void setChannelEnabled (Channel channel);
+    static void setChannelDisabled(Channel channel);
 
     // ---------[ MODEL INTERFACE ]----------- //
-    int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
-    int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& aIndex, int aRole = Qt::DisplayRole) const override;
-    QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
-    bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
-
-    void setFormatter(LogFormatter* formatter); // TODO: запретить замену?
-    LogFormatter* formatter() const;
-
-    void setDecorator(LogDecorator* decorator); // TODO: запретить замену?
-    LogDecorator* decorator() const;
-
-    void log(const LogEvent& event);
-    void log(LogChannel ch, const QByteArray& data);
-    void comment(const QByteArray& text);
-    void error(const QByteArray& text);
-
-    void setChannelEnabled(LogChannel channel);
-    void setChannelDisabled(LogChannel channel);
-
-signals:
-    void sPrint(const QString& text);
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
 public slots:
     void clear();
     void reload();
 
 private:
-    LogFormatter* m_formatter;
-    LogDecorator* m_decorator;
-    QList<LogEvent> m_log;
-    QMap<LogChannel, bool> m_flags;
+    Logger(QObject* parent = nullptr);
+    void log(const Event& event);
+
+private:
+    QList<Event> m_log;
+    QMap<Channel, bool> m_flags;
 };
 
 

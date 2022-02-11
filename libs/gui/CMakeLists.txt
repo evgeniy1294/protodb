@@ -12,6 +12,7 @@ project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
 option(${TARGET}_INSTALL "Generate the install target" OFF)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 # ------------ [ Sources ] ------------
 
@@ -82,6 +83,7 @@ target_include_directories(${TARGET} PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/>
 )
 
+target_include_directories( ${TARGET} PRIVATE include/${TARGET_NAMESPACE} )
 
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")

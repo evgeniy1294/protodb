@@ -12,10 +12,10 @@ LogProxyModel::LogProxyModel(QObject* parent)
 
 void LogProxyModel::createBaseConstant()
 {
-    m_lua["RX"]  = kFirstLogChannel;
-    m_lua["TX"]  = kSecondLogChannel;
-    m_lua["LUA"] = kCommentLogChannel;
-    m_lua["ERR"] = kErrorLogChannel;
+    m_lua["RX"]  = Logger::kChannelFirst;
+    m_lua["TX"]  = Logger::kChannelSecond;
+    m_lua["LUA"] = Logger::kChannelComment;
+    m_lua["ERR"] = Logger::kChannelError;
 }
 
 
@@ -81,9 +81,10 @@ bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_p
     if (!m_bypass) {
         sol::protected_function_result pfr;
 
-        auto index   = sourceModel()->index(source_row, 0, source_parent);
-        auto channel = index.data(Logger::ChannelRole).toInt();
-        auto msg = index.data(Logger::AnalyzeRole).toByteArray();
+        auto model = sourceModel();
+
+        auto channel = model->data( model->index(source_row, Logger::kColumnChannel) ).toInt();
+        auto msg     = model->data( model->index(source_row, Logger::kColumnMsg) ).toByteArray();
 
         pfr = m_accept(channel, SolByteArrayWrapper(msg));
         if (pfr.valid()) {

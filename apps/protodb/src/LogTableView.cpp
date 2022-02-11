@@ -44,11 +44,6 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::kColumnMsg,       QHeaderView::Stretch);
 }
 
-void LogTableView::setDecorator(LogDecorator* decorator)
-{
-    m_dec_dialog->setDecorator(decorator);
-}
-
 void LogTableView::setByteFormat(ByteFormat format)
 {
     m_item_delegate->setByteFormat(format);
@@ -88,12 +83,12 @@ void LogTableView::connectSignals()
 {
     connect(this, &QTableView::customContextMenuRequested, this, [this](QPoint pos) {
         auto menu = m_base_menu;
-        auto index = indexAt(pos);
+        auto row  = indexAt(pos).row();
 
-        if (index.row() != -1) {
-            auto channel = index.data(Logger::ChannelRole).toInt();
+        if (row != -1) {
+            auto channel = model()->data( model()->index( row, Logger::kColumnChannel ) ).toInt();
 
-            menu = (channel == kFirstLogChannel || channel == kSecondLogChannel) ?
+            menu = (channel == Logger::kChannelFirst || channel == Logger::kChannelSecond) ?
                 m_data_channel_menu : m_info_channel_menu;
         }
 
@@ -102,39 +97,44 @@ void LogTableView::connectSignals()
 
     connect(m_copy, &QAction::triggered, this, [this]() {
         auto format = m_item_delegate->byteFormat();
-        int role = (format == ByteFormat::kAsciiFormat) ? Logger::EventAsciiDisplayRole :
-                                                          Logger::EventHexDisplayRole;
 
-        auto msg = currentIndex().data(role).toString();
+        // TODO: FEA учитывать ByteFormat
+        auto msg = currentIndex().data().toString();
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_copy_message, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(Qt::DisplayRole).toString();
+        auto msg = currentIndex().data().toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_copy_as_bytes, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(Logger::HexDisplayRole).toString();
+        // TODO: FEA учёт разделителя
+        auto msg = currentIndex().data().toByteArray().toHex(' ');
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_copy_as_string, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(Logger::AsciiDisplayRole).toString();
+        auto msg = currentIndex().data(Qt::DisplayRole).toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_add_to_analyzer, &QAction::triggered, this, [this]() {
-        auto data = currentIndex().data(Logger::AnalyzeRole);
-        if (!data.isNull()) {
-            emit sToAnalyzer(data.toByteArray());
+        auto channel = model()->data( model()->index( currentIndex().row(), Logger::kColumnChannel ) ).toInt();
+
+        if (channel == Logger::kChannelFirst || channel == Logger::kChannelSecond) {
+
+            auto data = currentIndex().data();
+            if (!data.isNull()) {
+                emit sToAnalyzer(data.toByteArray());
+            }
         }
     });
 

@@ -13,6 +13,7 @@ public:
     NetIOWidget(QWidget *parent = nullptr);
     ~NetIOWidget() = default;
 
+    QString name() const override { return QString("Network"); }
 private:
     void createGui();
     void connectSignals();

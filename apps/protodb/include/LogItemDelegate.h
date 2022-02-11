@@ -15,7 +15,7 @@ public:
     void setByteFormat(ByteFormat format);
 
 private:
-    int m_byte_role;
+    ByteFormat m_byte_format;
 };
 
 

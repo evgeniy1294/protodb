@@ -9,21 +9,12 @@ class QPushButton;
 class QDialogButtonBox;
 class QLineEdit;
 
-class LogDecorator;
-
 class LogDecorationDialog: public QDialog // , public Configurable
 {
     Q_OBJECT
 
 public:
     LogDecorationDialog(QWidget* parent = nullptr);
-
-    /* void defaultConfig(nlohmann::json& json) const override;
-       void toJson(nlohmann::json& json) const override;
-       void fromJson(const nlohmann::json& json) override; */
-    void setDecorator(LogDecorator* decorator);
-
-
 
 private:
     void resetGui();
@@ -37,8 +28,6 @@ private slots:
     void onFontButtonClicked();
 
 private:
-    LogDecorator* m_decorator;
-
     QColor m_attr_color;
     QColor m_cmt_color;
     QColor m_err_color;

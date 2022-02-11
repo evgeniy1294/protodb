@@ -8,7 +8,7 @@
 
 LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
-    , m_byte_role(Logger::HexDisplayRole)
+    , m_byte_format( ByteFormat::kHexFormat )
 {
 }
 
@@ -19,20 +19,34 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
     painter->save();
 
     // ----------[DATA]---------- //
-    const QByteArray data = index.model()->data(index, m_byte_role).value<QByteArray>();
+    auto model = index.model();
 
-    // -------[TEXT COLOR]------- //
-    auto color = index.model()->data(index, Qt::ForegroundRole).value<QColor>();
+    //auto channel = model->data( model->index(index.row(), Logger::kColumnChannel) ).toInt();
+    auto color = Qt::green;
+    auto font  = QFont();
+    auto align = Qt::AlignCenter;
+    QByteArray data;
+    switch ( index.column() ) {
+        case Logger::kColumnChannel: {
+            data = "[CH]";
+        }
 
-        painter->setPen(color);
-        m_option.palette.setColor(QPalette::HighlightedText, color);
+        case Logger::kColumnTimestamp: {
+            auto timestamp = model->data( index ).value<QDateTime>();
+            data = timestamp.toString().toLatin1();
+        }
 
-    // -------[TEXT FONT]------- //
-    auto font = index.model()->data(index, Qt::FontRole).value<QFont>();
-        painter->setFont(font);
+        case Logger::kColumnMsg: {
+            color = Qt::red;
+            align = static_cast<Qt::AlignmentFlag>(0x81);
+            data = index.model()->data(index).toByteArray();
+        }
+    }
 
-    // -------[TEXT ALIGN]------- //
-    auto align = index.model()->data(index, Qt::TextAlignmentRole).value<int>();
+    painter->setFont(font);
+
+    painter->setPen(color);
+    m_option.palette.setColor(QPalette::HighlightedText, color);
 
     // -------[DRAW SELECTION]-------- //
     QColor selection_color = QApplication::style()->standardPalette().color(QPalette::Inactive, QPalette::Highlight);
@@ -48,13 +62,11 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
 ByteFormat LogItemDelegate::byteFormat() const
 {
-    return m_byte_role == Logger::AsciiDisplayRole ? ByteFormat::kAsciiFormat :
-                                                       ByteFormat::kHexFormat;
+    return m_byte_format;
 }
 
 void LogItemDelegate::setByteFormat(ByteFormat format)
 {
-    m_byte_role = (format == ByteFormat::kAsciiFormat) ? Logger::AsciiDisplayRole :
-                                                         Logger::HexDisplayRole;
+    m_byte_format = format;
 }
 

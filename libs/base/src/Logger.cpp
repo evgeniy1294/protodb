@@ -2,59 +2,14 @@
 
 Logger::Logger(QObject *parent)
     : QAbstractTableModel(parent)
-    , m_decorator(nullptr)
-    , m_formatter(nullptr)
 {
-    setDecorator( new LogDecorator() );  // Перенести в LogItemDelegate
-    setFormatter( new LogFormatter() );  // Перенести в LogItemDelegate
-
-    m_flags[kFirstLogChannel]   = true;
-    m_flags[kSecondLogChannel]  = true;
-    m_flags[kCommentLogChannel] = true;
-    m_flags[kErrorLogChannel]   = true;
+    m_flags[kChannelFirst]   = true;
+    m_flags[kChannelSecond]  = true;
+    m_flags[kChannelComment] = true;
+    m_flags[kChannelError]   = true;
 }
 
-void Logger::setFormatter(LogFormatter* formatter)
-{
-    if (m_formatter != formatter) {
-
-        if (m_formatter != nullptr) {
-            disconnect(m_formatter);
-            delete m_formatter;
-        }
-
-        m_formatter = formatter;
-        m_formatter->setParent(this);
-        connect(m_formatter, &LogFormatter::sConfigChanged, this, &Logger::reload);
-    }
-}
-
-LogFormatter *Logger::formatter() const
-{
-    return m_formatter;
-}
-
-void Logger::setDecorator(LogDecorator *decorator)
-{
-    if (m_decorator != decorator) {
-
-        if (m_decorator != nullptr) {
-            disconnect(m_decorator);
-            delete m_decorator;
-        }
-
-        m_decorator = decorator;
-        m_decorator->setParent(this);
-        connect(m_decorator, &LogDecorator::sConfigChanged, this, &Logger::reload);
-    }
-}
-
-LogDecorator *Logger::decorator() const
-{
-    return m_decorator;
-}
-
-void Logger::log(const LogEvent &event)
+void Logger::log(const Event &event)
 {
     if (m_flags[event.channel]) {
         beginInsertRows(QModelIndex(), rowCount() - 1, rowCount());
@@ -63,22 +18,25 @@ void Logger::log(const LogEvent &event)
     }
 }
 
-void Logger::log(LogChannel ch, const QByteArray &data)
+Logger &Logger::instance()
 {
-    LogEvent event = {.timestamp = QDateTime::currentDateTime(), .channel = ch, .message = data};
-    log(event);
+    static Logger m_instance;
+    return m_instance;
+}
+
+void Logger::log(Channel ch, const QByteArray& data, const QDateTime timestamp)
+{
+    instance().log( {.timestamp = timestamp, .channel = ch, .message = data} );
 }
 
 void Logger::comment(const QByteArray &text)
 {
-    LogEvent event = {.timestamp = QDateTime::currentDateTime(), .channel = kCommentLogChannel, .message = text};
-    log(event);
+    instance().log( { .timestamp = QDateTime::currentDateTime(), .channel = kChannelComment, .message = text } );
 }
 
 void Logger::error(const QByteArray& text)
 {
-    LogEvent event = {.timestamp = QDateTime::currentDateTime(), .channel = kErrorLogChannel, .message = text};
-    log(event);
+    instance().log( { .timestamp = QDateTime::currentDateTime(), .channel = kChannelError, .message = text } );
 }
 
 void Logger::clear()
@@ -112,68 +70,23 @@ QVariant Logger::data(const QModelIndex& index, int role) const
     if (!checkIndex(index))
         return QVariant();
 
-    if ( role == Qt::DisplayRole || role == HexDisplayRole || role == AsciiDisplayRole ) {
-        auto& item = m_log.at(row);
+    if ( role == Qt::DisplayRole ) {
+        auto& event = m_log.at(row);
         switch (col) {
             case kColumnTimestamp:
-                return m_formatter->timestamp(item);
+                return event.timestamp;
 
             case kColumnChannel: {
-                return m_formatter->channelName(item);
+                return event.channel;
             }
 
             case kColumnMsg: {
-                auto format = (role == AsciiDisplayRole) ? kAsciiFormat : kHexFormat;
-                return m_formatter->data(item, format);
+                return event.message;
             }
 
             default:
                 break;
         }
-    }
-
-    if (role == ChannelRole) {
-        auto& item = m_log.at(row);
-        return item.channel;
-    }
-
-    if (role == EventHexDisplayRole) {
-        auto& item = m_log.at(row);
-
-        QString msg = QString("%1 %2 %3").arg(m_formatter->timestamp(item),
-                                              m_formatter->channelName(item),
-                                              m_formatter->data(item, kHexFormat));
-        return msg;
-    }
-
-    if (role == EventAsciiDisplayRole) {
-        auto& item = m_log.at(row);
-
-        QString msg = QString("%1 %2 %3").arg(m_formatter->timestamp(item),
-                                              m_formatter->channelName(item),
-                                              m_formatter->data(item, kAsciiFormat));
-        return msg;
-    }
-
-    if (role == AnalyzeRole) {
-        auto& item = m_log.at(row);
-        if (item.channel == kFirstLogChannel || item.channel == kSecondLogChannel) {
-            return item.message;
-        }
-    }
-
-    if (role == Qt::ForegroundRole) {
-        return (col == kColumnMsg) ? m_decorator->channelColor(m_log.at(row)) :
-                                     m_decorator->attributeColor();
-    }
-
-    if (role == Qt::FontRole) {
-        return (col == kColumnMsg) ? m_decorator->channelFont(m_log.at(row)) :
-                                     m_decorator->attributeFont();
-    }
-
-    if (role == Qt::TextAlignmentRole) {
-        return (col == kColumnMsg) ? 0x81 : Qt::AlignCenter;
     }
 
     return QVariant();
@@ -206,12 +119,12 @@ bool Logger::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRol
 }
 
 
-void Logger::setChannelEnabled(LogChannel channel)
+void Logger::setChannelEnabled(Channel channel)
 {
-    m_flags[channel] = true;
+    instance().m_flags[channel] = true;
 }
 
-void Logger::setChannelDisabled(LogChannel channel)
+void Logger::setChannelDisabled(Channel channel)
 {
-    m_flags[channel] = false;
+    instance().m_flags[channel] = false;
 }

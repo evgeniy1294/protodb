@@ -13,6 +13,7 @@ public:
     SerialIOWIdget(QWidget *parent = nullptr);
     ~SerialIOWIdget() = default;
 
+    QString name() const override { return QString("Serial"); }
 private:
     void createGui();
     void connectSignals();

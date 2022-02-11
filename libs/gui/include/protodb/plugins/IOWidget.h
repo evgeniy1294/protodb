@@ -12,5 +12,7 @@ public:
     explicit IOWidget(QWidget* parent = nullptr)
         : QWidget(parent) {    }
 
+    virtual QString name() const = 0;
+
     virtual ~IOWidget() = default;
 };

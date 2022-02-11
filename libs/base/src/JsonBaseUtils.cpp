@@ -116,12 +116,12 @@ void to_json(nlohmann::json& j, const QJsonObject& qjson)
     }
 }
 
-bool readFromFile( QString& path, nlohmann::json& json )
+bool readFromFile( const QString& path, nlohmann::json& json )
 {
     return true;
 }
 
-bool writeToFile ( QString& path, const nlohmann::json& json )
+bool writeToFile ( const QString& path, const nlohmann::json& json )
 {
     return true;
 }

@@ -28,35 +28,22 @@ LogWidget::LogWidget(QWidget* parent)
         m_conn_dialog->resize(QSize(640, 540));
 
     m_log_proxy_model = new LogProxyModel(this);
-
-    // ------- Test --------
-    m_log_model = new Logger(this);
-    m_lua_api = new LuaApi(this);
-        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
-
-    connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &Logger::comment);
-    connect(m_lua_api, &LuaApi::sLogError, m_log_model, &Logger::error);
-    connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &Logger::clear);
-
-    setModel(m_log_model);
-    // ------- Test --------
-
-    createConnections();
-}
-
-void LogWidget::setModel(Logger *model)
-{
-    m_log_proxy_model->setSourceModel(model);
+    m_log_proxy_model->setSourceModel(&Logger::instance());
         m_log_proxy_model->invalidate();
 
     m_view->setModel(m_log_proxy_model);
-    m_view->setDecorator(model->decorator());
-}
+    //m_view->setDecorator(model->decorator());
 
-Logger LogWidget::model() const
-{
-    auto model = m_log_proxy_model->sourceModel();
-    return dynamic_cast<Logger*>(model) ? static_cast<Logger*>(model) : nullptr;
+    // ------- Test --------
+    m_lua_api = new LuaApi(this);
+        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
+
+    connect(m_lua_api, &LuaApi::sLogPrint, nullptr, &Logger::comment);
+    connect(m_lua_api, &LuaApi::sLogError, nullptr, &Logger::error);
+    connect(m_lua_api, &LuaApi::sLogClear, nullptr, &Logger::clear);
+    // ------- Test --------
+
+    createConnections();
 }
 
 void LogWidget::createGui()
@@ -140,18 +127,15 @@ void LogWidget::createConnections()
                 array.push_back(0x34);
 
             m_lua_api->beforeTransmit(array);
-            m_log_model->log(kSecondLogChannel, array);
-            //std::cout << std::hex << (uint64_t)msg[0] << std::endl;
+            Logger::log( Logger::kChannelSecond, array );;
 
             array.clear();
             array.push_back(0x35);
             array.push_back(0x36);
             array.push_back(0x37);
             array.push_back(0x38);
-            m_log_model->log(kFirstLogChannel, array);
+            Logger::log( Logger::kChannelFirst, array );
             m_lua_api->afterReceive(array);
-
-            //std::cout << std::hex << (uint64_t)array[0] << std::endl;
         }
         else
         {

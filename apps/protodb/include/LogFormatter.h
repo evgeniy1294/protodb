@@ -25,9 +25,9 @@ public:
     void setSeparator(char s);
     char separator() const;
 
-    QString channelName(const LogEvent& event) const;
-    QString timestamp(const LogEvent& event) const;
-    QString data(const LogEvent& event, ByteFormat format) const;
+    QString channelName(const Event& event) const;
+    QString timestamp(const Event& event) const;
+    QString data(const Event& event, ByteFormat format) const;
 
 signals:
     void sConfigChanged();

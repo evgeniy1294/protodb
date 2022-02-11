@@ -47,8 +47,8 @@ set(HEADERS_LIST
     include/LogProxyModel.h
     include/LogStyleConfigWidget.h
     include/LogTableView.h
-    include/LogDecorator.h
-    include/LogFormatter.h
+#    include/LogDecorator.h
+#    include/LogFormatter.h
     include/LogWidget.h
     include/mainwindow.h
     include/menu.h

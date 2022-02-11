@@ -22,11 +22,11 @@ public:
 
     void setChannelColor(LogChannel channel, const QColor& color);
     QColor channelColor(LogChannel channel) const;
-    QColor channelColor(const LogEvent& event) const;
+    QColor channelColor(const Event& event) const;
 
     void setChannelFont(LogChannel channel, const QFont& font);
     QFont channelFont(LogChannel channel) const;
-    QFont channelFont(const LogEvent& event) const;
+    QFont channelFont(const Event& event) const;
 
 signals:
     void sConfigChanged();

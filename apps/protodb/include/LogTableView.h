@@ -6,7 +6,6 @@
 class QMenu;
 class QAction;
 class LogDecorationDialog;
-class LogDecorator;
 class LogItemDelegate;
 
 class LogTableView: public QTableView
@@ -16,7 +15,6 @@ class LogTableView: public QTableView
 public:
     LogTableView(QWidget* parent = nullptr);
     void setModel(QAbstractItemModel *model) override;
-    void setDecorator(LogDecorator *decorator);
     void setByteFormat(ByteFormat format);
 
 signals:
