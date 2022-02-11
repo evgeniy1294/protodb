@@ -1,10 +1,11 @@
 #pragma once
 
+#include <protodb/shared_types/Sequence.h>
+
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QList>
 
-#include "shared_types/Sequence.h"
 
 class SequenceModel: public QAbstractTableModel
 {

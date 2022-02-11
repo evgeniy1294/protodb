@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared_types/Sequence.h"
+#include <shared_types/Sequence.h>
 
 #include <QtCore>
 #include <QVector>

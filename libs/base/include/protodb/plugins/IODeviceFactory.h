@@ -1,6 +1,6 @@
 #pragma once
 
-#include "factories/FactoryAbstract.h"
+#include <protodb/factories/FactoryAbstract.h>
 
 #include <QString>
 #include <QSharedPointer>

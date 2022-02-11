@@ -30,13 +30,13 @@ LogWidget::LogWidget(QWidget* parent)
     m_log_proxy_model = new LogProxyModel(this);
 
     // ------- Test --------
-    m_log_model = new LogModel(this);
+    m_log_model = new Logger(this);
     m_lua_api = new LuaApi(this);
         m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
-    connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &LogModel::comment);
-    connect(m_lua_api, &LuaApi::sLogError, m_log_model, &LogModel::error);
-    connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &LogModel::clear);
+    connect(m_lua_api, &LuaApi::sLogPrint, m_log_model, &Logger::comment);
+    connect(m_lua_api, &LuaApi::sLogError, m_log_model, &Logger::error);
+    connect(m_lua_api, &LuaApi::sLogClear, m_log_model, &Logger::clear);
 
     setModel(m_log_model);
     // ------- Test --------
@@ -44,7 +44,7 @@ LogWidget::LogWidget(QWidget* parent)
     createConnections();
 }
 
-void LogWidget::setModel(LogModel *model)
+void LogWidget::setModel(Logger *model)
 {
     m_log_proxy_model->setSourceModel(model);
         m_log_proxy_model->invalidate();
@@ -53,10 +53,10 @@ void LogWidget::setModel(LogModel *model)
     m_view->setDecorator(model->decorator());
 }
 
-LogModel LogWidget::model() const
+Logger LogWidget::model() const
 {
     auto model = m_log_proxy_model->sourceModel();
-    return dynamic_cast<LogModel*>(model) ? static_cast<LogModel*>(model) : nullptr;
+    return dynamic_cast<Logger*>(model) ? static_cast<Logger*>(model) : nullptr;
 }
 
 void LogWidget::createGui()
@@ -169,8 +169,8 @@ void LogWidget::createConnections()
             model = static_cast<QSortFilterProxyModel*>(model)->sourceModel();
         }
 
-        if (dynamic_cast<LogModel*>(model)) {
-            auto log_model = static_cast<LogModel*>(model);
+        if (dynamic_cast<Logger*>(model)) {
+            auto log_model = static_cast<Logger*>(model);
             log_model->clear();
         }
     });

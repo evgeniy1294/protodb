@@ -9,7 +9,7 @@ class QPushButton;
 class QLabel;
 class QLineEdit;
 class ConnectionConfigDialog;
-class LogModel;
+class Logger;
 class LogDecorationDialog;
 class LogProxyModel;
 class LuaApi;
@@ -22,8 +22,8 @@ public:
     explicit LogWidget(QWidget* parent = nullptr);
     ~LogWidget() = default;
 
-    void setModel(LogModel* model);
-    LogModel model() const;
+    void setModel(Logger* model);
+    Logger model() const;
 
 signals:
     void sByteFormatChanged(ByteFormat format);
@@ -44,7 +44,7 @@ private:
     // LogDecorationDialog* m_decoration_dialog;
 
      LuaApi* m_lua_api;
-     LogModel* m_log_model;
+     Logger* m_log_model;
      LogProxyModel* m_log_proxy_model;
 };
 

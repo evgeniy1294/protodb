@@ -4,7 +4,7 @@
 
 class QAbstractTableModel;
 class SequenceModel;
-class LogModel;
+class Logger;
 
 
 class Worker: public QObject
@@ -17,7 +17,7 @@ public:
 
     SequenceModel* incomingSequences();
     SequenceModel* outgoingSequences();
-    LogModel*      logModel();
+    Logger*      logModel();
 
 public slots:
     void onStart();
@@ -34,5 +34,5 @@ signals:
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
-    LogModel* m_log_model;
+    Logger* m_log_model;
 };

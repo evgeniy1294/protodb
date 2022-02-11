@@ -1,14 +1,14 @@
 #pragma once
 
-#include "shared_types/LogTypes.h"
-#include "configurable/Configurable.h"
+#include <protodb/shared_types/LogTypes.h>
+#include <protodb/configurable/Configurable.h>
 
 #include <QAbstractTableModel>
 
 class LogFormatter;
 class LogDecorator;
 
-class LogModel: public QAbstractTableModel
+class Logger: public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -31,7 +31,7 @@ public:
     };
 
 public:
-    LogModel(QObject* parent = nullptr);
+    Logger(QObject* parent = nullptr);
 
     // ---------[ MODEL INTERFACE ]----------- //
     int rowCount(const QModelIndex& aParent = QModelIndex()) const override;

@@ -6,7 +6,7 @@ Worker::Worker(QObject *parent)
     : QObject(parent)
     , m_incoming_sequences(new SequenceModel(this))
     , m_outgoing_sequences(new SequenceModel(this))
-    , m_log_model(new LogModel(this))
+    , m_log_model(new Logger(this))
 {
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
@@ -22,7 +22,7 @@ SequenceModel* Worker::outgoingSequences()
     return m_outgoing_sequences;
 }
 
-LogModel *Worker::logModel()
+Logger *Worker::logModel()
 {
     return m_log_model;
 }

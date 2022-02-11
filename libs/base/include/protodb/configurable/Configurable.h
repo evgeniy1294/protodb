@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/JsonBaseUtils.h"
+#include <protodb/utils/JsonBaseUtils.h>
 
 #include <QtCore>
 

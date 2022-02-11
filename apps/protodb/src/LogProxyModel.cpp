@@ -64,7 +64,7 @@ void LogProxyModel::removeNamedConstant(const QString& name)
 
 void LogProxyModel::setSourceModel(QAbstractItemModel* model)
 {
-    if (dynamic_cast<LogModel*>(model)) {
+    if (dynamic_cast<Logger*>(model)) {
         QSortFilterProxyModel::setSourceModel(model);
     }
 }
@@ -82,8 +82,8 @@ bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_p
         sol::protected_function_result pfr;
 
         auto index   = sourceModel()->index(source_row, 0, source_parent);
-        auto channel = index.data(LogModel::ChannelRole).toInt();
-        auto msg = index.data(LogModel::AnalyzeRole).toByteArray();
+        auto channel = index.data(Logger::ChannelRole).toInt();
+        auto msg = index.data(Logger::AnalyzeRole).toByteArray();
 
         pfr = m_accept(channel, SolByteArrayWrapper(msg));
         if (pfr.valid()) {

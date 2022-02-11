@@ -1,7 +1,8 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
 #include <protodb/factories/FactoryAbstract.h>
+
+#include <nlohmann/json.hpp>
 
 class IOWidgetCreatorInterface;
 class IOWidget;

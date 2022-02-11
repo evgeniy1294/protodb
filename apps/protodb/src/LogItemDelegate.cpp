@@ -8,7 +8,7 @@
 
 LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
-    , m_byte_role(LogModel::HexDisplayRole)
+    , m_byte_role(Logger::HexDisplayRole)
 {
 }
 
@@ -48,13 +48,13 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
 ByteFormat LogItemDelegate::byteFormat() const
 {
-    return m_byte_role == LogModel::AsciiDisplayRole ? ByteFormat::kAsciiFormat :
+    return m_byte_role == Logger::AsciiDisplayRole ? ByteFormat::kAsciiFormat :
                                                        ByteFormat::kHexFormat;
 }
 
 void LogItemDelegate::setByteFormat(ByteFormat format)
 {
-    m_byte_role = (format == ByteFormat::kAsciiFormat) ? LogModel::AsciiDisplayRole :
-                                                         LogModel::HexDisplayRole;
+    m_byte_role = (format == ByteFormat::kAsciiFormat) ? Logger::AsciiDisplayRole :
+                                                         Logger::HexDisplayRole;
 }
 

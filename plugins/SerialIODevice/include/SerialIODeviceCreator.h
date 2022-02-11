@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QIODevice>
-#include <IODeviceCreatorInterface.h>
+#include <protodb/plugins/IODeviceCreatorInterface.h>
 
 class SerialIODeviceCreator: public QObject, public IODeviceCreatorInterface
 {

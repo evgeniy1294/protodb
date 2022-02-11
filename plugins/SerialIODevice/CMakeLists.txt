@@ -54,7 +54,6 @@ target_link_libraries(${TARGET}
     PRIVATE
 
     protodb::base
-    protodb::gui
 )
 
 # ------------ [ Properties and compile definitions ] ------------

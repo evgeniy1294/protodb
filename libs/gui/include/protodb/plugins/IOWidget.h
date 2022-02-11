@@ -1,7 +1,8 @@
 #pragma once
 
-#include <QWidget>
 #include <protodb/configurable/Configurable.h>
+
+#include <QWidget>
 
 class IOWidget: public QWidget, public Configurable
 {

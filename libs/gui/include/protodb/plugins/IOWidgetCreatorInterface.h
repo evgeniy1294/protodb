@@ -1,8 +1,9 @@
 #pragma once
 
+#include <protodb/factories/CreatorAbstract.h>
+
 #include <QtPlugin>
 #include <nlohmann/json.hpp>
-#include <protodb/factories/CreatorAbstract.h>
 
 class IOWidget;
 

@@ -39,9 +39,9 @@ void LogTableView::setModel(QAbstractItemModel *model)
 {
     QTableView::setModel(model);
     QHeaderView* hh = horizontalHeader();
-        hh->setSectionResizeMode(LogModel::kColumnTimestamp, QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(LogModel::kColumnChannel,   QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(LogModel::kColumnMsg,       QHeaderView::Stretch);
+        hh->setSectionResizeMode(Logger::kColumnTimestamp, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(Logger::kColumnChannel,   QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(Logger::kColumnMsg,       QHeaderView::Stretch);
 }
 
 void LogTableView::setDecorator(LogDecorator* decorator)
@@ -91,7 +91,7 @@ void LogTableView::connectSignals()
         auto index = indexAt(pos);
 
         if (index.row() != -1) {
-            auto channel = index.data(LogModel::ChannelRole).toInt();
+            auto channel = index.data(Logger::ChannelRole).toInt();
 
             menu = (channel == kFirstLogChannel || channel == kSecondLogChannel) ?
                 m_data_channel_menu : m_info_channel_menu;
@@ -102,8 +102,8 @@ void LogTableView::connectSignals()
 
     connect(m_copy, &QAction::triggered, this, [this]() {
         auto format = m_item_delegate->byteFormat();
-        int role = (format == ByteFormat::kAsciiFormat) ? LogModel::EventAsciiDisplayRole :
-                                                          LogModel::EventHexDisplayRole;
+        int role = (format == ByteFormat::kAsciiFormat) ? Logger::EventAsciiDisplayRole :
+                                                          Logger::EventHexDisplayRole;
 
         auto msg = currentIndex().data(role).toString();
         QClipboard* pcb = QApplication::clipboard();
@@ -118,21 +118,21 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy_as_bytes, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(LogModel::HexDisplayRole).toString();
+        auto msg = currentIndex().data(Logger::HexDisplayRole).toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_copy_as_string, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(LogModel::AsciiDisplayRole).toString();
+        auto msg = currentIndex().data(Logger::AsciiDisplayRole).toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_add_to_analyzer, &QAction::triggered, this, [this]() {
-        auto data = currentIndex().data(LogModel::AnalyzeRole);
+        auto data = currentIndex().data(Logger::AnalyzeRole);
         if (!data.isNull()) {
             emit sToAnalyzer(data.toByteArray());
         }
