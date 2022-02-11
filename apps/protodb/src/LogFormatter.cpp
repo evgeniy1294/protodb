@@ -1,10 +1,10 @@
-#include <protodb/JsonUtils/JsonUtils.h>
-#include <protodb/LogFormatter.h>
+#include "LogFormatter.h"
+#include <protodb/utils/JsonUtils.h>
 
 LogFormatter::LogFormatter(QObject *parent)
     : QObject(parent)
 {
-    setDefaultConfig();
+    //setDefaultConfig();
 }
 
 LogFormatter::LogFormatter(const LogFormatter &other, QObject *parent)
@@ -48,6 +48,7 @@ char LogFormatter::separator() const
     return m_separator;
 }
 
+/*
 void LogFormatter::defaultConfig(nlohmann::json &json) const
 {
     json["CharSeparator"]      = ' ';
@@ -79,7 +80,7 @@ void LogFormatter::toJson(nlohmann::json &json) const
     json["CommentChannelName"] = m_names[kCommentLogChannel];
     json["ErrorChannelName"]   = m_names[kErrorLogChannel];
 }
-
+*/
 QString LogFormatter::channelName(const LogEvent &event) const
 {
     return m_names[event.channel];

@@ -85,13 +85,14 @@ target_link_libraries(${TARGET}
 
     PRIVATE
 
-    protodb::common
+    protodb::base
+    protodb::gui
 )
 
 # ------------ [ Properties and compile definitions ] ------------
 set_target_properties(${TARGET} PROPERTIES
   CXX_STANDARD_REQUIRED ON
-  CXX_STANDARD 14
+  CXX_STANDARD 17
 )
 
 #---------------------------------------------------------------------------------------

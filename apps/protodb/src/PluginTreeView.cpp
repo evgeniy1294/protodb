@@ -2,7 +2,7 @@
 #include "PluginDetailDialog.h"
 #include "PluginTreeView.h"
 
-#include <protodb/PluginManager.h>
+#include <protodb/plugins/PluginManager.h>
 
 #include <QHeaderView>
 #include <QSortFilterProxyModel>

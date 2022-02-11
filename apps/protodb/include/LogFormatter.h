@@ -4,10 +4,11 @@
 #include <QColor>
 #include <QFont>
 #include <QMap>
-#include <protodb/global/LogTypes.h>
+
+#include <protodb/shared_types/LogTypes.h>
 #include <protodb/configurable/Configurable.h>
 
-class LogFormatter: public QObject, public Configurable
+class LogFormatter: public QObject//, public Configurable
 {
     Q_OBJECT
 
@@ -23,10 +24,6 @@ public:
 
     void setSeparator(char s);
     char separator() const;
-
-    void defaultConfig(nlohmann::json& json) const override;
-    void fromJson(const nlohmann::json& json) override;
-    void toJson(nlohmann::json& json) const override;
 
     QString channelName(const LogEvent& event) const;
     QString timestamp(const LogEvent& event) const;

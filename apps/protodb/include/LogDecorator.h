@@ -6,8 +6,6 @@
 #include <protodb/configurable/Configurable.h>
 #include <protodb/shared_types/LogTypes.h>
 
-
-
 class LogDecorator: public QObject, public Configurable
 {
     Q_OBJECT

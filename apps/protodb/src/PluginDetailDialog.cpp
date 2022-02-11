@@ -1,6 +1,6 @@
 #include "PluginDetailDialog.h"
 
-#include <protodb/PluginManager.h>
+#include <protodb/plugins/PluginManager.h>
 
 #include <QFrame>
 #include <QGridLayout>

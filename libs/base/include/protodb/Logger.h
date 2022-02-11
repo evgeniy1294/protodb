@@ -1,0 +1,71 @@
+#pragma once
+
+#include "shared_types/LogTypes.h"
+#include "configurable/Configurable.h"
+
+#include <QAbstractTableModel>
+
+class LogFormatter;
+class LogDecorator;
+
+class LogModel: public QAbstractTableModel
+{
+    Q_OBJECT
+
+public:
+    enum ColumnNames {
+        kColumnTimestamp = 0,
+        kColumnChannel   = 1,
+        kColumnMsg       = 2,
+
+        kColumnCount
+    };
+
+    enum Role {
+        ChannelRole = Qt::UserRole,
+        HexDisplayRole,
+        AsciiDisplayRole,
+        EventAsciiDisplayRole,
+        EventHexDisplayRole,
+        AnalyzeRole,
+    };
+
+public:
+    LogModel(QObject* parent = nullptr);
+
+    // ---------[ MODEL INTERFACE ]----------- //
+    int rowCount(const QModelIndex& aParent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& aParent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& aIndex, int aRole = Qt::DisplayRole) const override;
+    QVariant headerData(int aSection, Qt::Orientation aOrientation, int aRole) const override;
+    bool setData(const QModelIndex &aIndex, const QVariant &aValue, int aRole = Qt::EditRole) override;
+
+    void setFormatter(LogFormatter* formatter); // TODO: запретить замену?
+    LogFormatter* formatter() const;
+
+    void setDecorator(LogDecorator* decorator); // TODO: запретить замену?
+    LogDecorator* decorator() const;
+
+    void log(const LogEvent& event);
+    void log(LogChannel ch, const QByteArray& data);
+    void comment(const QByteArray& text);
+    void error(const QByteArray& text);
+
+    void setChannelEnabled(LogChannel channel);
+    void setChannelDisabled(LogChannel channel);
+
+signals:
+    void sPrint(const QString& text);
+
+public slots:
+    void clear();
+    void reload();
+
+private:
+    LogFormatter* m_formatter;
+    LogDecorator* m_decorator;
+    QList<LogEvent> m_log;
+    QMap<LogChannel, bool> m_flags;
+};
+
+

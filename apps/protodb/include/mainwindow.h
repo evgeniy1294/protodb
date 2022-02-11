@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include "tool_bar.h"
+#include <QMainWindow>
 
 namespace ads {
   class CDockManager;

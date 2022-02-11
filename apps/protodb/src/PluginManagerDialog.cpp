@@ -1,7 +1,7 @@
 #include "PluginTreeView.h"
 #include "PluginManagerDialog.h"
 
-#include <protodb/PluginManager.h>
+#include <protodb/plugins/PluginManager.h>
 
 #include <QPushButton>
 #include <QDialogButtonBox>

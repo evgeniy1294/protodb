@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 #include <protodb/Worker.h>
-#include <protodb/PluginManager.h>
+#include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
 #include <QApplication>

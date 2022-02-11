@@ -1,10 +1,8 @@
+#include "tool_bar.h"
+#include "menu.h"
+
 #include <QToolButton>
 #include <QMenu>
-
-#include <protodb/tool_bar.h>
-#include <protodb/menu.h>
-
-
 
 ///
 /// \brief isa_tool_bar::isa_tool_bar
