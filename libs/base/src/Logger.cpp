@@ -12,8 +12,8 @@ Logger::Logger(QObject *parent)
 void Logger::log(const Event &event)
 {
     if (m_flags[event.channel]) {
-        beginInsertRows(QModelIndex(), rowCount() - 1, rowCount());
-            m_log.append(event);
+        m_log.append(event);
+        beginInsertRows(QModelIndex(), rowCount() - 1, rowCount() - 1);
         endInsertRows();
     }
 }
@@ -24,7 +24,7 @@ Logger &Logger::instance()
     return m_instance;
 }
 
-void Logger::log(Channel ch, const QByteArray& data, const QDateTime timestamp)
+void Logger::log(Channel ch, const QByteArray& data, const QDateTime& timestamp)
 {
     instance().log( {.timestamp = timestamp, .channel = ch, .message = data} );
 }
@@ -54,7 +54,8 @@ void Logger::reload()
 
 int Logger::rowCount(const QModelIndex& aParent) const
 {
-    return m_log.count();
+    int count = m_log.count();
+    return count;
 }
 
 int Logger::columnCount(const QModelIndex& aParent) const
@@ -92,12 +93,12 @@ QVariant Logger::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-QVariant Logger::headerData(int aSection, Qt::Orientation aOrientation, int aRole) const
+QVariant Logger::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (aRole == Qt::DisplayRole) {
+    if (role == Qt::DisplayRole) {
 
-        if (aOrientation == Qt::Horizontal) {
-            switch (aSection) {
+        if (orientation == Qt::Horizontal) {
+            switch (section) {
                 case kColumnTimestamp: return QString(tr(""));
                 case kColumnChannel: return QString(tr(""));
                 case kColumnMsg: return QString(tr("Bytes"));
@@ -105,7 +106,7 @@ QVariant Logger::headerData(int aSection, Qt::Orientation aOrientation, int aRol
             }
         }
         else {
-            return QString::number(aSection+1);
+            return QString::number(section+1);
         }
 
     }

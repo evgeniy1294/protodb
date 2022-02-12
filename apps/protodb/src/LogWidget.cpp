@@ -28,11 +28,9 @@ LogWidget::LogWidget(QWidget* parent)
         m_conn_dialog->resize(QSize(640, 540));
 
     m_log_proxy_model = new LogProxyModel(this);
-    m_log_proxy_model->setSourceModel(&Logger::instance());
         m_log_proxy_model->invalidate();
 
     m_view->setModel(m_log_proxy_model);
-    //m_view->setDecorator(model->decorator());
 
     // ------- Test --------
     m_lua_api = new LuaApi(this);

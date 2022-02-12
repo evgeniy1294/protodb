@@ -18,7 +18,6 @@ public:
     void removeNamedConstant(const QString& name);
 
     void setSourceModel(QAbstractItemModel* model) override;
-
 private:
     bool filterAcceptsColumn(int source_column, const QModelIndex &source_parent) const override;
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;

@@ -38,7 +38,7 @@ public:
 public:
     static Logger& instance();
 
-    static void log(Channel ch, const QByteArray& data, const QDateTime timestamp = QDateTime::currentDateTime());
+    static void log(Channel ch, const QByteArray& data, const QDateTime& timestamp = QDateTime::currentDateTime());
     static void comment(const QByteArray& text);
     static void error(const QByteArray& text);
 

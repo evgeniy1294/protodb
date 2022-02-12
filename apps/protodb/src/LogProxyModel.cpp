@@ -8,6 +8,7 @@ LogProxyModel::LogProxyModel(QObject* parent)
     , m_bypass(true)
 {
     createBaseConstant();
+    QSortFilterProxyModel::setSourceModel(&Logger::instance());
 }
 
 void LogProxyModel::createBaseConstant()
@@ -54,19 +55,15 @@ bool LogProxyModel::setFilterExpression(const QString& str)
 
 void LogProxyModel::addNamedConstant(const QString& name, quint32 value)
 {
-
 }
 
 void LogProxyModel::removeNamedConstant(const QString& name)
 {
-
 }
 
 void LogProxyModel::setSourceModel(QAbstractItemModel* model)
 {
-    if (dynamic_cast<Logger*>(model)) {
-        QSortFilterProxyModel::setSourceModel(model);
-    }
+    return;
 }
 
 bool LogProxyModel::filterAcceptsColumn(int source_column, const QModelIndex& source_parent) const
@@ -76,6 +73,8 @@ bool LogProxyModel::filterAcceptsColumn(int source_column, const QModelIndex& so
 
 bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
+    qDebug() << rowCount();
+
     bool ret = true;
 
     if (!m_bypass) {
