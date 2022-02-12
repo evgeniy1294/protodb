@@ -1,4 +1,3 @@
-
 function start()
     log:print("Start session")
 end

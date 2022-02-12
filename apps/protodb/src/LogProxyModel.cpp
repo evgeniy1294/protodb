@@ -73,8 +73,6 @@ bool LogProxyModel::filterAcceptsColumn(int source_column, const QModelIndex& so
 
 bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
-    qDebug() << rowCount();
-
     bool ret = true;
 
     if (!m_bypass) {

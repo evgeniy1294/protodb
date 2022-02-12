@@ -12,6 +12,8 @@ public:
     explicit LogItemDelegate(QObject* aParent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+    QString message(const QModelIndex& index);
+
     ByteFormat byteFormat() const;
     void setByteFormat(ByteFormat format);
 

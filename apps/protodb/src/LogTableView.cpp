@@ -96,12 +96,8 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy, &QAction::triggered, this, [this]() {
-        auto format = m_item_delegate->byteFormat();
-
-        // TODO: FEA учитывать ByteFormat
-        auto msg = currentIndex().data().toString();
         QClipboard* pcb = QApplication::clipboard();
-            pcb->setText(msg);
+            pcb->setText( m_item_delegate->message( currentIndex() ) );
     });
 
     connect(m_copy_message, &QAction::triggered, this, [this]() {
@@ -112,8 +108,7 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy_as_bytes, &QAction::triggered, this, [this]() {
-        // TODO: FEA учёт разделителя
-        auto msg = currentIndex().data().toByteArray().toHex(' ');
+        auto msg = currentIndex().data().toByteArray().toHex(m_item_delegate->separator());
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);

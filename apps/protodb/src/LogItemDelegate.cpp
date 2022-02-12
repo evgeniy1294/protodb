@@ -71,7 +71,7 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
             if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
                 if ( m_byte_format == kHexFormat ) {
-                    data = index.model()->data(index).toByteArray().toHex(m_separator);
+                    data = model->data(index).toByteArray().toHex(m_separator);
                     break;
                 }
             }
@@ -94,7 +94,32 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
         QApplication::style()->drawItemText(painter, option.rect, align, m_option.palette, true, data);
 
-    painter->restore();
+        painter->restore();
+}
+
+QString LogItemDelegate::message(const QModelIndex& index)
+{
+    QString ret;
+    if (index.isValid()) {
+        auto model = index.model();
+        auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::kColumnChannel) ).toInt());
+        auto timestamp = model->data( model->index(index.row(), Logger::kColumnTimestamp) ).value<QDateTime>().toString(m_time_format);
+
+        QString data;
+        if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
+            if ( m_byte_format == kHexFormat ) {
+                data = model->data( model->index(index.row(), Logger::kColumnMsg) ).toByteArray().toHex(m_separator);
+            }
+        }
+
+        if ( data.isEmpty() ) {
+            data = model->data( model->index(index.row(), Logger::kColumnMsg) ).toString();
+        }
+
+        ret =  timestamp + ' ' + m_ch_names[channel] + ' ' + data;
+    }
+
+    return ret.simplified();
 }
 
 ByteFormat LogItemDelegate::byteFormat() const

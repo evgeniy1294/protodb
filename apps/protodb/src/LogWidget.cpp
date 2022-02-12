@@ -37,9 +37,9 @@ LogWidget::LogWidget(QWidget* parent)
     m_lua_api = new LuaApi(this);
         m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
-    connect(m_lua_api, &LuaApi::sLogPrint, nullptr, &Logger::comment);
-    connect(m_lua_api, &LuaApi::sLogError, nullptr, &Logger::error);
-    connect(m_lua_api, &LuaApi::sLogClear, nullptr, &Logger::clear);
+    connect(m_lua_api, &LuaApi::sLogPrint, &Logger::instance(), &Logger::comment);
+    connect(m_lua_api, &LuaApi::sLogError, &Logger::instance(), &Logger::error);
+    connect(m_lua_api, &LuaApi::sLogClear, &Logger::instance(), &Logger::clear);
     // ------- Test --------
 
     createConnections();
