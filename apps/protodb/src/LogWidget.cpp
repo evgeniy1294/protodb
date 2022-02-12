@@ -31,6 +31,7 @@ LogWidget::LogWidget(QWidget* parent)
         m_log_proxy_model->invalidate();
 
     m_view->setModel(m_log_proxy_model);
+        m_view->reset();
 
     // ------- Test --------
     m_lua_api = new LuaApi(this);

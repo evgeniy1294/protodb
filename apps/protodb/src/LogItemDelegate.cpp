@@ -69,7 +69,15 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             color = m_ch_colors[channel];
             font  = m_ch_fonts [channel];
 
-            data = index.model()->data(index).toByteArray();
+            if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
+                if ( m_byte_format == kHexFormat ) {
+                    data = index.model()->data(index).toByteArray().toHex(m_separator);
+                    break;
+                }
+            }
+
+            data = index.model()->data(index).toString();
+
         } break;
     }
 
