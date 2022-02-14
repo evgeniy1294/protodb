@@ -12,8 +12,8 @@ Logger::Logger(QObject *parent)
 void Logger::log(const Event &event)
 {
     if (m_flags[event.channel]) {
-        m_log.append(event);
-        beginInsertRows(QModelIndex(), rowCount() - 1, rowCount() - 1);
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+            m_log.append(event);
         endInsertRows();
     }
 }
