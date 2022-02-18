@@ -3,6 +3,7 @@
 #include <protodb/Worker.h>
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
+#include <protodb/utils/MetaTypeUtils.h>
 
 #include <QApplication>
 #include <QPluginLoader>
@@ -15,7 +16,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("ProtoDb");
 
-    PluginManager::instance().setMainDirectory("/tmp/protodb/gui/plugins/");
+    registerCustomConverters();
+
+    PluginManager::instance().setMainDirectory(QApplication::applicationDirPath() + "/plugins");
     PluginManager::instance().setManualInstallDirectory("/tmp/test/");
     PluginManager::instance().loadPlugins(QMap<QString, bool>());
 
@@ -31,8 +34,10 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
+#include <protodb/plugins/IOWidgetFactory.h>
+#include <protodb/plugins/IOWidgetCreatorInterface.h>
 void testPlugins() {
-   /* auto factory = IOWidgetFactory::globalInstance();
+    auto factory = IOWidgetFactory::globalInstance();
     if (!factory) {
         GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
         factory = IOWidgetFactory::globalInstance();
@@ -44,5 +49,5 @@ void testPlugins() {
     for (auto& it: creators) {
         factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
     }
-*/
+
 }
