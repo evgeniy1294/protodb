@@ -18,6 +18,7 @@ set(CMAKE_AUTORCC ON)
 
 set( BaseHeaders
     include/protodb/utils/JsonUtils.h
+    include/protodb/utils/MetaTypeUtils.h
     include/protodb/plugins/IOWidget.h
     include/protodb/plugins/IOWidgetCreatorInterface.h
     include/protodb/plugins/IOWidgetFactory.h
@@ -25,6 +26,7 @@ set( BaseHeaders
 
 set( BaseSources
     src/JsonUtils.cpp
+    src/MetaTypeUtils.cpp
     src/IOWidgetFactory.cpp
 )
 

@@ -1,5 +1,7 @@
 #include "plugins/PluginManager.h"
 
+#include <protodb/utils/FsIcon.h>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
@@ -592,6 +594,7 @@ QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
+
 QVariant PluginManager::data(const QModelIndex &index, int role) const
 {
     Q_D(const PluginManager);
@@ -615,29 +618,34 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
         {
             case Qt::DecorationRole: {
                 if (index.column() == kColName) {
-                    /* Перенести функционал в делегат
                     if ( plugin.loaded ) {
-                        return QIcon(":/icons/check.svg");
+                        QVariant var = QVariant::fromValue(FsIcon(":/icons/check.svg"));
+                        var.convert( QVariant::Icon );
+                        return var;
                     }
                     else if ( plugin.fault ) {
-                        return QIcon(":/icons/red_cross.svg");
+                        QVariant var = QVariant::fromValue(FsIcon(":/icons/red_cross.svg"));
+                        var.convert( QVariant::Icon );
+                        return var;
                     }
                     else {
-                        return QIcon(":/icons/orange_minus.svg");
+                        QVariant var = QVariant::fromValue(FsIcon(":/icons/red_cross.svg"));
+                        var.convert( QVariant::Icon );
+                        return var;
                     }
-                    */
                 }
 
                 break;
             }
 
             case Qt::ForegroundRole: {
-                /* Перенести функционал в делегат
-                if( plugin.fault )
-                    return QColor(Qt::red);
+                if( plugin.fault ) {
+                    QVariant var = QVariant("#ff0000");
+                    var.convert( QVariant::Color );
+                    return var;
+                }
                 else
                     return {};
-                */
             }
 
             case Qt::DisplayRole:
