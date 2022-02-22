@@ -25,6 +25,7 @@ set( BaseHeaders
     include/protodb/utils/JsonBaseUtils.h
     include/protodb/utils/SolByteArrayWrapper.h
     include/protodb/utils/FsIcon.h
+    include/protodb/utils/JsonKeeper.h
     include/protodb/plugins/IODeviceCreatorInterface.h
     include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
