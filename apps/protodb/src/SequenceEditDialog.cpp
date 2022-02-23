@@ -4,7 +4,7 @@
 
 #include <QLineEdit>
 #include <QTextBrowser>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QDataWidgetMapper>
 #include <QAbstractItemModel>
@@ -121,10 +121,10 @@ void SequenceEditDialog::createGui()
     m_name_edit = new QLineEdit();
         m_name_edit->setPlaceholderText(tr("Sequence name"));
 
-    m_desc_editor = new QTextEdit();
+    m_desc_editor = new QPlainTextEdit();
         m_desc_editor->setPlaceholderText(tr("Document me!"));
 
-    m_dsl_editor = new QTextEdit();
+    m_dsl_editor = new QPlainTextEdit();
         m_dsl_editor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
 
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok|

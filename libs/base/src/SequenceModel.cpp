@@ -13,12 +13,12 @@ SequenceModel::SequenceModel(QObject* parent)
 
 int SequenceModel::rowCount(const QModelIndex& parent) const
 {
-    return m_sequences.size();
+    return parent.isValid() ? 0 : m_sequences.size();
 }
 
 int SequenceModel::columnCount(const QModelIndex& parent) const
 {
-    return kColumnCount;
+    return parent.isValid() ? 0 : kColumnCount;
 }
 
 
@@ -226,6 +226,79 @@ void SequenceModel::setOutgoingMode()
 bool SequenceModel::isModeIncoming() const
 {
     return m_mode;
+}
+
+void SequenceModel::toJson(nlohmann::json& json)
+{
+    for (const auto& sequence: qAsConst(m_sequences)) {
+        nlohmann::json fields;
+            fields["name"]        = sequence.name();
+            fields["binded_name"] = sequence.bindedName();
+            fields["period"]      = sequence.period();
+            fields["description"] = sequence.description();
+            fields["dsl"]         = sequence.dslString();
+            fields["active"]      = sequence.active();
+
+        json.push_back(fields);
+    }
+}
+
+void SequenceModel::fromJson(const nlohmann::json& json)
+{
+    QList<Sequence> imported;
+    if ( !json.is_array() )
+        return;
+
+    for (const auto& it: json) {
+        if (!it.is_object())
+            continue;
+
+        Sequence s;
+        if ( it.contains("name")) {
+            if ( it["name"].is_string() ) {
+                s.setName( it["name"] );
+            }
+        }
+
+        if ( it.contains("binded_name") ) {
+            if ( it["binded_name"].is_string() ) {
+                s.setBindedName( it["binded_name"] );
+            }
+        }
+
+        if ( it.contains("period") ) {
+            if ( it["period"].is_number() ) {
+                s.setPeriod( it["period"] );
+            }
+        }
+
+        if ( it.contains("description") ) {
+            if ( it["description"].is_string() ) {
+                s.setDescription( it["description"] );
+            }
+        }
+
+        if ( it.contains("dsl") ) {
+            if ( it["dsl"].is_string() ) {
+                s.setDslString( it["dsl"] );
+            }
+        }
+
+        if ( it.contains("active") ) {
+            if ( it["active"].is_boolean() ) {
+                s.setActive( it["active"] );
+            }
+        }
+
+        imported.append(s);
+    }
+
+    if (imported.size() > 0) {
+        int row = rowCount();
+        beginInsertRows(QModelIndex(), row, row + imported.count() - 1);
+            m_sequences.append(imported);
+        endInsertRows();
+    }
 }
 
 

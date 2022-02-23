@@ -4,6 +4,8 @@
 #include "PluginManagerDialog.h"
 
 #include <protodb/Worker.h>
+#include <protodb/SequenceModel.h>
+#include <protodb/utils/JsonUtils.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -78,6 +80,9 @@ void MainWindow::createActions()
     m_open = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
     m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
     m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
+    m_import_tables = new QAction(tr("&Import tables"), this);
+    m_export_tables = new QAction(tr("&Export tables"), this);
+    m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_about = new QAction(tr("&About"), this);
     m_about_qt = new QAction(tr("&About Qt"), this);
     m_help_content = new QAction(tr("&Help"), this);
@@ -94,6 +99,9 @@ void MainWindow::createToolBar() {
     m_toolbar->addToolAction(m_open);
     m_toolbar->addToolAction(m_save);
     m_toolbar->addToolAction(m_save_as, false);
+    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_export_tables, false);
+    m_toolbar->addToolAction(m_import_tables, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_options, false);
     m_toolbar->addToolAction(m_plugins, false);
@@ -122,6 +130,57 @@ void MainWindow::connectSignals()
         box.exec();
     });
 
+    connect(m_export_tables, &QAction::triggered, this, [this]() {
+        QFileDialog fileDialog;
+        fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+        fileDialog.setFileMode(QFileDialog::AnyFile);
+        fileDialog.setViewMode(QFileDialog::List);
+
+        if (fileDialog.exec()) {
+            auto fileNames = fileDialog.selectedFiles();
+
+            if (fileNames.size() != 0) {
+                auto path = fileNames.back();
+                nlohmann::json j;
+
+                nlohmann::json outgoing;
+                    m_worker->outgoingSequences()->toJson(outgoing);
+                    j["outgoing"] = outgoing;
+
+                nlohmann::json incoming;
+                    m_worker->incomingSequences()->toJson(incoming);
+                     j["incoming"] = incoming;
+
+                writeToFile(path, j);
+            }
+        }
+    });
+
+    connect(m_import_tables, &QAction::triggered, this, [this]() {
+        QFileDialog fileDialog;
+        fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+        fileDialog.setFileMode(QFileDialog::AnyFile);
+        fileDialog.setViewMode(QFileDialog::List);
+
+        if (fileDialog.exec()) {
+            auto fileNames = fileDialog.selectedFiles();
+
+            if (fileNames.size() != 0) {
+                nlohmann::json json;
+                bool ok = readFromFile(fileNames.back(), json);
+
+                if (ok) {
+                    if (json["incoming"].is_array()) {
+                        m_worker->incomingSequences()->fromJson(json["incoming"]);
+                    }
+
+                    if (json["outgoing"].is_array()) {
+                        m_worker->outgoingSequences()->fromJson(json["outgoing"]);
+                    }
+                }
+            }
+        }
+    });
 }
 
 void MainWindow::saveState()

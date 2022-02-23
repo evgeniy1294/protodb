@@ -8,8 +8,7 @@ class QDataWidgetMapper;
 class QAbstractButton;
 class QLabel;
 class QLineEdit;
-class QTextBrowser;
-class QTextEdit;
+class QPlainTextEdit;
 
 class SequenceEditDialog: public QDialog
 {
@@ -39,8 +38,8 @@ private:
     QPushButton* m_add_btn;
     QLabel* m_item_label;
     QLineEdit* m_name_edit;
-    QTextEdit* m_desc_editor;
-    QTextEdit* m_dsl_editor;
+    QPlainTextEdit* m_desc_editor;
+    QPlainTextEdit* m_dsl_editor;
     QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_btn;
 };

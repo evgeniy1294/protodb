@@ -1,5 +1,6 @@
 #pragma once
 
+#include <protodb/utils/JsonBaseUtils.h>
 #include <protodb/shared_types/Sequence.h>
 
 #include <QAbstractTableModel>
@@ -43,6 +44,8 @@ public:
     void setOutgoingMode();
     bool isModeIncoming() const;
 
+    void toJson(nlohmann::json& json);
+    void fromJson(const nlohmann::json& json);
 
 private:
     QList<Sequence> m_sequences;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <protodb/configurable/Configurable.h>
-
+/*
 class ConfigAggregator final:
     public QObject,
     public Configurable
@@ -71,3 +71,4 @@ private:
         nlohmann::json state;
     };
 };
+*/

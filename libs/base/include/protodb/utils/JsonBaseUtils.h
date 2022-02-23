@@ -13,3 +13,4 @@ void to_json(nlohmann::json& j, const QJsonObject& qjson);
 
 bool readFromFile( const QString& path, nlohmann::json& json );
 bool writeToFile ( const QString& path, const nlohmann::json& json );
+
