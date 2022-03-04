@@ -1,7 +1,7 @@
 #pragma once
 
 #include <protodb/configurable/Configurable.h>
-/*
+
 class ConfigAggregator final:
     public QObject,
     public Configurable
@@ -9,7 +9,13 @@ class ConfigAggregator final:
     Q_OBJECT
 
 public:
+    ConfigAggregator(QObject* parent = nullptr);
+   ~ConfigAggregator() = default;
+
 // ----------- [Aggregator interface] ------------
+    QString name() const;
+    void setName(const QString& name);
+
     // Attach Configurable object to aggregator
     bool attachObject(const QString& prefix, Configurable* cfg);
 
@@ -31,11 +37,15 @@ public:
     void getObjectState(const QString& prefix, nlohmann::json& json) const;
     void getDefaultObjectState(const QString& prefix, nlohmann::json& json) const;
 
+    QString prefix(Configurable* cfg) const;
+
     int size() const;
-    bool contains(const QString& prefix);
+    int position(const QString& prefix) const;
+    int position(Configurable* cfg) const;
+    bool contains(const QString& prefix) const;
+    bool contains(Configurable* cfg) const;
     bool isEmpty() const;
     void clear();
-
 
 // ----------- [Configurable interface] ----------
     void setConfig(const nlohmann::json& json) override;
@@ -53,22 +63,27 @@ public:
     bool readState( const QString &path, const QString &extension = "json") override;
 
 signals:
-    void sObjectAdded( const QString& prefix );
-    void sObjectAboutToBeRemoved( const QString& prefix );
-    void sObjectRemoved( const QString& prefix );
+    void sSectionAdded( const QString& prefix );
+    void sSectionAboutToBeRemoved( const QString& prefix );
+    void sSectionRemoved( const QString& prefix );
     void sAboutToClear();
     void sCleared();
 
     void sObjectConfigChanged ( const QString& prefix );
     void sObjectStateChanged  ( const QString& prefix );
 
+    void sNameChanged( const QString& name );
+
 private:
-    struct Object {
-        QString prefix;
-        int priority;
+    struct Section {
         Configurable* ptr;
+        QString prefix;
         nlohmann::json config;
         nlohmann::json state;
+        int priority;
     };
+
+    QList< Section > m_sections;
+    QString m_name = tr("Config aggregator");
 };
-*/
+
