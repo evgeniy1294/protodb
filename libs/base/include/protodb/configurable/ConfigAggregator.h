@@ -23,21 +23,28 @@ public:
     void detachObject(Configurable* cfg);
     void detachObject(const QString& prefix);
 
-    // Save config in sections
+    // Get configs and states from section and set it to object
     bool acceptObject(const QString& prefix);
     bool acceptObjectConfig(const QString& prefix);
     bool acceptObjectState (const QString& prefix);
 
-    void setObjectConfig(const QString& prefix, const nlohmann::json& json);
-    void modifyObjectConfig(const QString& prefix, const nlohmann::json& json);
-    void getObjectConfig(const QString& prefix, nlohmann::json& json) const;
-    void getDefaultObjectConfig(const QString& prefix, nlohmann::json& json) const;
+    // Get configs and states from objects and set it to section
+    bool updateSection(const QString& prefix);
+    bool updateSectionConfig(const QString& prefix);
+    bool updateSectionState (const QString& prefix);
 
-    void setObjectState(const QString& prefix, const nlohmann::json& json);
-    void modifyObjectState(const QString& prefix, const nlohmann::json& json);
-    void getObjectState(const QString& prefix, nlohmann::json& json) const;
-    void getDefaultObjectState(const QString& prefix, nlohmann::json& json) const;
+    // Section control api
+    bool setSectionConfig(const QString& prefix, const nlohmann::json& json, bool accept = false);
+    bool modifySectionConfig(const QString& prefix, const nlohmann::json& json, bool accept = false);
+    bool getSectionConfig(const QString& prefix, nlohmann::json& json) const;
+    bool getDefaultSectionConfig(const QString& prefix, nlohmann::json& json) const;
 
+    bool setSectionState(const QString& prefix, const nlohmann::json& json, bool accept = false);
+    bool modifySectionState(const QString& prefix, const nlohmann::json& json, bool accept = false);
+    bool getSectionState(const QString& prefix, nlohmann::json& json) const;
+    bool getDefaultSectionState(const QString& prefix, nlohmann::json& json) const;
+
+    // Container api
     QString prefix(Configurable* cfg) const;
 
     int size() const;
@@ -70,14 +77,11 @@ signals:
     void sAboutToClear();
     void sCleared();
 
-    void sObjectConfigChanged ( const QString& prefix );
-    void sObjectStateChanged  ( const QString& prefix );
-
     void sNameChanged( const QString& name );
 
 private:
     struct Section {
-        Configurable* ptr;
+        Configurable* obj;
         QString prefix;
         nlohmann::json config;
         nlohmann::json state;

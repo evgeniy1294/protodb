@@ -32,7 +32,7 @@ bool ConfigAggregator::attachObject(const QString& prefix, Configurable* cfg, in
     if (pos == -1) {
         Section section;
             section.prefix = prefix;
-            section.ptr = cfg;
+            section.obj = cfg;
             section.priority = priority;
 
         for (int i = 0; i < m_sections.size(); i++) {
@@ -46,10 +46,10 @@ bool ConfigAggregator::attachObject(const QString& prefix, Configurable* cfg, in
         emit sSectionAdded(prefix);
     }
     else {
-        if ( m_sections[pos].ptr != nullptr )
+        if ( m_sections[pos].obj != nullptr )
             return false;
 
-        m_sections[pos].ptr = cfg;
+        m_sections[pos].obj = cfg;
 
         if ( m_sections[pos].priority != priority ) {
             auto section = m_sections[pos];
@@ -102,12 +102,12 @@ bool ConfigAggregator::acceptObject(const QString& prefix)
     if ( pos == -1 )
         return false;
 
-    auto section = m_sections[pos];
-    if (section.ptr == nullptr)
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
         return false;
 
-    section.ptr->config(section.config);
-    section.ptr->state(section.state);
+    section.obj->config(section.config);
+    section.obj->state(section.state);
 
     return true;
 }
@@ -118,11 +118,11 @@ bool ConfigAggregator::acceptObjectConfig(const QString& prefix)
     if ( pos == -1 )
         return false;
 
-    auto section = m_sections[pos];
-    if (section.ptr == nullptr)
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
         return false;
 
-    section.ptr->config(section.config);
+    section.obj->config(section.config);
 
     return true;
 }
@@ -133,29 +133,195 @@ bool ConfigAggregator::acceptObjectState(const QString& prefix)
     if ( pos == -1 )
         return false;
 
-    auto section = m_sections[pos];
-    if (section.ptr == nullptr)
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
         return false;
 
-    section.ptr->state(section.state);
+    section.obj->state(section.state);
 
     return true;
 }
 
-void ConfigAggregator::setObjectConfig(const QString& prefix, const nlohmann::json& json)
+bool ConfigAggregator::updateSection(const QString &prefix)
 {
     int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
+        return false;
+
+    section.obj->state(section.config);
+    section.obj->state(section.state);
+
+    return true;
+}
+
+bool ConfigAggregator::updateSectionConfig(const QString &prefix)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
+        return false;
+
+    section.obj->config(section.config);
+
+    return true;
+}
+
+bool ConfigAggregator::updateSectionState(const QString &prefix)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+    if (section.obj == nullptr)
+        return false;
+
+    section.obj->state(section.state);
+
+    return true;
+}
+
+bool ConfigAggregator::setSectionConfig(const QString &prefix, const nlohmann::json &json, bool accept)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+        section.config = json;
+
+    if (accept && section.obj != nullptr) {
+        section.obj->setConfig(json);
+        section.obj->config(section.config);
+    }
+
+    return true;
+}
+
+bool ConfigAggregator::modifySectionConfig(const QString &prefix, const nlohmann::json &json, bool accept)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
     auto& section = m_sections[pos];
 
-    if (section.ptr != nullptr) {
-        section.ptr->setConfig(json);
+    for( const auto& it : json.items() )
+        section.config[ it.key() ] = it.value();
+
+    if (accept && section.obj != nullptr) {
+        section.obj->setConfig(json);
+        section.obj->config(section.config);
     }
+
+    return true;
+}
+
+bool ConfigAggregator::getSectionConfig(const QString &prefix, nlohmann::json &json) const
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    json = m_sections[pos].config;
+
+    return true;
+}
+
+bool ConfigAggregator::getDefaultSectionConfig(const QString &prefix, nlohmann::json &json) const
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+
+    if ( section.obj != nullptr ) {
+        section.obj->defaultConfig(json);
+    }
+    else {
+        json = section.config;
+    }
+
+    return true;
+}
+
+bool ConfigAggregator::setSectionState(const QString &prefix, const nlohmann::json &json, bool accept)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+        section.state = json;
+
+    if (accept && section.obj != nullptr) {
+        section.obj->setState(json);
+        section.obj->state(section.state);
+    }
+
+    return true;
+}
+
+bool ConfigAggregator::modifySectionState(const QString &prefix, const nlohmann::json &json, bool accept)
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+
+    for( const auto& it : json.items() )
+        section.state[ it.key() ] = it.value();
+
+    if (accept && section.obj != nullptr) {
+        section.obj->setState(json);
+        section.obj->state(section.state);
+    }
+
+    return true;
+}
+
+bool ConfigAggregator::getSectionState(const QString &prefix, nlohmann::json &json) const
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    json = m_sections[pos].state;
+
+    return true;
+}
+
+bool ConfigAggregator::getDefaultSectionState(const QString &prefix, nlohmann::json &json) const
+{
+    int pos = position(prefix);
+    if ( pos == -1 )
+        return false;
+
+    auto& section = m_sections[pos];
+
+    if ( section.obj != nullptr ) {
+        section.obj->defaultState(json);
+    }
+    else {
+        json = section.state;
+    }
+
+    return true;
 }
 
 QString ConfigAggregator::prefix(Configurable* cfg) const
 {
     for( int i = 0; i < m_sections.size(); i++) {
-        if ( m_sections[i].ptr == cfg ) {
+        if ( m_sections[i].obj == cfg ) {
             return m_sections[i].prefix;
         }
     }
@@ -187,7 +353,7 @@ int ConfigAggregator::position(Configurable* cfg) const
 {
     int ret = -1;
     for( int i = 0; i < m_sections.size(); i++) {
-        if ( m_sections[i].ptr == cfg ) {
+        if ( m_sections[i].obj == cfg ) {
             ret = i; break;
         }
     }
@@ -211,7 +377,7 @@ bool ConfigAggregator::contains(Configurable* cfg) const
 {
     int idx = -1;
     for( int i = 0; i < m_sections.size(); i++) {
-        if ( m_sections[i].ptr == cfg ) {
+        if ( m_sections[i].obj == cfg ) {
             idx = i; break;
         }
     }
@@ -230,5 +396,19 @@ void ConfigAggregator::clear()
 {
     emit sAboutToClear();
         m_sections.clear();
-        emit sCleared();
+    emit sCleared();
+}
+
+void ConfigAggregator::setConfig(const nlohmann::json &json)
+{
+    for ( auto& [key, config]: json.items() ) {
+        if ( !config.is_object() ) {
+            continue;
+        }
+
+        QString prefix( key.c_str() );
+        int pos = position(prefix);
+
+        if (pos )
+    }
 }
