@@ -1,6 +1,11 @@
 #include "configurable/Configurable.h"
 
 
+QString Configurable::gcid() const
+{
+    return QString();
+}
+
 void Configurable::setDefaultConfig()
 {
     nlohmann::json json;

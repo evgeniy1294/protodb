@@ -7,6 +7,9 @@
 class Configurable
 {
 public:
+    // Creator ID for widget factory
+    virtual QString gcid() const;
+
     void setDefaultConfig();
     virtual void setConfig(const nlohmann::json& json);
     virtual void config(nlohmann::json& json) const;

@@ -17,15 +17,16 @@ public:
     void setName(const QString& name);
 
     // Attach Configurable object to aggregator
-    bool attachObject(const QString& prefix, Configurable* cfg);
+    bool attachObject(const QString& prefix, Configurable* cfg, int priority);
 
     // Detach Configurable object from aggregator
     void detachObject(Configurable* cfg);
     void detachObject(const QString& prefix);
 
-    bool acceptObject(const QString& uid);
-    bool acceptObjectConfig(const QString& uid);
-    bool acceptObjectState (const QString& uid);
+    // Save config in sections
+    bool acceptObject(const QString& prefix);
+    bool acceptObjectConfig(const QString& prefix);
+    bool acceptObjectState (const QString& prefix);
 
     void setObjectConfig(const QString& prefix, const nlohmann::json& json);
     void modifyObjectConfig(const QString& prefix, const nlohmann::json& json);
@@ -85,5 +86,8 @@ private:
 
     QList< Section > m_sections;
     QString m_name = tr("Config aggregator");
+
+private:
+    //Section& find_or_create(const QString& prefix, int priority);
 };
 
