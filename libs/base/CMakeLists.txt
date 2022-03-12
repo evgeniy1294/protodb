@@ -18,7 +18,6 @@ set( BaseHeaders
     include/protodb/configurable/Configurable.h
     include/protodb/configurable/ConfigAggregator.h
     include/protodb/configurable/ConfigManager.h
-    include/protodb/configurable/SessionManager.h
     include/protodb/factories/CreatorAbstract.h
     include/protodb/factories/FactoryAbstract.h
     include/protodb/factories/GlobalFactoryStorage.h
@@ -31,6 +30,7 @@ set( BaseHeaders
     include/protodb/plugins/IODeviceCreatorInterface.h
     include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
+    include/protodb/SessionManager.h
     include/protodb/Logger.h
     include/protodb/LuaApi.h
     include/protodb/SequenceModel.h
