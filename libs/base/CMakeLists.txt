@@ -17,6 +17,8 @@ set(CMAKE_AUTOMOC ON)
 set( BaseHeaders
     include/protodb/configurable/Configurable.h
     include/protodb/configurable/ConfigAggregator.h
+    include/protodb/configurable/ConfigManager.h
+    include/protodb/configurable/SessionManager.h
     include/protodb/factories/CreatorAbstract.h
     include/protodb/factories/FactoryAbstract.h
     include/protodb/factories/GlobalFactoryStorage.h
@@ -38,6 +40,8 @@ set( BaseHeaders
 set( BaseSources
     src/Configurable.cpp
     src/ConfigAggregator.cpp
+    src/ConfigManager.cpp
+    src/SessionManager.cpp
     src/FactoryAbstract.cpp
     src/GlobalFactoryStorage.cpp
     src/JsonBaseUtils.cpp
