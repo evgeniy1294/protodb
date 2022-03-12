@@ -27,72 +27,43 @@ bool ConfigAggregator::attachObject(const QString& prefix, Configurable* cfg, in
         return false;
 
     bool ret = false;
+    auto& section = find_or_create(prefix, priority);
 
-    int pos = position(prefix);
-    if (pos == -1) {
-        Section section;
-            section.prefix = prefix;
-            section.obj = cfg;
-            section.priority = priority;
-
-        for (int i = 0; i < m_sections.size(); i++) {
-            if ( m_sections[i].priority > priority ) {
-                m_sections.insert(i, section);
-                break;
-            }
-        }
-
-        ret = true;
-        emit sSectionAdded(prefix);
-    }
-    else {
-        if ( m_sections[pos].obj != nullptr )
-            return false;
-
-        m_sections[pos].obj = cfg;
-
-        if ( m_sections[pos].priority != priority ) {
-            auto section = m_sections[pos];
-
-            emit sSectionAboutToBeRemoved(prefix);
-                m_sections.removeAt(pos);
-            emit sSectionRemoved(prefix);
-
-            for (int i = 0; i < m_sections.size(); i++) {
-                if ( m_sections[i].priority > priority ) {
-                    m_sections.insert(i, section);
-                    break;
-                }
-            }
-
-            emit sSectionAdded(prefix);
-        }
-
+    if ( section.obj == nullptr || section.obj == cfg ) {
+        section.obj = cfg;
         ret = true;
     }
 
     return ret;
 }
 
-void ConfigAggregator::detachObject(Configurable* cfg)
+void ConfigAggregator::detachObject(Configurable* cfg, bool remove)
 {
     int pos = position(cfg);
     if ( pos != -1 ) {
         auto prefix = m_sections[pos].prefix;
 
-        emit sSectionAboutToBeRemoved(prefix);
-            m_sections.removeAt(pos);
-        emit sSectionRemoved(prefix);
+        m_sections[pos].obj = nullptr;
+
+        if (remove) {
+            emit sSectionAboutToBeRemoved(prefix);
+                m_sections.removeAt(pos);
+            emit sSectionRemoved(prefix);
+        }
     }
 }
 
-void ConfigAggregator::detachObject(const QString& prefix)
+void ConfigAggregator::detachObject(const QString& prefix, bool remove)
 {
     int pos = position(prefix);
     if ( pos != -1 ) {
-        emit sSectionAboutToBeRemoved( prefix );
-            m_sections.removeAt( pos );
-        emit sSectionRemoved( prefix );
+        m_sections[pos].obj = nullptr;
+
+        if (remove) {
+            emit sSectionAboutToBeRemoved(prefix);
+                m_sections.removeAt(pos);
+            emit sSectionRemoved(prefix);
+        }
     }
 }
 
@@ -186,6 +157,18 @@ bool ConfigAggregator::updateSectionState(const QString &prefix)
     section.obj->state(section.state);
 
     return true;
+}
+
+void ConfigAggregator::removeSection(const QString &prefix)
+{
+    int pos = position(prefix);
+    if ( pos != -1 ) {
+        emit sSectionAboutToBeRemoved( prefix );
+            m_sections.removeAt( pos );
+        emit sSectionRemoved( prefix );
+    }
+
+    return;
 }
 
 bool ConfigAggregator::setSectionConfig(const QString &prefix, const nlohmann::json &json, bool accept)
@@ -407,8 +390,113 @@ void ConfigAggregator::setConfig(const nlohmann::json &json)
         }
 
         QString prefix( key.c_str() );
-        int pos = position(prefix);
+        auto& section = find_or_create(prefix);
 
-        if (pos )
+        section.config = config;
+        if ( section.obj != nullptr ) {
+            section.obj->setConfig(config);
+            section.obj->config(section.config);
+        }
     }
+}
+
+void ConfigAggregator::config(nlohmann::json &json) const
+{
+    for ( auto it = m_sections.cbegin(); it != m_sections.cend(); it++ ) {
+        json[it->prefix.toStdString()] = it->config;
+    }
+}
+
+void ConfigAggregator::defaultConfig(nlohmann::json &json) const
+{
+    for ( auto it = m_sections.cbegin(); it != m_sections.cend(); it++ ) {
+        if ( it->obj == nullptr ) {
+            json[it->prefix.toStdString()] = it->config;
+        }
+        else {
+            nlohmann::json config;
+                it->obj->defaultConfig(config);
+            json[it->prefix.toStdString()] = config;
+        }
+    }
+}
+
+void ConfigAggregator::setState(const nlohmann::json &json)
+{
+    for ( auto& [key, state]: json.items() ) {
+        if ( !state.is_object() ) {
+            continue;
+        }
+
+        QString prefix( key.c_str() );
+        auto& section = find_or_create(prefix);
+
+        section.state = state;
+        if ( section.obj != nullptr ) {
+            section.obj->setState(state);
+            section.obj->state(section.state);
+        }
+    }
+}
+
+void ConfigAggregator::state(nlohmann::json &json) const
+{
+    for ( auto it = m_sections.cbegin(); it != m_sections.cend(); it++ ) {
+        json[it->prefix.toStdString()] = it->state;
+    }
+}
+
+void ConfigAggregator::defaultState(nlohmann::json &json) const
+{
+    for ( auto it = m_sections.cbegin(); it != m_sections.cend(); it++ ) {
+        if ( it->obj == nullptr ) {
+            json[it->prefix.toStdString()] = it->state;
+        }
+        else {
+            nlohmann::json state;
+                it->obj->defaultState(state);
+            json[it->prefix.toStdString()] = state;
+        }
+    }
+}
+
+ConfigAggregator::Section& ConfigAggregator::find_or_create(const QString &prefix, int priority)
+{
+    auto pos = position(prefix);
+
+    if (pos == -1) {
+        Section section;
+            section.prefix = prefix;
+            section.priority = priority;
+
+        for (pos = 0; pos < m_sections.size(); pos++) {
+            if ( m_sections[pos].priority > priority ) {
+                m_sections.insert(pos, section);
+                break;
+            }
+        }
+
+        emit sSectionAdded(prefix);
+    }
+    else {
+        if ( m_sections[pos].priority != priority ) {
+            auto section = m_sections[pos];
+
+            emit sSectionAboutToBeRemoved(prefix);
+                m_sections.removeAt(pos);
+            emit sSectionRemoved(prefix);
+
+            for (pos = 0; pos < m_sections.size(); pos++) {
+                if ( m_sections[pos].priority > priority ) {
+                    m_sections.insert(pos, section);
+                    break;
+                }
+            }
+
+            emit sSectionAdded(prefix);
+        }
+
+    }
+
+    return m_sections[pos];
 }

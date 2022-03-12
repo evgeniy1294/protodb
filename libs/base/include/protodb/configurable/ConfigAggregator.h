@@ -20,8 +20,8 @@ public:
     bool attachObject(const QString& prefix, Configurable* cfg, int priority);
 
     // Detach Configurable object from aggregator
-    void detachObject(Configurable* cfg);
-    void detachObject(const QString& prefix);
+    void detachObject(Configurable* cfg, bool remove = true);
+    void detachObject(const QString& prefix, bool remove = true);
 
     // Get configs and states from section and set it to object
     bool acceptObject(const QString& prefix);
@@ -34,6 +34,8 @@ public:
     bool updateSectionState (const QString& prefix);
 
     // Section control api
+    void removeSection(const QString& prefix);
+
     bool setSectionConfig(const QString& prefix, const nlohmann::json& json, bool accept = false);
     bool modifySectionConfig(const QString& prefix, const nlohmann::json& json, bool accept = false);
     bool getSectionConfig(const QString& prefix, nlohmann::json& json) const;
@@ -64,12 +66,6 @@ public:
     void state(nlohmann::json& json) const override;
     void defaultState(nlohmann::json& json) const override;
 
-    bool writeConfig( const QString &path, const QString &extension = "json" ) const override;
-    bool readConfig( const QString &path, const QString &extension = "json" ) override;
-
-    bool writeState( const QString &path, const QString &extension = "json") const override;
-    bool readState( const QString &path, const QString &extension = "json") override;
-
 signals:
     void sSectionAdded( const QString& prefix );
     void sSectionAboutToBeRemoved( const QString& prefix );
@@ -92,6 +88,6 @@ private:
     QString m_name = tr("Config aggregator");
 
 private:
-    //Section& find_or_create(const QString& prefix, int priority);
+    Section& find_or_create(const QString& prefix, int priority = 50);
 };
 
