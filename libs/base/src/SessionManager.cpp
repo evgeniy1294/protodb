@@ -13,7 +13,7 @@ SessionManager& SessionManager::instance()
 }
 
 SessionManager::SessionManager(QObject *parent)
-    : QObject(this)
+    : QAbstractTableModel(this)
 {
 
 }
@@ -85,6 +85,84 @@ int SessionManager::currentSessionId() const
     return m_curr_session_id;
 }
 
+bool SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
+{
+    // Если имя не пустое и такая сессия уже существует не создавать новую сессию
+    if ( !name.isEmpty() ) {
+        if (findSessionByName(name) >= 0) {
+            m_last_error = tr("This session already exist");
+            return false;
+        }
+    }
+
+    Session s;
+        s.name = name;
+        s.description  = description;
+        s.last_changed = QDateTime::currentDateTime();
+
+    // Если имя пустое, подобрать значение по умолчанию
+    if ( s.name.isEmpty() ) {
+        s.name = "new session";
+
+        for (int i = 1; findSessionByName(s.name) >= 0; i++) {
+            s.name = QString("new session(%1)").arg(i);
+            if (i > 255) {
+                m_last_error = tr("Can't create session");
+                return false;
+            }
+        }
+    }
+
+    QDir session_dir( m_working_dir_path );
+        if ( !session_dir.mkdir(s.name) ) {
+            m_last_error = tr("Can't create session");
+            return false;
+        }
+        session_dir.cd(s.name);
+
+    if ( !origin.isEmpty() ) {
+        int id = findSessionByName(origin);
+        if (id >= 0) {
+            QDir origin_dir(m_working_dir_path + "/" + m_sessions.at(id).name);
+
+            if ( origin_dir.exists() ) {
+                auto origin_entry = origin_dir.entryInfoList({"*.json"});
+
+                for (auto& file_info: origin_entry) {
+                    QFile::copy(file_info.absoluteFilePath(), session_dir.absolutePath() + "/" + file_info.fileName());
+                }
+            }
+        }
+    }
+
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());  // Может быть баг с индексами, проверить
+        m_sessions.push_back(s);
+    endInsertRows();
+
+    return true;
+}
+
+bool SessionManager::removeSession(int id)
+{
+    if ( id >= 0 && id <= m_sessions.count() ) {
+        beginRemoveRows(QModelIndex(), id, id);
+            Session s = m_sessions.takeAt(id);
+
+            QDir session_dir(m_working_dir_path);
+                session_dir.cd(s.name);
+                session_dir.removeRecursively();
+
+        endRemoveRows();
+    }
+
+    return false;
+}
+
+QString SessionManager::lastError() const
+{
+    return m_last_error;
+}
+
 int SessionManager::rowCount(const QModelIndex &parent) const {
     return m_sessions.size();
 }
@@ -119,9 +197,11 @@ QVariant SessionManager::data(const QModelIndex &index, int role) const
 
         if (role == Qt::FontRole) {
             // TODO: выделить выбранную сессию
+
         }
     }
 
+    return QVariant();
 }
 
 QVariant SessionManager::headerData(int section, Qt::Orientation orientation, int role) const
@@ -149,4 +229,15 @@ QVariant SessionManager::headerData(int section, Qt::Orientation orientation, in
     }
 
     return QVariant();
+}
+
+int SessionManager::findSessionByName(const QString &name) const
+{
+    for ( int i = 0; i < m_sessions.size(); i++ ) {
+        if (m_sessions[i].name == name) {
+            return i;
+        }
+    }
+
+    return -1;
 }

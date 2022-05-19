@@ -44,6 +44,8 @@ public:
     // Сохранение сессии
     virtual bool saveSession(const QString& name = QString());
 
+    QString lastError() const;
+
     // ------------- [ Table Model Interface ] ---------------- //
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -56,15 +58,17 @@ signals:
     void sSessionsAboutToBeRemoved( QStringList names );
 
 private:
-    SessionManager(QObject* parent = nullptr);
-
     struct Session {
         QString name;
         QString description;
         QDateTime last_changed;
     };
 
+    SessionManager(QObject* parent = nullptr);
+    int findSessionByName(const QString& name) const;
+
 private:
+    QString m_last_error;
     QString m_working_dir_path;
     QString m_last_session_name;
     int m_curr_session_id;
