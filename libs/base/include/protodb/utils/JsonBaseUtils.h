@@ -1,7 +1,10 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include <QtCore>
+
+class QString;
+class QJsonValue;
+class QJsonObject;
 
 void from_json(const nlohmann::json& j, QString& str);
 void from_json(const nlohmann::json& j, QJsonValue& value);

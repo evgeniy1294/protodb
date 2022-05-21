@@ -2,6 +2,7 @@
 
 #include <QAbstractTableModel>
 #include <QDateTime>
+#include <QFileInfoList>
 
 class SessionManager: public QAbstractTableModel {
     Q_OBJECT
@@ -17,57 +18,70 @@ public:
     };
 
 public:
+    SessionManager(QObject* parent = nullptr);
+   ~SessionManager() = default;
+
     // -------------- [ Session Manager Interface ] -------------- //
-    static SessionManager& instance();
-
     // Установка рабочего каталога
-    bool setWorkingDirectory(const QString& path);
+    bool setWorkingDirectory(const QString& path); //
 
-    // Сохранение модели
-    virtual bool saveToWorkingDirectory();
-
-    // ID загруженной сессии
-    int currentSessionId() const;
+    // Сохранение данных в рабочий каталог
+    bool saveCurrentState();
 
     // Создание новой сессии или копии другой сессии
-    virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString());
+    virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString()); //
 
     // Удаление сессии
-    virtual bool removeSession(const QString& name);
-    virtual bool removeSession(int id);
+    virtual bool removeSession(const QString& name); //
+    virtual bool removeSession(int id); //
 
     // Загрузка сессии
-    bool loadLastSession();
-    virtual bool loadSession(const QString& name);
-    virtual bool loadSession(int id);
+    bool loadSession(const QString& name);
+    bool loadSession(int id);
 
     // Сохранение сессии
-    virtual bool saveSession(const QString& name = QString());
+    bool saveCurrentSession();
+
+    // Импорт сессии
+    bool importSession(const QString& path);
+
+    // Экспорт сессии
+    bool exportSession(const QString& name, const QString& path);
+    bool exportSession(int id, const QString& path);
 
     QString lastError() const;
 
     // ------------- [ Table Model Interface ] ---------------- //
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override; //
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override; //
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override; //
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override; //
 
 signals:
     void sSessionsAdded(QStringList names);
     void sSessionsRemoved(QStringList names);
-    void sSessionsAboutToBeRemoved( QStringList names );
+    void sSessionsAboutToBeRemoved( QStringList names );    
 
 private:
+    void markLoaded(int id);
+
+protected:
     struct Session {
         QString name;
         QString description;
         QDateTime last_changed;
     };
 
-    SessionManager(QObject* parent = nullptr);
     int findSessionByName(const QString& name) const;
 
-private:
+protected:
+    // Отвечает за непосредственную загрузку сессии, для каждого приложения пишется индивидуально
+    virtual bool load_session(const QString& path_to_folder) = 0;
+
+    // Отвечает за непосредственное сохранение сессии, для каждого приложения пишется индивидуально
+    virtual bool save_session(const QString& path_to_folder) = 0;
+
+protected:
     QString m_last_error;
     QString m_working_dir_path;
     QString m_last_session_name;

@@ -2,6 +2,7 @@
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
 #include "PluginManagerDialog.h"
+#include "SessionManagerWidget.h"
 
 #include <protodb/Worker.h>
 #include <protodb/SequenceModel.h>
@@ -49,6 +50,7 @@ void MainWindow::createGui()
     setCentralWidget(central_widget);
 
     m_plugin_manager_dialog = new PluginManagerDialog(this);
+    m_session_manager_dialog = new SessionManagerDialog(this);
 }
 
 void MainWindow::createDock()
@@ -76,6 +78,7 @@ void MainWindow::createActions()
 {
     m_new = new QAction(QIcon(":/icons/new_sessions.svg"), tr("&New..."), this);
     m_save = new QAction(QIcon(":/icons/save.svg"), tr("&Save"), this);
+    m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
     m_save_as = new QAction(QIcon(":/icons/save_as.svg"), tr("&Save As..."), this);
     m_open = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
     m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
@@ -105,6 +108,7 @@ void MainWindow::createToolBar() {
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_options, false);
     m_toolbar->addToolAction(m_plugins, false);
+    m_toolbar->addToolAction(m_sessions, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_help_content, false);
     m_toolbar->addToolAction(m_about_qt, false);
@@ -180,6 +184,10 @@ void MainWindow::connectSignals()
                 }
             }
         }
+    });
+
+    connect(m_sessions, &QAction::triggered, this, [this]() {
+        m_session_manager_dialog->show();
     });
 }
 

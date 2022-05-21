@@ -1,6 +1,8 @@
 #pragma once
 
 #include <protodb/utils/JsonBaseUtils.h>
+#include <QColor>
+#include <QFont>
 
 void to_json(nlohmann::json& j, const QColor& color);
 void to_json(nlohmann::json& j, const QFont& font);

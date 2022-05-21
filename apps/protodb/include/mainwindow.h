@@ -10,6 +10,7 @@ namespace ads {
 
 class Worker;
 class PluginManagerDialog;
+class SessionManagerDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -44,11 +45,13 @@ private:
   QAction* m_about;
   QAction* m_about_qt;
   QAction* m_help_content;
+  QAction* m_sessions;
   QAction* m_exit;
   isa_tool_bar* m_toolbar;
   ads::CDockManager* m_dock_man;
 
   PluginManagerDialog* m_plugin_manager_dialog;
+  SessionManagerDialog* m_session_manager_dialog;
 
   Worker* m_worker;
 };

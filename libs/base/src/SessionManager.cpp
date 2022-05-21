@@ -6,14 +6,8 @@
 #include <QStandardPaths>
 #include <QCoreApplication>
 
-SessionManager& SessionManager::instance()
-{
-    static SessionManager session_manager;
-    return session_manager;
-}
-
 SessionManager::SessionManager(QObject *parent)
-    : QAbstractTableModel(this)
+    : QAbstractTableModel(parent)
 {
 
 }
@@ -32,7 +26,6 @@ bool SessionManager::setWorkingDirectory(const QString &path)
 
     m_working_dir_path = path;
 
-    // Load sissions info
     nlohmann::json sessions;
         readFromFile(path + "/sessions.json", sessions);
 
@@ -50,7 +43,6 @@ bool SessionManager::setWorkingDirectory(const QString &path)
          return true;
      }
 
-     // Очистка модели
      m_sessions.clear();
 
      for (auto& session: sessions["sessions"]) {
@@ -71,8 +63,9 @@ bool SessionManager::setWorkingDirectory(const QString &path)
             if ( session["name"].is_string() ) {
                 s.name = session["name"].get<QString>();
 
-                // Добавление элементов в модель
-                m_sessions.push_back(s);
+                beginInsertRows(QModelIndex(), rowCount(), rowCount());  // Может быть баг с индексами, проверить
+                    m_sessions.push_back(s);
+                endInsertRows();
              }
          }
     }
@@ -80,9 +73,23 @@ bool SessionManager::setWorkingDirectory(const QString &path)
      return true;
 }
 
-int SessionManager::currentSessionId() const
+bool SessionManager::saveCurrentState()
 {
-    return m_curr_session_id;
+    nlohmann::json json;
+        json["last"] = m_last_session_name;
+
+    nlohmann::json sessions = nlohmann::json::array();
+    for (auto& s: m_sessions) {
+        nlohmann::json session;
+            session["name"]         = s.name;
+            session["last_changed"] = s.last_changed.toString();
+            session["description"]  = s.description;
+
+        sessions.push_back(session);
+    }
+
+    json["sessions"] = sessions;
+    return writeToFile(m_working_dir_path + "/sessions.json", json);
 }
 
 bool SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
@@ -139,7 +146,14 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
         m_sessions.push_back(s);
     endInsertRows();
 
+    emit sSessionsAdded({s.name});
+
     return true;
+}
+
+bool SessionManager::removeSession(const QString &name)
+{
+    return removeSession( findSessionByName(name) );
 }
 
 bool SessionManager::removeSession(int id)
@@ -150,12 +164,94 @@ bool SessionManager::removeSession(int id)
 
             QDir session_dir(m_working_dir_path);
                 session_dir.cd(s.name);
-                session_dir.removeRecursively();
-
+                session_dir.removeRecursively(); // TODO: проверять результат удаления папки
         endRemoveRows();
+
+        emit sSessionsRemoved({s.name});
+
+        return true;
+    }
+
+    m_last_error = tr("Wrong session id");
+    return false;
+}
+
+bool SessionManager::loadSession(const QString &name)
+{
+    int id = name.isEmpty() ? findSessionByName(m_last_session_name) : findSessionByName(name);
+    return loadSession(id);
+}
+
+bool SessionManager::loadSession(int id) {
+    if ( id > 0 && id < m_sessions.size() ) {
+        auto session_dir_path = QString(m_working_dir_path + "/" + m_sessions.at(id).name);
+
+        if ( load_session(session_dir_path) ) {
+            markLoaded(id);
+            return true;
+        }
+    }
+
+    m_last_error = tr("Wrong session id");
+    return false;
+}
+
+bool SessionManager::saveCurrentSession()
+{
+    if (m_sessions.empty())
+        return true;
+
+    auto session_dir_path = QString(m_working_dir_path + "/" + m_sessions.at(m_curr_session_id).name);
+    if ( save_session( session_dir_path ) ) {
+        m_sessions[m_curr_session_id].last_changed = QDateTime::currentDateTime();
+        return true;
     }
 
     return false;
+}
+
+bool SessionManager::importSession(const QString &path)
+{
+    QFileInfo file_info(path);
+    if ( file_info.exists() ) {
+        // 1 - проверить, что файл - архив
+
+        // 2 - распаковать во временную папку
+
+        // 3 - есть ли файл meta.json?
+
+        // 4 - скопировать данные в рабочий каталог
+
+        // 5 - создать сессию по метаинформации и добавить её в модель
+    }
+
+    m_last_error = tr("Import failed");
+    return false;
+}
+
+bool SessionManager::exportSession(const QString &name, const QString &path)
+{
+    return exportSession( findSessionByName(name), path );
+}
+
+bool SessionManager::exportSession(int id, const QString &path)
+{
+    if ( id > 0 && id < m_sessions.size() ) {
+        // 1 - создать архив с папкой и метаинформацией
+        // 2 - скопировать полученный архив по требуемому пути
+    }
+
+    return false;
+}
+
+void SessionManager::markLoaded(int id)
+{
+    if ( id > 0 && id < m_sessions.size() ) {
+        m_curr_session_id = id;
+        m_last_session_name = m_sessions[id].name;
+    }
+
+    return;
 }
 
 QString SessionManager::lastError() const

@@ -19,7 +19,7 @@ PluginManagerDialog::PluginManagerDialog(QWidget* parent)
     connectSignals();
 
     resize(640, 480);
-    setWindowTitle("Plugins");
+    setWindowTitle(tr("Plugins"));
 }
 
 void PluginManagerDialog::createGui()

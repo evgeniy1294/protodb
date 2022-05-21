@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "ProtodbSessionManager.h"
 
 #include <protodb/Worker.h>
 #include <protodb/plugins/PluginManager.h>
@@ -28,10 +29,19 @@ int main(int argc, char *argv[])
 
     Worker* worker = new Worker();
     MainWindow w(worker);
-    w.restoreState();
-    w.showMaximized();
+        w.restoreState();
+        w.showMaximized();
 
-    return a.exec();
+    // -------- TEST SESSIONS ---------
+    auto& manager = ProtodbSessionManager::instance();
+        manager.setWorkingDirectory("/tmp/protodb/sessions/");
+    // --------------------------------
+
+    int ret = a.exec();
+        manager.saveCurrentSession();
+        manager.saveCurrentState();
+
+    return ret;
 }
 
 #include <protodb/plugins/IOWidgetFactory.h>

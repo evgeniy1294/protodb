@@ -1,6 +1,9 @@
 #include "utils/JsonBaseUtils.h"
 
+#include <QString>
+#include <QJsonObject>
 #include <QJsonArray>
+#include <QFile>
 
 void to_json(nlohmann::json& j, const QString& str) {
     j = str.toStdString();
