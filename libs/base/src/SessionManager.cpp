@@ -92,6 +92,18 @@ bool SessionManager::saveCurrentState()
     return writeToFile(m_working_dir_path + "/sessions.json", json);
 }
 
+bool SessionManager::containsSession(const QString &name) const
+{
+    if (name.isEmpty())
+        return false;
+
+    for ( auto& s: qAsConst(m_sessions) ) {
+        if (s.name == name) return true;
+    }
+
+    return false;
+}
+
 bool SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
 {
     // Если имя не пустое и такая сессия уже существует не создавать новую сессию
@@ -158,6 +170,9 @@ bool SessionManager::removeSession(const QString &name)
 
 bool SessionManager::removeSession(int id)
 {
+    if ( m_sessions.empty() )
+        return false;
+
     if ( id >= 0 && id <= m_sessions.count() ) {
         beginRemoveRows(QModelIndex(), id, id);
             Session s = m_sessions.takeAt(id);
@@ -329,9 +344,11 @@ QVariant SessionManager::headerData(int section, Qt::Orientation orientation, in
 
 int SessionManager::findSessionByName(const QString &name) const
 {
-    for ( int i = 0; i < m_sessions.size(); i++ ) {
-        if (m_sessions[i].name == name) {
-            return i;
+    if ( !(name.isEmpty() || m_sessions.empty()) ) {
+        for ( int i = 0; i < m_sessions.size(); i++ ) {
+            if (m_sessions[i].name == name) {
+                return i;
+            }
         }
     }
 

@@ -28,6 +28,9 @@ public:
     // Сохранение данных в рабочий каталог
     bool saveCurrentState();
 
+    // Проверка наличия сессии
+    bool containsSession(const QString& name) const;
+
     // Создание новой сессии или копии другой сессии
     virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString()); //
 

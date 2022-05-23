@@ -7,7 +7,7 @@
 #include <protodb/Worker.h>
 #include <protodb/SequenceModel.h>
 #include <protodb/utils/JsonUtils.h>
-#include <protodb/gui/SessionManagerWidget.h>
+#include <protodb/gui/SessionManagerGui.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -51,7 +51,7 @@ void MainWindow::createGui()
     setCentralWidget(central_widget);
 
     m_plugin_manager_dialog = new PluginManagerDialog(this);
-    m_session_manager_dialog = new SessionManagerDialog(this);
+    m_session_manager_dialog = new SessionManagerGui(this);
         m_session_manager_dialog->setSessionManager(&ProtodbSessionManager::instance());
 }
 
