@@ -22,12 +22,14 @@ set( BaseHeaders
     include/protodb/plugins/IOWidget.h
     include/protodb/plugins/IOWidgetCreatorInterface.h
     include/protodb/plugins/IOWidgetFactory.h
+    include/protodb/gui/SessionManagerWidget.h
 )
 
 set( BaseSources
     src/JsonUtils.cpp
     src/MetaTypeUtils.cpp
     src/IOWidgetFactory.cpp
+    src/SessionManagerWidget.cpp
 )
 
 set( BaseResources

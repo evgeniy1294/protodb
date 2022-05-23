@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ProtodbSessionManager.h"
+#include <protodb/SessionManager.h>
 
 #include <QDialog>
 
@@ -18,6 +18,9 @@ public:
     SessionManagerDialog(QWidget* parent = nullptr);
    ~SessionManagerDialog() = default;
 
+    void setSessionManager(SessionManager* sm);
+    SessionManager* sessionManager() const;
+
 private:
     void create_gui();
     void create_connections();
@@ -26,6 +29,8 @@ private slots:
     void onDialogClicked(QAbstractButton* aBtn);
 
 private:
+    SessionManager* m_sm = nullptr;
+
     QDialogButtonBox* m_dialog_buttons;
     QTableView*   m_sessions_table;
     QCheckBox*    m_restore_chk;

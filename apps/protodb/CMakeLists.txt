@@ -34,7 +34,6 @@ set(SOURCES_LIST
     src/SequenceTableView.cpp
     src/SequenceTableWidget.cpp
     src/tool_bar.cpp
-    src/SessionManagerWidget.cpp
     src/ProtodbSessionManager.cpp
 )
 
@@ -59,7 +58,6 @@ set(HEADERS_LIST
     include/SequenceTableView.h
     include/SequenceTableWidget.h
     include/tool_bar.h
-    include/SessionManagerWidget.h
     include/ProtodbSessionManager.h
 )
 

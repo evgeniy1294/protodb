@@ -1,5 +1,4 @@
-#include "SessionManagerWidget.h"
-#include "ProtodbSessionManager.h"
+#include <protodb/gui/SessionManagerWidget.h>
 
 #include <QTableView>
 #include <QPushButton>
@@ -23,12 +22,6 @@ void SessionManagerDialog::create_gui()
     m_dialog_buttons = new QDialogButtonBox( QDialogButtonBox::Close );
 
     m_sessions_table = new QTableView;
-        m_sessions_table->setModel( &ProtodbSessionManager::instance() );
-        m_sessions_table->hideColumn(SessionManager::kColumnDescription);
-
-    QHeaderView* hh = m_sessions_table->horizontalHeader();
-        hh->setSectionResizeMode(SessionManager::kColumnName, QHeaderView::Stretch);
-        hh->setSectionResizeMode(SessionManager::kColumnLastChanged, QHeaderView::Stretch);
 
     m_restore_chk = new QCheckBox(tr("Restore last session"));
     m_create_btn = new QPushButton(tr("Create"));
@@ -74,4 +67,22 @@ void SessionManagerDialog::onDialogClicked(QAbstractButton* aBtn)
         default:
             break;
     }
+}
+
+void SessionManagerDialog::setSessionManager(SessionManager *sm)
+{
+    if (m_sm != sm) {
+        m_sm = sm;
+        m_sessions_table->setModel( sm );
+        m_sessions_table->hideColumn(SessionManager::kColumnDescription);
+
+        QHeaderView* hh = m_sessions_table->horizontalHeader();
+            hh->setSectionResizeMode(SessionManager::kColumnName, QHeaderView::Stretch);
+            hh->setSectionResizeMode(SessionManager::kColumnLastChanged, QHeaderView::Stretch);
+    }
+}
+
+SessionManager *SessionManagerDialog::sessionManager() const
+{
+    return m_sm;
 }

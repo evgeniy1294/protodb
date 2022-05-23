@@ -2,11 +2,12 @@
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
 #include "PluginManagerDialog.h"
-#include "SessionManagerWidget.h"
+#include "ProtodbSessionManager.h"
 
 #include <protodb/Worker.h>
 #include <protodb/SequenceModel.h>
 #include <protodb/utils/JsonUtils.h>
+#include <protodb/gui/SessionManagerWidget.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -51,6 +52,7 @@ void MainWindow::createGui()
 
     m_plugin_manager_dialog = new PluginManagerDialog(this);
     m_session_manager_dialog = new SessionManagerDialog(this);
+        m_session_manager_dialog->setSessionManager(&ProtodbSessionManager::instance());
 }
 
 void MainWindow::createDock()
