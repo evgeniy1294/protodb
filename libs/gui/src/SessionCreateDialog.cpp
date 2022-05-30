@@ -17,6 +17,24 @@ SessionCreateDialog::SessionCreateDialog(SessionManager* sm, QWidget *parent)
     create_connections();
 }
 
+void SessionCreateDialog::setSessionIndex(int idx)
+{
+    m_session_idx = idx;
+
+    if ( !m_create_mode ) {
+        auto name = m_sm->index(idx, SessionManager::kColumnName).data().toString();
+            m_name->setText(name);
+
+        auto desc = m_sm->index(idx, SessionManager::kColumnDescription).data().toString();
+            m_desc->setPlainText(desc);
+    }
+}
+
+int SessionCreateDialog::sessionIndex() const
+{
+    return m_session_idx;
+}
+
 void SessionCreateDialog::setCreateMode(bool on)
 {
     m_create_mode = on;

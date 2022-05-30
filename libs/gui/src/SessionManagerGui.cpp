@@ -32,21 +32,22 @@ void SessionManagerGui::create_gui()
         m_filter_le->setPlaceholderText( tr("Find session") );
 
     m_desc_browser   = new QTextBrowser();
-    m_dialog_buttons = new QDialogButtonBox( QDialogButtonBox::Close );
-    m_restore_chk = new QCheckBox(tr("Restore last session"));
+    m_close_btn = new QPushButton( tr("Close") );
     m_create_btn = new QPushButton(tr("Create"));
-    m_change_btn = new QPushButton(tr("Change"));
+    m_change_btn = new QPushButton(tr("Edit"));
     m_copy_btn = new QPushButton(tr("Copy"));
     m_rm_btn = new QPushButton(tr("Delete"));
-    m_select_btn = new QPushButton(tr("Select"));
+    m_select_btn = new QPushButton(tr("Switch to"));
 
     auto btn_layout = new QVBoxLayout;
         btn_layout->setAlignment(Qt::AlignTop);
+        btn_layout->addWidget(m_select_btn);
         btn_layout->addWidget(m_create_btn);
         btn_layout->addWidget(m_change_btn);
         btn_layout->addWidget(m_copy_btn);
         btn_layout->addWidget(m_rm_btn);
-        btn_layout->addWidget(m_select_btn);
+        btn_layout->addStretch(1);
+        btn_layout->addWidget(m_close_btn);
 
     auto stretch_layout = new QVBoxLayout;
         stretch_layout->addWidget(m_filter_le);
@@ -55,14 +56,10 @@ void SessionManagerGui::create_gui()
             stretch_layout->setStretch(1, 4);
         stretch_layout->addWidget(m_desc_browser);
             stretch_layout->setStretch(2, 1);
-        stretch_layout->addWidget(m_restore_chk);
-            stretch_layout->setStretch(3, 0);
-
 
     auto main_layout = new QGridLayout;
         main_layout->addLayout(stretch_layout, 0, 0, Qt::AlignLeft);
         main_layout->addLayout(btn_layout, 0, 1, Qt::AlignTop);
-        main_layout->addWidget(m_dialog_buttons, 1, 0, 1, 2);
 
     setLayout(main_layout);
 
@@ -72,27 +69,15 @@ void SessionManagerGui::create_gui()
 
 void SessionManagerGui::create_connections()
 {
-    connect(m_dialog_buttons, &QDialogButtonBox::clicked, this, &SessionManagerGui::onDialogClicked);
-
     connect(m_create_btn, &QPushButton::clicked, this, &SessionManagerGui::onCreateClicked);
     connect(m_change_btn, &QPushButton::clicked, this, &SessionManagerGui::onChangeClicked);
     connect(m_rm_btn, &QPushButton::clicked, this, &SessionManagerGui::onRmClicked);
-
     connect(m_filter_le, &QLineEdit::textChanged, m_proxy_model, &QSortFilterProxyModel::setFilterFixedString);
-}
+    connect(m_close_btn, &QPushButton::clicked, this, [this]() {
+        hide();
+    });
 
-
-void SessionManagerGui::onDialogClicked(QAbstractButton* aBtn)
-{
-    switch( m_dialog_buttons->standardButton( aBtn ) )
-    {
-        case QDialogButtonBox::Close:
-            hide();
-            break;
-
-        default:
-            break;
-    }
+    connect(m_sessions_table->selectionModel(), &QItemSelectionModel::selectionChanged, this, &SessionManagerGui::onSelectionChanged);
 }
 
 void SessionManagerGui::onCreateClicked()
@@ -107,9 +92,13 @@ void SessionManagerGui::onChangeClicked()
 {
     SessionCreateDialog dialog(m_sm);
         dialog.setChangeMode();
+        dialog.setSessionIndex(
+            m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row()
+        );
+
         dialog.exec();
 
-        return;
+    return;
 }
 
 void SessionManagerGui::onRmClicked()
@@ -144,6 +133,16 @@ void SessionManagerGui::onRmClicked()
 
             msgbox.exec();
         }
+    }
+}
+
+void SessionManagerGui::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    if (selected.count() > 0) {
+        auto index = m_proxy_model->index(selected.indexes().first().row(), SessionManager::kColumnDescription);
+        auto text  = index.data().toString();
+
+        m_desc_browser->setPlainText(text);
     }
 }
 

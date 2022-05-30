@@ -8,6 +8,7 @@
 
 SessionManager::SessionManager(QObject *parent)
     : QAbstractTableModel(parent)
+    , m_user_data(nlohmann::json::object())
 {
 
 }
@@ -29,54 +30,42 @@ bool SessionManager::setWorkingDirectory(const QString &path)
     nlohmann::json sessions;
         readFromFile(path + "/sessions.json", sessions);
 
-    if ( sessions.contains("last") ) {
-        if ( sessions["last"].is_string() ) {
-            m_last_session_name = sessions["last"].get<QString>();
-        }
-    }
-
     if ( !sessions.contains("sessions") ) {
         return true;
     }
 
-     if ( !sessions["sessions"].is_array() ) {
-         return true;
-     }
-
-     m_sessions.clear();
-
-     for (auto& session: sessions["sessions"]) {
-         Session s;
-         if ( session.contains("description") ) {
-             if ( session["description"].is_string() ) {
-                s.description = session["description"].get<QString>();
-             }
-         }
-
-         if ( session.contains("last_changed") ) {
-             if ( session["last_changed"].is_string() ) {
-                s.last_changed = QDateTime::fromString( session["last_changed"].get<QString>(), "dd.MM.yyyy hh:mm:ss" );
-             }
-         }
-
-         if ( session.contains("name") ) {
-            if ( session["name"].is_string() ) {
-                s.name = session["name"].get<QString>();
-
-                beginInsertRows(QModelIndex(), rowCount(), rowCount());  // Может быть баг с индексами, проверить
-                    m_sessions.push_back(s);
-                endInsertRows();
-             }
-         }
+    if ( !sessions["sessions"].is_array() ) {
+        return true;
     }
 
-     return true;
+    m_current_session_name = sessions.value("current", QString());
+    m_user_data            = sessions.value("user_data", nlohmann::json::object());
+
+    m_sessions.clear();
+    for (auto& session: sessions["sessions"]) {
+        Session s;
+
+        s.description = session.value("description", QString());
+        s.last_changed = QDateTime::fromString( session.value("last_changed", QString()), "dd.MM.yyyy hh:mm:ss" );
+
+        if ( session.contains("name") ) {
+           if ( session["name"].is_string() ) {
+               s.name = session["name"].get<QString>();
+
+               beginInsertRows(QModelIndex(), rowCount(), rowCount());  // Может быть баг с индексами, проверить
+                   m_sessions.push_back(s);
+               endInsertRows();
+            }
+        }
+    }
+
+    return true;
 }
 
 bool SessionManager::saveCurrentState()
 {
     nlohmann::json json;
-        json["last"] = m_last_session_name;
+        json["current"] = m_current_session_name;
 
     nlohmann::json sessions = nlohmann::json::array();
     for (auto& s: m_sessions) {
@@ -88,7 +77,9 @@ bool SessionManager::saveCurrentState()
         sessions.push_back(session);
     }
 
-    json["sessions"] = sessions;
+    json["sessions"]  = sessions;
+    json["user_data"] = m_user_data;
+
     return writeToFile(m_working_dir_path + "/sessions.json", json);
 }
 
@@ -193,7 +184,7 @@ bool SessionManager::removeSession(int id)
 
 bool SessionManager::loadSession(const QString &name)
 {
-    int id = name.isEmpty() ? findSessionByName(m_last_session_name) : findSessionByName(name);
+    int id = name.isEmpty() ? findSessionByName(m_current_session_name) : findSessionByName(name);
     return loadSession(id);
 }
 
@@ -259,11 +250,21 @@ bool SessionManager::exportSession(int id, const QString &path)
     return false;
 }
 
+void SessionManager::userData(nlohmann::json &json) const
+{
+    json = m_user_data;
+}
+
+void SessionManager::setUserData(const nlohmann::json& json)
+{
+    m_user_data = json;
+}
+
 void SessionManager::markLoaded(int id)
 {
     if ( id > 0 && id < m_sessions.size() ) {
         m_curr_session_id = id;
-        m_last_session_name = m_sessions[id].name;
+        m_current_session_name = m_sessions[id].name;
     }
 
     return;

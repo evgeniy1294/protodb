@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/utils/JsonBaseUtils.h>
+
 #include <QAbstractTableModel>
 #include <QDateTime>
 #include <QFileInfoList>
@@ -52,6 +54,10 @@ public:
     bool exportSession(const QString& name, const QString& path);
     bool exportSession(int id, const QString& path);
 
+    // Пользовательские данные
+    void userData(nlohmann::json& json) const;
+    void setUserData(const nlohmann::json& json);
+
     QString lastError() const;
 
     // ------------- [ Table Model Interface ] ---------------- //
@@ -85,9 +91,11 @@ protected:
     virtual bool save_session(const QString& path_to_folder) = 0;
 
 protected:
+    int m_curr_session_id;
     QString m_last_error;
     QString m_working_dir_path;
-    QString m_last_session_name;
-    int m_curr_session_id;
+    QString m_current_session_name;
     QList<Session> m_sessions;
+
+    nlohmann::json m_user_data;
 };

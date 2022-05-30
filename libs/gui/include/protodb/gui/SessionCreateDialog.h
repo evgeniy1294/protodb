@@ -16,6 +16,9 @@ public:
     SessionCreateDialog(SessionManager* sm, QWidget* parent = nullptr);
    ~SessionCreateDialog() = default;
 
+    void setSessionIndex(int idx);
+    int sessionIndex() const;
+
     void setCreateMode(bool on = true);
     bool isCreateMode() const;
 
@@ -32,6 +35,7 @@ private:
 
 private:
     SessionManager* m_sm;
+    int  m_session_idx;
     bool m_create_mode;
 
     QDialogButtonBox* m_dialog_buttons;

@@ -27,15 +27,16 @@ int main(int argc, char *argv[])
     testPlugins();
     //----------------------------------
 
-    Worker* worker = new Worker();
-    MainWindow w(worker);
-        w.restoreState();
-        w.showMaximized();
 
     // -------- TEST SESSIONS ---------
     auto& manager = ProtodbSessionManager::instance();
         manager.setWorkingDirectory("/tmp/protodb/sessions/");
     // --------------------------------
+
+    Worker* worker = new Worker();
+    MainWindow w(worker);
+        w.restoreState();
+        w.showMaximized();
 
     int ret = a.exec();
         manager.saveCurrentSession();

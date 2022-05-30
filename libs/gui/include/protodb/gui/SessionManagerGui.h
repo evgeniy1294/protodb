@@ -12,6 +12,7 @@ class QCheckBox;
 class QTextBrowser;
 class QLineEdit;
 class QSortFilterProxyModel;
+class QItemSelection;
 
 class SessionManagerGui: public QDialog
 {
@@ -29,20 +30,19 @@ private:
     void create_connections();
 
 private slots:
-    void onDialogClicked(QAbstractButton* aBtn);
     void onCreateClicked();
     void onChangeClicked();
     void onRmClicked();
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
     SessionManager* m_sm = nullptr;
 
     QSortFilterProxyModel* m_proxy_model;
 
-    QDialogButtonBox* m_dialog_buttons;
+    QPushButton* m_close_btn;
     QTextBrowser* m_desc_browser;
     QTableView*   m_sessions_table;
-    QCheckBox*    m_restore_chk;
     QLineEdit*    m_filter_le;
     QPushButton*  m_create_btn;
     QPushButton*  m_change_btn;
