@@ -1,10 +1,15 @@
 #include "protodb/SessionManager.h"
 
 #include "protodb/utils/JsonBaseUtils.h"
+#include "protodb/utils/ziputils.h"
+
+#include <zip.h>
 
 #include <QDir>
-#include <QStandardPaths>
 #include <QCoreApplication>
+#include <QTemporaryDir>
+
+#include <filesystem>
 
 SessionManager::SessionManager(QObject *parent)
     : QAbstractTableModel(parent)
@@ -99,7 +104,7 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
 {
     // Если имя не пустое и такая сессия уже существует не создавать новую сессию
     if ( !name.isEmpty() ) {
-        if (findSessionByName(name) >= 0) {
+        if ( containsSession(name) ) {
             m_last_error = tr("This session already exist");
             return false;
         }
@@ -242,9 +247,47 @@ bool SessionManager::exportSession(const QString &name, const QString &path)
 
 bool SessionManager::exportSession(int id, const QString &path)
 {
-    if ( id > 0 && id < m_sessions.size() ) {
-        // 1 - создать архив с папкой и метаинформацией
-        // 2 - скопировать полученный архив по требуемому пути
+    if ( id >= 0 && id < m_sessions.size() ) {
+        // 0 - подготовить метаинформацию
+        auto s = m_sessions.at(id);
+        nlohmann::json meta;
+            nlohmann::json session;
+                session["name"]         = s.name;
+                session["description"]  = s.description;
+
+            meta["application"] = QCoreApplication::applicationName();
+            meta["version"]     = QCoreApplication::applicationVersion();
+            meta["session"]     = session;
+
+        QTemporaryDir tmp_dir;
+        if ( tmp_dir.isValid() ) {
+            // 1 - создать во временной директории файл с метаинформацией
+            if ( !writeToFile(tmp_dir.path() + "/meta.json", meta) ) {
+                return false;
+            }
+
+            // 2 - скопировать папку сессии во временную директорию
+            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+
+            if ( std::filesystem::exists(session_dir) ) {
+                std::filesystem::path tmp_session_dir  = tmp_dir.filePath(s.name).toStdString();
+
+                std::error_code err;
+                std::filesystem::copy(session_dir, tmp_session_dir, err);
+
+                if (err.value() != 0) {
+                    return false;
+                }
+            }
+
+            // 3 - создать из временной папки архив
+            zipDirectory(tmp_dir.path(), path);
+
+
+            // 4 - переместить полученный архив по требуемому пути
+        }
+
+        return true;
     }
 
     return false;

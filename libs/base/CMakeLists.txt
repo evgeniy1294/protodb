@@ -27,6 +27,7 @@ set( BaseHeaders
     include/protodb/utils/SolByteArrayWrapper.h
     include/protodb/utils/FsIcon.h
     include/protodb/utils/JsonKeeper.h
+    include/protodb/utils/ziputils.h
     include/protodb/plugins/IODeviceCreatorInterface.h
     include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
@@ -52,6 +53,7 @@ set( BaseSources
     src/SolByteArrayWrapper.cpp
     src/Worker.cpp
     src/IODeviceFactory.cpp
+    src/ziputils.cpp
 )
 
 set(SOURCES_LIST
@@ -79,6 +81,7 @@ target_link_libraries(${TARGET}
     PRIVATE
 
     Qt5::Core
+    libzip
     ${LUA_LIBRARIES}
 )
 

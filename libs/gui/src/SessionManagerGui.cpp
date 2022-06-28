@@ -91,7 +91,7 @@ void SessionManagerGui::onCreateClicked()
 void SessionManagerGui::onChangeClicked()
 {
     SessionCreateDialog dialog(m_sm);
-        dialog.setChangeMode();
+        dialog.setMode( SessionCreateDialog::EditMode );
         dialog.setSessionIndex(
             m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row()
         );

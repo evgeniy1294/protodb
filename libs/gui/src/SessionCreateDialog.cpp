@@ -11,7 +11,7 @@
 SessionCreateDialog::SessionCreateDialog(SessionManager* sm, QWidget *parent)
     : QDialog(parent)
     , m_sm(sm)
-    , m_create_mode(true)
+    , m_mode(CreateMode)
 {
     create_gui();
     create_connections();
@@ -21,7 +21,7 @@ void SessionCreateDialog::setSessionIndex(int idx)
 {
     m_session_idx = idx;
 
-    if ( !m_create_mode ) {
+    if ( !m_mode ) {
         auto name = m_sm->index(idx, SessionManager::kColumnName).data().toString();
             m_name->setText(name);
 
@@ -35,34 +35,24 @@ int SessionCreateDialog::sessionIndex() const
     return m_session_idx;
 }
 
-void SessionCreateDialog::setCreateMode(bool on)
+void SessionCreateDialog::setMode(Mode mode)
 {
-    m_create_mode = on;
+    m_mode = mode;
 
-    if (on)
+    if (m_mode == CreateMode)
         setWindowTitle(tr("Create session"));
     else
-        setWindowTitle(tr("Change session"));
+        setWindowTitle(tr("Edit session"));
 }
 
 bool SessionCreateDialog::isCreateMode() const
 {
-    return m_create_mode;
+    return m_mode == CreateMode;
 }
 
-void SessionCreateDialog::setChangeMode(bool on)
+bool SessionCreateDialog::isEditMode() const
 {
-    m_create_mode = !on;
-
-    if (on)
-        setWindowTitle(tr("Change session"));
-    else
-        setWindowTitle(tr("Create session"));
-}
-
-bool SessionCreateDialog::isChangeMode() const
-{
-    return !m_create_mode;
+    return m_mode == EditMode;
 }
 
 void SessionCreateDialog::create_gui()
@@ -108,20 +98,26 @@ void SessionCreateDialog::onDialogClicked(QAbstractButton* aBtn)
             close();
             break;
 
-        case QDialogButtonBox::Ok:
-            if ( m_sm->containsSession(m_name->text()) ) {
-                m_error_label->setText( tr("Session with that name is already created") );
-                break;
-            }
+        case QDialogButtonBox::Ok: {
+            if (m_mode == CreateMode) {
+                if ( m_sm->containsSession(m_name->text()) ) {
+                    m_error_label->setText( tr("Session with that name is already created") );
+                    break;
+                }
 
-            if ( m_sm->createSession( m_name->text(), m_desc->toPlainText() ) ) {
-                m_error_label->setText("");
-                setResult(QDialog::Accepted);
-                close();
+                if ( m_sm->createSession( m_name->text(), m_desc->toPlainText() ) ) {
+                    m_error_label->setText("");
+                    setResult(QDialog::Accepted);
+                    close();
+                }
+                else {
+                    m_error_label->setText( m_sm->lastError() );
+                }
             }
             else {
-                m_error_label->setText( m_sm->lastError() );
+                // Редактирование сессии
             }
+        } break;
 
         default:
             break;
@@ -130,8 +126,11 @@ void SessionCreateDialog::onDialogClicked(QAbstractButton* aBtn)
 
 void SessionCreateDialog::onNameTextChanged(const QString &text)
 {
-    if (m_sm->containsSession(text)) {
-        m_name->setStyleSheet("QLineEdit { background-color: #FFCECE }");
+    auto idx = m_sm->findSessionByName(text);
+    if (idx >= 0) {
+        if (m_session_idx != idx) {
+            m_name->setStyleSheet("QLineEdit { background-color: #FFCECE }");
+        }
     }
     else {
         m_name->setStyleSheet("QLineEdit { background-color: white }");

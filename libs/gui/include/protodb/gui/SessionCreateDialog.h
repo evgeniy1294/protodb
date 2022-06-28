@@ -13,17 +13,17 @@ class SessionCreateDialog: public QDialog
 {
     Q_OBJECT
 public:
+    enum Mode { CreateMode, EditMode };
+
     SessionCreateDialog(SessionManager* sm, QWidget* parent = nullptr);
    ~SessionCreateDialog() = default;
 
     void setSessionIndex(int idx);
     int sessionIndex() const;
 
-    void setCreateMode(bool on = true);
+    void setMode( Mode mode );
     bool isCreateMode() const;
-
-    void setChangeMode(bool on = true);
-    bool isChangeMode() const;
+    bool isEditMode() const;
 
 private slots:
     void onDialogClicked(QAbstractButton* aBtn);
@@ -36,7 +36,7 @@ private:
 private:
     SessionManager* m_sm;
     int  m_session_idx;
-    bool m_create_mode;
+    Mode m_mode;
 
     QDialogButtonBox* m_dialog_buttons;
     QLineEdit* m_name;

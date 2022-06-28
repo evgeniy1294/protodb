@@ -32,6 +32,7 @@ public:
 
     // Проверка наличия сессии
     bool containsSession(const QString& name) const;
+    int findSessionByName(const QString& name) const;
 
     // Создание новой сессии или копии другой сессии
     virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString()); //
@@ -80,8 +81,6 @@ protected:
         QString description;
         QDateTime last_changed;
     };
-
-    int findSessionByName(const QString& name) const;
 
 protected:
     // Отвечает за непосредственную загрузку сессии, для каждого приложения пишется индивидуально
