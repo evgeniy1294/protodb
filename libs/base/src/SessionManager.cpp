@@ -280,11 +280,8 @@ bool SessionManager::exportSession(int id, const QString &path)
                 }
             }
 
-            // 3 - создать из временной папки архив
+            // 3 - создать из временной папки архив по требуемому пути
             zipDirectory(tmp_dir.path(), path);
-
-
-            // 4 - переместить полученный архив по требуемому пути
         }
 
         return true;

@@ -11,6 +11,7 @@
 #include <QDebug>
 
 void testPlugins();
+void testZip();
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,9 @@ int main(int argc, char *argv[])
     PluginManager::instance().setMainDirectory(QApplication::applicationDirPath() + "/plugins");
     PluginManager::instance().setManualInstallDirectory("/tmp/test/");
     PluginManager::instance().loadPlugins(QMap<QString, bool>());
+
+    //---------- TEST ZIP --------------
+    testZip();
 
     //---------- TEST PLUGINS ----------
     testPlugins();
@@ -61,4 +65,17 @@ void testPlugins() {
         factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
     }
 
+}
+
+#include <iostream>
+#include <protodb/utils/ziputils.h>
+void testZip() {
+    std::filesystem::path archive = "/tmp/archive.zip";
+    std::filesystem::path source  = "/tmp/zip/";
+    std::filesystem::path dest    = "/tmp/zip2/";
+
+    if ( !zipDirectory(source, archive) )
+        std::cout << "Zip success!!!";
+
+    unzipDirectory(archive, dest);
 }

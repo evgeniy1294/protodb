@@ -76,12 +76,13 @@ generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${T
 # ------------ [ Depends ] ------------
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(libzip REQUIRED)
 target_link_libraries(${TARGET}
 
     PRIVATE
 
     Qt5::Core
-    libzip
+    libzip::zip
     ${LUA_LIBRARIES}
 )
 
