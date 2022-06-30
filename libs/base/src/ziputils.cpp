@@ -16,32 +16,35 @@ static bool is_zip_directory(struct zip_stat& zs) {
     return (length > 0) && zs.name[length-1] == '/';
 }
 
-static void zip_walk_directory(zip_t* zipper, const std::filesystem::path &dir, const std::filesystem::path& relative) {
+static bool zip_walk_directory(zip_t* zipper, const std::filesystem::path &dir, const std::filesystem::path& relative) {
 
     for (const fs::directory_entry& entry: fs::directory_iterator(dir)) {
         if (is_directory(entry)) {
             if (zip_dir_add(zipper, fs::relative(entry.path(), relative).c_str(), ZIP_FL_ENC_UTF_8) < 0) {
                 std::cerr << "Failed to add directory to zip: " + std::string(zip_strerror(zipper));
-                continue;
+                return false;
             }
 
-            zip_walk_directory(zipper, entry.path(), relative);
+            if (!zip_walk_directory(zipper, entry.path(), relative)) {
+                return false;
+            }
         }
         else {
             zip_source_t *source = zip_source_file(zipper, entry.path().c_str(), 0, 0);
             if (source == nullptr) {
                 std::cerr << "Failed to add file to zip: " + std::string(zip_strerror(zipper));
-                continue;
+                return false;
             }
 
             if (zip_file_add(zipper, fs::relative(entry.path(), relative).c_str(), source, ZIP_FL_ENC_UTF_8 | ZIP_FL_OVERWRITE) < 0) {
                 zip_source_free(source);
                 std::cerr << "Failed to add file to zip: " + std::string(zip_strerror(zipper));
+                return false;
             }
         }
     }
 
-    return;
+    return true;
 }
 
 bool zipDirectory(const QString &dir, const QString &zip)
@@ -76,23 +79,27 @@ bool zipDirectory(const fs::path &dir, const fs::path &zip)
         return false;
     }
 
-    zip_walk_directory(zipper, dir, dir);
+    bool ret = zip_walk_directory(zipper, dir, dir);
     zip_close(zipper);
 
-    return true;
+    if (!ret) {
+        fs::remove(zip);
+    }
+
+    return ret;
 }
 
-bool unzipDirectory(const QString &zip, const QString &dir)
+bool unzipToDirectory(const QString &zip, const QString &dir)
 {
-    return unzipDirectory(fs::path(zip.toStdString()), fs::path(dir.toStdString()));
+    return unzipToDirectory(fs::path(zip.toStdString()), fs::path(dir.toStdString()));
 }
 
-bool unzipDirectory(const std::string &zip, const std::string &dir)
+bool unzipToDirectory(const std::string &zip, const std::string &dir)
 {
-    return unzipDirectory(fs::path(zip), fs::path(dir));
+    return unzipToDirectory(fs::path(zip), fs::path(dir));
 }
 
-bool unzipDirectory(const std::filesystem::path& zip, const std::filesystem::path& dir)
+bool unzipToDirectory(const std::filesystem::path& zip, const std::filesystem::path& dir)
 {
     if ( !std::filesystem::exists(zip) ) {
         std::cerr << "Failed zip directory: directory is not exists" << std::endl;
@@ -109,8 +116,8 @@ bool unzipDirectory(const std::filesystem::path& zip, const std::filesystem::pat
     }
 
     zip_file* zf;
-    char buf[100];
     struct zip_stat zs;
+    char buf[100]; bool ok = true;
     for (int i = 0; i < zip_get_num_entries(za, 0); i++) {
         if ( zip_stat_index(za, i,0, &zs) == 0 ) {
 
@@ -121,6 +128,7 @@ bool unzipDirectory(const std::filesystem::path& zip, const std::filesystem::pat
                 zf = zip_fopen_index(za, i, 0);
                 if (!zf) {
                     std::cerr << "Can't unzip file: " << zs.name;
+                    ok = false; break;
                 }
 
                 fs::path file_path = dir/zs.name;
@@ -129,13 +137,14 @@ bool unzipDirectory(const std::filesystem::path& zip, const std::filesystem::pat
                 std::ofstream ofs(file_path);
                 if (!ofs.is_open()) {
                     std::cerr << "File not created: " << file_path << std::endl;
+                    ok = false; break;
                 }
                 std::size_t sum = 0;
                 while (sum != zs.size) {
                     size_t len = zip_fread(zf, buf, sizeof(buf));
                     if (len < 0) {
                         std::cerr << "Can't read zip-file: " << zs.name;
-                        break;
+                        ok = false; break;
                     }
                     ofs.write(buf, len);
                     sum += len;
@@ -146,7 +155,13 @@ bool unzipDirectory(const std::filesystem::path& zip, const std::filesystem::pat
         }
     }
 
-    return true;
+    zip_close(za);
+
+    if (!ok) {
+        fs::remove_all(dir);
+    }
+
+    return ok;
 }
 
 

@@ -24,13 +24,9 @@ int main(int argc, char *argv[])
     PluginManager::instance().setManualInstallDirectory("/tmp/test/");
     PluginManager::instance().loadPlugins(QMap<QString, bool>());
 
-    //---------- TEST ZIP --------------
-    testZip();
-
     //---------- TEST PLUGINS ----------
     testPlugins();
     //----------------------------------
-
 
     // -------- TEST SESSIONS ---------
     auto& manager = ProtodbSessionManager::instance();
@@ -65,17 +61,4 @@ void testPlugins() {
         factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
     }
 
-}
-
-#include <iostream>
-#include <protodb/utils/ziputils.h>
-void testZip() {
-    std::filesystem::path archive = "/tmp/archive.zip";
-    std::filesystem::path source  = "/tmp/zip/";
-    std::filesystem::path dest    = "/tmp/zip2/";
-
-    if ( !zipDirectory(source, archive) )
-        std::cout << "Zip success!!!";
-
-    unzipDirectory(archive, dest);
 }
