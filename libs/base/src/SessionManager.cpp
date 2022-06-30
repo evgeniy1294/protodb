@@ -169,14 +169,21 @@ bool SessionManager::removeSession(int id)
     if ( m_sessions.empty() )
         return false;
 
-    if ( id >= 0 && id <= m_sessions.count() ) {
-        beginRemoveRows(QModelIndex(), id, id);
-            Session s = m_sessions.takeAt(id);
+    if ( id >= 0 && id < m_sessions.count() ) {
+            Session s = m_sessions.at(id);
 
-            QDir session_dir(m_working_dir_path);
-                session_dir.cd(s.name);
-                session_dir.removeRecursively(); // TODO: проверять результат удаления папки
-        endRemoveRows();
+            std::error_code err;
+            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+                std::filesystem::remove_all(session_dir, err);
+
+            if (err) {
+                m_last_error = tr("Can't remove session: ") + QString(err.message().c_str());
+            }
+            else {
+                beginRemoveRows(QModelIndex(), id, id);
+                    m_sessions.removeAt(id);
+                endRemoveRows();
+            }
 
         emit sSessionsRemoved({s.name});
 
@@ -223,21 +230,45 @@ bool SessionManager::saveCurrentSession()
 
 bool SessionManager::importSession(const QString &path)
 {
-    QFileInfo file_info(path);
-    if ( file_info.exists() ) {
-        // 1 - проверить, что файл - архив
+    std::filesystem::path fp = path.toStdString();
 
-        // 2 - распаковать во временную папку
-
-        // 3 - есть ли файл meta.json?
-
-        // 4 - скопировать данные в рабочий каталог
-
-        // 5 - создать сессию по метаинформации и добавить её в модель
+    if ( !std::filesystem::exists(fp) ) {
+        m_last_error = tr("Import session failed: archive not exists");
+        return false;
     }
 
-    m_last_error = tr("Import failed");
-    return false;
+    // 1 - проверить, что файл - архив
+    if (fp.extension() != ".zip") {
+        m_last_error = tr("Import session failed: this file is not supported");
+        return false;
+    }
+
+    // 2 - распаковать во временную папку
+    std::filesystem::path tmp = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
+    std::filesystem::create_directory(tmp);
+
+    if ( unzipToDirectory( tmp, std::filesystem::path(path.toStdString()) ) ) {
+        m_last_error = tr("Import session failed: unzip failed");
+        return false;
+    }
+
+    // 3 - есть ли файл meta.json?
+    std::filesystem::path meta_path = tmp / "meta.json";
+    if (std::filesystem::exists(meta_path)) {
+        nlohmann::json meta;
+        if ( readFromFile(meta_path.c_str(), meta) ) {
+            // 4 - Проверить метаинформацию
+            // 5 - создать сессию по метаинформации и добавить её в модель
+            // 6 - скопировать данные в рабочий каталог
+        }
+    }
+    else {
+        m_last_error = tr("Import session failed: session struct is broken");
+        return false;
+    }
+
+
+    return true;
 }
 
 bool SessionManager::exportSession(const QString &name, const QString &path)
@@ -247,8 +278,22 @@ bool SessionManager::exportSession(const QString &name, const QString &path)
 
 bool SessionManager::exportSession(int id, const QString &path)
 {
+    if ( m_sessions.empty() ) {
+        m_last_error = tr("Export session failed: no session");
+        return false;
+    }
+
+    if ( id < 0 && id >= m_sessions.count() ) {
+        m_last_error = tr("Export session failed: select session");
+        return false;
+    }
+
+    if (path.isEmpty()) {
+        m_last_error = tr("Export session failed: target path is incorrect");
+        return false;
+    }
+
     if ( id >= 0 && id < m_sessions.size() ) {
-        // 0 - подготовить метаинформацию
         auto s = m_sessions.at(id);
         nlohmann::json meta;
             nlohmann::json session;
@@ -259,18 +304,18 @@ bool SessionManager::exportSession(int id, const QString &path)
             meta["version"]     = QCoreApplication::applicationVersion();
             meta["session"]     = session;
 
-        QTemporaryDir tmp_dir;
-        if ( tmp_dir.isValid() ) {
-            // 1 - создать во временной директории файл с метаинформацией
-            if ( !writeToFile(tmp_dir.path() + "/meta.json", meta) ) {
+        std::filesystem::path tmp = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
+        std::filesystem::create_directory(tmp);
+
+        if ( std::filesystem::exists(tmp) ) {
+            if ( !writeToFile( QString(tmp.c_str()) + "/meta.json", meta) ) {
                 return false;
             }
 
-            // 2 - скопировать папку сессии во временную директорию
             std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
 
             if ( std::filesystem::exists(session_dir) ) {
-                std::filesystem::path tmp_session_dir  = tmp_dir.filePath(s.name).toStdString();
+                std::filesystem::path tmp_session_dir  = tmp / s.name.toStdString();
 
                 std::error_code err;
                 std::filesystem::copy(session_dir, tmp_session_dir, err);
@@ -280,8 +325,8 @@ bool SessionManager::exportSession(int id, const QString &path)
                 }
             }
 
-            // 3 - создать из временной папки архив по требуемому пути
-            zipDirectory(tmp_dir.path(), path);
+            zipDirectory(tmp, std::filesystem::path(path.toStdString()));
+            std::filesystem::remove_all(tmp);
         }
 
         return true;
