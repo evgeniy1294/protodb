@@ -5,9 +5,9 @@
 
 #include <zip.h>
 
-#include <QDir>
-#include <QCoreApplication>
-#include <QTemporaryDir>
+#include <QApplication>
+#include <QUuid>
+#include <QFont>
 
 #include <filesystem>
 
@@ -24,8 +24,12 @@ bool SessionManager::setWorkingDirectory(const QString &path)
         return true;
     }
 
-    if ( !QDir(path).exists() ) {
-        if ( !QDir().mkdir(path) ) {
+    std::filesystem::path working_dir = path.toStdString();
+    if (!std::filesystem::exists(working_dir)) {
+        std::error_code ec;
+        std::filesystem::create_directory(working_dir, ec);
+
+        if (ec) {
             return false;
         }
     }
@@ -76,7 +80,7 @@ bool SessionManager::saveCurrentState()
     for (auto& s: m_sessions) {
         nlohmann::json session;
             session["name"]         = s.name;
-            session["last_changed"] = s.last_changed.toString();
+            session["last_changed"] = s.last_changed.toString("dd.MM.yyyy hh:mm:ss");
             session["description"]  = s.description;
 
         sessions.push_back(session);
@@ -102,49 +106,32 @@ bool SessionManager::containsSession(const QString &name) const
 
 bool SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
 {
-    // Если имя не пустое и такая сессия уже существует не создавать новую сессию
-    if ( !name.isEmpty() ) {
-        if ( containsSession(name) ) {
-            m_last_error = tr("This session already exist");
-            return false;
-        }
-    }
-
     Session s;
-        s.name = name;
+        s.name = getUniqueSessionName(name);
         s.description  = description;
         s.last_changed = QDateTime::currentDateTime();
 
-    // Если имя пустое, подобрать значение по умолчанию
-    if ( s.name.isEmpty() ) {
-        s.name = "new session";
-
-        for (int i = 1; findSessionByName(s.name) >= 0; i++) {
-            s.name = QString("new session(%1)").arg(i);
-            if (i > 255) {
-                m_last_error = tr("Can't create session");
-                return false;
-            }
-        }
+    if (s.name.isEmpty()) {
+        m_last_error = tr("Can't create session");
+        return false;
     }
 
-    QDir session_dir( m_working_dir_path );
-        if ( !session_dir.mkdir(s.name) ) {
-            m_last_error = tr("Can't create session");
-            return false;
-        }
-        session_dir.cd(s.name);
+    std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+    std::filesystem::create_directory(session_dir);
 
     if ( !origin.isEmpty() ) {
         int id = findSessionByName(origin);
         if (id >= 0) {
-            QDir origin_dir(m_working_dir_path + "/" + m_sessions.at(id).name);
+            std::filesystem::path origin_dir = (m_working_dir_path + "/" + m_sessions.at(id).name).toStdString();
 
-            if ( origin_dir.exists() ) {
-                auto origin_entry = origin_dir.entryInfoList({"*.json"});
+            if ( std::filesystem::exists(origin_dir) ) {
+                std::error_code ec;
+                std::filesystem::copy(origin_dir, session_dir, std::filesystem::copy_options::recursive, ec);
 
-                for (auto& file_info: origin_entry) {
-                    QFile::copy(file_info.absoluteFilePath(), session_dir.absolutePath() + "/" + file_info.fileName());
+                if (ec) {
+                    std::filesystem::remove_all(session_dir);
+                    m_last_error = tr("Can't create session");
+                    return false;
                 }
             }
         }
@@ -157,6 +144,39 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
     emit sSessionsAdded({s.name});
 
     return true;
+}
+
+bool SessionManager::renameSession(const QString& curr_name, const QString& new_name)
+{
+    int idx = findSessionByName(curr_name);
+    return renameSession(idx, new_name);
+}
+
+bool SessionManager::renameSession(int id, const QString& name)
+{
+    if ( id >= 0 && id < m_sessions.count() ) {
+        auto& s = m_sessions[id];
+
+        std::filesystem::path old_p = (m_working_dir_path + "/" + s.name).toStdString();
+        std::filesystem::path new_p = (m_working_dir_path + "/" + name).toStdString();
+
+        std::error_code ec;
+        std::filesystem::rename(old_p, new_p, ec);
+
+        if (ec) {
+            m_last_error = tr("Can't rename session %1").arg(s.name);
+            return false;
+        }
+
+        s.name = name;
+        s.last_changed = QDateTime::currentDateTime();
+
+        emit dataChanged( index(id, 0), index(id, kColumnLastChanged), {Qt::EditRole} );
+
+        return true;
+    }
+
+    return false;
 }
 
 bool SessionManager::removeSession(const QString &name)
@@ -244,10 +264,10 @@ bool SessionManager::importSession(const QString &path)
     }
 
     // 2 - распаковать во временную папку
-    std::filesystem::path tmp = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
+    std::filesystem::path tmp = std::filesystem::temp_directory_path() / QUuid::createUuid().toString().toStdString();
     std::filesystem::create_directory(tmp);
 
-    if ( unzipToDirectory( tmp, std::filesystem::path(path.toStdString()) ) ) {
+    if ( !unzipToDirectory( fp, tmp) ) {
         m_last_error = tr("Import session failed: unzip failed");
         return false;
     }
@@ -258,16 +278,89 @@ bool SessionManager::importSession(const QString &path)
         nlohmann::json meta;
         if ( readFromFile(meta_path.c_str(), meta) ) {
             // 4 - Проверить метаинформацию
+            if ( QCoreApplication::applicationName() != meta.value( "application", QString("Unknown") ) ) {
+                m_last_error = tr("Import session failed: session is not supported");
+                std::filesystem::remove_all(tmp);
+
+                return false;
+            }
+
+            if ( !sessionSupported(meta) ) {
+                m_last_error = tr("Import session failed: this session is not supported");
+                std::filesystem::remove_all(tmp);
+
+                return false;
+            }
+
+            if ( !meta.contains("session") ) {
+                m_last_error = tr("Import session failed: broken format");
+                std::filesystem::remove_all(tmp);
+
+                return false;
+            }
+
+            if ( !meta["session"].is_object() ) {
+                m_last_error = tr("Import session failed: broken format");
+                std::filesystem::remove_all(tmp);
+
+                return false;
+            }
+
+            nlohmann::json session = meta["session"];
+
             // 5 - создать сессию по метаинформации и добавить её в модель
+            QString name = session.value("name", QString());
+            QString desc = session.value("description", QString());
+
+            Session s;
+                s.name = getUniqueSessionName(name);
+                s.description  = desc;
+                s.last_changed = QDateTime::currentDateTime();
+
             // 6 - скопировать данные в рабочий каталог
+            {
+                std::filesystem::path from = tmp / name.toStdString();
+                if ( !std::filesystem::exists(from) ) {
+                    m_last_error = tr("Import session failed: broken format");
+                    std::filesystem::remove_all(tmp);
+
+                    return false;
+                }
+
+                std::error_code ec;
+                std::filesystem::path to = (m_working_dir_path + "/" + s.name).toStdString();
+                std::filesystem::rename(from, to, ec);
+
+                if (ec) {
+                    std::filesystem::remove_all(tmp);
+                    std::filesystem::remove_all(to);
+
+                    m_last_error = tr("Import session failed: can't copy session data to folder");
+
+                    return false;
+                }
+            }
+
+            beginInsertRows(QModelIndex(), rowCount(), rowCount());  // Может быть баг с индексами, проверить
+                m_sessions.push_back(s);
+            endInsertRows();
+
+            emit sSessionsAdded({s.name});
         }
     }
     else {
+        std::filesystem::remove_all(tmp);
         m_last_error = tr("Import session failed: session struct is broken");
         return false;
     }
 
+    std::filesystem::remove_all(tmp);
 
+    return true;
+}
+
+bool SessionManager::sessionSupported(const nlohmann::json& meta)
+{
     return true;
 }
 
@@ -304,7 +397,7 @@ bool SessionManager::exportSession(int id, const QString &path)
             meta["version"]     = QCoreApplication::applicationVersion();
             meta["session"]     = session;
 
-        std::filesystem::path tmp = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
+        std::filesystem::path tmp = std::filesystem::temp_directory_path() / QUuid::createUuid().toString().toStdString();
         std::filesystem::create_directory(tmp);
 
         if ( std::filesystem::exists(tmp) ) {
@@ -317,10 +410,10 @@ bool SessionManager::exportSession(int id, const QString &path)
             if ( std::filesystem::exists(session_dir) ) {
                 std::filesystem::path tmp_session_dir  = tmp / s.name.toStdString();
 
-                std::error_code err;
-                std::filesystem::copy(session_dir, tmp_session_dir, err);
+                std::error_code ec;
+                std::filesystem::copy(session_dir, tmp_session_dir, ec);
 
-                if (err.value() != 0) {
+                if (ec) {
                     return false;
                 }
             }
@@ -353,6 +446,21 @@ void SessionManager::markLoaded(int id)
     }
 
     return;
+}
+
+QString SessionManager::getUniqueSessionName(const QString& name)
+{
+    QString base_name = name.isEmpty() ? "New session" : name;
+    QString generated_name = base_name;
+
+    for (int i = 1; findSessionByName(generated_name) >= 0; i++) {
+        generated_name = base_name + QString("(%1)").arg(i);
+        if (i > 255) {
+            return QString();
+        }
+    }
+
+    return generated_name;
 }
 
 QString SessionManager::lastError() const
@@ -393,8 +501,12 @@ QVariant SessionManager::data(const QModelIndex &index, int role) const
 
 
         if (role == Qt::FontRole) {
-            // TODO: выделить выбранную сессию
-
+            if (index.row() == m_curr_session_id) {
+                auto font = QApplication::font();
+                    font.setBold(true);
+                    font.setItalic(true);
+                return font;
+            }
         }
     }
 
@@ -426,6 +538,29 @@ QVariant SessionManager::headerData(int section, Qt::Orientation orientation, in
     }
 
     return QVariant();
+}
+
+bool SessionManager::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+    if ( !index.isValid() ) {
+        return false;
+    }
+
+    if (role != Qt::EditRole) {
+        return false;
+    }
+
+    // setData can change description only
+    if (index.column() != kColumnDescription) {
+        return false;
+    }
+
+    auto& s = m_sessions[index.row()];
+        s.description = value.toString();
+
+    emit dataChanged( index, index, {Qt::EditRole} );
+
+    return true;
 }
 
 int SessionManager::findSessionByName(const QString &name) const

@@ -25,7 +25,7 @@ public:
 
     // -------------- [ Session Manager Interface ] -------------- //
     // Установка рабочего каталога
-    bool setWorkingDirectory(const QString& path); //
+    bool setWorkingDirectory(const QString& path);
 
     // Сохранение данных в рабочий каталог
     bool saveCurrentState();
@@ -35,7 +35,11 @@ public:
     int findSessionByName(const QString& name) const;
 
     // Создание новой сессии или копии другой сессии
-    virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString()); //
+    virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString());
+
+    // Переименование сессии
+    bool renameSession(const QString& curr_name, const QString& new_name);
+    bool renameSession(int id, const QString& name);
 
     // Удаление сессии
     virtual bool removeSession(const QString& name); //
@@ -50,6 +54,7 @@ public:
 
     // Импорт сессии
     bool importSession(const QString& path);
+    virtual bool sessionSupported(const nlohmann::json& meta);
 
     // Экспорт сессии
     bool exportSession(const QString& name, const QString& path);
@@ -62,10 +67,11 @@ public:
     QString lastError() const;
 
     // ------------- [ Table Model Interface ] ---------------- //
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override; //
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override; //
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override; //
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override; //
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setData( const QModelIndex &index, const QVariant &value, int role ) override;
 
 signals:
     void sSessionsAdded(QStringList names);
@@ -74,6 +80,7 @@ signals:
 
 private:
     void markLoaded(int id);
+    QString getUniqueSessionName(const QString& base = QString());
 
 protected:
     struct Session {

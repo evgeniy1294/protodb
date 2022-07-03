@@ -28,11 +28,15 @@ public:
 private:
     void create_gui();
     void create_connections();
+    void disable_control_btn();
+    void enable_control_btn();
 
 private slots:
     void onCreateClicked();
     void onChangeClicked();
     void onRmClicked();
+    void onExportClicked();
+    void onImportClicked();
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
@@ -49,4 +53,6 @@ private:
     QPushButton*  m_copy_btn;
     QPushButton*  m_rm_btn;
     QPushButton*  m_select_btn;
+    QPushButton*  m_import_btn;
+    QPushButton*  m_export_btn;
 };

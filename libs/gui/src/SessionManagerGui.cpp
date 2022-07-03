@@ -11,12 +11,15 @@
 #include <QLineEdit>
 #include <QSortFilterProxyModel>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 SessionManagerGui::SessionManagerGui(QWidget *parent)
     : QDialog(parent)
 {
     create_gui();
     create_connections();
+    disable_control_btn();
 }
 
 void SessionManagerGui::create_gui()
@@ -38,13 +41,17 @@ void SessionManagerGui::create_gui()
     m_copy_btn = new QPushButton(tr("Copy"));
     m_rm_btn = new QPushButton(tr("Delete"));
     m_select_btn = new QPushButton(tr("Switch to"));
+    m_import_btn = new QPushButton(tr("Import"));
+    m_export_btn = new QPushButton(tr("Export"));
 
     auto btn_layout = new QVBoxLayout;
         btn_layout->setAlignment(Qt::AlignTop);
         btn_layout->addWidget(m_select_btn);
         btn_layout->addWidget(m_create_btn);
-        btn_layout->addWidget(m_change_btn);
+        btn_layout->addWidget(m_import_btn);
+        btn_layout->addWidget(m_export_btn);
         btn_layout->addWidget(m_copy_btn);
+        btn_layout->addWidget(m_change_btn);
         btn_layout->addWidget(m_rm_btn);
         btn_layout->addStretch(1);
         btn_layout->addWidget(m_close_btn);
@@ -73,6 +80,8 @@ void SessionManagerGui::create_connections()
     connect(m_change_btn, &QPushButton::clicked, this, &SessionManagerGui::onChangeClicked);
     connect(m_rm_btn, &QPushButton::clicked, this, &SessionManagerGui::onRmClicked);
     connect(m_filter_le, &QLineEdit::textChanged, m_proxy_model, &QSortFilterProxyModel::setFilterFixedString);
+    connect(m_export_btn, &QPushButton::clicked, this, &SessionManagerGui::onExportClicked);
+    connect(m_import_btn, &QPushButton::clicked, this, &SessionManagerGui::onImportClicked);
     connect(m_close_btn, &QPushButton::clicked, this, [this]() {
         hide();
     });
@@ -80,23 +89,77 @@ void SessionManagerGui::create_connections()
     connect(m_sessions_table->selectionModel(), &QItemSelectionModel::selectionChanged, this, &SessionManagerGui::onSelectionChanged);
 }
 
+void SessionManagerGui::disable_control_btn()
+{
+    m_change_btn->setDisabled(true);
+    m_copy_btn->setDisabled(true);
+    m_rm_btn->setDisabled(true);
+    m_select_btn->setDisabled(true);
+    m_export_btn->setDisabled(true);
+}
+
+void SessionManagerGui::enable_control_btn()
+{
+    m_change_btn->setEnabled(true);
+    m_copy_btn->setEnabled(true);
+    m_rm_btn->setEnabled(true);
+    m_select_btn->setEnabled(true);
+    m_export_btn->setEnabled(true);
+}
+
 void SessionManagerGui::onCreateClicked()
 {
-    SessionCreateDialog dialog(m_sm);
-        dialog.exec();
+    SessionCreateDialog dialog;
+        dialog.setSessionName(tr("New session"));
+
+    if (dialog.exec() == QDialog::Accepted) {
+        if (!m_sm->createSession(dialog.sessionName(), dialog.sessionDescription())) {
+            QMessageBox mbox;
+                mbox.setText("Error");
+                mbox.setIcon(QMessageBox::Critical);
+                mbox.setInformativeText(m_sm->lastError());
+                mbox.setStandardButtons(QMessageBox::Ok);
+
+            mbox.exec();
+        }
+    }
 
     return;
 }
 
 void SessionManagerGui::onChangeClicked()
 {
-    SessionCreateDialog dialog(m_sm);
-        dialog.setMode( SessionCreateDialog::EditMode );
-        dialog.setSessionIndex(
-            m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row()
-        );
+    auto idx = m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row();
 
-        dialog.exec();
+    QString old_name = m_sm->data( m_sm->index(idx, SessionManager::kColumnName) ).toString();
+    QString old_desc = m_sm->data( m_sm->index(idx, SessionManager::kColumnDescription) ).toString();
+
+    SessionCreateDialog dialog;
+    {
+        dialog.setMode( SessionCreateDialog::EditMode );
+        dialog.setSessionName( old_name );
+        dialog.setSessionDescription(old_desc);
+    }
+
+    if (dialog.exec() == QDialog::Accepted) {
+        if (old_name != dialog.sessionName()) {
+            if (!m_sm->renameSession(idx, dialog.sessionName())) {
+                QMessageBox mbox;
+                    mbox.setText("Error");
+                    mbox.setIcon(QMessageBox::Critical);
+                    mbox.setInformativeText(m_sm->lastError());
+                    mbox.setStandardButtons(QMessageBox::Ok);
+
+                mbox.exec();
+            }
+        }
+
+        if (old_desc != dialog.sessionDescription()) {
+            if ( m_sm->setData(m_sm->index(idx, SessionManager::kColumnDescription), dialog.sessionDescription(), Qt::EditRole) ) {
+                m_desc_browser->setPlainText(dialog.sessionDescription());
+            }
+        }
+    }
 
     return;
 }
@@ -136,6 +199,58 @@ void SessionManagerGui::onRmClicked()
     }
 }
 
+void SessionManagerGui::onExportClicked()
+{
+    auto selected = m_sessions_table->selectionModel()->selectedRows();
+    if (selected.empty()) {
+        return;
+    }
+
+    QString name = selected.first().data().toString();
+    if ( name.isEmpty() ) {
+        return;
+    }
+
+    QString exportPath = QDir::homePath() + "/" + name + ".zip";
+    exportPath = QFileDialog::getSaveFileName(this,
+        tr("Select session"), exportPath, tr("Session files (*.zip)"));
+
+    if (exportPath.isEmpty()) {
+        return;
+    }
+
+    if ( !m_sm->exportSession(m_proxy_model->mapToSource(selected.first()).row(), exportPath) ) {
+        QMessageBox mbox;
+            mbox.setText("Export error");
+            mbox.setIcon(QMessageBox::Critical);
+            mbox.setInformativeText(m_sm->lastError());
+            mbox.setStandardButtons(QMessageBox::Ok);
+
+        mbox.exec();
+    }
+}
+
+void SessionManagerGui::onImportClicked()
+{
+    QString importPath = QDir::homePath();
+    importPath = QFileDialog::getOpenFileName(this,
+        tr("Select session"), importPath, tr("Session files (*.zip)"));
+
+    if (importPath.isEmpty()) {
+        return;
+    }
+
+    if ( !m_sm->importSession(importPath) ) {
+        QMessageBox mbox;
+            mbox.setText("Import error");
+            mbox.setIcon(QMessageBox::Critical);
+            mbox.setInformativeText(m_sm->lastError());
+            mbox.setStandardButtons(QMessageBox::Ok);
+
+        mbox.exec();
+    }
+}
+
 void SessionManagerGui::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     if (selected.count() > 0) {
@@ -143,6 +258,11 @@ void SessionManagerGui::onSelectionChanged(const QItemSelection &selected, const
         auto text  = index.data().toString();
 
         m_desc_browser->setPlainText(text);
+        enable_control_btn();
+    }
+    else {
+        m_desc_browser->clear();
+        disable_control_btn();
     }
 }
 

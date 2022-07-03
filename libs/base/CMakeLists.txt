@@ -31,7 +31,6 @@ set( BaseHeaders
     include/protodb/plugins/IODeviceCreatorInterface.h
     include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
-    include/protodb/SessionManager.h
     include/protodb/Logger.h
     include/protodb/LuaApi.h
     include/protodb/SequenceModel.h
@@ -42,7 +41,6 @@ set( BaseSources
     src/Configurable.cpp
     src/ConfigAggregator.cpp
     src/ConfigManager.cpp
-    src/SessionManager.cpp
     src/FactoryAbstract.cpp
     src/GlobalFactoryStorage.cpp
     src/JsonBaseUtils.cpp

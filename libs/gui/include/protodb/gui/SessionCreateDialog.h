@@ -15,31 +15,30 @@ class SessionCreateDialog: public QDialog
 public:
     enum Mode { CreateMode, EditMode };
 
-    SessionCreateDialog(SessionManager* sm, QWidget* parent = nullptr);
+    SessionCreateDialog(QWidget* parent = nullptr);
    ~SessionCreateDialog() = default;
-
-    void setSessionIndex(int idx);
-    int sessionIndex() const;
 
     void setMode( Mode mode );
     bool isCreateMode() const;
     bool isEditMode() const;
 
+    void setSessionName(const QString& name);
+    QString sessionName() const;
+
+    void setSessionDescription(const QString& desc);
+    QString sessionDescription() const;
+
 private slots:
     void onDialogClicked(QAbstractButton* aBtn);
-    void onNameTextChanged(const QString& text);
 
 private:
     void create_gui();
     void create_connections();
 
 private:
-    SessionManager* m_sm;
-    int  m_session_idx;
     Mode m_mode;
 
     QDialogButtonBox* m_dialog_buttons;
     QLineEdit* m_name;
     QPlainTextEdit* m_desc;
-    QLabel* m_error_label;
 };

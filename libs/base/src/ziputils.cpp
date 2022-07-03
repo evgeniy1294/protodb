@@ -70,7 +70,7 @@ bool zipDirectory(const fs::path &dir, const fs::path &zip)
         return false;
     }
 
-    int errorp; zip_t *zipper = zip_open(zip.c_str(), ZIP_CREATE | ZIP_EXCL, &errorp);
+    int errorp; zip_t *zipper = zip_open(zip.c_str(), ZIP_CREATE | ZIP_TRUNCATE, &errorp);
     if (zipper == nullptr) {
         zip_error_t ziperror;
             zip_error_init_with_code(&ziperror, errorp);

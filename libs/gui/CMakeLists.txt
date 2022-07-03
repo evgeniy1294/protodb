@@ -22,6 +22,7 @@ set( BaseHeaders
     include/protodb/plugins/IOWidget.h
     include/protodb/plugins/IOWidgetCreatorInterface.h
     include/protodb/plugins/IOWidgetFactory.h
+    include/protodb/SessionManager.h
     include/protodb/gui/SessionManagerGui.h
     include/protodb/gui/SessionCreateDialog.h
 )
@@ -30,6 +31,7 @@ set( BaseSources
     src/JsonUtils.cpp
     src/MetaTypeUtils.cpp
     src/IOWidgetFactory.cpp
+    src/SessionManager.cpp
     src/SessionManagerGui.cpp
     src/SessionCreateDialog.cpp
 )
