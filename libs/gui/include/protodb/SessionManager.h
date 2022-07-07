@@ -35,7 +35,7 @@ public:
     int findSessionByName(const QString& name) const;
 
     // Создание новой сессии или копии другой сессии
-    virtual bool createSession(const QString& name, const QString& description = QString(), const QString& origin = QString());
+    virtual QString createSession(const QString& name, const QString& description = QString(), const QString& origin = QString());
 
     // Переименование сессии
     bool renameSession(const QString& curr_name, const QString& new_name);

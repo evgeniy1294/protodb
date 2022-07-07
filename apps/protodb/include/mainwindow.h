@@ -8,7 +8,6 @@ namespace ads {
   class CDockManager;
 }
 
-class Worker;
 class PluginManagerDialog;
 class SessionManagerGui;
 
@@ -17,7 +16,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(Worker* worker, QWidget *parent = nullptr);
+  explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow() = default;
 
   void restoreState();
@@ -52,8 +51,6 @@ private:
 
   PluginManagerDialog* m_plugin_manager_dialog;
   SessionManagerGui* m_session_manager_dialog;
-
-  Worker* m_worker;
 };
 
 

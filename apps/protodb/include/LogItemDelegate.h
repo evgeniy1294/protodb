@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Logger.h"
 #include <QStyledItemDelegate>
-#include <protodb/Logger.h>
-#include <protodb/shared_types/LogTypes.h>
 
 class LogItemDelegate: public QStyledItemDelegate
 {
@@ -14,8 +13,8 @@ public:
 
     QString message(const QModelIndex& index);
 
-    ByteFormat byteFormat() const;
-    void setByteFormat(ByteFormat format);
+    Logger::ByteFormat byteFormat() const;
+    void setByteFormat(Logger::ByteFormat format);
 
     void setAttributeColor(const QColor& color);
     QColor attributeColor() const;
@@ -39,7 +38,7 @@ public:
     char separator() const;
 
 private:
-    ByteFormat m_byte_format;
+    Logger::ByteFormat m_byte_format;
 
     char m_separator;
     QColor m_attr_color;

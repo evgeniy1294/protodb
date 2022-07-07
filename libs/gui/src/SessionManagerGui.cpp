@@ -113,7 +113,7 @@ void SessionManagerGui::onCreateClicked()
         dialog.setSessionName(tr("New session"));
 
     if (dialog.exec() == QDialog::Accepted) {
-        if (!m_sm->createSession(dialog.sessionName(), dialog.sessionDescription())) {
+        if (m_sm->createSession(dialog.sessionName(), dialog.sessionDescription()).isEmpty()) {
             QMessageBox mbox;
                 mbox.setText("Error");
                 mbox.setIcon(QMessageBox::Critical);

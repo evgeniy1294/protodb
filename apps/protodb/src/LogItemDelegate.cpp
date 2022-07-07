@@ -1,7 +1,5 @@
 #include "LogItemDelegate.h"
 
-#include <protodb/Logger.h>
-
 #include <QtGui>
 #include <QApplication>
 
@@ -10,7 +8,7 @@ LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
 
 {
-    m_byte_format = ByteFormat::kHexFormat;
+    m_byte_format = Logger::ByteFormat::HexFormat;
     m_separator   = ' ';
 
     m_time_format = "hh:mm:ss.zzz";
@@ -70,7 +68,7 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             font  = m_ch_fonts [channel];
 
             if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
-                if ( m_byte_format == kHexFormat ) {
+                if ( m_byte_format == Logger::HexFormat ) {
                     data = model->data(index).toByteArray().toHex(m_separator);
                     break;
                 }
@@ -107,7 +105,7 @@ QString LogItemDelegate::message(const QModelIndex& index)
 
         QString data;
         if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
-            if ( m_byte_format == kHexFormat ) {
+            if ( m_byte_format == Logger::HexFormat ) {
                 data = model->data( model->index(index.row(), Logger::kColumnMsg) ).toByteArray().toHex(m_separator);
             }
         }
@@ -122,12 +120,12 @@ QString LogItemDelegate::message(const QModelIndex& index)
     return ret.simplified();
 }
 
-ByteFormat LogItemDelegate::byteFormat() const
+Logger::ByteFormat LogItemDelegate::byteFormat() const
 {
     return m_byte_format;
 }
 
-void LogItemDelegate::setByteFormat(ByteFormat format)
+void LogItemDelegate::setByteFormat(Logger::ByteFormat format)
 {
     m_byte_format = format;
 }

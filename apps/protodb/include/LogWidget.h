@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Logger.h"
 #include <QWidget>
-#include <protodb/shared_types/LogTypes.h>
 
 class LogTableView;
 class QTableView;
@@ -23,7 +23,7 @@ public:
     ~LogWidget() = default;
 
 signals:
-    void sByteFormatChanged(ByteFormat format);
+    void sByteFormatChanged(Logger::ByteFormat format);
 
 private:
     void createGui();

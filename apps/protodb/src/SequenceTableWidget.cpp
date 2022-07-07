@@ -2,7 +2,7 @@
 #include "SequenceEditDialog.h"
 #include "SequenceTableView.h"
 
-#include <protodb/SequenceModel.h>
+#include "SequenceModel.h"
 
 #include <QAction>
 #include <QLayout>

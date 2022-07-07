@@ -2,7 +2,7 @@
 #include "LogDecorationDialog.h"
 #include "LogItemDelegate.h"
 
-#include <protodb/Logger.h>
+#include "Logger.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -44,7 +44,7 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::kColumnMsg,       QHeaderView::Stretch);
 }
 
-void LogTableView::setByteFormat(ByteFormat format)
+void LogTableView::setByteFormat(Logger::ByteFormat format)
 {
     m_item_delegate->setByteFormat(format);
 }

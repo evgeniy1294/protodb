@@ -1,6 +1,5 @@
+#include "SequenceModel.h"
 #include "SequenceEditDialog.h"
-
-#include <protodb/SequenceModel.h>
 
 #include <QLineEdit>
 #include <QTextBrowser>

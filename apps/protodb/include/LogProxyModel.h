@@ -1,7 +1,5 @@
 #pragma once
 
-#include <protodb/shared_types/LogTypes.h>
-
 #include <QSortFilterProxyModel>
 #include <sol/sol.hpp>
 

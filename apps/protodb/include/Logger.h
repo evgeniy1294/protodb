@@ -1,6 +1,5 @@
 #pragma once
 
-#include <protodb/shared_types/LogTypes.h>
 #include <protodb/configurable/Configurable.h>
 
 #include <QAbstractTableModel>
@@ -11,6 +10,12 @@ class Logger: public QAbstractTableModel
     Q_DISABLE_COPY(Logger)
 
 public:
+    enum ByteFormat {
+        HexFormat,
+        AsciiFormat,
+    };
+
+
     enum ColumnNames {
         kColumnTimestamp = 0,
         kColumnChannel   = 1,

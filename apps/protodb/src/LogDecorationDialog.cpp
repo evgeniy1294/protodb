@@ -1,6 +1,6 @@
 #include "LogDecorationDialog.h"
 
-#include <protodb/Logger.h>
+#include "Logger.h"
 #include <protodb/utils/JsonUtils.h>
 
 #include <QApplication>

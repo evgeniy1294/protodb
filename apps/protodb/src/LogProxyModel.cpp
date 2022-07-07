@@ -1,6 +1,6 @@
 #include "LogProxyModel.h"
 
-#include <protodb/Logger.h>
+#include "Logger.h"
 #include <protodb/utils/SolByteArrayWrapper.h>
 
 LogProxyModel::LogProxyModel(QObject* parent)

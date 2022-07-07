@@ -4,7 +4,7 @@
 #include "LogDecorationDialog.h"
 #include "LogProxyModel.h"
 
-#include <protodb/Logger.h>
+#include "Logger.h"
 #include <protodb/LuaApi.h>
 
 #include <QApplication>
@@ -162,12 +162,12 @@ void LogWidget::createConnections()
        static bool state = true;
 
        if (state) {
-           m_view->setByteFormat(ByteFormat::kAsciiFormat);
+           m_view->setByteFormat(Logger::AsciiFormat);
            m_view->reset();
            m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
-           m_view->setByteFormat(ByteFormat::kHexFormat);
+           m_view->setByteFormat(Logger::HexFormat);
            m_view->reset();
            m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }

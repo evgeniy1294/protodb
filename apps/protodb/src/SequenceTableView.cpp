@@ -1,9 +1,9 @@
+#include "SequenceModel.h"
 #include "SequenceTableView.h"
 #include "CellSpinBoxDelegate.h"
 #include "CellCheckBoxDelegate.h"
 #include "CellButtonDelegate.h"
 
-#include <protodb/SequenceModel.h>
 
 #include <QHeaderView>
 

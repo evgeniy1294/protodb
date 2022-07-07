@@ -16,6 +16,7 @@ set(SOURCES_LIST
     src/CellCheckBoxDelegate.cpp
     src/CellSpinBoxDelegate.cpp
     src/ConnectionConfigDialog.cpp
+    src/Logger.cpp
     src/LogDecorationDialog.cpp
     src/LogFormatWidget.cpp
     src/LogItemDelegate.cpp
@@ -29,12 +30,14 @@ set(SOURCES_LIST
     src/PluginDetailDialog.cpp
     src/PluginManagerDialog.cpp
     src/PluginTreeView.cpp
+    src/SequenceModel.cpp
     src/SequenceEditDialog.cpp
     src/SequenceEditDialog.cpp
     src/SequenceTableView.cpp
     src/SequenceTableWidget.cpp
     src/tool_bar.cpp
     src/ProtodbSessionManager.cpp
+    src/MainClass.cpp
 )
 
 set(HEADERS_LIST
@@ -42,6 +45,7 @@ set(HEADERS_LIST
     include/CellCheckBoxDelegate.h
     include/CellSpinBoxDelegate.h
     include/ConnectionConfigDialog.h
+    include/Logger.h
     include/LogDecorationDialog.h
     include/LogFormatWidget.h
     include/LogItemDelegate.h
@@ -54,11 +58,14 @@ set(HEADERS_LIST
     include/PluginDetailDialog.h
     include/PluginManagerDialog.h
     include/PluginTreeView.h
+    include/Sequence.h
+    include/SequenceModel.h
     include/SequenceEditDialog.h
     include/SequenceTableView.h
     include/SequenceTableWidget.h
     include/tool_bar.h
     include/ProtodbSessionManager.h
+    include/MainClass.h
 )
 
 add_executable(${TARGET})

@@ -35,23 +35,14 @@ bool SessionManager::setWorkingDirectory(const QString &path)
     }
 
     m_working_dir_path = path;
+    m_sessions.clear();
 
-    nlohmann::json sessions;
+    nlohmann::json sessions = nlohmann::json::object();
         readFromFile(path + "/sessions.json", sessions);
 
-    if ( !sessions.contains("sessions") ) {
-        return true;
-    }
+    nlohmann::json session_list = sessions.value("sessions", nlohmann::json::array());
 
-    if ( !sessions["sessions"].is_array() ) {
-        return true;
-    }
-
-    m_current_session_name = sessions.value("current", QString());
-    m_user_data            = sessions.value("user_data", nlohmann::json::object());
-
-    m_sessions.clear();
-    for (auto& session: sessions["sessions"]) {
+    for (auto& session: session_list) {
         Session s;
 
         s.description = session.value("description", QString());
@@ -68,13 +59,20 @@ bool SessionManager::setWorkingDirectory(const QString &path)
         }
     }
 
-    return true;
+    m_user_data = sessions.value("user_data", nlohmann::json::object());
+
+    auto last_used = sessions.value("last_used", QString("Default"));
+    if ( findSessionByName(last_used) < 0) {
+        last_used = createSession("Default");
+    }
+
+    return loadSession(last_used);
 }
 
 bool SessionManager::saveCurrentState()
 {
     nlohmann::json json;
-        json["current"] = m_current_session_name;
+        json["last_used"] = m_current_session_name;
 
     nlohmann::json sessions = nlohmann::json::array();
     for (auto& s: m_sessions) {
@@ -104,7 +102,7 @@ bool SessionManager::containsSession(const QString &name) const
     return false;
 }
 
-bool SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
+QString SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
 {
     Session s;
         s.name = getUniqueSessionName(name);
@@ -113,7 +111,7 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
 
     if (s.name.isEmpty()) {
         m_last_error = tr("Can't create session");
-        return false;
+        return QString();
     }
 
     std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
@@ -131,7 +129,7 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
                 if (ec) {
                     std::filesystem::remove_all(session_dir);
                     m_last_error = tr("Can't create session");
-                    return false;
+                    return QString();
                 }
             }
         }
@@ -143,7 +141,7 @@ bool SessionManager::createSession(const QString &name, const QString &descripti
 
     emit sSessionsAdded({s.name});
 
-    return true;
+    return s.name;
 }
 
 bool SessionManager::renameSession(const QString& curr_name, const QString& new_name)
@@ -221,7 +219,7 @@ bool SessionManager::loadSession(const QString &name)
 }
 
 bool SessionManager::loadSession(int id) {
-    if ( id > 0 && id < m_sessions.size() ) {
+    if ( id >= 0 && id < m_sessions.size() ) {
         auto session_dir_path = QString(m_working_dir_path + "/" + m_sessions.at(id).name);
 
         if ( load_session(session_dir_path) ) {
@@ -440,7 +438,7 @@ void SessionManager::setUserData(const nlohmann::json& json)
 
 void SessionManager::markLoaded(int id)
 {
-    if ( id > 0 && id < m_sessions.size() ) {
+    if ( id >= 0 && id < m_sessions.size() ) {
         m_curr_session_id = id;
         m_current_session_name = m_sessions[id].name;
     }

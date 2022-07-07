@@ -1,7 +1,7 @@
+#include "MainClass.h"
 #include "mainwindow.h"
 #include "ProtodbSessionManager.h"
 
-#include <protodb/Worker.h>
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/utils/MetaTypeUtils.h>
@@ -28,19 +28,20 @@ int main(int argc, char *argv[])
     testPlugins();
     //----------------------------------
 
-    // -------- TEST SESSIONS ---------
-    auto& manager = ProtodbSessionManager::instance();
-        manager.setWorkingDirectory("/tmp/protodb/sessions/");
-    // --------------------------------
+    auto& main_class = MainClass::instance();
+        main_class.init();
 
-    Worker* worker = new Worker();
-    MainWindow w(worker);
+    MainWindow w;
         w.restoreState();
         w.showMaximized();
 
+    auto& session_manager = ProtodbSessionManager::instance();
+        session_manager.setWorkingDirectory("/tmp/protodb/sessions/");
+
     int ret = a.exec();
-        manager.saveCurrentSession();
-        manager.saveCurrentState();
+
+    session_manager.saveCurrentSession();
+    session_manager.saveCurrentState();
 
     return ret;
 }

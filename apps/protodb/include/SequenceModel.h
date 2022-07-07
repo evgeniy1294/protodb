@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Sequence.h"
+
 #include <protodb/utils/JsonBaseUtils.h>
-#include <protodb/shared_types/Sequence.h>
 
 #include <QAbstractTableModel>
 #include <QVariant>

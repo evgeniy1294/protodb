@@ -1,13 +1,15 @@
 #include "mainwindow.h"
+#include "SequenceModel.h"
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
 #include "PluginManagerDialog.h"
 #include "ProtodbSessionManager.h"
+#include "MainClass.h"
 
-#include <protodb/Worker.h>
-#include <protodb/SequenceModel.h>
 #include <protodb/utils/JsonUtils.h>
 #include <protodb/gui/SessionManagerGui.h>
+
+#include <DockManager.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -20,11 +22,9 @@
 #include <QInputDialog>
 #include <QSettings>
 
-#include <DockManager.h>
 
-MainWindow::MainWindow(Worker* worker, QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_worker(worker)
 {
   createGui();
   connectSignals();
@@ -63,11 +63,12 @@ void MainWindow::createDock()
     auto log_widget = new ads::CDockWidget("Log");
         log_widget->setWidget(new LogWidget());
 
+    auto& main_class = MainClass::instance();
     auto incoming_table_widget = new ads::CDockWidget("Incoming");
-        incoming_table_widget->setWidget(new SequenceTableWidget(m_worker->incomingSequences()));
+        incoming_table_widget->setWidget(new SequenceTableWidget(main_class.incomingSequences()));
 
     auto outgoing_table_widget = new ads::CDockWidget("Outgoing");
-        outgoing_table_widget->setWidget(new SequenceTableWidget(m_worker->outgoingSequences()));
+        outgoing_table_widget->setWidget(new SequenceTableWidget(main_class.outgoingSequences()));
 
     m_dock_man = new ads::CDockManager();
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, log_widget);
@@ -143,6 +144,7 @@ void MainWindow::connectSignals()
         fileDialog.setViewMode(QFileDialog::List);
 
         if (fileDialog.exec()) {
+            auto& main_class = MainClass::instance();
             auto fileNames = fileDialog.selectedFiles();
 
             if (fileNames.size() != 0) {
@@ -150,11 +152,11 @@ void MainWindow::connectSignals()
                 nlohmann::json j;
 
                 nlohmann::json outgoing;
-                    m_worker->outgoingSequences()->toJson(outgoing);
+                    main_class.outgoingSequences()->toJson(outgoing);
                     j["outgoing"] = outgoing;
 
                 nlohmann::json incoming;
-                    m_worker->incomingSequences()->toJson(incoming);
+                    main_class.incomingSequences()->toJson(incoming);
                      j["incoming"] = incoming;
 
                 writeToFile(path, j);
@@ -169,6 +171,7 @@ void MainWindow::connectSignals()
         fileDialog.setViewMode(QFileDialog::List);
 
         if (fileDialog.exec()) {
+            auto& main_class = MainClass::instance();
             auto fileNames = fileDialog.selectedFiles();
 
             if (fileNames.size() != 0) {
@@ -177,11 +180,11 @@ void MainWindow::connectSignals()
 
                 if (ok) {
                     if (json["incoming"].is_array()) {
-                        m_worker->incomingSequences()->fromJson(json["incoming"]);
+                        main_class.incomingSequences()->fromJson(json["incoming"]);
                     }
 
                     if (json["outgoing"].is_array()) {
-                        m_worker->outgoingSequences()->fromJson(json["outgoing"]);
+                        main_class.outgoingSequences()->fromJson(json["outgoing"]);
                     }
                 }
             }

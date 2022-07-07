@@ -21,8 +21,6 @@ set( BaseHeaders
     include/protodb/factories/CreatorAbstract.h
     include/protodb/factories/FactoryAbstract.h
     include/protodb/factories/GlobalFactoryStorage.h
-    include/protodb/shared_types/LogTypes.h
-    include/protodb/shared_types/Sequence.h
     include/protodb/utils/JsonBaseUtils.h
     include/protodb/utils/SolByteArrayWrapper.h
     include/protodb/utils/FsIcon.h
@@ -31,10 +29,7 @@ set( BaseHeaders
     include/protodb/plugins/IODeviceCreatorInterface.h
     include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
-    include/protodb/Logger.h
     include/protodb/LuaApi.h
-    include/protodb/SequenceModel.h
-    include/protodb/Worker.h
 )
 
 set( BaseSources
@@ -44,12 +39,9 @@ set( BaseSources
     src/FactoryAbstract.cpp
     src/GlobalFactoryStorage.cpp
     src/JsonBaseUtils.cpp
-    src/Logger.cpp
     src/LuaApi.cpp
     src/PluginManager.cpp
-    src/SequenceModel.cpp
     src/SolByteArrayWrapper.cpp
-    src/Worker.cpp
     src/IODeviceFactory.cpp
     src/ziputils.cpp
 )
