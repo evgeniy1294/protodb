@@ -4,6 +4,7 @@ project(ProtodbProject VERSION "0.0.1")
 # Libs
 add_subdirectory(libs/base)
 add_subdirectory(libs/gui)
+add_subdirectory(libs/dev)
 
 # Apps
 add_subdirectory(apps/protodb)

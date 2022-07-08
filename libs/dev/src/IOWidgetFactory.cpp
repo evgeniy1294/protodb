@@ -1,6 +1,6 @@
-#include "plugins/IOWidgetCreatorInterface.h"
-#include "plugins/IOWidgetFactory.h"
+#include "protodb/factories/IOWidgetFactory.h"
 
+#include <protodb/creators/IOWidgetCreatorInterface.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
 IOWidgetFactory::IOWidgetFactory(QObject* parent)

@@ -39,9 +39,9 @@ void LogTableView::setModel(QAbstractItemModel *model)
 {
     QTableView::setModel(model);
     QHeaderView* hh = horizontalHeader();
-        hh->setSectionResizeMode(Logger::kColumnTimestamp, QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(Logger::kColumnChannel,   QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(Logger::kColumnMsg,       QHeaderView::Stretch);
+        hh->setSectionResizeMode(Logger::ColumnTimestamp, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(Logger::ColumnChannel,   QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
 }
 
 void LogTableView::setByteFormat(Logger::ByteFormat format)
@@ -86,9 +86,9 @@ void LogTableView::connectSignals()
         auto row  = indexAt(pos).row();
 
         if (row != -1) {
-            auto channel = model()->data( model()->index( row, Logger::kColumnChannel ) ).toInt();
+            auto channel = model()->data( model()->index( row, Logger::ColumnChannel ) ).toInt();
 
-            menu = (channel == Logger::kChannelFirst || channel == Logger::kChannelSecond) ?
+            menu = (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) ?
                 m_data_channel_menu : m_info_channel_menu;
         }
 
@@ -122,9 +122,9 @@ void LogTableView::connectSignals()
     });
 
     connect(m_add_to_analyzer, &QAction::triggered, this, [this]() {
-        auto channel = model()->data( model()->index( currentIndex().row(), Logger::kColumnChannel ) ).toInt();
+        auto channel = model()->data( model()->index( currentIndex().row(), Logger::ColumnChannel ) ).toInt();
 
-        if (channel == Logger::kChannelFirst || channel == Logger::kChannelSecond) {
+        if (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) {
 
             auto data = currentIndex().data();
             if (!data.isNull()) {

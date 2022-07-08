@@ -26,8 +26,6 @@ set( BaseHeaders
     include/protodb/utils/FsIcon.h
     include/protodb/utils/JsonKeeper.h
     include/protodb/utils/ziputils.h
-    include/protodb/plugins/IODeviceCreatorInterface.h
-    include/protodb/plugins/IODeviceFactory.h
     include/protodb/plugins/PluginManager.h
     include/protodb/LuaApi.h
 )
@@ -42,7 +40,6 @@ set( BaseSources
     src/LuaApi.cpp
     src/PluginManager.cpp
     src/SolByteArrayWrapper.cpp
-    src/IODeviceFactory.cpp
     src/ziputils.cpp
 )
 

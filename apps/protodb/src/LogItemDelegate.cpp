@@ -15,21 +15,21 @@ LogItemDelegate::LogItemDelegate(QObject* aParent)
     m_attr_color = QColor(Qt::darkGreen);
     m_attr_font  = QApplication::font();
 
-    m_ch_colors[Logger::kChannelFirst]   = QColor(Qt::darkMagenta);
-    m_ch_fonts [Logger::kChannelFirst]   = QApplication::font();
-    m_ch_names [Logger::kChannelFirst]   = "RX";
+    m_ch_colors[Logger::ChannelFirst]   = QColor(Qt::darkMagenta);
+    m_ch_fonts [Logger::ChannelFirst]   = QApplication::font();
+    m_ch_names [Logger::ChannelFirst]   = "RX";
 
-    m_ch_colors[Logger::kChannelSecond]  = QColor(Qt::blue);
-    m_ch_fonts [Logger::kChannelSecond]  = QApplication::font();
-    m_ch_names [Logger::kChannelSecond]  = "TX";
+    m_ch_colors[Logger::ChannelSecond]  = QColor(Qt::blue);
+    m_ch_fonts [Logger::ChannelSecond]  = QApplication::font();
+    m_ch_names [Logger::ChannelSecond]  = "TX";
 
-    m_ch_colors[Logger::kChannelComment] = QColor(Qt::darkYellow);
-    m_ch_fonts [Logger::kChannelComment] = QApplication::font();
-    m_ch_names [Logger::kChannelComment] = "LUA";
+    m_ch_colors[Logger::ChannelComment] = QColor(Qt::darkYellow);
+    m_ch_fonts [Logger::ChannelComment] = QApplication::font();
+    m_ch_names [Logger::ChannelComment] = "LUA";
 
-    m_ch_colors[Logger::kChannelError]   = QColor(Qt::red);
-    m_ch_fonts [Logger::kChannelError]   = QApplication::font();
-    m_ch_names [Logger::kChannelError]   = "ERR";
+    m_ch_colors[Logger::ChannelError]   = QColor(Qt::red);
+    m_ch_fonts [Logger::ChannelError]   = QApplication::font();
+    m_ch_names [Logger::ChannelError]   = "ERR";
 }
 
 void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -42,13 +42,13 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
     if (index.row() >= rowCount)
         return;
 
-    auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::kColumnChannel) ).toInt());
+    auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
     Qt::AlignmentFlag align = static_cast<Qt::AlignmentFlag>(0x81);;
     QColor color;
     QFont font;
     QString data;
     switch ( index.column() ) {
-        case Logger::kColumnTimestamp: {
+        case Logger::ColumnTimestamp: {
             color = m_attr_color;
             font  = m_attr_font;
             align = Qt::AlignCenter;
@@ -56,18 +56,18 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             data = model->data( index ).value<QDateTime>().toString(m_time_format);
         } break;
 
-        case Logger::kColumnChannel: {
+        case Logger::ColumnChannel: {
             color = m_attr_color;
             font  = m_attr_font;
 
             data  = m_ch_names[channel];
         } break;
 
-        case Logger::kColumnMsg: {
+        case Logger::ColumnMsg: {
             color = m_ch_colors[channel];
             font  = m_ch_fonts [channel];
 
-            if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
+            if ( channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) {
                 if ( m_byte_format == Logger::HexFormat ) {
                     data = model->data(index).toByteArray().toHex(m_separator);
                     break;
@@ -100,18 +100,18 @@ QString LogItemDelegate::message(const QModelIndex& index)
     QString ret;
     if (index.isValid()) {
         auto model = index.model();
-        auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::kColumnChannel) ).toInt());
-        auto timestamp = model->data( model->index(index.row(), Logger::kColumnTimestamp) ).value<QDateTime>().toString(m_time_format);
+        auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
+        auto timestamp = model->data( model->index(index.row(), Logger::ColumnTimestamp) ).value<QDateTime>().toString(m_time_format);
 
         QString data;
-        if ( channel == Logger::kChannelFirst || channel == Logger::kChannelSecond ) {
+        if ( channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) {
             if ( m_byte_format == Logger::HexFormat ) {
-                data = model->data( model->index(index.row(), Logger::kColumnMsg) ).toByteArray().toHex(m_separator);
+                data = model->data( model->index(index.row(), Logger::ColumnMsg) ).toByteArray().toHex(m_separator);
             }
         }
 
         if ( data.isEmpty() ) {
-            data = model->data( model->index(index.row(), Logger::kColumnMsg) ).toString();
+            data = model->data( model->index(index.row(), Logger::ColumnMsg) ).toString();
         }
 
         ret =  timestamp + ' ' + m_ch_names[channel] + ' ' + data;

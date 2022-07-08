@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/plugins/IOWidgetCreatorInterface.h>
+#include <protodb/creators/IOWidgetCreatorInterface.h>
 
 class NetIOWIdgetCreator: public QObject, public IOWidgetCreatorInterface
 {

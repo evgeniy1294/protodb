@@ -8,15 +8,14 @@ LogProxyModel::LogProxyModel(QObject* parent)
     , m_bypass(true)
 {
     createBaseConstant();
-    QSortFilterProxyModel::setSourceModel(&Logger::instance());
 }
 
 void LogProxyModel::createBaseConstant()
 {
-    m_lua["RX"]  = Logger::kChannelFirst;
-    m_lua["TX"]  = Logger::kChannelSecond;
-    m_lua["LUA"] = Logger::kChannelComment;
-    m_lua["ERR"] = Logger::kChannelError;
+    m_lua["RX"]  = Logger::ChannelFirst;
+    m_lua["TX"]  = Logger::ChannelSecond;
+    m_lua["LUA"] = Logger::ChannelComment;
+    m_lua["ERR"] = Logger::ChannelError;
 }
 
 
@@ -63,6 +62,11 @@ void LogProxyModel::removeNamedConstant(const QString& name)
 
 void LogProxyModel::setSourceModel(QAbstractItemModel* model)
 {
+    auto logger = qobject_cast<Logger*>(model);
+    if (logger) {
+        QSortFilterProxyModel::setSourceModel(logger);
+    }
+
     return;
 }
 
@@ -80,8 +84,8 @@ bool LogProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_p
 
         auto model = sourceModel();
 
-        auto channel = model->data( model->index(source_row, Logger::kColumnChannel) ).toInt();
-        auto msg     = model->data( model->index(source_row, Logger::kColumnMsg) ).toByteArray();
+        auto channel = model->data( model->index(source_row, Logger::ColumnChannel) ).toInt();
+        auto msg     = model->data( model->index(source_row, Logger::ColumnMsg) ).toByteArray();
 
         pfr = m_accept(channel, SolByteArrayWrapper(msg));
         if (pfr.valid()) {

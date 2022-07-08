@@ -1,8 +1,16 @@
 #include "MainClass.h"
 #include "ProtodbSessionManager.h"
 #include "SequenceModel.h"
+#include "Logger.h"
 
-MainClass::MainClass() { }
+MainClass::MainClass()
+    : m_incoming_sequences(new SequenceModel(this))
+    , m_outgoing_sequences(new SequenceModel(this))
+    , m_logger(new Logger(this))
+{
+    m_incoming_sequences->setIncomingMode();
+    m_outgoing_sequences->setOutgoingMode();
+}
 
 MainClass::~MainClass()
 {
@@ -16,11 +24,7 @@ MainClass &MainClass::instance()
 
 void MainClass::init()
 {
-    m_incoming_sequences = new SequenceModel(this);
-        m_incoming_sequences->setIncomingMode();
 
-    m_outgoing_sequences = new SequenceModel(this);
-        m_outgoing_sequences->setOutgoingMode();
 }
 
 SequenceModel* MainClass::incomingSequences() const

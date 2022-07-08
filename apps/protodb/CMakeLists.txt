@@ -58,7 +58,6 @@ set(HEADERS_LIST
     include/PluginDetailDialog.h
     include/PluginManagerDialog.h
     include/PluginTreeView.h
-    include/Sequence.h
     include/SequenceModel.h
     include/SequenceEditDialog.h
     include/SequenceTableView.h
@@ -94,6 +93,7 @@ target_link_libraries(${TARGET}
 
     protodb::base
     protodb::gui
+    protodb::dev
 )
 
 # ------------ [ Properties and compile definitions ] ------------

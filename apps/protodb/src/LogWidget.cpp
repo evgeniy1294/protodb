@@ -3,8 +3,9 @@
 #include "ConnectionConfigDialog.h"
 #include "LogDecorationDialog.h"
 #include "LogProxyModel.h"
-
 #include "Logger.h"
+#include "MainClass.h"
+
 #include <protodb/LuaApi.h>
 
 #include <QApplication>
@@ -27,7 +28,9 @@ LogWidget::LogWidget(QWidget* parent)
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         m_conn_dialog->resize(QSize(640, 540));
 
+    auto logger = MainClass::instance().logger();
     m_log_proxy_model = new LogProxyModel(this);
+        m_log_proxy_model->setSourceModel(logger);
         m_log_proxy_model->invalidate();
 
     m_view->setModel(m_log_proxy_model);
@@ -37,9 +40,9 @@ LogWidget::LogWidget(QWidget* parent)
     m_lua_api = new LuaApi(this);
         m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
 
-    connect(m_lua_api, &LuaApi::sLogPrint, &Logger::instance(), &Logger::comment);
-    connect(m_lua_api, &LuaApi::sLogError, &Logger::instance(), &Logger::error);
-    connect(m_lua_api, &LuaApi::sLogClear, &Logger::instance(), &Logger::clear);
+    connect(m_lua_api, &LuaApi::sLogPrint, logger, &Logger::comment);
+    connect(m_lua_api, &LuaApi::sLogError, logger, &Logger::error);
+    connect(m_lua_api, &LuaApi::sLogClear, logger, &Logger::clear);
     // ------- Test --------
 
     createConnections();
@@ -111,6 +114,7 @@ void LogWidget::createGui()
 void LogWidget::createConnections()
 {
     connect(m_run, &QPushButton::released, this, [this]() {
+        auto logger = MainClass::instance().logger();
         static bool state = true;
         if (state) {
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
@@ -126,14 +130,14 @@ void LogWidget::createConnections()
                 array.push_back(0x34);
 
             m_lua_api->beforeTransmit(array);
-            Logger::log( Logger::kChannelSecond, array );;
+            logger->log( Logger::ChannelSecond, array );
 
             array.clear();
             array.push_back(0x35);
             array.push_back(0x36);
             array.push_back(0x37);
             array.push_back(0x38);
-            Logger::log( Logger::kChannelFirst, array );
+            logger->log( Logger::ChannelFirst, array );
             m_lua_api->afterReceive(array);
         }
         else

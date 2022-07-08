@@ -54,6 +54,7 @@ target_link_libraries(${TARGET}
     PRIVATE
 
     protodb::base
+    protodb::dev
 )
 
 # ------------ [ Properties and compile definitions ] ------------

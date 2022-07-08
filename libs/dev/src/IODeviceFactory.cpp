@@ -1,6 +1,7 @@
-#include "plugins/IODeviceFactory.h"
-#include "plugins/IODeviceCreatorInterface.h"
-#include "factories/GlobalFactoryStorage.h"
+#include "protodb/factories/IODeviceFactory.h"
+
+#include <protodb/factories/GlobalFactoryStorage.h>
+#include <protodb/creators/IODeviceCreatorInterface.h>
 
 
 IODeviceFactory::IODeviceFactory(QObject* parent)

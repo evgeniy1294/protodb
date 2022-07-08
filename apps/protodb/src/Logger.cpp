@@ -3,10 +3,10 @@
 Logger::Logger(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    m_flags[kChannelFirst]   = true;
-    m_flags[kChannelSecond]  = true;
-    m_flags[kChannelComment] = true;
-    m_flags[kChannelError]   = true;
+    m_flags[ChannelFirst]   = true;
+    m_flags[ChannelSecond]  = true;
+    m_flags[ChannelComment] = true;
+    m_flags[ChannelError]   = true;
 }
 
 void Logger::log(const Event &event)
@@ -18,25 +18,19 @@ void Logger::log(const Event &event)
     }
 }
 
-Logger &Logger::instance()
-{
-    static Logger m_instance;
-    return m_instance;
-}
-
 void Logger::log(Channel ch, const QByteArray& data, const QDateTime& timestamp)
 {
-    instance().log( {.timestamp = timestamp, .channel = ch, .message = data} );
+    log( {.timestamp = timestamp, .channel = ch, .message = data} );
 }
 
 void Logger::comment(const QByteArray &text)
 {
-    instance().log( { .timestamp = QDateTime::currentDateTime(), .channel = kChannelComment, .message = text } );
+    log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelComment, .message = text } );
 }
 
 void Logger::error(const QByteArray& text)
 {
-    instance().log( { .timestamp = QDateTime::currentDateTime(), .channel = kChannelError, .message = text } );
+    log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelError, .message = text } );
 }
 
 void Logger::clear()
@@ -74,14 +68,14 @@ QVariant Logger::data(const QModelIndex& index, int role) const
     if ( role == Qt::DisplayRole ) {
         auto& event = m_log.at(row);
         switch (col) {
-            case kColumnTimestamp:
+            case ColumnTimestamp:
                 return event.timestamp;
 
-            case kColumnChannel: {
+            case ColumnChannel: {
                 return event.channel;
             }
 
-            case kColumnMsg: {
+            case ColumnMsg: {
                 return event.message;
             }
 
@@ -99,9 +93,9 @@ QVariant Logger::headerData(int section, Qt::Orientation orientation, int role) 
 
         if (orientation == Qt::Horizontal) {
             switch (section) {
-                case kColumnTimestamp: return QString(tr(""));
-                case kColumnChannel: return QString(tr(""));
-                case kColumnMsg: return QString(tr("Bytes"));
+                case ColumnTimestamp: return QString(tr(""));
+                case ColumnChannel: return QString(tr(""));
+                case ColumnMsg: return QString(tr("Bytes"));
                 default: break;
             }
         }
@@ -122,10 +116,10 @@ bool Logger::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRol
 
 void Logger::setChannelEnabled(Channel channel)
 {
-    instance().m_flags[channel] = true;
+    m_flags[channel] = true;
 }
 
 void Logger::setChannelDisabled(Channel channel)
 {
-    instance().m_flags[channel] = false;
+    m_flags[channel] = false;
 }

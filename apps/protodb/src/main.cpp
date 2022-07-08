@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
     return ret;
 }
 
-#include <protodb/plugins/IOWidgetFactory.h>
-#include <protodb/plugins/IOWidgetCreatorInterface.h>
+#include <protodb/factories/IOWidgetFactory.h>
+#include <protodb/creators/IOWidgetCreatorInterface.h>
 void testPlugins() {
     auto factory = IOWidgetFactory::globalInstance();
     if (!factory) {

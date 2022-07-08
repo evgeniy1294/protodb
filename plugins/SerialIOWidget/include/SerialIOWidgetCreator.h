@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/plugins/IOWidgetCreatorInterface.h>
+#include <protodb/creators/IOWidgetCreatorInterface.h>
 #include "SerialIOWidget.h"
 
 class SerialIOWIdgetCreator: public QObject, public IOWidgetCreatorInterface

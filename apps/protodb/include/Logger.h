@@ -17,18 +17,18 @@ public:
 
 
     enum ColumnNames {
-        kColumnTimestamp = 0,
-        kColumnChannel   = 1,
-        kColumnMsg       = 2,
+        ColumnTimestamp = 0,
+        ColumnChannel   = 1,
+        ColumnMsg       = 2,
 
         kColumnCount
     };
 
     enum Channel {
-        kChannelFirst = 0,
-        kChannelSecond,
-        kChannelComment,
-        kChannelError,
+        ChannelFirst = 0,
+        ChannelSecond,
+        ChannelComment,
+        ChannelError,
 
         kLogChannelsNum
     };
@@ -41,14 +41,14 @@ public:
     };
 
 public:
-    static Logger& instance();
+    Logger(QObject* parent = nullptr);
 
-    static void log(Channel ch, const QByteArray& data, const QDateTime& timestamp = QDateTime::currentDateTime());
-    static void comment(const QByteArray& text);
-    static void error(const QByteArray& text);
+    void log(Channel ch, const QByteArray& data, const QDateTime& timestamp = QDateTime::currentDateTime());
+    void comment(const QByteArray& text);
+    void error(const QByteArray& text);
 
-    static void setChannelEnabled (Channel channel);
-    static void setChannelDisabled(Channel channel);
+    void setChannelEnabled (Channel channel);
+    void setChannelDisabled(Channel channel);
 
     // ---------[ MODEL INTERFACE ]----------- //
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -62,7 +62,6 @@ public slots:
     void reload();
 
 private:
-    Logger(QObject* parent = nullptr);
     void log(const Event& event);
 
 private:

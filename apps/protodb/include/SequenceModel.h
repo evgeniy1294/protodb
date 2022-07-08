@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sequence.h"
+#include <protodb/Sequence.h>
 
 #include <protodb/utils/JsonBaseUtils.h>
 

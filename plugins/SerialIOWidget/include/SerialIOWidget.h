@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/plugins/IOWidget.h>
+#include <protodb/IOWidget.h>
 
 class QComboBox;
 class QValidator;

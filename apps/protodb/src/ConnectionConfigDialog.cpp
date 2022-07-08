@@ -1,9 +1,9 @@
 #include "ConnectionConfigDialog.h"
 #include "LogFormatWidget.h"
 
-#include <protodb/plugins/IOWidget.h>
-#include <protodb/plugins/IOWidgetFactory.h>
-#include <protodb/plugins/IOWidgetCreatorInterface.h>
+#include <protodb/IOWidget.h>
+#include <protodb/factories/IOWidgetFactory.h>
+#include <protodb/creators/IOWidgetCreatorInterface.h>
 
 #include <protodb/factories/GlobalFactoryStorage.h>
 
