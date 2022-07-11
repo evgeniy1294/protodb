@@ -38,7 +38,7 @@ public:
     char separator() const;
 
 private:
-    Logger::ByteFormat m_byte_format;
+    ByteFormat m_byte_format;
 
     char m_separator;
     QColor m_attr_color;

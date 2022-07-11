@@ -10,12 +10,6 @@ class Logger: public QAbstractTableModel
     Q_DISABLE_COPY(Logger)
 
 public:
-    enum ByteFormat {
-        HexFormat,
-        AsciiFormat,
-    };
-
-
     enum ColumnNames {
         ColumnTimestamp = 0,
         ColumnChannel   = 1,

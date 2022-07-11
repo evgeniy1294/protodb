@@ -17,6 +17,7 @@ set(SOURCES_LIST
     src/CellSpinBoxDelegate.cpp
     src/ConnectionConfigDialog.cpp
     src/Logger.cpp
+    src/LogFormatter.cpp
     src/LogDecorationDialog.cpp
     src/LogFormatWidget.cpp
     src/LogItemDelegate.cpp
@@ -46,6 +47,7 @@ set(HEADERS_LIST
     include/CellSpinBoxDelegate.h
     include/ConnectionConfigDialog.h
     include/Logger.h
+    include/LogFormatter.h
     include/LogDecorationDialog.h
     include/LogFormatWidget.h
     include/LogItemDelegate.h
