@@ -8,7 +8,7 @@
 #include <QFont>
 #include <QMap>
 
-class LogFormatter: public QObject//, public Configurable
+class LogFormatter: public QObject
 {
     Q_OBJECT
 
@@ -31,14 +31,22 @@ public:
     void setSeparator(char s);
     char separator() const;
 
-    QStringList format (const Logger::Event& event) const;
+    void setByteFormat(ByteFormat format);
+    ByteFormat byteFormat() const;
+
     QString channelName(const Logger::Event& event) const;
     QString timestamp  (const Logger::Event& event) const;
     QString data       (const Logger::Event& event) const;
+    QString format     (const Logger::Event& event) const;
+
+    QString format(Logger::Channel ch) const;
+    QString format(const QDateTime& dt) const;
+    QString format(Logger::Channel ch, const QByteArray& msg) const;
 
 private:
     QMap<Logger::Channel, QString> m_ch_names;
     QString m_time_format;
+    ByteFormat m_byte_format;
     char m_separator;
 };
 

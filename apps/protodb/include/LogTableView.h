@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Logger.h"
+#include "LogFormatter.h"
 
 #include <QTableView>
 
@@ -16,7 +16,7 @@ class LogTableView: public QTableView
 public:
     LogTableView(QWidget* parent = nullptr);
     void setModel(QAbstractItemModel *model) override;
-    void setByteFormat(Logger::ByteFormat format);
+    void setByteFormat(LogFormatter::ByteFormat format);
 
 signals:
     void sToAnalyzer(const QByteArray&);

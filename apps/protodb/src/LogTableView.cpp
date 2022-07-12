@@ -44,7 +44,7 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
 }
 
-void LogTableView::setByteFormat(Logger::ByteFormat format)
+void LogTableView::setByteFormat(LogFormatter::ByteFormat format)
 {
     m_item_delegate->setByteFormat(format);
 }

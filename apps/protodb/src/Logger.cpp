@@ -65,8 +65,8 @@ QVariant Logger::data(const QModelIndex& index, int role) const
     if (!checkIndex(index))
         return QVariant();
 
+    auto& event = m_log.at(row);
     if ( role == Qt::DisplayRole ) {
-        auto& event = m_log.at(row);
         switch (col) {
             case ColumnTimestamp:
                 return event.timestamp;
@@ -82,6 +82,10 @@ QVariant Logger::data(const QModelIndex& index, int role) const
             default:
                 break;
         }
+    }
+
+    if ( role == EventRole ) {
+        return QVariant::fromValue(event);
     }
 
     return QVariant();

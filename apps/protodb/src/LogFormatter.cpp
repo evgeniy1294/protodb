@@ -4,7 +4,7 @@
 LogFormatter::LogFormatter(QObject *parent)
     : QObject(parent)
 {
-    m_byte_format = Logger::ByteFormat::HexFormat;
+    m_byte_format = HexFormat;
     m_separator   = ' ';
 
     m_time_format = "hh:mm:ss.zzz";
@@ -21,6 +21,7 @@ LogFormatter::LogFormatter(const LogFormatter &other, QObject *parent)
     m_ch_names    = other.m_ch_names;
     m_time_format = other.m_time_format;
     m_separator   = other.m_separator;
+    m_byte_format = other.m_byte_format;
 }
 
 void LogFormatter::setChannelName(Logger::Channel ch, const QString &name)
@@ -63,10 +64,38 @@ QString LogFormatter::timestamp(const Logger::Event &event) const
     return event.timestamp.toString(m_time_format);
 }
 
-QString LogFormatter::data(const Logger::Event &event, ByteFormat format) const
+QString LogFormatter::data(const Logger::Event &event) const
 {
-    bool ascii = event.channel == kCommentLogChannel || event.channel == kErrorLogChannel || format == kAsciiFormat;
+    bool ascii = event.channel == Logger::ChannelComment || event.channel == Logger::ChannelError || m_byte_format == AsciiFormat;
     return ascii ? event.message : event.message.toHex(m_separator);
+}
+
+QString LogFormatter::format(const Logger::Event &event) const
+{
+    QString ret;
+        ret += timestamp(event);
+        ret += " ";
+        ret += channelName(event);
+        ret += " ";
+        ret += data(event);
+
+        return ret;
+}
+
+QString LogFormatter::format(Logger::Channel ch) const
+{
+    return m_ch_names[ch];
+}
+
+QString LogFormatter::format(const QDateTime &dt) const
+{
+    return dt.toString(m_time_format);
+}
+
+QString LogFormatter::format(Logger::Channel ch, const QByteArray &msg) const
+{
+    bool ascii = ch == Logger::ChannelComment || ch == Logger::ChannelError || m_byte_format == AsciiFormat;
+    return ascii ? msg : msg.toHex(m_separator);
 }
 
 

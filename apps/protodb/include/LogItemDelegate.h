@@ -3,6 +3,8 @@
 #include "Logger.h"
 #include <QStyledItemDelegate>
 
+class LogFormatter;
+
 class LogItemDelegate: public QStyledItemDelegate
 {
     Q_OBJECT
@@ -12,9 +14,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     QString message(const QModelIndex& index);
-
-    Logger::ByteFormat byteFormat() const;
-    void setByteFormat(Logger::ByteFormat format);
 
     void setAttributeColor(const QColor& color);
     QColor attributeColor() const;
@@ -28,25 +27,13 @@ public:
     void setChannelFont(Logger::Channel channel, const QFont& font);
     QFont channelFont  (Logger::Channel channel) const;
 
-    void setChannelName(Logger::Channel channel, const QString& name);
-    QString channelName(Logger::Channel channel) const;
-
-    void setTimestampFormat(const QString& format);
-    const QString& timestampFormat() const;
-
-    void setSeparator(char s);
-    char separator() const;
-
 private:
-    ByteFormat m_byte_format;
+    LogFormatter* m_formatter;
 
-    char m_separator;
     QColor m_attr_color;
     QFont  m_attr_font;
-    QString m_time_format;
     QMap<Logger::Channel, QColor>  m_ch_colors;
     QMap<Logger::Channel, QFont>   m_ch_fonts;
-    QMap<Logger::Channel, QString> m_ch_names;
 };
 
 

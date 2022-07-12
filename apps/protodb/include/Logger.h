@@ -34,6 +34,7 @@ public:
         QByteArray message;
     };
 
+    static constexpr int EventRole = Qt::UserRole;
 public:
     Logger(QObject* parent = nullptr);
 
@@ -63,4 +64,4 @@ private:
     QMap<Channel, bool> m_flags;
 };
 
-
+Q_DECLARE_METATYPE(Logger::Event)
