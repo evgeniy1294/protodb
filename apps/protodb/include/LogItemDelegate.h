@@ -27,6 +27,9 @@ public:
     void setChannelFont(Logger::Channel channel, const QFont& font);
     QFont channelFont  (Logger::Channel channel) const;
 
+    void setFormatter(LogFormatter* fmt);
+    LogFormatter* formatter() const;
+
 private:
     LogFormatter* m_formatter;
 

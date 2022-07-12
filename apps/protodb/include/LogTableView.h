@@ -15,8 +15,10 @@ class LogTableView: public QTableView
 
 public:
     LogTableView(QWidget* parent = nullptr);
-    void setModel(QAbstractItemModel *model) override;
-    void setByteFormat(LogFormatter::ByteFormat format);
+    void setModel(QAbstractItemModel* model) override;
+
+    void setFormatter(LogFormatter* fmt);
+    LogFormatter* formatter() const;
 
 signals:
     void sToAnalyzer(const QByteArray&);

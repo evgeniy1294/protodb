@@ -13,8 +13,8 @@
 LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {
-    setContextMenuPolicy(Qt::CustomContextMenu);
     m_item_delegate = new LogItemDelegate();
+    setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegate(m_item_delegate);
     setWordWrap(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -44,9 +44,14 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
 }
 
-void LogTableView::setByteFormat(LogFormatter::ByteFormat format)
+void LogTableView::setFormatter(LogFormatter* fmt)
 {
-    m_item_delegate->setByteFormat(format);
+    m_item_delegate->setFormatter(fmt);
+}
+
+LogFormatter *LogTableView::formatter() const
+{
+    return m_item_delegate->formatter();
 }
 
 void LogTableView::createMenu()
@@ -108,7 +113,8 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy_as_bytes, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data().toByteArray().toHex(m_item_delegate->separator());
+        char separator = m_item_delegate->formatter()->separator();
+        auto msg = currentIndex().data().toByteArray().toHex(separator);
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
