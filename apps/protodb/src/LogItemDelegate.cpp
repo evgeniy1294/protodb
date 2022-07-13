@@ -6,6 +6,7 @@
 
 LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
+    , m_fmt(nullptr)
 
 {
     m_attr_color = QColor(Qt::darkGreen);
@@ -45,21 +46,24 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             font  = m_attr_font;
             align = Qt::AlignCenter;
 
-            data = m_formatter->format( model->data( index ).value<QDateTime>() );
+            auto dt = model->data( index ).value<QDateTime>();
+            data = m_fmt != nullptr ? m_fmt->format( dt ) : LogFormatter::defaultFormat(dt);
         } break;
 
         case Logger::ColumnChannel: {
             color = m_attr_color;
             font  = m_attr_font;
 
-            data  = m_formatter->format(channel);
+            data  = m_fmt != nullptr ? m_fmt->format(channel) : LogFormatter::defaultFormat(channel);
         } break;
 
         case Logger::ColumnMsg: {
             color = m_ch_colors[channel];
             font  = m_ch_fonts [channel];
 
-            data = m_formatter->format( channel, index.model()->data(index).toByteArray() );
+            auto raw_data = index.model()->data(index).toByteArray();
+            data = m_fmt != nullptr ? m_fmt->format( channel, raw_data ) :
+                                      LogFormatter::defaultFormat(channel, raw_data);
 
         } break;
     }
@@ -84,7 +88,8 @@ QString LogItemDelegate::message(const QModelIndex& index)
 {
     QString ret;
     if (index.isValid()) {
-        ret = m_formatter->format( index.data(Logger::EventRole).value<Logger::Event>() );
+        auto event = index.data(Logger::EventRole).value<Logger::Event>();
+        ret = m_fmt != nullptr ? m_fmt->format( event ) : LogFormatter::defaultFormat(event);
     }
 
     return ret.simplified();
@@ -128,5 +133,19 @@ void LogItemDelegate::setChannelFont(Logger::Channel channel, const QFont& font)
 QFont LogItemDelegate::channelFont(Logger::Channel channel) const
 {
     return m_ch_fonts[channel];
+}
+
+void LogItemDelegate::setFormatter(LogFormatter* fmt)
+{
+    if (fmt != m_fmt && fmt != nullptr) {
+        m_fmt = fmt;
+    }
+
+    return;
+}
+
+LogFormatter* LogItemDelegate::formatter() const
+{
+    return m_fmt;
 }
 

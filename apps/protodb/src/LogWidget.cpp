@@ -33,6 +33,8 @@ LogWidget::LogWidget(QWidget* parent)
         m_log_proxy_model->setSourceModel(logger);
         m_log_proxy_model->invalidate();
 
+    auto formatter = MainClass::instance().logFormatter();
+    m_view->setFormatter(formatter);
     m_view->setModel(m_log_proxy_model);
         m_view->reset();
 
@@ -165,13 +167,14 @@ void LogWidget::createConnections()
     connect(m_mode_btn, &QPushButton::released, this, [this]() {
        static bool state = true;
 
+       auto formatter = MainClass::instance().logFormatter();
        if (state) {
-           m_view->setByteFormat(Logger::AsciiFormat);
+           m_view->formatter()->setByteFormat(LogFormatter::AsciiFormat);
            m_view->reset();
            m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
-           m_view->setByteFormat(Logger::HexFormat);
+           m_view->formatter()->setByteFormat(LogFormatter::HexFormat);
            m_view->reset();
            m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }

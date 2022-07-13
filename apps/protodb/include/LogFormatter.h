@@ -1,26 +1,29 @@
 #pragma once
 
 #include "Logger.h"
-#include <protodb/configurable/Configurable.h>
+//#include <protodb/configurable/Configurable.h>
 
-#include <QObject>
 #include <QColor>
 #include <QFont>
 #include <QMap>
 
-class LogFormatter: public QObject
+class LogFormatter
 {
-    Q_OBJECT
-
 public:
     enum ByteFormat {
         HexFormat,
         AsciiFormat,
     };
 
+    static const QString DefaultTimeFormat;
+    static const ByteFormat DefaultByteFormat = HexFormat;
+    static const char DefaultSeparator = ' ';
+
 public:
     LogFormatter(QObject* parent = nullptr);
     LogFormatter(const LogFormatter& other, QObject* parent = nullptr);
+
+    void setDefault();
 
     void setChannelName(Logger::Channel ch, const QString& name);
     QString channelName(Logger::Channel ch) const;
@@ -33,6 +36,13 @@ public:
 
     void setByteFormat(ByteFormat format);
     ByteFormat byteFormat() const;
+
+    static QMap<Logger::Channel, QString> defaultChannelNames();
+
+    static QString defaultFormat(Logger::Channel ch);
+    static QString defaultFormat(const QDateTime& dt);
+    static QString defaultFormat(Logger::Channel ch, const QByteArray& msg);
+    static QString defaultFormat(const Logger::Event& event);
 
     QString channelName(const Logger::Event& event) const;
     QString timestamp  (const Logger::Event& event) const;

@@ -6,6 +6,7 @@
 class QIODevice;
 
 class Logger;
+class LogFormatter;
 class SequenceModel;
 
 class MainClass final: public QObject
@@ -16,12 +17,12 @@ public:
     static MainClass& instance();
 
     void init();
+    bool isStarted() const;
 
     SequenceModel* incomingSequences() const;
     SequenceModel* outgoingSequences() const;
     Logger* logger() const;
-
-    bool isStarted() const;
+    LogFormatter* logFormatter() const;
 
 public slots:
     void start(const nlohmann::json& attr);
@@ -39,5 +40,6 @@ private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
     Logger* m_logger;
+    LogFormatter* m_log_formatter;
     QIODevice* m_io;
 };

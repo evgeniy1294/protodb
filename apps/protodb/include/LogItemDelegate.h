@@ -31,7 +31,7 @@ public:
     LogFormatter* formatter() const;
 
 private:
-    LogFormatter* m_formatter;
+    LogFormatter* m_fmt;
 
     QColor m_attr_color;
     QFont  m_attr_font;

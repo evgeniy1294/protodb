@@ -14,6 +14,7 @@ LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {
     m_item_delegate = new LogItemDelegate();
+
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegate(m_item_delegate);
     setWordWrap(true);

@@ -1,27 +1,34 @@
 #include "LogFormatter.h"
 #include <protodb/utils/JsonUtils.h>
 
+const QString LogFormatter::DefaultTimeFormat = "hh:mm:ss.zzz";
+
 LogFormatter::LogFormatter(QObject *parent)
-    : QObject(parent)
 {
-    m_byte_format = HexFormat;
-    m_separator   = ' ';
-
-    m_time_format = "hh:mm:ss.zzz";
-
-    m_ch_names [Logger::ChannelFirst]   = "RX";
-    m_ch_names [Logger::ChannelSecond]  = "TX";
-    m_ch_names [Logger::ChannelComment] = "LUA";
-    m_ch_names [Logger::ChannelError]   = "ERR";
+    setDefault();
 }
 
 LogFormatter::LogFormatter(const LogFormatter &other, QObject *parent)
-    : QObject(parent)
 {
     m_ch_names    = other.m_ch_names;
     m_time_format = other.m_time_format;
     m_separator   = other.m_separator;
     m_byte_format = other.m_byte_format;
+}
+
+void LogFormatter::setDefault()
+{
+    auto names = defaultChannelNames();
+
+    m_byte_format = DefaultByteFormat;
+    m_separator   = DefaultSeparator;
+
+    m_time_format = DefaultTimeFormat;
+
+    m_ch_names[Logger::ChannelFirst]   = names[Logger::ChannelFirst];
+    m_ch_names[Logger::ChannelSecond]  = names[Logger::ChannelSecond];
+    m_ch_names[Logger::ChannelComment] = names[Logger::ChannelComment];
+    m_ch_names[Logger::ChannelError]   = names[Logger::ChannelError];
 }
 
 void LogFormatter::setChannelName(Logger::Channel ch, const QString &name)
@@ -52,6 +59,16 @@ void LogFormatter::setSeparator(char s)
 char LogFormatter::separator() const
 {
     return m_separator;
+}
+
+void LogFormatter::setByteFormat(ByteFormat format)
+{
+    m_byte_format = format;
+}
+
+LogFormatter::ByteFormat LogFormatter::byteFormat() const
+{
+    return m_byte_format;
 }
 
 QString LogFormatter::channelName(const Logger::Event &event) const
@@ -97,6 +114,47 @@ QString LogFormatter::format(Logger::Channel ch, const QByteArray &msg) const
     bool ascii = ch == Logger::ChannelComment || ch == Logger::ChannelError || m_byte_format == AsciiFormat;
     return ascii ? msg : msg.toHex(m_separator);
 }
+
+QMap<Logger::Channel, QString> LogFormatter::defaultChannelNames()
+{
+    static const QMap<Logger::Channel, QString> DefaultNames = {
+        {Logger::ChannelFirst,  "RX"},
+        {Logger::ChannelSecond, "TX"},
+        {Logger::ChannelComment,"LUA"},
+        {Logger::ChannelError,  "ERR"}
+    };
+
+    return DefaultNames;
+}
+
+QString LogFormatter::defaultFormat(Logger::Channel ch)
+{
+    return DefaultTimeFormat[ch];
+}
+
+QString LogFormatter::defaultFormat(const QDateTime &dt)
+{
+    return dt.toString(DefaultTimeFormat);
+}
+
+QString LogFormatter::defaultFormat(Logger::Channel ch, const QByteArray &msg)
+{
+    bool ascii = ch == Logger::ChannelComment || ch == Logger::ChannelError;
+    return ascii ? msg : msg.toHex(DefaultSeparator);
+}
+
+QString LogFormatter::defaultFormat(const Logger::Event &event)
+{
+    QString ret;
+        ret += defaultFormat(event.timestamp);
+        ret += " ";
+        ret += defaultFormat(event.channel);
+        ret += " ";
+        ret += defaultFormat(event.channel, event.message);
+
+        return ret;
+}
+
 
 
 
