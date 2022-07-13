@@ -3,15 +3,18 @@
 #include "SequenceModel.h"
 #include "Logger.h"
 #include "LogFormatter.h"
+#include "LogPrinter.h"
 
 MainClass::MainClass()
     : m_incoming_sequences(new SequenceModel(this))
     , m_outgoing_sequences(new SequenceModel(this))
     , m_logger(new Logger(this))
     , m_log_formatter(new LogFormatter())
+    , m_log_printer(new LogPrinter(this))
 {
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
+    m_log_printer->setFormatter(m_log_formatter);
 }
 
 MainClass::~MainClass()

@@ -1,12 +1,14 @@
+#include "LogDecorator.h"
+
+#include <protodb/utils/JsonUtils.h>
+
 #include <QApplication>
-#include <protodb/JsonUtils/JsonUtils.h>
-#include <protodb/LogDecorator.h>
 
 
 LogDecorator::LogDecorator(QObject* parent)
     : QObject(parent)
 {
-    setDefaultConfig();
+    setDefault();
 }
 
 LogDecorator::LogDecorator(const LogDecorator &other, QObject *parent)
@@ -40,64 +42,55 @@ QFont LogDecorator::attributeFont() const
     return m_attr_font;
 }
 
-void LogDecorator::setChannelColor(LogChannel channel, const QColor& color)
+void LogDecorator::setChannelColor(Logger::Channel channel, const QColor& color)
 {
     m_ch_colors[channel] = color;
     emit sConfigChanged();
 }
 
-QColor LogDecorator::channelColor(LogChannel channel) const
+QColor LogDecorator::channelColor(Logger::Channel channel) const
 {
     return m_ch_colors[channel];
 }
 
-QColor LogDecorator::channelColor(const LogEvent &event) const
+QColor LogDecorator::channelColor(const Logger::Event &event) const
 {
     return channelColor(event.channel);
 }
 
-void LogDecorator::setChannelFont(LogChannel channel, const QFont& font)
+void LogDecorator::setChannelFont(Logger::Channel channel, const QFont& font)
 {
     m_ch_fonts[channel] = font;
     emit sConfigChanged();
 }
 
-QFont LogDecorator::channelFont(LogChannel channel) const
+QFont LogDecorator::channelFont(Logger::Channel channel) const
 {
     return m_ch_fonts[channel];
 }
 
-QFont LogDecorator::channelFont(const LogEvent &event) const
+QFont LogDecorator::channelFont(const Logger::Event &event) const
 {
     return channelFont(event.channel);
 }
 
-void LogDecorator::defaultConfig(nlohmann::json& json) const
+void LogDecorator::setDefault()
 {
-    json["AttributeColor"]      = QColor(Qt::darkGreen);
-    json["AttributeFont"]       = QApplication::font();
-    json["FirstChannelColor"]   = QColor(Qt::darkMagenta);
-    json["FirstChannelFont"]    = QApplication::font();
-    json["SecondChannelColor"]  = QColor(Qt::blue);
-    json["SecondChannelFont"]   = QApplication::font();
-    json["CommentChannelColor"] = QColor(Qt::darkYellow);
-    json["CommentChannelFont"]  = QApplication::font();
-    json["ErrorChannelColor"]   = QColor(Qt::red);
-    json["ErrorChannelFont"]    = QApplication::font();
+
 }
 
 void LogDecorator::fromJson(const nlohmann::json& json)
 {
     m_attr_color = json["AttributeColor"].get<QColor>();
     m_attr_font  = json["AttributeFont"].get<QFont>();
-    m_ch_colors[kFirstLogChannel]   = json["FirstChannelColor"].get<QColor>();
-    m_ch_fonts [kFirstLogChannel]   = json["FirstChannelFont"].get<QFont>();
-    m_ch_fonts [kSecondLogChannel]  = json["SecondChannelFont"].get<QFont>();
-    m_ch_colors[kSecondLogChannel]  = json["SecondChannelColor"].get<QColor>();
-    m_ch_colors[kCommentLogChannel] = json["CommentChannelColor"].get<QColor>();
-    m_ch_fonts [kCommentLogChannel] = json["CommentChannelFont"].get<QFont>();
-    m_ch_colors[kErrorLogChannel]   = json["ErrorChannelColor"].get<QColor>();
-    m_ch_fonts [kErrorLogChannel]   = json["ErrorChannelFont"].get<QFont>();
+    m_ch_colors[Logger::ChannelFirst]   = json["FirstChannelColor"].get<QColor>();
+    m_ch_fonts [Logger::ChannelFirst]   = json["FirstChannelFont"].get<QFont>();
+    m_ch_fonts [Logger::ChannelSecond]  = json["SecondChannelFont"].get<QFont>();
+    m_ch_colors[Logger::ChannelSecond]  = json["SecondChannelColor"].get<QColor>();
+    m_ch_colors[Logger::ChannelComment] = json["CommentChannelColor"].get<QColor>();
+    m_ch_fonts [Logger::ChannelComment] = json["CommentChannelFont"].get<QFont>();
+    m_ch_colors[Logger::ChannelError]   = json["ErrorChannelColor"].get<QColor>();
+    m_ch_fonts [Logger::ChannelError]   = json["ErrorChannelFont"].get<QFont>();
 
     emit sConfigChanged();
 }
@@ -106,12 +99,45 @@ void LogDecorator::toJson(nlohmann::json& json) const
 {
     json["AttributeColor"]      = m_attr_color;
     json["AttributeFont"]       = m_attr_font;
-    json["FirstChannelColor"]   = m_ch_colors[kFirstLogChannel];
-    json["FirstChannelFont"]    = m_ch_fonts [kFirstLogChannel];
-    json["SecondChannelColor"]  = m_ch_colors[kSecondLogChannel];
-    json["SecondChannelFont"]   = m_ch_fonts [kSecondLogChannel];
-    json["CommentChannelColor"] = m_ch_colors[kCommentLogChannel];
-    json["CommentChannelFont"]  = m_ch_fonts [kCommentLogChannel];
-    json["ErrorChannelColor"]   = m_ch_colors[kErrorLogChannel];
-    json["ErrorChannelFont"]    = m_ch_fonts [kErrorLogChannel];
+    json["FirstChannelColor"]   = m_ch_colors[Logger::ChannelFirst];
+    json["FirstChannelFont"]    = m_ch_fonts [Logger::ChannelFirst];
+    json["SecondChannelColor"]  = m_ch_colors[Logger::ChannelSecond];
+    json["SecondChannelFont"]   = m_ch_fonts [Logger::ChannelSecond];
+    json["CommentChannelColor"] = m_ch_colors[Logger::ChannelComment];
+    json["CommentChannelFont"]  = m_ch_fonts [Logger::ChannelComment];
+    json["ErrorChannelColor"]   = m_ch_colors[Logger::ChannelError];
+    json["ErrorChannelFont"]    = m_ch_fonts [Logger::ChannelError];
+}
+
+QMap<Logger::Channel, QColor> LogDecorator::defaultChannelColors()
+{
+    static QMap<Logger::Channel, QColor> m_def_colors = {
+        {Logger::ChannelFirst,   QColor(Qt::darkMagenta)},
+        {Logger::ChannelSecond,  QColor(Qt::blue)},
+        {Logger::ChannelComment, QColor(Qt::darkYellow)},
+        {Logger::ChannelError,   QColor(Qt::red)}
+    };
+
+    return m_def_colors;
+}
+
+QMap<Logger::Channel, QFont> LogDecorator::defaultChannelFonts()
+{
+    static QMap<Logger::Channel, QFont> m_def_fonts = {
+        {Logger::ChannelFirst,   QApplication::font()},
+        {Logger::ChannelSecond,  QApplication::font()},
+        {Logger::ChannelComment, QApplication::font()},
+        {Logger::ChannelError,   QApplication::font()}
+    };
+
+}
+
+QColor LogDecorator::defaultAttributeColor()
+{
+    return QColor(Qt::darkGreen);
+}
+
+QFont LogDecorator::defaultAttributeFont()
+{
+    return QApplication::font();
 }

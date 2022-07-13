@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Logger.h"
+
 #include <QtCore>
 #include <QColor>
 #include <QFont>
-#include <protodb/configurable/Configurable.h>
-#include <protodb/shared_types/LogTypes.h>
 
 class LogDecorator: public QObject, public Configurable
 {
@@ -14,26 +14,30 @@ public:
     LogDecorator(QObject* parent = nullptr);
     LogDecorator(const LogDecorator& other, QObject* parent = nullptr);
 
+    void setDefault();
+
     void setAttributeColor(const QColor& color);
     QColor attributeColor() const;
 
     void setAttributeFont(const QFont& font);
     QFont attributeFont() const;
 
-    void setChannelColor(LogChannel channel, const QColor& color);
-    QColor channelColor(LogChannel channel) const;
-    QColor channelColor(const Event& event) const;
+    void setChannelColor(Logger::Channel channel, const QColor& color);
+    QColor channelColor (Logger::Channel channel) const;
+    QColor channelColor (const Logger::Event& event) const;
 
-    void setChannelFont(LogChannel channel, const QFont& font);
-    QFont channelFont(LogChannel channel) const;
-    QFont channelFont(const Event& event) const;
+    void setChannelFont(Logger::Channel channel, const QFont& font);
+    QFont channelFont  (Logger::Channel channel) const;
+    QFont channelFont  (const Logger::Event& event) const;
 
-signals:
-    void sConfigChanged();
+    static QMap<Logger::Channel, QColor> defaultChannelColors();
+    static QMap<Logger::Channel, QFont>  defaultChannelFonts();
+    static QColor defaultAttributeColor();
+    static QFont  defaultAttributeFont();
 
 private:
     QColor m_attr_color;
     QFont  m_attr_font;
-    QMap<LogChannel, QColor> m_ch_colors;
-    QMap<LogChannel, QFont>  m_ch_fonts;
+    QMap<Logger::Channel, QColor> m_ch_colors;
+    QMap<Logger::Channel, QFont>  m_ch_fonts;
 };

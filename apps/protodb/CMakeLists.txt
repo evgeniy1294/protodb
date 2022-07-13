@@ -18,6 +18,8 @@ set(SOURCES_LIST
     src/ConnectionConfigDialog.cpp
     src/Logger.cpp
     src/LogFormatter.cpp
+    src/LogPrinter.cpp
+    src/LogDecorator.cpp
     src/LogDecorationDialog.cpp
     src/LogFormatWidget.cpp
     src/LogItemDelegate.cpp
@@ -48,6 +50,8 @@ set(HEADERS_LIST
     include/ConnectionConfigDialog.h
     include/Logger.h
     include/LogFormatter.h
+    include/LogPrinter.h
+    include/LogDecorator.h
     include/LogDecorationDialog.h
     include/LogFormatWidget.h
     include/LogItemDelegate.h

@@ -4,12 +4,14 @@
 #include <QColor>
 #include <QFont>
 
+#include <nlohmann/json.hpp>
+
 class QAbstractButton;
 class QPushButton;
 class QDialogButtonBox;
 class QLineEdit;
 
-class LogDecorationDialog: public QDialog // , public Configurable
+class LogDecorationDialog: public QDialog
 {
     Q_OBJECT
 
@@ -41,7 +43,6 @@ private:
     QFont m_ch2_font;
 
 private:
-
     QDialogButtonBox* m_dialog_btn;
 
     QPushButton* m_ch1_color_btn;

@@ -7,6 +7,7 @@ class QIODevice;
 
 class Logger;
 class LogFormatter;
+class LogPrinter;
 class SequenceModel;
 
 class MainClass final: public QObject
@@ -41,5 +42,6 @@ private:
     SequenceModel* m_outgoing_sequences;
     Logger* m_logger;
     LogFormatter* m_log_formatter;
+    LogPrinter* m_log_printer;
     QIODevice* m_io;
 };
