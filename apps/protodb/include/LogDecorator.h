@@ -6,13 +6,11 @@
 #include <QColor>
 #include <QFont>
 
-class LogDecorator: public QObject, public Configurable
+class LogDecorator
 {
-    Q_OBJECT
-
 public:
-    LogDecorator(QObject* parent = nullptr);
-    LogDecorator(const LogDecorator& other, QObject* parent = nullptr);
+    LogDecorator();
+    LogDecorator(const LogDecorator& other);
 
     void setDefault();
 
@@ -34,6 +32,8 @@ public:
     static QMap<Logger::Channel, QFont>  defaultChannelFonts();
     static QColor defaultAttributeColor();
     static QFont  defaultAttributeFont();
+    static QColor defaultChannelColor(Logger::Channel channel);
+    static QFont  defaultChannelFont(Logger::Channel channel);
 
 private:
     QColor m_attr_color;

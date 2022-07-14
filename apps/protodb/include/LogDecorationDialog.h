@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Logger.h"
+
 #include <QDialog>
 #include <QColor>
 #include <QFont>
@@ -11,6 +13,8 @@ class QPushButton;
 class QDialogButtonBox;
 class QLineEdit;
 
+class LogDecorator;
+
 class LogDecorationDialog: public QDialog
 {
     Q_OBJECT
@@ -18,9 +22,16 @@ class LogDecorationDialog: public QDialog
 public:
     LogDecorationDialog(QWidget* parent = nullptr);
 
+    void apply(LogDecorator* dec);
+
+signals:
+    void sConfigChanged();
+
 private:
+    void applyValue();
+    void restoreDefaultValue();
+    void restoreValue();
     void resetGui();
-    void applyConfig();
     void createGui();
     void createConnections();
 
@@ -31,16 +42,16 @@ private slots:
 
 private:
     QColor m_attr_color;
-    QColor m_cmt_color;
-    QColor m_err_color;
-    QColor m_ch1_color;
-    QColor m_ch2_color;
+    QColor m_temp_attr_color;
 
     QFont m_attr_font;
-    QFont m_cmt_font;
-    QFont m_err_font;
-    QFont m_ch1_font;
-    QFont m_ch2_font;
+    QFont m_temp_attr_font;
+
+    QMap<Logger::Channel, QColor> m_ch_colors;
+    QMap<Logger::Channel, QColor> m_temp_ch_colors;
+
+    QMap<Logger::Channel, QFont> m_ch_fonts;
+    QMap<Logger::Channel, QFont> m_temp_ch_fonts;
 
 private:
     QDialogButtonBox* m_dialog_btn;

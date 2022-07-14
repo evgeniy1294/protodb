@@ -1,13 +1,13 @@
 #pragma once
 
-#include "LogFormatter.h"
-
 #include <QTableView>
 
 class QMenu;
 class QAction;
 class LogDecorationDialog;
 class LogItemDelegate;
+class LogFormatter;
+class LogDecorator;
 
 class LogTableView: public QTableView
 {
@@ -42,4 +42,5 @@ private:
 
     LogDecorationDialog* m_dec_dialog;
     LogItemDelegate* m_item_delegate;
+    LogDecorator* m_decorator;
 };

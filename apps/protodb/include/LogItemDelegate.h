@@ -4,6 +4,7 @@
 #include <QStyledItemDelegate>
 
 class LogFormatter;
+class LogDecorator;
 
 class LogItemDelegate: public QStyledItemDelegate
 {
@@ -15,28 +16,15 @@ public:
 
     QString message(const QModelIndex& index);
 
-    void setAttributeColor(const QColor& color);
-    QColor attributeColor() const;
-
-    void setAttributeFont(const QFont& font);
-    QFont attributeFont() const;
-
-    void setChannelColor(Logger::Channel channel, const QColor& color);
-    QColor channelColor (Logger::Channel channel) const;
-
-    void setChannelFont(Logger::Channel channel, const QFont& font);
-    QFont channelFont  (Logger::Channel channel) const;
-
     void setFormatter(LogFormatter* fmt);
     LogFormatter* formatter() const;
 
+    void setDecorator(LogDecorator* dec);
+    LogDecorator* decorator() const;
+
 private:
     LogFormatter* m_fmt;
-
-    QColor m_attr_color;
-    QFont  m_attr_font;
-    QMap<Logger::Channel, QColor>  m_ch_colors;
-    QMap<Logger::Channel, QFont>   m_ch_fonts;
+    LogDecorator* m_dec;
 };
 
 

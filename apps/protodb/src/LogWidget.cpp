@@ -34,7 +34,8 @@ LogWidget::LogWidget(QWidget* parent)
         m_log_proxy_model->invalidate();
 
     auto formatter = MainClass::instance().logFormatter();
-    m_view->setFormatter(formatter);
+        m_view->setFormatter(formatter);
+
     m_view->setModel(m_log_proxy_model);
         m_view->reset();
 

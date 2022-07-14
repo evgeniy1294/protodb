@@ -1,8 +1,10 @@
-#include "LogTableView.h"
-#include "LogDecorationDialog.h"
-#include "LogItemDelegate.h"
-
 #include "Logger.h"
+#include "LogFormatter.h"
+#include "LogDecorator.h"
+#include "LogTableView.h"
+#include "LogItemDelegate.h"
+#include "LogDecorationDialog.h"
+
 
 #include <QApplication>
 #include <QClipboard>
@@ -13,7 +15,10 @@
 LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {
+    m_decorator = new LogDecorator();
+
     m_item_delegate = new LogItemDelegate();
+        m_item_delegate->setDecorator(m_decorator);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegate(m_item_delegate);
@@ -29,6 +34,7 @@ LogTableView::LogTableView(QWidget *parent)
         hh->hide();
 
     m_dec_dialog = new LogDecorationDialog(this);
+        m_dec_dialog->setDecorator(m_decorator);
 
     createActions();
     createMenu();

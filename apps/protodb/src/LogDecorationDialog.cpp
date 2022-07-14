@@ -1,6 +1,7 @@
 #include "LogDecorationDialog.h"
 
 #include "Logger.h"
+#include "LogDecorator.h"
 #include <protodb/utils/JsonUtils.h>
 
 #include <QApplication>
@@ -19,81 +20,94 @@ LogDecorationDialog::LogDecorationDialog(QWidget *parent)
 {
     createGui();
     createConnections();
+
+    restoreDefaultValue();
 }
+
+void LogDecorationDialog::apply(LogDecorator* dec)
+{
+    dec->setAttributeColor(m_attr_color);
+
+}
+
+void LogDecorationDialog::applyValue()
+{
+    m_attr_color = m_temp_attr_color;
+    m_ch_colors  = m_temp_ch_colors;
+
+    m_attr_font  = m_temp_attr_font;
+    m_ch_fonts   = m_temp_ch_fonts;
+
+    emit sConfigChanged();
+}
+
+void LogDecorationDialog::restoreDefaultValue()
+{
+    m_attr_color = LogDecorator::defaultAttributeColor();
+    m_ch_colors = LogDecorator::defaultChannelColors();
+
+    m_attr_font  = LogDecorator::defaultAttributeFont();
+    m_ch_fonts  = LogDecorator::defaultChannelFonts();
+
+    restoreValue();
+    emit sConfigChanged();
+}
+
+void LogDecorationDialog::restoreValue()
+{
+    m_temp_attr_color = m_attr_color;
+    m_temp_ch_colors  = m_ch_colors;
+    m_temp_attr_font  = m_attr_font;
+    m_temp_ch_fonts   = m_ch_fonts;
+
+    resetGui();
+}
+
 
 void LogDecorationDialog::resetGui()
 {
     // All buttons have same size
     QPixmap pixmap(QSize(36,36));
 
-    m_attr_color = Qt::darkGreen;
     pixmap.fill(m_attr_color);
     m_attr_color_btn->setIcon(pixmap);
 
-    m_ch1_color = Qt::darkMagenta;
-    pixmap.fill(m_ch1_color);
+    pixmap.fill(m_ch_colors.value(Logger::ChannelFirst, LogDecorator::defaultChannelColor(Logger::ChannelFirst)));
     m_ch1_color_btn->setIcon(pixmap);
 
-    m_ch2_color = Qt::blue;
-    pixmap.fill(m_ch2_color);
+    pixmap.fill(m_ch_colors.value(Logger::ChannelSecond, LogDecorator::defaultChannelColor(Logger::ChannelSecond)));
     m_ch2_color_btn->setIcon(pixmap);
 
-    m_cmt_color = Qt::darkYellow;
-    pixmap.fill(m_cmt_color);
+    pixmap.fill(m_ch_colors.value(Logger::ChannelComment, LogDecorator::defaultChannelColor(Logger::ChannelComment)));
     m_cmt_color_btn->setIcon(pixmap);
 
-    m_err_color = Qt::red;
-    pixmap.fill(m_err_color);
+    pixmap.fill(m_ch_colors.value(Logger::ChannelError, LogDecorator::defaultChannelColor(Logger::ChannelError)));
     m_err_color_btn->setIcon(pixmap);
 
     // Font combo boxes
-    m_ch1_font = QApplication::font();
-    QString font_str = QString("%1, %2").arg(m_ch1_font.family()).arg(m_ch1_font.pointSize());
-        m_ch1_font_le->setFont(m_ch1_font);
+    auto font = m_ch_fonts.value(Logger::ChannelFirst, LogDecorator::defaultChannelFont(Logger::ChannelFirst));
+    QString font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
+        m_ch1_font_le->setFont(font);
         m_ch1_font_le->setText(font_str);
 
-    m_ch2_font = QApplication::font();
-    font_str = QString("%1, %2").arg(m_ch2_font.family()).arg(m_ch2_font.pointSize());
-        m_ch2_font_le->setFont(m_ch2_font);
+    font = m_ch_fonts.value(Logger::ChannelSecond, LogDecorator::defaultChannelFont(Logger::ChannelSecond));
+    font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
+        m_ch2_font_le->setFont(font);
         m_ch2_font_le->setText(font_str);
 
-    m_cmt_font = QApplication::font();
-    font_str = QString("%1, %2").arg(m_cmt_font.family()).arg(m_cmt_font.pointSize());
-        m_cmt_font_le->setFont(m_cmt_font);
+    font = m_ch_fonts.value(Logger::ChannelComment, LogDecorator::defaultChannelFont(Logger::ChannelComment));
+    font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
+        m_cmt_font_le->setFont(font);
         m_cmt_font_le->setText(font_str);
 
-    m_err_font = QApplication::font();
-    font_str = QString("%1, %2").arg(m_err_font.family()).arg(m_err_font.pointSize());
-        m_err_font_le->setFont(m_err_font);
+    font = m_ch_fonts.value(Logger::ChannelError, LogDecorator::defaultChannelFont(Logger::ChannelError));
+    font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
+        m_err_font_le->setFont(font);
         m_err_font_le->setText(font_str);
 
-    m_attr_font = QApplication::font();
     font_str = QString("%1, %2").arg(m_attr_font.family()).arg(m_attr_font.pointSize());
         m_attr_font_le->setFont(m_attr_font);
         m_attr_font_le->setText(font_str);
-}
-
-
-void LogDecorationDialog::applyConfig()
-{
-    nlohmann::json json;
-
-    json["AttributeColor"]      = m_attr_color;
-    json["AttributeFont"]       = m_attr_font;
-
-    json["FirstChannelColor"]   = m_ch1_color;
-    json["FirstChannelFont"]    = m_ch1_font;
-
-    json["SecondChannelColor"]  = m_ch2_color;
-    json["SecondChannelFont"]   = m_ch2_font;
-
-    json["CommentChannelColor"] = m_cmt_color;
-    json["CommentChannelFont"]  = m_cmt_font;
-
-    json["ErrorChannelColor"]   = m_err_color;
-    json["ErrorChannelFont"]    = m_err_font;
-
-    //m_decorator->fromJson(json);
 }
 
 
@@ -208,16 +222,16 @@ void LogDecorationDialog::onDialogButtonClicked(QAbstractButton* btn)
     switch( m_dialog_btn->standardButton( btn ) )
     {
         case QDialogButtonBox::Apply:
-            applyConfig();
+            applyValue();
             break;
 
         case QDialogButtonBox::Ok:
-            applyConfig();
+            applyValue();
             accept();
             break;
 
         case QDialogButtonBox::Reset:
-            resetGui();
+            restoreValue();
             break;
 
         case QDialogButtonBox::RestoreDefaults: {
@@ -234,7 +248,7 @@ void LogDecorationDialog::onDialogButtonClicked(QAbstractButton* btn)
             }
 
             if (msgbox.exec() == QMessageBox::Yes) {
-                //m_decorator->setDefaultConfig();
+                restoreDefaultValue();
             }
         } break;
 
@@ -253,19 +267,19 @@ void LogDecorationDialog::onColorButtonClicked()
     QColor previos_color;
 
     if (signalSender == m_attr_color_btn) {
-        previos_color = m_attr_color;
+        previos_color = m_temp_attr_color;
     }
     else if (signalSender == m_cmt_color_btn) {
-        previos_color = m_cmt_color;
+        previos_color = m_temp_ch_colors.value(Logger::ChannelComment, LogDecorator::defaultChannelColor(Logger::ChannelComment));
     }
     else if (signalSender == m_err_color_btn) {
-        previos_color = m_err_color;
+        previos_color = m_temp_ch_colors.value(Logger::ChannelError, LogDecorator::defaultChannelColor(Logger::ChannelError));
     }
     else if (signalSender == m_ch1_color_btn) {
-        previos_color = m_ch1_color;
+        previos_color = m_temp_ch_colors.value(Logger::ChannelFirst, LogDecorator::defaultChannelColor(Logger::ChannelFirst));
     }
     else if (signalSender == m_ch2_color_btn) {
-        previos_color = m_ch2_color;
+        previos_color = m_temp_ch_colors.value(Logger::ChannelSecond, LogDecorator::defaultChannelColor(Logger::ChannelSecond));
     }
 
     QColorDialog dialog;
@@ -282,23 +296,23 @@ void LogDecorationDialog::onColorButtonClicked()
         auto signalSender = sender();
 
         if (signalSender == m_attr_color_btn) {
-            m_attr_color = color;
+            m_temp_attr_color = color;
             m_attr_color_btn->setIcon(QIcon(pixmap));
         }
         else if (signalSender == m_cmt_color_btn) {
-            m_cmt_color = color;
+            m_temp_ch_colors[Logger::ChannelComment] = color;
             m_cmt_color_btn->setIcon(QIcon(pixmap));
         }
         else if (signalSender == m_err_color_btn) {
-            m_err_color = color;
+            m_temp_ch_colors[Logger::ChannelError] = color;
             m_err_color_btn->setIcon(QIcon(pixmap));
         }
         else if (signalSender == m_ch1_color_btn) {
-            m_ch1_color = color;
+            m_temp_ch_colors[Logger::ChannelFirst] = color;
             m_ch1_color_btn->setIcon(QIcon(pixmap));
         }
         else if (signalSender == m_ch2_color_btn) {
-            m_ch2_color = color;
+            m_temp_ch_colors[Logger::ChannelSecond] = color;
             m_ch2_color_btn->setIcon(QIcon(pixmap));
         }
     }
@@ -310,19 +324,19 @@ void LogDecorationDialog::onFontButtonClicked()
     QFont previos_font;
 
     if (signalSender == m_attr_font_btn) {
-        previos_font = m_attr_font;
+        previos_font = m_temp_attr_font;
     }
     else if (signalSender == m_cmt_font_btn) {
-        previos_font = m_cmt_font;
+        previos_font = m_temp_ch_fonts.value(Logger::ChannelComment, LogDecorator::defaultChannelFont(Logger::ChannelComment));
     }
     else if (signalSender == m_err_font_btn) {
-        previos_font = m_err_font;
+        previos_font = m_temp_ch_fonts.value(Logger::ChannelError, LogDecorator::defaultChannelFont(Logger::ChannelError));
     }
     else if (signalSender == m_ch1_font_btn) {
-        previos_font = m_ch1_font;
+        previos_font = m_temp_ch_fonts.value(Logger::ChannelFirst, LogDecorator::defaultChannelFont(Logger::ChannelFirst));
     }
     else if (signalSender == m_ch2_font_btn) {
-        previos_font = m_ch2_font;
+        previos_font = m_temp_ch_fonts.value(Logger::ChannelSecond, LogDecorator::defaultChannelFont(Logger::ChannelSecond));
     }
 
     QFontDialog dialog;
@@ -336,28 +350,28 @@ void LogDecorationDialog::onFontButtonClicked()
         QString font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
 
         if (signalSender == m_attr_font_btn) {
-            m_attr_font = font;
+            m_temp_attr_font = font;
             m_attr_font_le->setFont(font);
             m_attr_font_le->setText(font_str);
 
         }
         else if (signalSender == m_cmt_font_btn) {
-            m_cmt_font = font;
+            m_temp_ch_fonts[Logger::ChannelComment] = font;
             m_cmt_font_le->setFont(font);
             m_cmt_font_le->setText(font_str);
         }
         else if (signalSender == m_err_font_btn) {
-            m_err_font = font;
+            m_temp_ch_fonts[Logger::ChannelError] = font;
             m_err_font_le->setFont(font);
             m_err_font_le->setText(font_str);
         }
         else if (signalSender == m_ch1_font_btn) {
-            m_ch1_font = font;
+            m_temp_ch_fonts[Logger::ChannelFirst] = font;
             m_ch1_font_le->setFont(font);
             m_ch1_font_le->setText(font_str);
         }
         else if (signalSender == m_ch2_font_btn) {
-            m_ch2_font = font;
+            m_temp_ch_fonts[Logger::ChannelSecond] = font;
             m_ch2_font_le->setFont(font);
             m_ch2_font_le->setText(font_str);
         }
