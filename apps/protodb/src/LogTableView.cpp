@@ -16,9 +16,11 @@ LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {
     m_decorator = new LogDecorator();
+    m_formatter = new LogFormatter();
 
     m_item_delegate = new LogItemDelegate();
         m_item_delegate->setDecorator(m_decorator);
+        m_item_delegate->setFormatter(m_formatter);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegate(m_item_delegate);
@@ -34,11 +36,16 @@ LogTableView::LogTableView(QWidget *parent)
         hh->hide();
 
     m_dec_dialog = new LogDecorationDialog(this);
-        m_dec_dialog->setDecorator(m_decorator);
 
     createActions();
     createMenu();
     connectSignals();
+}
+
+LogTableView::~LogTableView()
+{
+    delete m_decorator;
+    delete m_formatter;
 }
 
 
@@ -51,14 +58,14 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
 }
 
-void LogTableView::setFormatter(LogFormatter* fmt)
+LogFormatter* LogTableView::formatter() const
 {
-    m_item_delegate->setFormatter(fmt);
+    return m_formatter;
 }
 
-LogFormatter *LogTableView::formatter() const
+LogDecorator* LogTableView::decorator() const
 {
-    return m_item_delegate->formatter();
+    return m_decorator;
 }
 
 void LogTableView::createMenu()
@@ -141,13 +148,19 @@ void LogTableView::connectSignals()
 
             auto data = currentIndex().data();
             if (!data.isNull()) {
-                emit sToAnalyzer(data.toByteArray());
+
             }
         }
     });
 
     connect(m_options, &QAction::triggered, this, [this]() {
+        m_dec_dialog->readOrigin(m_decorator);
         m_dec_dialog->show();
+    });
+
+    connect(m_dec_dialog, &LogDecorationDialog::sConfigChanged, this, [this]() {
+        m_dec_dialog->apply(m_decorator);
+        reset();
     });
 }
 

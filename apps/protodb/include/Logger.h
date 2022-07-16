@@ -45,12 +45,18 @@ public:
     void setChannelEnabled (Channel channel);
     void setChannelDisabled(Channel channel);
 
+    void toJson(nlohmann::json& json) const;
+    void fromJson(const nlohmann::json& json);
+
     // ---------[ MODEL INTERFACE ]----------- //
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+signals:
+    void sEventOccuaried(Logger::Event event);
 
 public slots:
     void clear();

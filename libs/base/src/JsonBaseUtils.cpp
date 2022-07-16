@@ -139,16 +139,38 @@ bool readFromFile( const QString& path, nlohmann::json& json )
     return true;
 }
 
-bool writeToFile ( const QString& path, const nlohmann::json& json )
+bool writeToFile ( const QString& path, const nlohmann::json& json, int intend )
 {
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly)) {
         return false;
     }
 
-    file.write(json.dump(4).c_str());
+    file.write(json.dump(intend).c_str());
     file.close();
 
     return true;
 }
 
+
+void to_json(nlohmann::json& j, const QByteArray& array)
+{
+    j = nlohmann::json::array();
+    for (auto& byte: qAsConst(array)) {
+        j.push_back(byte);
+    }
+}
+
+void from_json(const nlohmann::json& j, QByteArray& array)
+{
+    array.clear();
+
+    if (!j.is_array()) {
+        return;
+    }
+
+    array.resize(j.size());
+    for(int i = 0; i < j.size(); i++) {
+        array[i] = j[i].get<std::uint8_t>();
+    }
+}

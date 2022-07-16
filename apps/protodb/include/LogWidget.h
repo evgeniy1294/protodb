@@ -39,7 +39,6 @@ private:
      QLineEdit* m_msg_le;
      LogTableView* m_view;
      ConnectionConfigDialog* m_conn_dialog;
-    // LogDecorationDialog* m_decoration_dialog;
 
      LuaApi* m_lua_api;
      Logger* m_log_model;

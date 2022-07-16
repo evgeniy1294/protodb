@@ -1,5 +1,7 @@
 #include "Logger.h"
 
+#include <protodb/utils/JsonBaseUtils.h>
+
 Logger::Logger(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -15,6 +17,8 @@ void Logger::log(const Event &event)
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
             m_log.append(event);
         endInsertRows();
+
+        emit sEventOccuaried(event);
     }
 }
 
@@ -35,9 +39,9 @@ void Logger::error(const QByteArray& text)
 
 void Logger::clear()
 {
-    beginResetModel();
+    beginRemoveRows(QModelIndex(), 0, m_log.size() - 1);
         m_log.clear();
-    endResetModel();
+    endRemoveRows();
 }
 
 void Logger::reload()
@@ -48,8 +52,7 @@ void Logger::reload()
 
 int Logger::rowCount(const QModelIndex& aParent) const
 {
-    int count = m_log.count();
-    return count;
+    return m_log.count();
 }
 
 int Logger::columnCount(const QModelIndex& aParent) const
@@ -65,7 +68,7 @@ QVariant Logger::data(const QModelIndex& index, int role) const
     if (!checkIndex(index))
         return QVariant();
 
-    auto& event = m_log.at(row);
+    auto event = m_log.at(row);
     if ( role == Qt::DisplayRole ) {
         switch (col) {
             case ColumnTimestamp:
@@ -126,4 +129,48 @@ void Logger::setChannelEnabled(Channel channel)
 void Logger::setChannelDisabled(Channel channel)
 {
     m_flags[channel] = false;
+}
+
+void Logger::toJson(nlohmann::json& json) const
+{
+    json = nlohmann::json::array();
+
+    for (const auto& event: qAsConst(m_log)) {
+        nlohmann::json fields;
+            fields["timestamp"] = event.timestamp.toString("dd.MM.yyyy hh:mm:ss.zzz");
+            fields["channel"]   = static_cast<int>(event.channel);
+            fields["data"]      = event.message;
+
+        json.push_back(fields);
+    }
+}
+
+void Logger::fromJson(const nlohmann::json& json)
+{
+    QList<Event> imported;
+    if ( !json.is_array() )
+        return;
+
+    for (const auto& it: json) {
+        if (!it.is_object())
+            continue;
+
+        Event e;
+            e.timestamp = QDateTime::fromString( it.value("timestamp", QString()), QString("dd.MM.yyyy hh:mm:ss.zzz") );
+            e.channel   = static_cast<Channel>( it.value("channel", static_cast<int>(Channel::ChannelError)) );
+            e.message   = it.value("data", QByteArray());
+
+        imported.append(e);
+    }
+
+    if (imported.size() > 0) {
+        std::sort(imported.begin(), imported.end(), [](Event& a, Event& b) {
+            return a.timestamp < b.timestamp;
+        });
+
+        beginResetModel();
+            m_log.clear();
+            m_log.append(imported);
+        endResetModel();
+    }
 }

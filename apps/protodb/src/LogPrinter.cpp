@@ -3,21 +3,25 @@
 
 LogPrinter::LogPrinter(QObject *parent)
     : QObject(parent)
-    , m_fmt(nullptr)
+    , m_fmt(new LogFormatter)
+    , m_append_flag(false)
 {
 
 }
 
+LogPrinter::~LogPrinter()
+{
+    delete m_fmt;
+}
+
 void LogPrinter::setLogFile(const QString &path)
 {
-    if ( QFile::exists(path) ) {
-        bool opened = m_log_file.isOpen();
-        m_log_file.close();
+    bool opened = m_log_file.isOpen();
+    m_log_file.close();
 
-        m_log_file.setFileName(path);
-        if (opened) {
-            m_log_file.open(QFile::WriteOnly);
-        }
+    m_log_file.setFileName(path);
+    if (opened) {
+        m_log_file.open(QFile::WriteOnly | (m_append_flag ? QFile::Append : QFile::NotOpen));
     }
 }
 
@@ -26,21 +30,20 @@ QString LogPrinter::logFile() const
     return m_log_file.fileName();
 }
 
-void LogPrinter::setFormatter(LogFormatter *fmt)
+void LogPrinter::setAppendFile(bool append)
 {
-    if (fmt != m_fmt && fmt != nullptr)
-        m_fmt = fmt;
+    m_append_flag = append;
 }
 
-LogFormatter *LogPrinter::formatter() const
+bool LogPrinter::appendFile() const
 {
-    return m_fmt;
+    return m_append_flag;
 }
 
 bool LogPrinter::setEnabled(bool enabled)
 {
     if (enabled) {
-        m_log_file.open(QFile::WriteOnly);
+        m_log_file.open(QFile::WriteOnly | (m_append_flag ? QFile::Append : QFile::NotOpen));
     }
     else {
         m_log_file.close();
@@ -71,12 +74,13 @@ bool LogPrinter::disabled()
     return !m_log_file.isOpen();
 }
 
-void LogPrinter::print(Logger::Event event)
+void LogPrinter::print(const Logger::Event& event)
 {
     if (m_log_file.isOpen()) {
         QString text = m_fmt != nullptr ? m_fmt->format(event) : LogFormatter::defaultFormat(event);
-        m_log_file.write(text.toLatin1());
+        m_log_file.write(text.toLatin1() + "\n\n");
     }
 }
+
 
 

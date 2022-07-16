@@ -41,6 +41,8 @@ private:
   QAction* m_plugins;
   QAction* m_export_tables;
   QAction* m_import_tables;
+  QAction* m_export_log;
+  QAction* m_import_log;
   QAction* m_about;
   QAction* m_about_qt;
   QAction* m_help_content;

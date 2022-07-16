@@ -88,6 +88,8 @@ void MainWindow::createActions()
     m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_import_tables = new QAction(tr("&Import tables"), this);
     m_export_tables = new QAction(tr("&Export tables"), this);
+    m_import_log    = new QAction(tr("&Import log"), this);
+    m_export_log    = new QAction(tr("&Export log"), this);
     m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_about = new QAction(tr("&About"), this);
     m_about_qt = new QAction(tr("&About Qt"), this);
@@ -108,6 +110,9 @@ void MainWindow::createToolBar() {
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_export_tables, false);
     m_toolbar->addToolAction(m_import_tables, false);
+    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_export_log, false);
+    m_toolbar->addToolAction(m_import_log, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_options, false);
     m_toolbar->addToolAction(m_plugins, false);
@@ -135,6 +140,27 @@ void MainWindow::connectSignals()
                     "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
         box.setIcon(QMessageBox::Icon::Information);
         box.exec();
+    });
+
+    connect(m_export_log, &QAction::triggered, this, [this]() {
+        QString exportPath = QDir::homePath() + "/" + "log.zip";
+        exportPath = QFileDialog::getSaveFileName(this,
+            tr("Select session"), exportPath, tr("Log files (*.json)"));
+
+        nlohmann::json log;
+            MainClass::instance().logger()->toJson(log);
+            writeToFile(exportPath, log);
+    });
+
+    connect(m_import_log, &QAction::triggered, this, [this]() {
+        QString importPath = QDir::homePath();
+        importPath = QFileDialog::getOpenFileName(this,
+            tr("Select session"), importPath, tr("Log files (*.json)"));
+
+        nlohmann::json log;
+            readFromFile(importPath, log);
+            MainClass::instance().logger()->fromJson(log);
+
     });
 
     connect(m_export_tables, &QAction::triggered, this, [this]() {

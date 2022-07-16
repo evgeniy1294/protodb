@@ -27,7 +27,20 @@ LogDecorationDialog::LogDecorationDialog(QWidget *parent)
 void LogDecorationDialog::apply(LogDecorator* dec)
 {
     dec->setAttributeColor(m_attr_color);
+    dec->setAttributeFont (m_attr_font);
+    dec->setChannelColors (m_ch_colors);
+    dec->setChannelFonts  (m_ch_fonts);
+}
 
+void LogDecorationDialog::readOrigin(LogDecorator* dec)
+{
+    m_attr_color = dec->attributeColor();
+    m_ch_colors  = dec->channelColors();
+
+    m_attr_font  = dec->attributeFont();
+    m_ch_fonts   = dec->channelFonts();
+
+    resetGui();
 }
 
 void LogDecorationDialog::applyValue()

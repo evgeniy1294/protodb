@@ -9,12 +9,10 @@ MainClass::MainClass()
     : m_incoming_sequences(new SequenceModel(this))
     , m_outgoing_sequences(new SequenceModel(this))
     , m_logger(new Logger(this))
-    , m_log_formatter(new LogFormatter())
     , m_log_printer(new LogPrinter(this))
 {
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
-    m_log_printer->setFormatter(m_log_formatter);
 }
 
 MainClass::~MainClass()
@@ -29,7 +27,9 @@ MainClass &MainClass::instance()
 
 void MainClass::init()
 {
-
+    m_log_printer->setLogFile("/tmp/protodb.log");
+    m_log_printer->setAppendFile(true);
+    connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
 }
 
 SequenceModel* MainClass::incomingSequences() const
@@ -47,11 +47,6 @@ Logger* MainClass::logger() const
     return m_logger;
 }
 
-LogFormatter *MainClass::logFormatter() const
-{
-    return m_log_formatter;
-}
-
 bool MainClass::isStarted() const
 {
     return m_io != nullptr;
@@ -59,13 +54,15 @@ bool MainClass::isStarted() const
 
 void MainClass::start(const nlohmann::json &attr)
 {
-
+    if (!m_log_printer->setEnabled()) {
+        m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
+    }
     emit sStarted();
 }
 
 void MainClass::stop()
 {
-
+    m_log_printer->setDisabled();
     emit sStopted();
 }
 

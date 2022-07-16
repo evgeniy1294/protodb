@@ -12,13 +12,13 @@ class LogPrinter: public QObject
 
 public:
     LogPrinter(QObject* parent = nullptr);
-   ~LogPrinter() = default;
+   ~LogPrinter();
 
     void setLogFile(const QString& path);
     QString logFile() const;
 
-    void setFormatter(LogFormatter* fmt);
-    LogFormatter* formatter() const;
+    void setAppendFile(bool append);
+    bool appendFile() const;
 
     bool setEnabled(bool enabled = true);
     bool enabled() const;
@@ -27,9 +27,10 @@ public:
     bool disabled();
 
 public slots:
-    void print(Logger::Event event);
+    void print(const Logger::Event& event);
 
 private:
+    bool m_append_flag;
     QFile m_log_file;
     LogFormatter* m_fmt;
 };

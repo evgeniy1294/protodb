@@ -15,13 +15,11 @@ class LogTableView: public QTableView
 
 public:
     LogTableView(QWidget* parent = nullptr);
+   ~LogTableView();
+
     void setModel(QAbstractItemModel* model) override;
-
-    void setFormatter(LogFormatter* fmt);
     LogFormatter* formatter() const;
-
-signals:
-    void sToAnalyzer(const QByteArray&);
+    LogDecorator* decorator() const;
 
 private:
     void createMenu();
@@ -43,4 +41,5 @@ private:
     LogDecorationDialog* m_dec_dialog;
     LogItemDelegate* m_item_delegate;
     LogDecorator* m_decorator;
+    LogFormatter* m_formatter;
 };

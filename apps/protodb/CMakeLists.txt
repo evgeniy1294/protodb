@@ -24,7 +24,6 @@ set(SOURCES_LIST
     src/LogFormatWidget.cpp
     src/LogItemDelegate.cpp
     src/LogProxyModel.cpp
-    src/LogStyleConfigWidget.cpp
     src/LogTableView.cpp
     src/LogWidget.cpp
     src/main.cpp
@@ -56,7 +55,6 @@ set(HEADERS_LIST
     include/LogFormatWidget.h
     include/LogItemDelegate.h
     include/LogProxyModel.h
-    include/LogStyleConfigWidget.h
     include/LogTableView.h
     include/LogWidget.h
     include/mainwindow.h

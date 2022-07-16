@@ -23,6 +23,7 @@ public:
     LogDecorationDialog(QWidget* parent = nullptr);
 
     void apply(LogDecorator* dec);
+    void readOrigin(LogDecorator* dec);
 
 signals:
     void sConfigChanged();

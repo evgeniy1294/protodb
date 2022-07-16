@@ -33,9 +33,6 @@ LogWidget::LogWidget(QWidget* parent)
         m_log_proxy_model->setSourceModel(logger);
         m_log_proxy_model->invalidate();
 
-    auto formatter = MainClass::instance().logFormatter();
-        m_view->setFormatter(formatter);
-
     m_view->setModel(m_log_proxy_model);
         m_view->reset();
 
@@ -124,6 +121,7 @@ void LogWidget::createConnections()
 
             m_lua_api->loadScript();
             m_lua_api->start();
+            MainClass::instance().start(nlohmann::json());
 
             // Test
             QByteArray array;
@@ -131,6 +129,7 @@ void LogWidget::createConnections()
                 array.push_back(0x32);
                 array.push_back(0x33);
                 array.push_back(0x34);
+                array.push_back(0xFF);
 
             m_lua_api->beforeTransmit(array);
             logger->log( Logger::ChannelSecond, array );
@@ -140,6 +139,7 @@ void LogWidget::createConnections()
             array.push_back(0x36);
             array.push_back(0x37);
             array.push_back(0x38);
+            array.push_back(0xFD);
             logger->log( Logger::ChannelFirst, array );
             m_lua_api->afterReceive(array);
         }
@@ -147,6 +147,7 @@ void LogWidget::createConnections()
         {
             m_run->setIcon(QIcon(":/icons/run.svg"));
             m_lua_api->stop();
+            MainClass::instance().stop();
         }
         state = !state;
     });
@@ -168,7 +169,6 @@ void LogWidget::createConnections()
     connect(m_mode_btn, &QPushButton::released, this, [this]() {
        static bool state = true;
 
-       auto formatter = MainClass::instance().logFormatter();
        if (state) {
            m_view->formatter()->setByteFormat(LogFormatter::AsciiFormat);
            m_view->reset();

@@ -20,10 +20,12 @@ public:
     static const char DefaultSeparator = ' ';
 
 public:
-    LogFormatter(QObject* parent = nullptr);
-    LogFormatter(const LogFormatter& other, QObject* parent = nullptr);
+    LogFormatter();
+    LogFormatter(const LogFormatter& other);
 
     void setDefault();
+    void toJson(nlohmann::json& json) const;
+    void fromJson(const nlohmann::json& json);
 
     void setChannelName(Logger::Channel ch, const QString& name);
     QString channelName(Logger::Channel ch) const;
