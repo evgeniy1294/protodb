@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
-set(TARGET dev)
+set(TARGET LuaScriptInterface)
 set(TARGET_NAMESPACE protodb)
 set(INCLUDE_PREFIX "")
 set(LIBRARY_DIST_SUFFIX "")
-
 set(${TARGET}_VERSION "0.0.1")
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
@@ -13,22 +12,14 @@ option(${TARGET}_INSTALL "Generate the install target" OFF)
 set(CMAKE_AUTOMOC ON)
 
 # ------------ [ Sources ] ------------
-
 set( BaseHeaders
-    include/protodb/IOWidget.h
-    include/protodb/ScriptInterface.h
-    include/protodb/creators/IODeviceCreatorInterface.h
-    include/protodb/creators/IOWidgetCreatorInterface.h
-    include/protodb/creators/ScriptInterfaceCreator.h
-    include/protodb/factories/IODeviceFactory.h
-    include/protodb/factories/IOWidgetFactory.h
-    include/protodb/factories/ScriptInterfaceFactory.h
+    include/LuaScriptInterfaceCreator.h
+    include/LuaScriptInterface.h
 )
 
 set( BaseSources
-    src/IOWidgetFactory.cpp
-    src/IODeviceFactory.cpp
-    src/ScriptInterfaceFactory.cpp
+    src/LuaScriptInterfaceCreator.cpp
+    src/LuaScriptInterface.cpp
 )
 
 set(SOURCES_LIST
@@ -42,15 +33,15 @@ target_sources(${TARGET} PRIVATE ${SOURCES_LIST})
 add_library(${TARGET_NAMESPACE}::${TARGET} ALIAS ${TARGET})
 
 # ------------ [ ExportHeader ] ------------
-
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp)
 
 # ------------ [ Depends ] ------------
+find_package(Qt5 COMPONENTS Core Gui Widgets SerialPort REQUIRED)
+find_package(Lua REQUIRED)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 target_link_libraries(${TARGET}
 
     PRIVATE
@@ -58,6 +49,9 @@ target_link_libraries(${TARGET}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
+    Qt5::SerialPort
+	
+	${LUA_LIBRARIES}
 )
 
 target_link_libraries(${TARGET}
@@ -65,7 +59,7 @@ target_link_libraries(${TARGET}
     PRIVATE
 
     protodb::base
-    protodb::gui
+    protodb::dev
 )
 
 # ------------ [ Properties and compile definitions ] ------------
@@ -80,9 +74,9 @@ target_include_directories(${TARGET} PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/>
 )
 
-target_include_directories( ${TARGET} PRIVATE include/${TARGET_NAMESPACE} )
-
-
+#---------------------------------------------------------------------------------------
+# install
+#---------------------------------------------------------------------------------------
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")
 
@@ -102,10 +96,10 @@ if(${TARGET}_INSTALL)
     # installing cmake config file allows importing our library into other projects via "find_package"
     #---------------------------------------------------------------------------------------
 
-    # set(project_config_in "${CMAKE_CURRENT_BINARY_DIR}/cmake/${TARGET}_config.cmake.in")
-    set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config.cmake")
-    set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config_version.cmake")
-    set(config_targets_file "${TARGET}_config_targets.cmake")
+    # set(project_config_in "${CMAKE_CURRENT_BINARY_DIR}/cmake/${TARGET}Config.cmake.in")
+    set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake")
+    set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}ConfigVersion.cmake")
+    set(config_targets_file "${TARGET}ConfigTargets.cmake")
     set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET}/cmake")
 
     install(EXPORT ${TARGET}
@@ -119,4 +113,3 @@ if(${TARGET}_INSTALL)
     install(FILES "${version_config_file}" DESTINATION "${export_dest_dir}")
 
 endif()
-

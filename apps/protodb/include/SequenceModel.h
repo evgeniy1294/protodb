@@ -1,13 +1,12 @@
 #pragma once
 
-#include <protodb/Sequence.h>
+#include "Sequence.h"
 
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QList>
-
 
 class SequenceModel: public QAbstractTableModel
 {

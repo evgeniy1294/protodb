@@ -29,7 +29,7 @@ public:
     const QString &getDefaultCreator() const;
     void setDefaultCreator( const QString &cid );
 
-    // ------------ [ Create new ephemers ] --------- //
+    // ------------ [ Create new widget ] --------- //
     IOWidget* createIOWidget() const;
     IOWidget* createIOWidget(const nlohmann::json& json) const;
 

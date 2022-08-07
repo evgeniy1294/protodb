@@ -1,6 +1,8 @@
 #pragma once
 
-#include <QtCore>
+#include <QString>
+#include <QVersionNumber>
+#include <QtPlugin>
 
 #ifndef MODULE_VERSION_MAJ
 #define MODULE_VERSION_MAJ 0

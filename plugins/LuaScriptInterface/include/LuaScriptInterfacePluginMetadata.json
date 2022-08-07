@@ -1,0 +1,9 @@
+{
+    "Group": "Script language",
+    "Name": "Lua script support",
+    "Version": "1.0.0",
+    "Vendor": "Evgenii Fedoseev",
+    "Description": "Based on Sol3 library",
+    "Platform": "All",
+    "Dependencies": []
+}
