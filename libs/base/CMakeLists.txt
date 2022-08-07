@@ -27,7 +27,6 @@ set( BaseHeaders
     include/protodb/utils/JsonKeeper.h
     include/protodb/utils/ziputils.h
     include/protodb/plugins/PluginManager.h
-    include/protodb/LuaApi.h
 )
 
 set( BaseSources
@@ -37,7 +36,6 @@ set( BaseSources
     src/FactoryAbstract.cpp
     src/GlobalFactoryStorage.cpp
     src/JsonBaseUtils.cpp
-    src/LuaApi.cpp
     src/PluginManager.cpp
     src/SolByteArrayWrapper.cpp
     src/ziputils.cpp

@@ -6,8 +6,6 @@
 #include "Logger.h"
 #include "MainClass.h"
 
-#include <protodb/LuaApi.h>
-
 #include <QApplication>
 #include <QLayout>
 #include <QTableView>
@@ -35,15 +33,6 @@ LogWidget::LogWidget(QWidget* parent)
 
     m_view->setModel(m_log_proxy_model);
         m_view->reset();
-
-    // ------- Test --------
-    m_lua_api = new LuaApi(this);
-        m_lua_api->setScriptFile("/home/evgen/Workspace/protodb/script.lua");
-
-    connect(m_lua_api, &LuaApi::sLogPrint, logger, &Logger::comment);
-    connect(m_lua_api, &LuaApi::sLogError, logger, &Logger::error);
-    connect(m_lua_api, &LuaApi::sLogClear, logger, &Logger::clear);
-    // ------- Test --------
 
     createConnections();
 }
@@ -119,34 +108,11 @@ void LogWidget::createConnections()
         if (state) {
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
 
-            m_lua_api->loadScript();
-            m_lua_api->start();
             MainClass::instance().start(nlohmann::json());
-
-            // Test
-            QByteArray array;
-                array.push_back(0x31);
-                array.push_back(0x32);
-                array.push_back(0x33);
-                array.push_back(0x34);
-                array.push_back(0xFF);
-
-            m_lua_api->beforeTransmit(array);
-            logger->log( Logger::ChannelSecond, array );
-
-            array.clear();
-            array.push_back(0x35);
-            array.push_back(0x36);
-            array.push_back(0x37);
-            array.push_back(0x38);
-            array.push_back(0xFD);
-            logger->log( Logger::ChannelFirst, array );
-            m_lua_api->afterReceive(array);
         }
         else
         {
             m_run->setIcon(QIcon(":/icons/run.svg"));
-            m_lua_api->stop();
             MainClass::instance().stop();
         }
         state = !state;

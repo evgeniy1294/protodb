@@ -97,7 +97,7 @@ QPointer<ScriptInterfaceFactory> ScriptInterfaceFactory::globalInstance()
 
 QString ScriptInterfaceFactory::fid()
 {
-    return QString("IOWidgetFactory");
+    return QString("ScriptInterfaceFactory");
 }
 
 bool ScriptInterfaceFactory::addCreator(const QSharedPointer<ScriptInterfaceCreator>& creator)
