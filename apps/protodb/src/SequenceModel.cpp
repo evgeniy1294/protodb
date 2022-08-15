@@ -53,6 +53,9 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                 case kColumnDsl:
                     return sq.dslString();
 
+                case kColumnSyntaxId:
+                    return sq.syntaxId();
+
                 case kColumnActiveFlag:
                     return sq.active();
             }
@@ -75,6 +78,9 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                 case kColumnDsl:
                     return sq.dslString();
 
+                case kColumnSyntaxId:
+                    return sq.syntaxId();
+
                 case kColumnActiveFlag:
                     return sq.active();
             }
@@ -96,6 +102,7 @@ QVariant SequenceModel::headerData(int section, Qt::Orientation orientation, int
                 case kColumnPeriod: return (isModeIncoming()) ? QString(tr("Delay")) : QString(tr("Repeat"));
                 case kColumnDescription: return QString(tr("Description"));
                 case kColumnDsl: return QString(tr("Sequence"));
+                case kColumnSyntaxId: return QString(tr("Syntax"));
                 case kColumnActiveFlag: return (isModeIncoming()) ? QString(tr("Use")): QString("");
                 default: break;
             }
@@ -141,6 +148,9 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                     break;
                 case kColumnDsl:
                     sq.setDslString(value.toString());
+                    break;
+                case kColumnSyntaxId:
+                    sq.setSyntaxId(value.toInt());
                     break;
                 case kColumnActiveFlag:
                     sq.setActive( value.toBool() );
@@ -237,6 +247,7 @@ void SequenceModel::toJson(nlohmann::json& json)
             fields["period"]      = sequence.period();
             fields["description"] = sequence.description();
             fields["dsl"]         = sequence.dslString();
+            fields["syntax"]      = sequence.syntaxId();
             fields["active"]      = sequence.active();
 
         json.push_back(fields);
@@ -281,6 +292,12 @@ void SequenceModel::fromJson(const nlohmann::json& json)
         if ( it.contains("dsl") ) {
             if ( it["dsl"].is_string() ) {
                 s.setDslString( it["dsl"] );
+            }
+        }
+
+        if ( it.contains("syntax") ) {
+            if ( it["syntax"].is_string() ) {
+                s.setDslString( it["syntax"] );
             }
         }
 

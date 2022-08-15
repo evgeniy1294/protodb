@@ -16,6 +16,7 @@ public:
    : m_uuid(QUuid::createUuid())
    , m_name()
    , m_dsl_string()
+   , m_syntax_id(0)
    , m_cached(false)
    , m_bytes()
    , m_active(false)
@@ -27,6 +28,7 @@ public:
     : m_uuid(seq.m_uuid)
     , m_name(seq.m_name)
     , m_dsl_string(seq.m_dsl_string)
+    , m_syntax_id(0)
     , m_cached(seq.m_cached)
     , m_bytes(seq.m_bytes)
     , m_active(seq.m_active)
@@ -42,6 +44,9 @@ public:
   const QString& dslString() const { return m_dsl_string; };
   void setDslString(const QString& dsl) { m_dsl_string = dsl; }
 
+  const int syntaxId() const { return m_syntax_id; };
+  void setSyntaxId(int id) { m_syntax_id = id; }
+
   const QString& description() const { return m_description; }
   void setDescription(const QString& description) { m_description = description; }
 
@@ -54,8 +59,6 @@ public:
   quint32 period() const { return m_period;}
   void setPeriod( quint32 period ) { m_period = period; }
 
-
-
   bool operator==(const Sequence& rsh) {return m_uuid == rsh.m_uuid;}
 
 private:
@@ -66,10 +69,12 @@ private:
 private:
   QUuid m_uuid;
 
+  int m_syntax_id;
+  QString m_dsl_string;
+
   bool m_active;
   quint32 m_period;
   QString m_name;
-  QString m_dsl_string;
   QString m_description;
   QString m_binded_name;
 };

@@ -44,6 +44,11 @@ LuaScriptInterface::LuaScriptInterface(QObject* parent)
     m_lua["log"] = this;
 }
 
+QString LuaScriptInterface::language() const
+{
+    return "lua";
+}
+
 bool LuaScriptInterface::setScriptFile(const QString& path)
 {
     std::filesystem::path script_path = path.toStdString();

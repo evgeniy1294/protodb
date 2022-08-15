@@ -19,7 +19,8 @@ public:
         kColumnPeriod      = 2,
         kColumnDescription = 3,
         kColumnDsl         = 4,
-        kColumnActiveFlag  = 5,
+        kColumnSyntaxId    = 5,
+        kColumnActiveFlag  = 6,
 
         kColumnCount
     };

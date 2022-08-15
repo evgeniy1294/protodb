@@ -21,6 +21,8 @@ public:
     // Custom event handler
     bool handleEvent(Event event, QByteArray& bytes) override;
 
+    QString language() const override;
+
 private:
     bool m_valid = false;
 
