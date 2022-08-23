@@ -1,9 +1,11 @@
 #include "MainClass.h"
-#include "ProtodbSessionManager.h"
 #include "SequenceModel.h"
 #include "Logger.h"
-#include "LogFormatter.h"
 #include "LogPrinter.h"
+
+#include <protodb/factories/ScriptInterfaceFactory.h>
+#include <protodb/creators/ScriptInterfaceCreator.h>
+#include <protodb/ScriptInterface.h>
 
 MainClass::MainClass()
     : m_incoming_sequences(new SequenceModel(this))
@@ -27,6 +29,24 @@ MainClass &MainClass::instance()
 
 void MainClass::init()
 {
+    // Create script interfaces
+    m_script_interfaces.clear();
+        auto script_interface_creators = ScriptInterfaceFactory::globalInstance()->getAllCreators();
+        for (auto& creator: script_interface_creators) {
+            m_script_interfaces.append( creator->create() );
+        }
+
+    // Create base supported syntax list
+    m_supported_syntaxes.clear();
+        m_supported_syntaxes.append("ascii");
+        m_supported_syntaxes.append("hex");
+
+    // Add script interface to supported syntax list
+    for (auto& script_interface: m_script_interfaces) {
+        m_supported_syntaxes.append(script_interface->syntaxId());
+    }
+
+
     m_log_printer->setLogFile("/tmp/protodb.log");
     m_log_printer->setAppendFile(true);
     connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
@@ -66,4 +86,7 @@ void MainClass::stop()
     emit sStopted();
 }
 
-
+QStringList MainClass::supportedSyntaxes() const
+{
+    return m_supported_syntaxes;
+}

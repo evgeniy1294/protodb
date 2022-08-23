@@ -20,7 +20,7 @@ public:
     virtual bool setScriptFile(const QString& path) = 0;
     virtual bool isValid() const = 0;
 
-    virtual QString language() const = 0;
+    virtual QString syntaxId() const = 0;
 
     // Compile code to byte array
     virtual QByteArray compileCode(QString& code) const = 0;

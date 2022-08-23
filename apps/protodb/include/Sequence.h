@@ -16,7 +16,7 @@ public:
    : m_uuid(QUuid::createUuid())
    , m_name()
    , m_dsl_string()
-   , m_syntax_id(0)
+   , m_syntax_id()
    , m_cached(false)
    , m_bytes()
    , m_active(false)
@@ -28,7 +28,7 @@ public:
     : m_uuid(seq.m_uuid)
     , m_name(seq.m_name)
     , m_dsl_string(seq.m_dsl_string)
-    , m_syntax_id(0)
+    , m_syntax_id()
     , m_cached(seq.m_cached)
     , m_bytes(seq.m_bytes)
     , m_active(seq.m_active)
@@ -36,21 +36,21 @@ public:
     , m_binded_name(seq.m_binded_name)
     , m_period(seq.m_period) {  }
 
-  const QUuid& uuid() const { return m_uuid; };
+  const QUuid uuid() const { return m_uuid; };
 
-  const QString& name() const { return m_name; }
+  QString name() const { return m_name; }
   void setName(const QString& a_name) { m_name = a_name; }
 
-  const QString& dslString() const { return m_dsl_string; };
+  QString dslString() const { return m_dsl_string; };
   void setDslString(const QString& dsl) { m_dsl_string = dsl; }
 
-  const int syntaxId() const { return m_syntax_id; };
+  QString syntaxId() const { return m_syntax_id; };
   void setSyntaxId(int id) { m_syntax_id = id; }
 
-  const QString& description() const { return m_description; }
+  QString description() const { return m_description; }
   void setDescription(const QString& description) { m_description = description; }
 
-  const QString& bindedName() const { return m_binded_name; }
+  QString bindedName() const { return m_binded_name; }
   void setBindedName(const QString& name) { m_binded_name = name; }
 
   bool active() const { return m_active; }
@@ -69,7 +69,7 @@ private:
 private:
   QUuid m_uuid;
 
-  int m_syntax_id;
+  QString m_syntax_id;
   QString m_dsl_string;
 
   bool m_active;

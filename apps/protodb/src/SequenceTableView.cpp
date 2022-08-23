@@ -39,6 +39,7 @@ void SequenceTableView::setSequenceModel(QAbstractItemModel *model, bool incomin
         setColumnWidth(SequenceModel::kColumnActiveFlag, 0);
         hideColumn(SequenceModel::kColumnDescription);
         hideColumn(SequenceModel::kColumnDsl);
+        hideColumn(SequenceModel::kColumnSyntaxId);
 
     QHeaderView* hh = horizontalHeader();
         hh->setSectionResizeMode(SequenceModel::kColumnName, QHeaderView::Stretch);

@@ -44,7 +44,7 @@ LuaScriptInterface::LuaScriptInterface(QObject* parent)
     m_lua["log"] = this;
 }
 
-QString LuaScriptInterface::language() const
+QString LuaScriptInterface::syntaxId() const
 {
     return "lua";
 }
