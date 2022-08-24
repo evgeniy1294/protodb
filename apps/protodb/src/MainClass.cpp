@@ -3,6 +3,10 @@
 #include "Logger.h"
 #include "LogPrinter.h"
 
+#include <protodb/plugins/PluginManager.h>
+#include <protodb/factories/GlobalFactoryStorage.h>
+#include <protodb/factories/IOWidgetFactory.h>
+#include <protodb/factories/IODeviceFactory.h>
 #include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
@@ -13,12 +17,38 @@ MainClass::MainClass()
     , m_logger(new Logger(this))
     , m_log_printer(new LogPrinter(this))
 {
+    init_factories();
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
 }
 
 MainClass::~MainClass()
 {
+}
+
+void MainClass::init_factories()
+{
+    if (!IOWidgetFactory::globalInstance()) {
+        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+    }
+
+    if (!IODeviceFactory::globalInstance()) {
+        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+    }
+
+    // Script Interfaces
+    {
+        if (!ScriptInterfaceFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(ScriptInterfaceFactory::fid(), new ScriptInterfaceFactory);
+        }
+
+        auto factory  = ScriptInterfaceFactory::globalInstance();
+        auto creators = PluginManager::instance().getPlugins<ScriptInterfaceCreator>();
+
+        for (auto& it: creators) {
+            factory->addCreator(QSharedPointer<ScriptInterfaceCreator>(it));
+        }
+    }
 }
 
 MainClass &MainClass::instance()

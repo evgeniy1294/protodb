@@ -9,6 +9,7 @@ class QAbstractButton;
 class QLabel;
 class QLineEdit;
 class QPlainTextEdit;
+class QGroupBox;
 
 class SequenceEditDialog: public QDialog
 {
@@ -29,6 +30,7 @@ private slots:
 private:
     void createGui();
     void createConnections();
+    void createSyntaxSelector();
 
 private:
     QPushButton* m_back_btn;
@@ -40,6 +42,7 @@ private:
     QLineEdit* m_name_edit;
     QPlainTextEdit* m_desc_editor;
     QPlainTextEdit* m_dsl_editor;
+    QGroupBox* m_syntax_selection_group;
     QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_btn;
 };

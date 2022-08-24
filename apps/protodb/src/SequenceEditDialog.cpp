@@ -1,5 +1,6 @@
 #include "SequenceModel.h"
 #include "SequenceEditDialog.h"
+#include "MainClass.h"
 
 #include <QLineEdit>
 #include <QTextBrowser>
@@ -11,6 +12,8 @@
 #include <QLabel>
 #include <QAction>
 #include <QDialogButtonBox>
+#include <QGroupBox>
+#include <QRadioButton>
 
 
 SequenceEditDialog::SequenceEditDialog(QWidget* aParent)
@@ -123,6 +126,8 @@ void SequenceEditDialog::createGui()
     m_desc_editor = new QPlainTextEdit();
         m_desc_editor->setPlaceholderText(tr("Document me!"));
 
+    createSyntaxSelector();
+
     m_dsl_editor = new QPlainTextEdit();
         m_dsl_editor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
 
@@ -134,14 +139,27 @@ void SequenceEditDialog::createGui()
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop);
         main_layout->addLayout(h_layout, 0, 0);
-        main_layout->addWidget(m_name_edit,      1, 0);
-        main_layout->addWidget(m_desc_editor, 2, 0);
-        main_layout->addWidget(m_dsl_editor,   3, 0);
-        main_layout->addWidget(m_dialog_btn,   4, 0);
+        main_layout->addWidget(m_name_edit, 1, 0);
+        main_layout->addWidget(m_syntax_selection_group, 2, 0);
+        main_layout->addWidget(m_dsl_editor,  3, 0);
+        main_layout->addWidget(m_desc_editor, 4, 0);
+        main_layout->addWidget(m_dialog_btn,  5, 0);
 
     setLayout(main_layout);
     setWindowModality(Qt::NonModal);
 }
+
+void SequenceEditDialog::createSyntaxSelector() {
+    auto group_layout = new QHBoxLayout();
+        for (auto& syntax: MainClass::instance().supportedSyntaxes()) {
+            group_layout->addWidget(new QRadioButton(syntax));
+        }
+        group_layout->addStretch(1);
+
+    m_syntax_selection_group = new QGroupBox();
+    m_syntax_selection_group->setLayout(group_layout);
+}
+
 
 void SequenceEditDialog::createConnections()
 {

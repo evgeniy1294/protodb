@@ -39,6 +39,8 @@ private:
     MainClass();
    ~MainClass();
 
+    void init_factories();
+
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;

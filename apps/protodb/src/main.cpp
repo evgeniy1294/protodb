@@ -55,7 +55,6 @@ void testPlugins() {
         factory = IOWidgetFactory::globalInstance();
     }
 
-
     auto creators = PluginManager::instance().getPlugins<IOWidgetCreatorInterface>();
 
     for (auto& it: creators) {
