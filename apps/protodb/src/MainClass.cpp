@@ -112,16 +112,39 @@ bool MainClass::isStarted() const
     return m_io != nullptr;
 }
 
-void MainClass::start(const nlohmann::json &attr)
+#include <iostream>
+
+void MainClass::start(const nlohmann::json& attr)
 {
-    if (!m_log_printer->setEnabled()) {
-        m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
+    std::cout << attr.dump(4) << std::endl;
+    auto factory = IODeviceFactory::globalInstance();
+    if (!factory) {
+        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IOWidgetFactory);
+        factory = IODeviceFactory::globalInstance();
     }
-    emit sStarted();
+
+    auto cid = attr["IODevice"].value("CID", QString());
+    m_io = factory->createIODevice(cid, attr["IODevice"].value("Attribute", nlohmann::json()));
+    if (m_io) {
+
+        if (!m_log_printer->setEnabled()) {
+            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
+        }
+
+        emit sStarted();
+    }
+    else {
+        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLatin1());
+        stop();
+    }
 }
 
 void MainClass::stop()
 {
+    auto io = m_io;
+        m_io = nullptr;
+        if (io) { io->close(); delete io; }
+
     m_log_printer->setDisabled();
     emit sStopted();
 }

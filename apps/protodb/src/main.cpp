@@ -47,18 +47,33 @@ int main(int argc, char *argv[])
 }
 
 #include <protodb/factories/IOWidgetFactory.h>
+#include <protodb/factories/IODeviceFactory.h>
 #include <protodb/creators/IOWidgetCreatorInterface.h>
+#include <protodb/creators/IODeviceCreatorInterface.h>
 void testPlugins() {
-    auto factory = IOWidgetFactory::globalInstance();
-    if (!factory) {
+    // IOWidget
+    auto iowgt_factory = IOWidgetFactory::globalInstance();
+    if (!iowgt_factory) {
         GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
-        factory = IOWidgetFactory::globalInstance();
+        iowgt_factory = IOWidgetFactory::globalInstance();
     }
 
-    auto creators = PluginManager::instance().getPlugins<IOWidgetCreatorInterface>();
+    auto iowgt_creators = PluginManager::instance().getPlugins<IOWidgetCreatorInterface>();
 
-    for (auto& it: creators) {
-        factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
+    for (auto& it: iowgt_creators) {
+        iowgt_factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
+    }
+
+    // IODevice
+    auto iodev_factory = IODeviceFactory::globalInstance();
+    if (!iodev_factory) {
+        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+        iodev_factory = IODeviceFactory::globalInstance();
+    }
+
+    auto iodev_creators = PluginManager::instance().getPlugins<IODeviceCreatorInterface>();
+    for (auto& it: iodev_creators) {
+        iodev_factory->addCreator(QSharedPointer<IODeviceCreatorInterface>(it));
     }
 
 }

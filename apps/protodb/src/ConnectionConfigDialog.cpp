@@ -28,10 +28,13 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 
 void ConnectionConfigDialog::getConfig(nlohmann::json& json)
 {
-    nlohmann::json io_device_cfg;
+    nlohmann::json io_device_cfg = nlohmann::json::object();
     auto io_widget = dynamic_cast<IOWidget*>(m_current_iowiget);
     if (io_widget) {
         io_widget->config(io_device_cfg);
+    }
+    else {
+        io_device_cfg["CID"] = "NULL";
     }
 
     json["IODevice"] = io_device_cfg;

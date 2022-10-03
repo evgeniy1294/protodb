@@ -10,6 +10,17 @@ IODeviceFactory::IODeviceFactory(QObject* parent)
 
 }
 
+bool IODeviceFactory::addCreator(const QSharedPointer<IODeviceCreatorInterface>& creator)
+{
+    if (!creator || containsCreator(creator->cid())) {
+        return false;
+    }
+
+    m_creators[ creator->cid() ] = creator;
+
+    return true;
+}
+
 QList<QSharedPointer<IODeviceCreatorInterface> > IODeviceFactory::getAllCreators() const
 {
     QList<QSharedPointer<IODeviceCreatorInterface> > ret;

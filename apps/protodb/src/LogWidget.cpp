@@ -104,21 +104,17 @@ void LogWidget::createConnections()
 {
     connect(m_run, &QPushButton::released, this, [this]() {
         auto logger = MainClass::instance().logger();
-        static bool state = true;
-        if (state) {
-            m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
 
+        if (MainClass::instance().isStarted()) {
+            MainClass::instance().stop();
+        }
+        else
+        {
             nlohmann::json start_attr;
                 m_conn_dialog->getConfig(start_attr);
 
             MainClass::instance().start(start_attr);
         }
-        else
-        {
-            m_run->setIcon(QIcon(":/icons/run.svg"));
-            MainClass::instance().stop();
-        }
-        state = !state;
     });
 
 
@@ -168,6 +164,13 @@ void LogWidget::createConnections()
         m_find_le->setPalette(palette);
     });
 
+    connect(&MainClass::instance(), &MainClass::sStarted, this, [this]() {
+        m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
+    });
+
+    connect(&MainClass::instance(), &MainClass::sStopted, this, [this]() {
+        m_run->setIcon(QIcon(":/icons/run.svg"));
+    });
 }
 
 
