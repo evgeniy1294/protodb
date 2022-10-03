@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <QMap>
 #include <QWidget>
+#include <protodb/utils/JsonBaseUtils.h>
 
 class QGroupBox;
 class QButtonGroup;
@@ -15,14 +16,15 @@ class IOWidgetFactory;
 class IOWidget;
 class LogFormatWidget;
 
-class Core;
-
 class ConnectionConfigDialog: public QDialog {
     Q_OBJECT
 
 public:
     ConnectionConfigDialog(QWidget* aParent = nullptr);
-    ~ConnectionConfigDialog() = default;
+   ~ConnectionConfigDialog() = default;
+
+    void getConfig(nlohmann::json& json);
+    void setConfig(const nlohmann::json& json);
 
 private:
     void createGui();

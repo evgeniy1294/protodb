@@ -108,7 +108,10 @@ void LogWidget::createConnections()
         if (state) {
             m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
 
-            MainClass::instance().start(nlohmann::json());
+            nlohmann::json start_attr;
+                m_conn_dialog->getConfig(start_attr);
+
+            MainClass::instance().start(start_attr);
         }
         else
         {

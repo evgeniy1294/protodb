@@ -88,7 +88,7 @@ bool LuaScriptInterface::isValid() const
     return m_valid;
 }
 
-QByteArray LuaScriptInterface::compileCode(QString& code) const
+QByteArray LuaScriptInterface::compileCode(const QString& code) const
 {
     static const QString m_template = {
         "function compile(bytes) \n %1 \n end"

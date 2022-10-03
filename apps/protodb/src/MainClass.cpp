@@ -11,19 +11,33 @@
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
 
+#include <QRegularExpression>
+
 MainClass::MainClass()
     : m_incoming_sequences(new SequenceModel(this))
     , m_outgoing_sequences(new SequenceModel(this))
     , m_logger(new Logger(this))
     , m_log_printer(new LogPrinter(this))
 {
-    init_factories();
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
 }
 
 MainClass::~MainClass()
 {
+}
+
+MainClass &MainClass::instance()
+{
+    static MainClass m_instance;
+    return m_instance;
+}
+
+void MainClass::init()
+{
+    init_factories();
+    init_syntaxes();
+    init_logger();
 }
 
 void MainClass::init_factories()
@@ -51,13 +65,14 @@ void MainClass::init_factories()
     }
 }
 
-MainClass &MainClass::instance()
+void MainClass::init_logger()
 {
-    static MainClass m_instance;
-    return m_instance;
+    m_log_printer->setLogFile("/tmp/protodb.log");
+    m_log_printer->setAppendFile(true);
+    connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
 }
 
-void MainClass::init()
+void MainClass::init_syntaxes()
 {
     // Create script interfaces
     m_script_interfaces.clear();
@@ -75,11 +90,6 @@ void MainClass::init()
     for (auto& script_interface: m_script_interfaces) {
         m_supported_syntaxes.append(script_interface->syntaxId());
     }
-
-
-    m_log_printer->setLogFile("/tmp/protodb.log");
-    m_log_printer->setAppendFile(true);
-    connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
 }
 
 SequenceModel* MainClass::incomingSequences() const

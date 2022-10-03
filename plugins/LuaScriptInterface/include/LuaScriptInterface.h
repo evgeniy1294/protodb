@@ -16,7 +16,7 @@ public:
     bool isValid() const override;
 
     // Compile code to byte array
-    QByteArray compileCode(QString& code) const override;
+    QByteArray compileCode(const QString& code) const override;
 
     // Custom event handler
     bool handleEvent(Event event, QByteArray& bytes) override;

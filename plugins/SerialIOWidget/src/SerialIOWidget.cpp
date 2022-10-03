@@ -11,7 +11,7 @@
 
 
 
-SerialIOWIdget::SerialIOWIdget(QWidget* parent)
+SerialIOWidget::SerialIOWidget(QWidget* parent)
     : IOWidget(parent)
 {
     createGui();
@@ -20,47 +20,53 @@ SerialIOWIdget::SerialIOWIdget(QWidget* parent)
     setDefaultConfig();
 }
 
-/*
-void SerialIOWIdget::defaultConfig(nlohmann::json &json) const
+void SerialIOWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["Device"]      = "";
-    json["OpenMode"]    = "Communication";
-    json["Baudrate"]    = "115200";
-    json["DataBits"]    = "8";
-    json["Parity"]      = "None";
-    json["StopBits"]    = "1";
-    json["FlowControl"] = "None";
+    json["CID"]         = "SerialIODeviceCreator";
+    nlohmann::json attr;
+        attr["Device"]      = "";
+        attr["OpenMode"]    = "Communication";
+        attr["Baudrate"]    = "115200";
+        attr["DataBits"]    = "8";
+        attr["Parity"]      = "None";
+        attr["StopBits"]    = "1";
+        attr["FlowControl"] = "None";
+    json["Attributes"] = attr;
 }
 
-void SerialIOWIdget::toJson(nlohmann::json &json) const
+void SerialIOWidget::config(nlohmann::json &json) const
 {
-    json["Device"]      = m_device->currentText();
-    json["OpenMode"]    = m_open_mode->currentText();
-    json["Baudrate"]    = m_baudrate->currentText();
-    json["DataBits"]    = m_data_bits->currentText();
-    json["Parity"]      = m_parity->currentText();
-    json["StopBits"]    = m_stop_bits->currentText();
-    json["FlowControl"] = m_flow_ctrl->currentText();
+    json["CID"]         = "SerialIODeviceCreator";
+    nlohmann::json attr;
+        attr["Device"]      = m_device->currentText();
+        attr["OpenMode"]    = m_open_mode->currentText();
+        attr["Baudrate"]    = m_baudrate->currentText();
+        attr["DataBits"]    = m_data_bits->currentText();
+        attr["Parity"]      = m_parity->currentText();
+        attr["StopBits"]    = m_stop_bits->currentText();
+        attr["FlowControl"] = m_flow_ctrl->currentText();
+    json["Attributes"] = attr;
 }
 
-void SerialIOWIdget::fromJson(const nlohmann::json &json)
+void SerialIOWidget::setConfig(const nlohmann::json &json)
 {
-    QString baudrate = json["Baudrate"].get<QString>();
+    nlohmann::json attr = json.value<nlohmann::json>("Attributes", nlohmann::json());
+
+    QString baudrate = attr["Baudrate"].get<QString>();
     if (m_baudrate->findText(baudrate) == -1) {
-        m_baudrate->setItemText(m_baudrate->count() - 1,baudrate);
+        m_baudrate->setItemText(m_baudrate->count() - 1, baudrate);
     }
     m_baudrate->setCurrentText(baudrate);
 
-    m_device->setCurrentText(json["Device"].get<QString>());
-    m_open_mode->setCurrentText(json["OpenMode"].get<QString>());
-    m_data_bits->setCurrentText(json["DataBits"].get<QString>());
-    m_parity->setCurrentText(json["Parity"].get<QString>());
-    m_stop_bits->setCurrentText(json["StopBits"].get<QString>());
-    m_flow_ctrl->setCurrentText(json["FlowControl"].get<QString>());
+    m_device->setCurrentText(attr["Device"].get<QString>());
+    m_open_mode->setCurrentText(attr["OpenMode"].get<QString>());
+    m_data_bits->setCurrentText(attr["DataBits"].get<QString>());
+    m_parity->setCurrentText(attr["Parity"].get<QString>());
+    m_stop_bits->setCurrentText(attr["StopBits"].get<QString>());
+    m_flow_ctrl->setCurrentText(attr["FlowControl"].get<QString>());
 }
-*/
 
-void SerialIOWIdget::createGui()
+void SerialIOWidget::createGui()
 {
     static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };
     static const QStringList databits_list   = { "5", "6", "7", "8" };
@@ -132,7 +138,7 @@ void SerialIOWIdget::createGui()
     setLayout(main_layout);
 }
 
-void SerialIOWIdget::connectSignals()
+void SerialIOWidget::connectSignals()
 {
     connect(m_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         if (index == m_baudrate->count() - 1) {

@@ -26,6 +26,17 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     connectSignals();
 }
 
+void ConnectionConfigDialog::getConfig(nlohmann::json& json)
+{
+    nlohmann::json io_device_cfg;
+    auto io_widget = dynamic_cast<IOWidget*>(m_current_iowiget);
+    if (io_widget) {
+        io_widget->config(io_device_cfg);
+    }
+
+    json["IODevice"] = io_device_cfg;
+}
+
 void ConnectionConfigDialog::createGui()
 {
     // --------[CREATE DUMMY WIDGET]--------- //

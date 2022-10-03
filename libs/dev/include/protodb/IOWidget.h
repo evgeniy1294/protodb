@@ -11,8 +11,7 @@ class IOWidget: public QWidget, public Configurable
 public:
     explicit IOWidget(QWidget* parent = nullptr)
         : QWidget(parent) {    }
+    virtual ~IOWidget() = default;
 
     virtual QString name() const = 0;
-
-    virtual ~IOWidget() = default;
 };

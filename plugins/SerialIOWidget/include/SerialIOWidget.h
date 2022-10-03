@@ -5,15 +5,20 @@
 class QComboBox;
 class QValidator;
 
-class SerialIOWIdget: public IOWidget
+class SerialIOWidget final: public IOWidget
 {
   Q_OBJECT
 
 public:
-    SerialIOWIdget(QWidget *parent = nullptr);
-    ~SerialIOWIdget() = default;
+    SerialIOWidget(QWidget *parent = nullptr);
+    ~SerialIOWidget() = default;
 
     QString name() const override { return QString("Serial"); }
+
+    void setConfig(const nlohmann::json& json) override;
+    void config(nlohmann::json& json) const override;
+    void defaultConfig(nlohmann::json& json) const override;
+
 private:
     void createGui();
     void connectSignals();

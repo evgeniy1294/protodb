@@ -21,12 +21,12 @@ QString SerialIOWIdgetCreator::iconName() const {
 
 IOWidget* SerialIOWIdgetCreator::create() const
 {
-    return new SerialIOWIdget;
+    return new SerialIOWidget;
 }
 
 IOWidget* SerialIOWIdgetCreator::create(const nlohmann::json& json) const
 {
-    auto widget = new SerialIOWIdget;
+    auto widget = new SerialIOWidget;
     // widget->fromJson(json);
 
     return widget;

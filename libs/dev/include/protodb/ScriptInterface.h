@@ -23,7 +23,7 @@ public:
     virtual QString syntaxId() const = 0;
 
     // Compile code to byte array
-    virtual QByteArray compileCode(QString& code) const = 0;
+    virtual QByteArray compileCode(const QString& code) const = 0;
 
     // Custom event handler
     virtual bool handleEvent(Event event, QByteArray& bytes) = 0;

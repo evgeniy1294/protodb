@@ -7,6 +7,7 @@
 
 class QIODevice;
 
+class Sequence;
 class Logger;
 class LogPrinter;
 class SequenceModel;
@@ -40,6 +41,8 @@ private:
    ~MainClass();
 
     void init_factories();
+    void init_logger();
+    void init_syntaxes();
 
 private:
     SequenceModel* m_incoming_sequences;

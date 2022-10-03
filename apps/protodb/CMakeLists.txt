@@ -32,6 +32,8 @@ set(SOURCES_LIST
     src/PluginDetailDialog.cpp
     src/PluginManagerDialog.cpp
     src/PluginTreeView.cpp
+    src/Sequence.cpp
+    src/SequenceScriptFormatter.cpp
     src/SequenceModel.cpp
     src/SequenceEditDialog.cpp
     src/SequenceEditDialog.cpp
@@ -63,6 +65,8 @@ set(HEADERS_LIST
     include/PluginManagerDialog.h
     include/PluginTreeView.h
     include/Sequence.h
+    include/SequenceFormatter.h
+    include/SequenceScriptFormatter.h
     include/SequenceModel.h
     include/SequenceEditDialog.h
     include/SequenceTableView.h

@@ -54,7 +54,7 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                     return sq.dslString();
 
                 case kColumnSyntaxId:
-                    return sq.syntaxId();
+                    return sq.formatId();
 
                 case kColumnActiveFlag:
                     return sq.active();
@@ -79,7 +79,7 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                     return sq.dslString();
 
                 case kColumnSyntaxId:
-                    return sq.syntaxId();
+                    return sq.formatId();
 
                 case kColumnActiveFlag:
                     return sq.active();
@@ -150,7 +150,7 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                     sq.setDslString(value.toString());
                     break;
                 case kColumnSyntaxId:
-                    sq.setSyntaxId(value.toInt());
+                    sq.setFormatId(value.toInt());
                     break;
                 case kColumnActiveFlag:
                     sq.setActive( value.toBool() );
@@ -247,7 +247,7 @@ void SequenceModel::toJson(nlohmann::json& json)
             fields["period"]      = sequence.period();
             fields["description"] = sequence.description();
             fields["dsl"]         = sequence.dslString();
-            fields["syntax"]      = sequence.syntaxId();
+            fields["syntax"]      = sequence.formatId();
             fields["active"]      = sequence.active();
 
         json.push_back(fields);

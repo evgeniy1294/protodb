@@ -4,7 +4,7 @@
 
 QString SerialIODeviceCreator::cid() const
 {
-    return QString("SerialIOWidgetCreator");
+    return QString("SerialIODeviceCreator");
 }
 
 QString SerialIODeviceCreator::name() const

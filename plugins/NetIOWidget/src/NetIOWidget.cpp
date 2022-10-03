@@ -19,29 +19,37 @@ NetIOWidget::NetIOWidget(QWidget* parent)
     setDefaultConfig();
 }
 
-/*
-
 void NetIOWidget::defaultConfig(nlohmann::json& json) const
 {
-    json["RemoteIp"] = "127.0.0.1";
-    json["Port"]     = "1";
-    json["Protocol"] = "TCP";
+    json["CID"] = "NetIODeviceCreator";
+
+    nlohmann::json attr;
+        attr["RemoteIp"] = "127.0.0.1";
+        attr["Port"]     = "1";
+        attr["Protocol"] = "TCP";
+    json["Attributes"] = attr;
 }
 
-void NetIOWidget::toJson(nlohmann::json& json) const
+void NetIOWidget::config(nlohmann::json& json) const
 {
-    json["RemoteIp"] = m_ip->text();
-    json["Port"]     = m_port->text();
-    json["Protocol"] = m_protocol->currentText();
+    json["CID"] = "NetIODeviceCreator";
+
+    nlohmann::json attr;
+        attr["RemoteIp"] = m_ip->text();
+        attr["Port"]     = m_port->text();
+        attr["Protocol"] = m_protocol->currentText();
+    json["Attributes"] = attr;
 }
 
-void NetIOWidget::fromJson(const nlohmann::json& json)
+void NetIOWidget::setConfig(const nlohmann::json& json)
 {
-    m_ip->setText(json["RemoteIp"].get<QString>());
-    m_port->setText(json["Port"].get<QString>());
-    m_protocol->setCurrentText(json["Protocol"].get<QString>());
+    nlohmann::json attr = json.value<nlohmann::json>("Attributes", nlohmann::json());
+
+    m_ip->setText(json.value<QString>("RemoteIp", QString()));
+    m_port->setText(json.value<QString>("Port", QString()));
+    m_protocol->setCurrentText(json.value<QString>("Protocol", QString()));
 }
-*/
+
 void NetIOWidget::createGui()
 {
     m_ip = new QLineEdit();
