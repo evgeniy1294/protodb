@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 
 # ------------ [ Sources ] ------------
 set( BaseHeaders
-    include/SerialIODeviceCreator.h
+    include/protodb/SerialIODeviceCreator.h
 )
 
 set( BaseSources

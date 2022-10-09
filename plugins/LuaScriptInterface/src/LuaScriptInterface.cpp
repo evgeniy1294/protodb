@@ -1,4 +1,4 @@
-#include "LuaScriptInterface.h"
+#include "protodb/LuaScriptInterface.h"
 
 #include <protodb/utils/SolByteArrayWrapper.h>
 

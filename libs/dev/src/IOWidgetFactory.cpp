@@ -9,12 +9,12 @@ IOWidgetFactory::IOWidgetFactory(QObject* parent)
 
 }
 
-QList<QSharedPointer<IOWidgetCreatorInterface> > IOWidgetFactory::getAllCreators() const
+QList<QSharedPointer<IOWidgetCreator> > IOWidgetFactory::getAllCreators() const
 {
-    QList<QSharedPointer<IOWidgetCreatorInterface> > ret;
+    QList<QSharedPointer<IOWidgetCreator> > ret;
 
     for (auto& it: m_creators) {
-        auto ptr = qSharedPointerCast<IOWidgetCreatorInterface>(it);
+        auto ptr = qSharedPointerCast<IOWidgetCreator>(it);
         if (ptr) {
             ret.append(ptr);
         }
@@ -23,19 +23,19 @@ QList<QSharedPointer<IOWidgetCreatorInterface> > IOWidgetFactory::getAllCreators
     return ret;
 }
 
-QSharedPointer<IOWidgetCreatorInterface> IOWidgetFactory::getCreator(const QString& cid) const
+QSharedPointer<IOWidgetCreator> IOWidgetFactory::getCreator(const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IOWidgetCreatorInterface>(m_creators[cid]);
+        return qSharedPointerCast<IOWidgetCreator>(m_creators[cid]);
     }
 
     return nullptr;
 }
 
-QSharedPointer<IOWidgetCreatorInterface> IOWidgetFactory::operator[](const QString& cid) const
+QSharedPointer<IOWidgetCreator> IOWidgetFactory::operator[](const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IOWidgetCreatorInterface>(m_creators[cid]);
+        return qSharedPointerCast<IOWidgetCreator>(m_creators[cid]);
     }
 
     return nullptr;
@@ -66,7 +66,7 @@ IOWidget* IOWidgetFactory::createIOWidget(const QString& cid) const
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IOWidgetCreatorInterface >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< IOWidgetCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 
@@ -80,7 +80,7 @@ IOWidget* IOWidgetFactory::createIOWidget(const QString& cid, const nlohmann::js
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IOWidgetCreatorInterface >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< IOWidgetCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 
@@ -100,7 +100,7 @@ QString IOWidgetFactory::fid()
     return QString("IOWidgetFactory");
 }
 
-bool IOWidgetFactory::addCreator(const QSharedPointer<IOWidgetCreatorInterface>& creator)
+bool IOWidgetFactory::addCreator(const QSharedPointer<IOWidgetCreator>& creator)
 {
     if (!creator || containsCreator(creator->cid())) {
         return false;

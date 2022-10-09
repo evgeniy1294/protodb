@@ -184,6 +184,28 @@ void ConnectionConfigDialog::connectSignals()
         }
     });
 
+    connect(m_dialog_btn, &QDialogButtonBox::clicked, this, [this](QAbstractButton* btn){
+        switch( m_dialog_btn->standardButton( btn ) )
+        {
+            case QDialogButtonBox::Apply:
+                break;
+
+            case QDialogButtonBox::Ok:
+                hide();
+                break;
+
+            case QDialogButtonBox::Reset:
+                break;
+
+            case QDialogButtonBox::Cancel:
+                hide();
+                break;
+
+            default:
+                break;
+        }
+    });
+
     connect(m_selection_group,
             QOverload<QAbstractButton *>::of(&QButtonGroup::buttonReleased), this, [this](QAbstractButton* btn)
     {

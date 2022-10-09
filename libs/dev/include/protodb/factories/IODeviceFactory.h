@@ -7,7 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
-class IODeviceCreatorInterface;
+class IODeviceCreator;
 class QIODevice;
 
 class IODeviceFactory final: public FactoryAbstract
@@ -22,11 +22,11 @@ public:
     static QString fid();
 
     // ---------------- [ Creators ] --------------- //
-    bool addCreator(const QSharedPointer< IODeviceCreatorInterface >& creator);
+    bool addCreator(const QSharedPointer< IODeviceCreator >& creator);
 
-    QList< QSharedPointer< IODeviceCreatorInterface > > getAllCreators() const;
-    QSharedPointer< IODeviceCreatorInterface > getCreator( const QString& cid ) const;
-    QSharedPointer< IODeviceCreatorInterface > operator[]( const QString& cid ) const;
+    QList< QSharedPointer< IODeviceCreator > > getAllCreators() const;
+    QSharedPointer< IODeviceCreator > getCreator( const QString& cid ) const;
+    QSharedPointer< IODeviceCreator > operator[]( const QString& cid ) const;
 
     // ------------ [ Default creator ] ------------ //
     const QString &getDefaultCreator() const;

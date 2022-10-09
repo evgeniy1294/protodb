@@ -24,10 +24,6 @@ int main(int argc, char *argv[])
     PluginManager::instance().setManualInstallDirectory("/tmp/test/");
     PluginManager::instance().loadPlugins(QMap<QString, bool>());
 
-    //---------- TEST PLUGINS ----------
-    testPlugins();
-    //----------------------------------
-
     auto& main_class = MainClass::instance();
         main_class.init();
 
@@ -44,36 +40,4 @@ int main(int argc, char *argv[])
     session_manager.saveCurrentState();
 
     return ret;
-}
-
-#include <protodb/factories/IOWidgetFactory.h>
-#include <protodb/factories/IODeviceFactory.h>
-#include <protodb/creators/IOWidgetCreatorInterface.h>
-#include <protodb/creators/IODeviceCreatorInterface.h>
-void testPlugins() {
-    // IOWidget
-    auto iowgt_factory = IOWidgetFactory::globalInstance();
-    if (!iowgt_factory) {
-        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
-        iowgt_factory = IOWidgetFactory::globalInstance();
-    }
-
-    auto iowgt_creators = PluginManager::instance().getPlugins<IOWidgetCreatorInterface>();
-
-    for (auto& it: iowgt_creators) {
-        iowgt_factory->addCreator(QSharedPointer<IOWidgetCreatorInterface>(it));
-    }
-
-    // IODevice
-    auto iodev_factory = IODeviceFactory::globalInstance();
-    if (!iodev_factory) {
-        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
-        iodev_factory = IODeviceFactory::globalInstance();
-    }
-
-    auto iodev_creators = PluginManager::instance().getPlugins<IODeviceCreatorInterface>();
-    for (auto& it: iodev_creators) {
-        iodev_factory->addCreator(QSharedPointer<IODeviceCreatorInterface>(it));
-    }
-
 }

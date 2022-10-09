@@ -10,7 +10,7 @@ IODeviceFactory::IODeviceFactory(QObject* parent)
 
 }
 
-bool IODeviceFactory::addCreator(const QSharedPointer<IODeviceCreatorInterface>& creator)
+bool IODeviceFactory::addCreator(const QSharedPointer<IODeviceCreator>& creator)
 {
     if (!creator || containsCreator(creator->cid())) {
         return false;
@@ -21,12 +21,12 @@ bool IODeviceFactory::addCreator(const QSharedPointer<IODeviceCreatorInterface>&
     return true;
 }
 
-QList<QSharedPointer<IODeviceCreatorInterface> > IODeviceFactory::getAllCreators() const
+QList<QSharedPointer<IODeviceCreator> > IODeviceFactory::getAllCreators() const
 {
-    QList<QSharedPointer<IODeviceCreatorInterface> > ret;
+    QList<QSharedPointer<IODeviceCreator> > ret;
 
     for (auto& it: m_creators) {
-        auto ptr = qSharedPointerCast<IODeviceCreatorInterface>(it);
+        auto ptr = qSharedPointerCast<IODeviceCreator>(it);
         if (ptr) {
             ret.append(ptr);
         }
@@ -35,19 +35,19 @@ QList<QSharedPointer<IODeviceCreatorInterface> > IODeviceFactory::getAllCreators
     return ret;
 }
 
-QSharedPointer<IODeviceCreatorInterface> IODeviceFactory::getCreator(const QString& cid) const
+QSharedPointer<IODeviceCreator> IODeviceFactory::getCreator(const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IODeviceCreatorInterface>(m_creators[cid]);
+        return qSharedPointerCast<IODeviceCreator>(m_creators[cid]);
     }
 
     return nullptr;
 }
 
-QSharedPointer<IODeviceCreatorInterface> IODeviceFactory::operator[](const QString& cid) const
+QSharedPointer<IODeviceCreator> IODeviceFactory::operator[](const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IODeviceCreatorInterface>(m_creators[cid]);
+        return qSharedPointerCast<IODeviceCreator>(m_creators[cid]);
     }
 
     return nullptr;
@@ -78,7 +78,7 @@ QIODevice* IODeviceFactory::createIODevice(const QString& cid) const
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IODeviceCreatorInterface >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< IODeviceCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 
@@ -92,7 +92,7 @@ QIODevice* IODeviceFactory::createIODevice(const QString& cid, const nlohmann::j
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IODeviceCreatorInterface >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< IODeviceCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 

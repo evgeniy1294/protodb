@@ -4,7 +4,7 @@
 
 #include <nlohmann/json.hpp>
 
-class IOWidgetCreatorInterface;
+class IOWidgetCreator;
 class IOWidget;
 
 class IOWidgetFactory final: public FactoryAbstract
@@ -19,11 +19,11 @@ public:
     static QString fid();
 
     // ---------------- [ Creators ] --------------- //
-    bool addCreator(const QSharedPointer< IOWidgetCreatorInterface >& creator);
+    bool addCreator(const QSharedPointer< IOWidgetCreator >& creator);
 
-    QList< QSharedPointer< IOWidgetCreatorInterface > > getAllCreators() const;
-    QSharedPointer< IOWidgetCreatorInterface > getCreator( const QString& cid ) const;
-    QSharedPointer< IOWidgetCreatorInterface > operator[]( const QString& cid ) const;
+    QList< QSharedPointer< IOWidgetCreator > > getAllCreators() const;
+    QSharedPointer< IOWidgetCreator > getCreator( const QString& cid ) const;
+    QSharedPointer< IOWidgetCreator > operator[]( const QString& cid ) const;
 
     // ------------ [ Default creator ] ------------ //
     const QString &getDefaultCreator() const;

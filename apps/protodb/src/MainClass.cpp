@@ -7,6 +7,8 @@
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/factories/IOWidgetFactory.h>
 #include <protodb/factories/IODeviceFactory.h>
+#include <protodb/creators/IOWidgetCreatorInterface.h>
+#include <protodb/creators/IODeviceCreatorInterface.h>
 #include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
@@ -42,12 +44,32 @@ void MainClass::init()
 
 void MainClass::init_factories()
 {
-    if (!IOWidgetFactory::globalInstance()) {
-        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+    // IOWidget factories
+    {
+        if (!IOWidgetFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+        }
+
+        auto factory  = IOWidgetFactory::globalInstance();
+        auto creators = PluginManager::instance().getPlugins<IOWidgetCreator>();
+
+        for (auto& it: creators) {
+            factory->addCreator(QSharedPointer<IOWidgetCreator>(it));
+        }
     }
 
-    if (!IODeviceFactory::globalInstance()) {
-        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+    // IODevice factories
+    {
+        if (!IODeviceFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+        }
+
+        auto factory  = IODeviceFactory::globalInstance();
+        auto creators = PluginManager::instance().getPlugins<IODeviceCreator>();
+
+        for (auto& it: creators) {
+            factory->addCreator(QSharedPointer<IODeviceCreator>(it));
+        }
     }
 
     // Script Interfaces
@@ -112,20 +134,33 @@ bool MainClass::isStarted() const
     return m_io != nullptr;
 }
 
-#include <iostream>
-
 void MainClass::start(const nlohmann::json& attr)
 {
-    std::cout << attr.dump(4) << std::endl;
     auto factory = IODeviceFactory::globalInstance();
     if (!factory) {
         GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IOWidgetFactory);
         factory = IODeviceFactory::globalInstance();
     }
 
-    auto cid = attr["IODevice"].value("CID", QString());
-    m_io = factory->createIODevice(cid, attr["IODevice"].value("Attribute", nlohmann::json()));
+    auto io_cfg = attr.value("IODevice", nlohmann::json::object());
+    auto cid = io_cfg.value("CID", QString());
+    auto cfg = io_cfg.value("Attributes", nlohmann::json::object());
+    m_io = factory->createIODevice(cid, cfg);
     if (m_io) {
+        if (cfg.value("OpenMode", QString()) == "Monitoring") {
+            m_io->open(QIODevice::ReadOnly);
+        }
+        else {
+            m_io->open(QIODevice::ReadWrite);
+        }
+
+        if (!m_io->isOpen()) {
+            qDebug() << m_io->errorString();
+            m_logger->error(QString("Can't open device: %2").
+                                arg(m_io->errorString()).toLatin1());
+            stop();
+            return;
+        }
 
         if (!m_log_printer->setEnabled()) {
             m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
@@ -137,6 +172,8 @@ void MainClass::start(const nlohmann::json& attr)
         m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLatin1());
         stop();
     }
+
+    return;
 }
 
 void MainClass::stop()

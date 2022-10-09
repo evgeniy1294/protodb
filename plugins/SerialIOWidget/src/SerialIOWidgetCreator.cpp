@@ -1,4 +1,5 @@
-#include "SerialIOWidgetCreator.h"
+#include "protodb/SerialIOWidgetCreator.h"
+#include "protodb/SerialIOWidget.h"
 
 QString SerialIOWIdgetCreator::cid() const
 {

@@ -58,6 +58,7 @@ target_link_libraries(${TARGET}
     protodb::base
     protodb::gui
     protodb::dev
+    protodb::NetIoDevice
 )
 
 # ------------ [ Properties and compile definitions ] ------------

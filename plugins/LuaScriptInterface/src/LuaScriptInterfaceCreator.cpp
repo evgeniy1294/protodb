@@ -1,10 +1,10 @@
-#include "LuaScriptInterfaceCreator.h"
+#include "protodb/LuaScriptInterfaceCreator.h"
 
-#include "LuaScriptInterface.h"
+#include "protodb/LuaScriptInterface.h"
 
 QString LuaScriptInterfaceCreator::cid() const
 {
-    return QString("LuaScriptInterfaceCreator");
+    return creatorId();
 }
 
 QString LuaScriptInterfaceCreator::name() const

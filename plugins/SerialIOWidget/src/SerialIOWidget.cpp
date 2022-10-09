@@ -1,4 +1,6 @@
-#include "SerialIOWidget.h"
+#include "protodb/SerialIOWidget.h"
+
+#include <protodb/SerialIODeviceCreator.h>
 
 #include <protodb/utils/JsonUtils.h>
 
@@ -22,9 +24,9 @@ SerialIOWidget::SerialIOWidget(QWidget* parent)
 
 void SerialIOWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["CID"]         = "SerialIODeviceCreator";
+    json["CID"] = SerialIODeviceCreator::creatorId();
     nlohmann::json attr;
-        attr["Device"]      = "";
+        attr["PortName"]    = "";
         attr["OpenMode"]    = "Communication";
         attr["Baudrate"]    = "115200";
         attr["DataBits"]    = "8";
@@ -38,7 +40,7 @@ void SerialIOWidget::config(nlohmann::json &json) const
 {
     json["CID"]         = "SerialIODeviceCreator";
     nlohmann::json attr;
-        attr["Device"]      = m_device->currentText();
+        attr["PortName"]    = m_device->currentText();
         attr["OpenMode"]    = m_open_mode->currentText();
         attr["Baudrate"]    = m_baudrate->currentText();
         attr["DataBits"]    = m_data_bits->currentText();
@@ -50,20 +52,20 @@ void SerialIOWidget::config(nlohmann::json &json) const
 
 void SerialIOWidget::setConfig(const nlohmann::json &json)
 {
-    nlohmann::json attr = json.value<nlohmann::json>("Attributes", nlohmann::json());
+    nlohmann::json attr = json.value("Attributes", nlohmann::json::object());
 
-    QString baudrate = attr["Baudrate"].get<QString>();
+    QString baudrate = attr.value("Baudrate", QString());
     if (m_baudrate->findText(baudrate) == -1) {
         m_baudrate->setItemText(m_baudrate->count() - 1, baudrate);
     }
     m_baudrate->setCurrentText(baudrate);
 
-    m_device->setCurrentText(attr["Device"].get<QString>());
-    m_open_mode->setCurrentText(attr["OpenMode"].get<QString>());
-    m_data_bits->setCurrentText(attr["DataBits"].get<QString>());
-    m_parity->setCurrentText(attr["Parity"].get<QString>());
-    m_stop_bits->setCurrentText(attr["StopBits"].get<QString>());
-    m_flow_ctrl->setCurrentText(attr["FlowControl"].get<QString>());
+    m_device->setCurrentText(attr.value("PortName", QString()));
+    m_open_mode->setCurrentText(attr.value("OpenMode", QString()));
+    m_data_bits->setCurrentText(attr.value("DataBits", QString()));
+    m_parity->setCurrentText(attr.value("Parity", QString()));
+    m_stop_bits->setCurrentText(attr.value("StopBits", QString()));
+    m_flow_ctrl->setCurrentText(attr.value("FlowControl", QString()));
 }
 
 void SerialIOWidget::createGui()
@@ -94,7 +96,7 @@ void SerialIOWidget::createGui()
     m_device    = new QComboBox();
 
     for (auto& port: QSerialPortInfo::availablePorts()) {
-        m_device->addItem(port.portName());
+        m_device->addItem(port.systemLocation());
     }
 
     // --------[LABELS]-------- //

@@ -7,13 +7,13 @@
 
 class IOWidget;
 
-class IOWidgetCreatorInterface: public CreatorAbstract
+class IOWidgetCreator: public CreatorAbstract
 {
 public:
-    virtual ~IOWidgetCreatorInterface() override = default;
+    virtual ~IOWidgetCreator() override = default;
 
     virtual IOWidget* create() const = 0;
     virtual IOWidget* create(const nlohmann::json&) const = 0;
 };
 
-Q_DECLARE_INTERFACE(IOWidgetCreatorInterface, "ProtoDb.IOWidgetCreatorInterface")
+Q_DECLARE_INTERFACE(IOWidgetCreator, "ProtoDb.IOWidgetCreatorInterface")

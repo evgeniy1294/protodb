@@ -2,6 +2,8 @@
 
 #include <protodb/utils/JsonUtils.h>
 
+#include <protodb/NetIODeviceCreator.h>
+
 #include <QLineEdit>
 #include <QComboBox>
 #include <QLayout>
@@ -21,7 +23,7 @@ NetIOWidget::NetIOWidget(QWidget* parent)
 
 void NetIOWidget::defaultConfig(nlohmann::json& json) const
 {
-    json["CID"] = "NetIODeviceCreator";
+    json["CID"] = NetIODeviceCreator::creatorId();
 
     nlohmann::json attr;
         attr["RemoteIp"] = "127.0.0.1";
@@ -56,9 +58,10 @@ void NetIOWidget::createGui()
         m_ip->setPlaceholderText(tr("IPv4 or IPv6"));
 
     m_port = new QLineEdit();
-        auto portValidator = new QIntValidator(1, 65535, this);
+        auto portValidator = new QIntValidator(0, 65535, this);
         m_port->setValidator(portValidator);
-        m_port->setPlaceholderText(tr("1 to 65535"));
+        m_port->setPlaceholderText(tr("0 to 65535"));
+        m_port->setText("0");
 
     m_protocol = new QComboBox();
         m_protocol->addItem("TCP");

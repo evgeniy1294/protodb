@@ -1,12 +1,11 @@
 #pragma once
 
 #include <protodb/creators/IOWidgetCreatorInterface.h>
-#include "SerialIOWidget.h"
 
-class SerialIOWIdgetCreator: public QObject, public IOWidgetCreatorInterface
+class SerialIOWIdgetCreator: public QObject, public IOWidgetCreator
 {
     Q_OBJECT
-    Q_INTERFACES(IOWidgetCreatorInterface)
+    Q_INTERFACES(IOWidgetCreator)
     Q_PLUGIN_METADATA(IID "ProtoDb.SerialIOWidgetCreator" FILE "SerialIOWidgetPluginMetadata.json")
 
 public:

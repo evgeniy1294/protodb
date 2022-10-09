@@ -12,6 +12,7 @@ public:
     explicit LuaScriptInterfaceCreator() = default;
     ~LuaScriptInterfaceCreator() override = default;
 
+    static QString creatorId() { return QString("LuaScriptInterfaceCreator"); }
     QString cid() const override;
     QString name() const override;
     QString description() const override;

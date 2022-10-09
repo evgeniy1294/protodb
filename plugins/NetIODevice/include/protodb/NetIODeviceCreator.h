@@ -4,16 +4,17 @@
 
 #include <QIODevice>
 
-class SerialIODeviceCreator: public QObject, public IODeviceCreatorInterface
+class NetIODeviceCreator: public QObject, public IODeviceCreator
 {
     Q_OBJECT
-    Q_INTERFACES(IODeviceCreatorInterface)
-    Q_PLUGIN_METADATA(IID "ProtoDb.SerialIODeviceCreator" FILE "SerialIODevicePluginMetadata.json")
+    Q_INTERFACES(IODeviceCreator)
+    Q_PLUGIN_METADATA(IID "ProtoDb.NetIODeviceCreator" FILE "NetIODevicePluginMetadata.json")
 
 public:
-    explicit SerialIODeviceCreator() = default;
-    ~SerialIODeviceCreator() override = default;
+    explicit NetIODeviceCreator() = default;
+    ~NetIODeviceCreator() override = default;
 
+    static QString creatorId() { return QString("NetIODeviceCreator"); }
     QString cid() const override;
     QString name() const override;
     QString description() const override;

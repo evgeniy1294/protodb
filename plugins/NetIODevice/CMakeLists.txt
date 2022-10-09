@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
-set(TARGET SerialIoWidget)
+set(TARGET NetIoDevice)
 set(TARGET_NAMESPACE protodb)
 set(INCLUDE_PREFIX "")
 set(LIBRARY_DIST_SUFFIX "")
@@ -13,13 +13,11 @@ set(CMAKE_AUTOMOC ON)
 
 # ------------ [ Sources ] ------------
 set( BaseHeaders
-    include/protodb/SerialIOWidget.h
-    include/protodb/SerialIOWidgetCreator.h
+    include/protodb/NetIODeviceCreator.h
 )
 
 set( BaseSources
-    src/SerialIOWidget.cpp
-    src/SerialIOWidgetCreator.cpp
+    src/NetIODeviceCreator.cpp
 )
 
 set(SOURCES_LIST
@@ -39,7 +37,7 @@ include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp)
 
 # ------------ [ Depends ] ------------
-find_package(Qt5 COMPONENTS Core Gui Widgets SerialPort REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Network REQUIRED)
 
 target_link_libraries(${TARGET}
 
@@ -48,7 +46,7 @@ target_link_libraries(${TARGET}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
-    Qt5::SerialPort
+    Qt5::Network
 )
 
 target_link_libraries(${TARGET}
@@ -56,9 +54,7 @@ target_link_libraries(${TARGET}
     PRIVATE
 
     protodb::base
-    protodb::gui
     protodb::dev
-    protodb::SerialIoDevice
 )
 
 # ------------ [ Properties and compile definitions ] ------------
@@ -112,5 +108,3 @@ if(${TARGET}_INSTALL)
     install(FILES "${version_config_file}" DESTINATION "${export_dest_dir}")
 
 endif()
-
-
