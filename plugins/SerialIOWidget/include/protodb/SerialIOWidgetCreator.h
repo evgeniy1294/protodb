@@ -12,6 +12,7 @@ public:
     explicit SerialIOWIdgetCreator() = default;
     ~SerialIOWIdgetCreator() override = default;
 
+    static QString creatorId() { return QString("SerialIOWidgetCreator"); }
     QString cid() const override;
     QString name() const override;
     QString description() const override;

@@ -111,7 +111,7 @@ void LogWidget::createConnections()
         else
         {
             nlohmann::json start_attr;
-                m_conn_dialog->getConfig(start_attr);
+                m_conn_dialog->connectionConfig(start_attr);
 
             MainClass::instance().start(start_attr);
         }

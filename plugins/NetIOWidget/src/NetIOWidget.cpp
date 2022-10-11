@@ -1,4 +1,5 @@
-#include "NetIOWidget.h"
+#include "protodb/NetIOWidget.h"
+#include "protodb/NetIOWidgetCreator.h"
 
 #include <protodb/utils/JsonUtils.h>
 
@@ -19,6 +20,11 @@ NetIOWidget::NetIOWidget(QWidget* parent)
     connectSignals();
 
     setDefaultConfig();
+}
+
+QString NetIOWidget::gcid() const
+{
+    return NetIOWIdgetCreator::creatorId();
 }
 
 void NetIOWidget::defaultConfig(nlohmann::json& json) const

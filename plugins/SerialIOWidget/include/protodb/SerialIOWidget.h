@@ -14,6 +14,7 @@ public:
     ~SerialIOWidget() = default;
 
     QString name() const override { return QString("Serial"); }
+    virtual QString gcid() const override;
 
     void setConfig(const nlohmann::json& json) override;
     void config(nlohmann::json& json) const override;

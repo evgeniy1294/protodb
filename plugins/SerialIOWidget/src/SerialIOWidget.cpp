@@ -1,4 +1,5 @@
 #include "protodb/SerialIOWidget.h"
+#include "protodb/SerialIOWidgetCreator.h"
 
 #include <protodb/SerialIODeviceCreator.h>
 
@@ -20,6 +21,11 @@ SerialIOWidget::SerialIOWidget(QWidget* parent)
     connectSignals();
 
     setDefaultConfig();
+}
+
+QString SerialIOWidget::gcid() const
+{
+    return SerialIOWIdgetCreator::creatorId();
 }
 
 void SerialIOWidget::defaultConfig(nlohmann::json &json) const

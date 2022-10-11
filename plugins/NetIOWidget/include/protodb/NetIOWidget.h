@@ -14,6 +14,7 @@ public:
     ~NetIOWidget() = default;
 
     QString name() const override { return QString("Network"); }
+    QString gcid() const override;
 
     void setConfig(const nlohmann::json& json) override;
     void config(nlohmann::json& json) const override;

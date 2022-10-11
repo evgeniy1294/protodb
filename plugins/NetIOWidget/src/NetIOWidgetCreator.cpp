@@ -3,7 +3,7 @@
 
 QString NetIOWIdgetCreator::cid() const
 {
-    return QString("NetIOWidgetCreator");
+    return creatorId();
 }
 
 QString NetIOWIdgetCreator::name() const

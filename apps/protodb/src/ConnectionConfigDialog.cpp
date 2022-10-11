@@ -26,18 +26,25 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     connectSignals();
 }
 
-void ConnectionConfigDialog::getConfig(nlohmann::json& json)
+void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
 {
-    nlohmann::json io_device_cfg = nlohmann::json::object();
-    auto io_widget = dynamic_cast<IOWidget*>(m_current_iowiget);
-    if (io_widget) {
-        io_widget->config(io_device_cfg);
-    }
-    else {
-        io_device_cfg["CID"] = "NULL";
+    json.clear();
+    if (!m_curr_cid.isEmpty()) {
+        if (m_io_widgets.contains(m_curr_cid)) {
+            std::string cid = m_curr_cid.toStdString();
+
+            if ( !m_curr_cfg.contains(cid) ) {
+                nlohmann::json io_device_cfg = nlohmann::json::object();
+                m_io_widgets[m_curr_cid]->config(io_device_cfg);
+
+                m_curr_cfg[cid]  = io_device_cfg;
+            }
+
+            json["IODevice"] = m_curr_cfg[cid];
+        }
     }
 
-    json["IODevice"] = io_device_cfg;
+    return;
 }
 
 void ConnectionConfigDialog::createGui()
@@ -68,6 +75,8 @@ void ConnectionConfigDialog::createGui()
             m_selection_btns[it->cid()] = new QRadioButton(wgt->name());
         }
     }
+
+    m_curr_cid = m_io_widgets.firstKey();
 
     // --------[BUTTONS]--------- //
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
@@ -188,16 +197,20 @@ void ConnectionConfigDialog::connectSignals()
         switch( m_dialog_btn->standardButton( btn ) )
         {
             case QDialogButtonBox::Apply:
+                connectionConfig(m_curr_cfg);
                 break;
 
             case QDialogButtonBox::Ok:
+                connectionConfig(m_curr_cfg);
                 hide();
                 break;
 
             case QDialogButtonBox::Reset:
+                setDefaultConnectionConfig();
                 break;
 
             case QDialogButtonBox::Cancel:
+                setConnectionConfig(m_curr_cfg);
                 hide();
                 break;
 
@@ -239,6 +252,8 @@ void ConnectionConfigDialog::replaceIOWiget(const QString& cid)
     if (wgt) {
         auto item = m_layout->replaceWidget(m_current_iowiget, wgt);
         if (item) {
+            m_curr_cid = cid;
+
             m_current_iowiget->hide();
                 wgt->show();
             m_current_iowiget = wgt;
@@ -263,4 +278,34 @@ void ConnectionConfigDialog::showFileDialog(QString& path)
             path = fileNames.back();
       }
     }
+}
+
+void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
+{
+
+}
+
+void ConnectionConfigDialog::config(nlohmann::json& json) const
+{
+
+}
+
+void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
+{
+
+}
+
+void ConnectionConfigDialog::setState(const nlohmann::json& json)
+{
+
+}
+
+void ConnectionConfigDialog::state(nlohmann::json& json) const
+{
+
+}
+
+void ConnectionConfigDialog::defaultState(nlohmann::json& json) const
+{
+
 }

@@ -12,6 +12,7 @@ public:
     explicit NetIOWIdgetCreator() = default;
     ~NetIOWIdgetCreator() override = default;
 
+    static QString creatorId() { return QString("NetIOWidgetCreator"); }
     QString cid() const override;
     QString name() const override;
     QString description() const override;

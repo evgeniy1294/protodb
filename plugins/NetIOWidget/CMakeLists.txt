@@ -13,8 +13,8 @@ set(CMAKE_AUTOMOC ON)
 
 # ------------ [ Sources ] ------------
 set( BaseHeaders
-    include/NetIOWidget.h
-    include/NetIOWidgetCreator.h
+    include/protodb/NetIOWidget.h
+    include/protodb/NetIOWidgetCreator.h
 )
 
 set( BaseSources

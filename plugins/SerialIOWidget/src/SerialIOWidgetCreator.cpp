@@ -3,7 +3,7 @@
 
 QString SerialIOWIdgetCreator::cid() const
 {
-    return QString("SerialIOWidgetCreator");
+    return creatorId();
 }
 
 QString SerialIOWIdgetCreator::name() const
