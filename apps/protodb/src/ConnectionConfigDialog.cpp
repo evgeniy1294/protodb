@@ -197,20 +197,20 @@ void ConnectionConfigDialog::connectSignals()
         switch( m_dialog_btn->standardButton( btn ) )
         {
             case QDialogButtonBox::Apply:
-                connectionConfig(m_curr_cfg);
+                config(m_curr_cfg);
                 break;
 
             case QDialogButtonBox::Ok:
-                connectionConfig(m_curr_cfg);
+                config(m_curr_cfg);
                 hide();
                 break;
 
             case QDialogButtonBox::Reset:
-                setDefaultConnectionConfig();
+                setDefaultConfig();
                 break;
 
             case QDialogButtonBox::Cancel:
-                setConnectionConfig(m_curr_cfg);
+                setConfig(m_curr_cfg);
                 hide();
                 break;
 
@@ -280,19 +280,45 @@ void ConnectionConfigDialog::showFileDialog(QString& path)
     }
 }
 
+// Должна быть метка активного элемента
 void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
 {
+    for (auto& [cid, cfg] : json.items()) {
+        auto key = cid.c_str();
 
+        if (m_io_widgets.contains(key)) {
+            m_io_widgets[key]->setConfig(cfg);
+        }
+    }
+
+    m_curr_cfg.clear();
+    config(m_curr_cfg);
+
+    return;
 }
 
 void ConnectionConfigDialog::config(nlohmann::json& json) const
 {
+    for (const auto& cid: m_io_widgets.keys()) {
+        nlohmann::json cfg;
+            m_io_widgets.value(cid)->config(cfg);
 
+        json[cid.toStdString()] = cfg;
+    }
+
+    return;
 }
 
 void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
 {
+    for (const auto& cid: m_io_widgets.keys()) {
+        nlohmann::json cfg;
+            m_io_widgets.value(cid)->defaultConfig(cfg);
 
+        json[cid.toStdString()] = cfg;
+    }
+
+    return;
 }
 
 void ConnectionConfigDialog::setState(const nlohmann::json& json)
