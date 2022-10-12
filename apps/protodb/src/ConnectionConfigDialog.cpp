@@ -76,7 +76,8 @@ void ConnectionConfigDialog::createGui()
         }
     }
 
-    m_curr_cid = m_io_widgets.firstKey();
+
+    m_curr_cid = m_io_widgets.empty() ? "None" : m_io_widgets.firstKey();
 
     // --------[BUTTONS]--------- //
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
@@ -299,8 +300,9 @@ void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
 
 void ConnectionConfigDialog::config(nlohmann::json& json) const
 {
-    for (const auto& cid: m_io_widgets.keys()) {
-        nlohmann::json cfg;
+    const auto keys = m_io_widgets.keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        nlohmann::json cfg; auto cid = keys.at(i);
             m_io_widgets.value(cid)->config(cfg);
 
         json[cid.toStdString()] = cfg;
@@ -311,8 +313,9 @@ void ConnectionConfigDialog::config(nlohmann::json& json) const
 
 void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
 {
-    for (const auto& cid: m_io_widgets.keys()) {
-        nlohmann::json cfg;
+    const auto keys = m_io_widgets.keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        nlohmann::json cfg; auto cid = keys.at(i);
             m_io_widgets.value(cid)->defaultConfig(cfg);
 
         json[cid.toStdString()] = cfg;

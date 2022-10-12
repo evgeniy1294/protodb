@@ -1,5 +1,5 @@
-#include "NetIOWidgetCreator.h"
-#include "NetIOWidget.h"
+#include "protodb/NetIOWidgetCreator.h"
+#include "protodb/NetIOWidget.h"
 
 QString NetIOWIdgetCreator::cid() const
 {
