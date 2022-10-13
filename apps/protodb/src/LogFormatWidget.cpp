@@ -14,10 +14,10 @@ LogFormatWidget::LogFormatWidget(QWidget* aParent)
     connectSignals();
 }
 
-/*
 void LogFormatWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["CharSeparator"]        = ' ';
+    json["CharSeparator"]        = ' '; /// TODO: Задействовать
+    json["Append"]               = true;
     json["TimestampEnabled"]     = true;
     json["FirstChannelEnabled"]  = true;
     json["SecondChannelEnabled"] = true;
@@ -26,20 +26,10 @@ void LogFormatWidget::defaultConfig(nlohmann::json &json) const
     json["SecondChannelName"]    = QString("TX");
 }
 
-void LogFormatWidget::fromJson(const nlohmann::json &json)
-{
-    m_separator->setText(QString(json["CharSeparator"].get<char>()));
-    m_timestamp_en->setCheckState(json["TimestampEnabled"].get<bool>() ? Qt::Checked : Qt::Unchecked);
-    m_timestamp_en->setCheckState(json["FirstChannelEnabled"].get<bool>() ? Qt::Checked : Qt::Unchecked);
-    m_timestamp_en->setCheckState(json["SecondChannelEnabled"].get<bool>() ? Qt::Checked : Qt::Unchecked);
-    m_timestamp_format->setText(json["TimestampFormat"].get<QString>());
-    m_ch1_name->setText(json["FirstChannelName"].get<QString>());
-    m_ch2_name->setText(json["SecondChannelName"].get<QString>());
-}
-
-void LogFormatWidget::toJson(nlohmann::json &json) const
+void LogFormatWidget::config(nlohmann::json &json) const
 {
     json["CharSeparator"]        = ' '; /// TODO: Задействовать
+    json["Append"]               = m_append_en->checkState() == Qt::Checked;
     json["TimestampEnabled"]     = m_timestamp_en->checkState() == Qt::Checked;
     json["FirstChannelEnabled"]  = m_ch1_en->checkState() == Qt::Checked;
     json["SecondChannelEnabled"] = m_ch2_en->checkState() == Qt::Checked;
@@ -47,7 +37,43 @@ void LogFormatWidget::toJson(nlohmann::json &json) const
     json["FirstChannelName"]     = m_ch1_name->text();
     json["SecondChannelName"]    = m_ch2_name->text();
 }
-*/
+
+void LogFormatWidget::setConfig(const nlohmann::json &json)
+{
+    m_separator->setText(
+        QString(json.value<char>("CharSeparator", ' '))
+    );
+
+    m_append_en->setCheckState(
+        json.value<bool>("Append", true) ? Qt::Checked : Qt::Unchecked
+    );
+
+    m_timestamp_en->setCheckState(
+        json.value<bool>("TimestampEnabled", true) ? Qt::Checked : Qt::Unchecked
+    );
+
+    m_ch1_en->setCheckState(
+        json.value<bool>("FirstChannelEnabled", true) ? Qt::Checked : Qt::Unchecked
+    );
+
+    m_ch2_en->setCheckState(
+        json.value<bool>("SecondChannelEnabled", true) ? Qt::Checked : Qt::Unchecked
+    );
+
+    m_timestamp_format->setText(
+        json.value("TimestampFormat", QString("hh:mm:ss.sss"))
+    );
+
+    m_ch1_name->setText(
+        json.value("FirstChannelName", QString("RX"))
+    );
+
+    m_ch2_name->setText(
+        json.value("SecondChannelName", QString("TX"))
+    );
+
+    return;
+}
 
 void LogFormatWidget::createGui() {
     // ----------[WIDGETS]------------ //

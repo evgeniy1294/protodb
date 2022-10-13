@@ -6,11 +6,15 @@
 class QCheckBox;
 class QLineEdit;
 
-class LogFormatWidget: public QWidget //, Configurable
+class LogFormatWidget: public QWidget, public Configurable
 {
 public:
     explicit LogFormatWidget(QWidget* parent = nullptr);
     virtual ~LogFormatWidget() = default;
+
+    void config(nlohmann::json& json) const override;
+    void defaultConfig(nlohmann::json& json) const override;
+    void setConfig(const nlohmann::json& json) override;
 
 private:
     void createGui();

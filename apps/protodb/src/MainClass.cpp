@@ -134,14 +134,22 @@ bool MainClass::isStarted() const
     return m_io != nullptr;
 }
 
+#include <iostream>
+
 void MainClass::start(const nlohmann::json& attr)
 {
+    std::cout << attr.dump(4) << std::endl;
+
     auto factory = IODeviceFactory::globalInstance();
     if (!factory) {
         GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IOWidgetFactory);
         factory = IODeviceFactory::globalInstance();
     }
 
+    // Configure logger
+
+
+    // Init IODevice
     auto io_cfg = attr.value("IODevice", nlohmann::json::object());
     auto cid = io_cfg.value("CID", QString());
     auto cfg = io_cfg.value("Attributes", nlohmann::json::object());

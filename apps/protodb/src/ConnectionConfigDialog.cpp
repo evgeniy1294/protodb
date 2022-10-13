@@ -30,17 +30,27 @@ void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
 {
     json.clear();
     if (!m_curr_cid.isEmpty()) {
+        auto configs = m_curr_cfg.value("Configs", nlohmann::json::object());
+
         if (m_io_widgets.contains(m_curr_cid)) {
             std::string cid = m_curr_cid.toStdString();
 
-            if ( !m_curr_cfg.contains(cid) ) {
-                nlohmann::json io_device_cfg = nlohmann::json::object();
-                m_io_widgets[m_curr_cid]->config(io_device_cfg);
+            if ( !configs.contains(cid) ) {
+                nlohmann::json cfg = nlohmann::json::object();
+                m_io_widgets[m_curr_cid]->config(cfg);
 
-                m_curr_cfg[cid]  = io_device_cfg;
+                configs[cid]  = cfg;
             }
 
-            json["IODevice"] = m_curr_cfg[cid];
+            if ( !m_curr_cfg.contains("LogConfigs")) {
+                nlohmann::json log_configs = nlohmann::json::object();
+                m_log_format_wiget->config(log_configs);
+
+                m_curr_cfg["LogConfigs"] = log_configs;
+            }
+
+            json["IODevice"]   = configs[cid];
+            json["LogConfigs"] = m_curr_cfg["LogConfigs"];
         }
     }
 
@@ -208,6 +218,7 @@ void ConnectionConfigDialog::connectSignals()
 
             case QDialogButtonBox::Reset:
                 setDefaultConfig();
+                config(m_curr_cfg);
                 break;
 
             case QDialogButtonBox::Cancel:
@@ -284,11 +295,28 @@ void ConnectionConfigDialog::showFileDialog(QString& path)
 // Должна быть метка активного элемента
 void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
 {
-    for (auto& [cid, cfg] : json.items()) {
-        auto key = cid.c_str();
+    auto log_configs = json.value("LogConfigs", nlohmann::json::object());
+        m_log_format_wiget->setConfig(log_configs);
+
+    auto configs  = json.value("Configs",  nlohmann::json::object());
+    for (auto& [cid, cfg] : configs.items()) {
+        auto key = QString(cid.c_str());
 
         if (m_io_widgets.contains(key)) {
             m_io_widgets[key]->setConfig(cfg);
+        }
+    }
+
+    auto selected = json.value("Selected", QString());
+    if (m_io_widgets.contains(selected)) {
+        auto buttons = m_selection_group->buttons();
+
+        for (int i = 0; i < buttons.size(); ++i) {
+            auto btn = buttons[i];
+            if ( m_selection_btns.key(btn, QString()) == selected ) {
+                btn->setChecked(true);
+                replaceIOWiget(selected);
+            }
         }
     }
 
@@ -299,27 +327,47 @@ void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
 }
 
 void ConnectionConfigDialog::config(nlohmann::json& json) const
-{
+{        
+    auto configs = nlohmann::json::object();
+
+    auto log_configs = nlohmann::json::object();
+        m_log_format_wiget->config(log_configs);
+
     const auto keys = m_io_widgets.keys();
+
     for (int i = 0; i < keys.size(); ++i) {
         nlohmann::json cfg; auto cid = keys.at(i);
             m_io_widgets.value(cid)->config(cfg);
 
-        json[cid.toStdString()] = cfg;
+        configs[cid.toStdString()] = cfg;
     }
+
+    json["Configs"]    = configs;
+    json["LogConfigs"] = log_configs;
+    json["Selected"]   = m_curr_cid;
 
     return;
 }
 
 void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
 {
+    auto configs = nlohmann::json::object();
+
+    auto log_configs = nlohmann::json::object();
+        m_log_format_wiget->defaultConfig(log_configs);
+
     const auto keys = m_io_widgets.keys();
+
     for (int i = 0; i < keys.size(); ++i) {
         nlohmann::json cfg; auto cid = keys.at(i);
             m_io_widgets.value(cid)->defaultConfig(cfg);
 
-        json[cid.toStdString()] = cfg;
+        configs[cid.toStdString()] = cfg;
     }
+
+    json["Configs"]    = configs;
+    json["LogConfigs"] = log_configs;
+    json["Selected"]   = m_curr_cid;
 
     return;
 }

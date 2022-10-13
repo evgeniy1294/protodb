@@ -32,8 +32,8 @@ void NetIOWidget::defaultConfig(nlohmann::json& json) const
     json["CID"] = NetIODeviceCreator::creatorId();
 
     nlohmann::json attr;
-        attr["RemoteIp"] = "127.0.0.1";
-        attr["Port"]     = "1";
+        attr["RemoteIp"] = "localhost";
+        attr["Port"]     = "0";
         attr["Protocol"] = "TCP";
     json["Attributes"] = attr;
 }
@@ -62,6 +62,7 @@ void NetIOWidget::createGui()
 {
     m_ip = new QLineEdit();
         m_ip->setPlaceholderText(tr("IPv4 or IPv6"));
+        m_ip->setText("localhost");
 
     m_port = new QLineEdit();
         auto portValidator = new QIntValidator(0, 65535, this);
