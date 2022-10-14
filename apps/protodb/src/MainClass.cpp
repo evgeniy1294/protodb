@@ -133,7 +133,12 @@ void MainClass::config_logger(const nlohmann::json &json)
         }
 
     bool append_log = log_configs.value<bool>("Append", true);
-        m_log_printer->setAppendFile(append_log);
+    m_log_printer->setAppendFile(append_log);
+}
+
+void MainClass::create_iodevice(const nlohmann::json &json)
+{
+
 }
 
 SequenceModel* MainClass::incomingSequences() const
