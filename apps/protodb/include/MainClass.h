@@ -44,6 +44,8 @@ private:
     void init_logger();
     void init_syntaxes();
 
+    void config_logger(const nlohmann::json& json);
+
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;

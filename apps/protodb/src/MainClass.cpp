@@ -114,6 +114,28 @@ void MainClass::init_syntaxes()
     }
 }
 
+void MainClass::config_logger(const nlohmann::json &json)
+{
+    bool ch1_en = log_configs.value<bool>("FirstChannelEnabled", true);
+        if (ch1_en) {
+            m_logger->setChannelEnabled(Logger::ChannelFirst);
+        }
+        else {
+            m_logger->setChannelDisabled(Logger::ChannelFirst);
+        }
+
+    bool ch2_en = log_configs.value<bool>("SecondChannelEnabled", true);
+        if (ch2_en) {
+            m_logger->setChannelEnabled(Logger::ChannelSecond);
+        }
+        else {
+            m_logger->setChannelDisabled(Logger::ChannelSecond);
+        }
+
+    bool append_log = log_configs.value<bool>("Append", true);
+        m_log_printer->setAppendFile(append_log);
+}
+
 SequenceModel* MainClass::incomingSequences() const
 {
     return m_incoming_sequences;
@@ -147,7 +169,8 @@ void MainClass::start(const nlohmann::json& attr)
     }
 
     // Configure logger
-
+    auto log_configs = attr.value("LogConfigs", nlohmann::json::object());
+    config_logger(log_configs);
 
     // Init IODevice
     auto io_cfg = attr.value("IODevice", nlohmann::json::object());
