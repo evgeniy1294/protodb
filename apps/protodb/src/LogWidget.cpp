@@ -1,7 +1,7 @@
 #include "LogWidget.h"
 #include "LogTableView.h"
 #include "ConnectionConfigDialog.h"
-#include "LogDecorationDialog.h"
+#include "LogFormatter.h"
 #include "LogProxyModel.h"
 #include "Logger.h"
 #include "MainClass.h"
@@ -117,8 +117,20 @@ void LogWidget::createConnections()
         }
     });
 
+    connect(m_conn_dialog, &QDialog::accepted, this, [this]() {
+        nlohmann::json start_attr;
+            m_conn_dialog->connectionConfig(start_attr);
 
-    connect(m_clr_btn, &QPushButton::released, this, [this] {
+        auto log_configs = start_attr.value("LogConfigs", nlohmann::json::object());
+
+        auto formatter = m_view->formatter();
+            formatter->setTimeFormat(log_configs.value("TimestampFormat", LogFormatter::DefaultTimeFormat));
+            formatter->setSeparator(log_configs.value<char>("CharSeparator", LogFormatter::DefaultSeparator));
+
+        m_view->reset();
+    });
+
+    connect(m_clr_btn, &QPushButton::released, this, [this]() {
         auto model = m_log_proxy_model->sourceModel();
 
         if (dynamic_cast<QSortFilterProxyModel*>(model)) {

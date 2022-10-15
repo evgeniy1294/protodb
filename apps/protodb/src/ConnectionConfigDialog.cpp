@@ -21,6 +21,7 @@
 
 ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     : QDialog(aParent)
+    , m_curr_cfg(nlohmann::json::object())
 {
     createGui();
     connectSignals();
@@ -28,7 +29,8 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
 
 void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
 {
-    json.clear();
+    json = nlohmann::json::object();
+
     if (!m_curr_cid.isEmpty()) {
         auto configs = m_curr_cfg.value("Configs", nlohmann::json::object());
 
@@ -42,17 +44,23 @@ void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
                 configs[cid]  = cfg;
             }
 
-            if ( !m_curr_cfg.contains("LogConfigs")) {
-                nlohmann::json log_configs = nlohmann::json::object();
-                m_log_format_wiget->config(log_configs);
 
-                m_curr_cfg["LogConfigs"] = log_configs;
-            }
-
-            json["IODevice"]   = configs[cid];
-            json["LogConfigs"] = m_curr_cfg["LogConfigs"];
+            json["IODeviceConfigs"]   = configs[cid];
         }
     }
+    else {
+        auto cfg = nlohmann::json::object();
+            cfg["CID"] = "Null";
+        json["IODeviceConfigs"] = cfg;
+    }
+
+    if ( !m_curr_cfg.contains("LogConfigs")) {
+        nlohmann::json log_configs = nlohmann::json::object();
+        m_log_format_wiget->config(log_configs);
+
+        m_curr_cfg["LogConfigs"] = log_configs;
+    }
+    json["LogConfigs"] = m_curr_cfg["LogConfigs"];
 
     return;
 }
@@ -86,8 +94,9 @@ void ConnectionConfigDialog::createGui()
         }
     }
 
-
-    m_curr_cid = m_io_widgets.empty() ? "None" : m_io_widgets.firstKey();
+    if (!m_io_widgets.empty()) {
+        m_curr_cid = m_io_widgets.firstKey();
+    }
 
     // --------[BUTTONS]--------- //
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok |
@@ -209,16 +218,24 @@ void ConnectionConfigDialog::connectSignals()
         {
             case QDialogButtonBox::Apply:
                 config(m_curr_cfg);
+                emit accepted();
                 break;
 
             case QDialogButtonBox::Ok:
                 config(m_curr_cfg);
                 hide();
+                emit accepted();
+                break;
+
+            case QDialogButtonBox::RestoreDefaults:
+                setDefaultConfig();
+                config(m_curr_cfg);
+                emit accepted();
+
                 break;
 
             case QDialogButtonBox::Reset:
-                setDefaultConfig();
-                config(m_curr_cfg);
+                setConfig(m_curr_cfg);
                 break;
 
             case QDialogButtonBox::Cancel:

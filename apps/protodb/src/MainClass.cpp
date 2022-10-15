@@ -2,6 +2,7 @@
 #include "SequenceModel.h"
 #include "Logger.h"
 #include "LogPrinter.h"
+#include "LogFormatter.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
@@ -116,7 +117,7 @@ void MainClass::init_syntaxes()
 
 void MainClass::config_logger(const nlohmann::json &json)
 {
-    bool ch1_en = log_configs.value<bool>("FirstChannelEnabled", true);
+    bool ch1_en = json.value<bool>("FirstChannelEnabled", true);
         if (ch1_en) {
             m_logger->setChannelEnabled(Logger::ChannelFirst);
         }
@@ -124,7 +125,7 @@ void MainClass::config_logger(const nlohmann::json &json)
             m_logger->setChannelDisabled(Logger::ChannelFirst);
         }
 
-    bool ch2_en = log_configs.value<bool>("SecondChannelEnabled", true);
+    bool ch2_en = json.value<bool>("SecondChannelEnabled", true);
         if (ch2_en) {
             m_logger->setChannelEnabled(Logger::ChannelSecond);
         }
@@ -132,13 +133,52 @@ void MainClass::config_logger(const nlohmann::json &json)
             m_logger->setChannelDisabled(Logger::ChannelSecond);
         }
 
-    bool append_log = log_configs.value<bool>("Append", true);
+    bool append_log = json.value<bool>("Append", true);
+
     m_log_printer->setAppendFile(append_log);
+        m_log_printer->formatter()->setTimeFormat(json.value("TimestampFormat", QString("hh:mm:ss.sss")));
+        m_log_printer->setTimestampEnabled(json.value("TimestampEnabled", true));
 }
 
-void MainClass::create_iodevice(const nlohmann::json &json)
+bool MainClass::try_create_connection(const nlohmann::json &json)
 {
+    bool ret = false;
 
+    auto factory = IODeviceFactory::globalInstance();
+    if (!factory) {
+        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+        factory = IODeviceFactory::globalInstance();
+    }
+
+    auto cid = json.value("CID", QString());
+    auto cfg = json.value("Attributes", nlohmann::json::object());
+    m_io = factory->createIODevice(cid, cfg);
+    if (m_io) {
+        if (cfg.value("OpenMode", QString()) == "Monitoring") {
+            m_io->open(QIODevice::ReadOnly);
+        }
+        else {
+            m_io->open(QIODevice::ReadWrite);
+        }
+
+        if (!m_io->isOpen()) {
+            qDebug() << m_io->errorString();
+            m_logger->error(QString("Can't open device: %2").
+                                arg(m_io->errorString()).toLatin1());
+            return false;
+        }
+
+        if (!m_log_printer->setEnabled()) {
+            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
+        }
+
+        ret = true;
+    }
+    else {
+        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLatin1());
+    }
+
+    return ret;
 }
 
 SequenceModel* MainClass::incomingSequences() const
@@ -167,45 +207,16 @@ void MainClass::start(const nlohmann::json& attr)
 {
     std::cout << attr.dump(4) << std::endl;
 
-    auto factory = IODeviceFactory::globalInstance();
-    if (!factory) {
-        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IOWidgetFactory);
-        factory = IODeviceFactory::globalInstance();
-    }
-
     // Configure logger
     auto log_configs = attr.value("LogConfigs", nlohmann::json::object());
     config_logger(log_configs);
 
     // Init IODevice
-    auto io_cfg = attr.value("IODevice", nlohmann::json::object());
-    auto cid = io_cfg.value("CID", QString());
-    auto cfg = io_cfg.value("Attributes", nlohmann::json::object());
-    m_io = factory->createIODevice(cid, cfg);
-    if (m_io) {
-        if (cfg.value("OpenMode", QString()) == "Monitoring") {
-            m_io->open(QIODevice::ReadOnly);
-        }
-        else {
-            m_io->open(QIODevice::ReadWrite);
-        }
-
-        if (!m_io->isOpen()) {
-            qDebug() << m_io->errorString();
-            m_logger->error(QString("Can't open device: %2").
-                                arg(m_io->errorString()).toLatin1());
-            stop();
-            return;
-        }
-
-        if (!m_log_printer->setEnabled()) {
-            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
-        }
-
+    auto io_cfg = attr.value("IODeviceConfigs", nlohmann::json::object());
+    if (try_create_connection(io_cfg)) {
         emit sStarted();
     }
     else {
-        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLatin1());
         stop();
     }
 

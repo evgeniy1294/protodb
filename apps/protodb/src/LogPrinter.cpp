@@ -5,6 +5,7 @@ LogPrinter::LogPrinter(QObject *parent)
     : QObject(parent)
     , m_fmt(new LogFormatter)
     , m_append_flag(false)
+    , m_fmt_flags(LogFormatter::AllEnabled)
 {
 
 }
@@ -72,6 +73,41 @@ bool LogPrinter::setDisabled(bool disabled)
 bool LogPrinter::disabled()
 {
     return !m_log_file.isOpen();
+}
+
+void LogPrinter::setTimestampEnabled(bool enabled)
+{
+    if (enabled) {
+        m_fmt_flags |= LogFormatter::TimeStampEnabled;
+    }
+    else {
+        m_fmt_flags &= ~LogFormatter::TimeStampEnabled;
+    }
+}
+
+bool LogPrinter::timestampEnabled() const
+{
+    return (m_fmt_flags & LogFormatter::TimeStampEnabled) != 0;
+}
+
+void LogPrinter::setChannelNameEnabled(bool enabled)
+{
+    if (enabled) {
+        m_fmt_flags |= LogFormatter::ChannelNameEnabled;
+    }
+    else {
+        m_fmt_flags &= ~LogFormatter::ChannelNameEnabled;
+    }
+}
+
+bool LogPrinter::channelNameEnabled() const
+{
+    return (m_fmt_flags & LogFormatter::ChannelNameEnabled) != 0;
+}
+
+LogFormatter* LogPrinter::formatter() const
+{
+    return m_fmt;
 }
 
 void LogPrinter::print(const Logger::Event& event)

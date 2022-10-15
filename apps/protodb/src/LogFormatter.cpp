@@ -2,6 +2,8 @@
 #include <protodb/utils/JsonUtils.h>
 
 const QString LogFormatter::DefaultTimeFormat = "hh:mm:ss.zzz";
+const LogFormatter::ByteFormat LogFormatter::DefaultByteFormat = LogFormatter::HexFormat;
+const char LogFormatter::DefaultSeparator = ' ';
 
 LogFormatter::LogFormatter()
 {
@@ -115,14 +117,21 @@ QString LogFormatter::data(const Logger::Event &event) const
     return ascii ? event.message : event.message.toHex(m_separator);
 }
 
-QString LogFormatter::format(const Logger::Event &event) const
+QString LogFormatter::format(const Logger::Event &event, Flags flags) const
 {
     QString ret;
-        ret += timestamp(event);
-        ret += " ";
-        ret += channelName(event);
-        ret += " ";
-        ret += data(event);
+        if ( (flags & TimeStampEnabled) != 0 ) {
+            ret += timestamp(event);
+            ret += " ";
+        }
+
+        if ( (flags & ChannelNameEnabled) != 0 ) {
+            ret += channelName(event);
+            ret += " ";
+        }
+
+        if ( (flags & DataEnabled) != 0 )
+            ret += data(event);
 
         return ret;
 }

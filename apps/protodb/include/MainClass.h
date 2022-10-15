@@ -45,7 +45,7 @@ private:
     void init_syntaxes();
 
     void config_logger(const nlohmann::json& json);
-    void create_iodevice(const nlohmann::json& json);
+    bool try_create_connection(const nlohmann::json& json);
 
 private:
     SequenceModel* m_incoming_sequences;

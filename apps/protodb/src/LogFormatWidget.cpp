@@ -1,4 +1,5 @@
 #include "LogFormatWidget.h"
+#include "LogFormatter.h"
 
 #include <protodb/utils/JsonUtils.h>
 
@@ -16,19 +17,19 @@ LogFormatWidget::LogFormatWidget(QWidget* aParent)
 
 void LogFormatWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["CharSeparator"]        = ' '; /// TODO: Задействовать
+    json["CharSeparator"]        = LogFormatter::DefaultSeparator;
     json["Append"]               = true;
     json["TimestampEnabled"]     = true;
     json["FirstChannelEnabled"]  = true;
     json["SecondChannelEnabled"] = true;
-    json["TimestampFormat"]      = QString("hh:mm:ss.sss");
+    json["TimestampFormat"]      = LogFormatter::DefaultTimeFormat;
     json["FirstChannelName"]     = QString("RX");
     json["SecondChannelName"]    = QString("TX");
 }
 
 void LogFormatWidget::config(nlohmann::json &json) const
 {
-    json["CharSeparator"]        = ' '; /// TODO: Задействовать
+    json["CharSeparator"]        = ' ';
     json["Append"]               = m_append_en->checkState() == Qt::Checked;
     json["TimestampEnabled"]     = m_timestamp_en->checkState() == Qt::Checked;
     json["FirstChannelEnabled"]  = m_ch1_en->checkState() == Qt::Checked;
@@ -41,7 +42,7 @@ void LogFormatWidget::config(nlohmann::json &json) const
 void LogFormatWidget::setConfig(const nlohmann::json &json)
 {
     m_separator->setText(
-        QString(json.value<char>("CharSeparator", ' '))
+        QString(json.value<char>("CharSeparator", LogFormatter::DefaultSeparator))
     );
 
     m_append_en->setCheckState(
@@ -61,7 +62,7 @@ void LogFormatWidget::setConfig(const nlohmann::json &json)
     );
 
     m_timestamp_format->setText(
-        json.value("TimestampFormat", QString("hh:mm:ss.sss"))
+        json.value("TimestampFormat", LogFormatter::DefaultTimeFormat)
     );
 
     m_ch1_name->setText(
@@ -90,8 +91,11 @@ void LogFormatWidget::createGui() {
         m_ch2_en->setChecked(true);
 
     m_timestamp_format = new QLineEdit();
-        m_timestamp_format->setPlaceholderText("yyyy.mm.dd hh:mm:ss.sss");
-        m_timestamp_format->setText("hh:mm:ss.sss");
+        m_timestamp_format->setPlaceholderText("yyyy.mm.dd hh:mm:ss.zzz");
+        m_timestamp_format->setText(LogFormatter::DefaultTimeFormat);
+
+    m_separator = new QLineEdit();
+        m_separator->setText(QString(LogFormatter::DefaultSeparator));
 
     m_ch1_name = new QLineEdit();
         m_ch1_name->setText("RX");

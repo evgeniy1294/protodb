@@ -15,9 +15,16 @@ public:
         AsciiFormat,
     };
 
+    enum Flags {
+        ChannelNameEnabled = 0b001,
+        TimeStampEnabled   = 0b010,
+        DataEnabled        = 0b100,
+        AllEnabled = ChannelNameEnabled | TimeStampEnabled | DataEnabled
+    };
+
     static const QString DefaultTimeFormat;
-    static const ByteFormat DefaultByteFormat = HexFormat;
-    static const char DefaultSeparator = ' ';
+    static const ByteFormat DefaultByteFormat;
+    static const char DefaultSeparator;
 
 public:
     LogFormatter();
@@ -49,7 +56,7 @@ public:
     QString channelName(const Logger::Event& event) const;
     QString timestamp  (const Logger::Event& event) const;
     QString data       (const Logger::Event& event) const;
-    QString format     (const Logger::Event& event) const;
+    QString format     (const Logger::Event& event, Flags flags = AllEnabled) const;
 
     QString format(Logger::Channel ch) const;
     QString format(const QDateTime& dt) const;

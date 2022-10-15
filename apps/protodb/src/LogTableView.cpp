@@ -68,6 +68,23 @@ LogDecorator* LogTableView::decorator() const
     return m_decorator;
 }
 
+void LogTableView::setTimestampVisible(bool visible)
+{
+    if (visible)
+        showColumn(Logger::ColumnTimestamp);
+    else
+        hideColumn(Logger::ColumnTimestamp);
+}
+
+void LogTableView::setChannelNameVisible(bool visible)
+{
+    if (visible)
+        showColumn(Logger::ColumnChannel);
+    else
+        hideColumn(Logger::ColumnChannel);
+}
+
+
 void LogTableView::createMenu()
 {
     m_base_menu = new QMenu();

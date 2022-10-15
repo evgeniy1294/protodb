@@ -2,8 +2,6 @@
 
 #include <QTableView>
 
-2202 2021 4894 0350
-
 class QMenu;
 class QAction;
 class LogDecorationDialog;
@@ -22,6 +20,9 @@ public:
     void setModel(QAbstractItemModel* model) override;
     LogFormatter* formatter() const;
     LogDecorator* decorator() const;
+
+    void setTimestampVisible(bool visible);
+    void setChannelNameVisible(bool visible);
 
 private:
     void createMenu();
