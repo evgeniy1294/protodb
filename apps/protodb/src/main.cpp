@@ -1,6 +1,7 @@
 #include "MainClass.h"
 #include "mainwindow.h"
 #include "ProtodbSessionManager.h"
+#include "Sequence.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
@@ -10,14 +11,14 @@
 #include <QPluginLoader>
 #include <QDebug>
 
-void testPlugins();
-void testZip();
+void registerMetaType();
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("ProtoDb");
 
+    registerMetaType();
     registerCustomConverters();
 
     PluginManager::instance().setMainDirectory(QApplication::applicationDirPath() + "/plugins");
@@ -40,4 +41,8 @@ int main(int argc, char *argv[])
     session_manager.saveCurrentState();
 
     return ret;
+}
+
+void registerMetaType() {
+    qRegisterMetaType<Sequence>();
 }

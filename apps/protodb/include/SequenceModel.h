@@ -27,6 +27,7 @@ public:
 
     enum Role {
         kClickRole = Qt::UserRole,
+        kSequenceRole
     };
 
 public:
@@ -45,8 +46,18 @@ public:
     void setOutgoingMode();
     bool isModeIncoming() const;
 
-    void toJson(nlohmann::json& json);
+    void toJson(nlohmann::json& json) const;
     void fromJson(const nlohmann::json& json);
+
+    QVariant getSequence(int id) const;
+
+    int findSequenceByUuid(const QUuid& uuid) const;
+    int findSequenceByName(const QString& name) const;
+    int findSequenceByBytes(const QByteArray& bytes) const;
+
+signals:
+    void sSequenceActivated(int id);
+    void sSequenceDisactivated(int id);
 
 private:
     QList<Sequence> m_sequences;

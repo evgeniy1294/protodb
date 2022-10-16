@@ -24,6 +24,7 @@ MainClass::MainClass()
 {
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
+    connect_signals();
 }
 
 MainClass::~MainClass()
@@ -113,6 +114,12 @@ void MainClass::init_syntaxes()
     for (auto& script_interface: m_script_interfaces) {
         m_supported_syntaxes.append(script_interface->syntaxId());
     }
+}
+
+void MainClass::connect_signals()
+{
+    connect(m_outgoing_sequences, &SequenceModel::sSequenceActivated, this, &MainClass::sequenceActivated);
+    connect(m_outgoing_sequences, &SequenceModel::sSequenceDisactivated, this, &MainClass::sequenceDisactivated);
 }
 
 void MainClass::config_logger(const nlohmann::json &json)
@@ -231,6 +238,31 @@ void MainClass::stop()
 
     m_log_printer->setDisabled();
     emit sStopted();
+}
+
+void MainClass::sequenceActivated(int id)
+{
+    if (sender() == m_outgoing_sequences) {
+
+    }
+    else {
+        auto var = m_incoming_sequences->getSequence(id);
+        if ( var.canConvert<Sequence>() ) {
+            auto sq = var.value<Sequence>();
+            // Теперь необходимо скомпилировать последовательность
+            // Нужно работать через указатель
+        }
+    }
+}
+
+void MainClass::sequenceDisactivated(int id)
+{
+    qDebug() << "Sequence disactivated: " << id;
+}
+
+void MainClass::timerEvent(QTimerEvent* event)
+{
+    auto id = event->timerId();
 }
 
 QStringList MainClass::supportedSyntaxes() const

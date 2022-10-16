@@ -31,6 +31,10 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
     if (checkIndex(index)) {
         auto& sq = m_sequences.at(row);
 
+        if (role == kSequenceRole) {
+            return QVariant::fromValue<Sequence>( sq );
+        }
+
         if (role == Qt::DisplayRole) {
             switch (col) {
                 case kColumnName:
@@ -152,8 +156,19 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                 case kColumnSyntaxId:
                     sq.setFormatId(value.toInt());
                     break;
-                case kColumnActiveFlag:
-                    sq.setActive( value.toBool() );
+                case kColumnActiveFlag: {
+                    auto active = value.toBool();
+
+                    if(sq.period() != 0) {
+                        sq.setActive( active );
+                    }
+
+                    if (active)
+                        emit sSequenceActivated(index.row());
+                    else
+                        emit sSequenceDisactivated(index.row());
+                } break;
+
                 default:
                     break;
             }
@@ -163,9 +178,19 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
 
         if (role == kClickRole) {
             if (col == kColumnActiveFlag) {
-                sq.setActive( !sq.active() );
+                auto active = !sq.active();
+
+                if( m_mode || (sq.period() != 0) ) {
+                    sq.setActive( active );
+                    emit dataChanged(index, index);
+                }
+
+                if (active)
+                    emit sSequenceActivated(index.row());
+                else
+                    emit sSequenceDisactivated(index.row());
             }
-            emit dataChanged(index, index);
+
         }
     }
 
@@ -238,7 +263,7 @@ bool SequenceModel::isModeIncoming() const
     return m_mode;
 }
 
-void SequenceModel::toJson(nlohmann::json& json)
+void SequenceModel::toJson(nlohmann::json& json) const
 {
     for (const auto& sequence: qAsConst(m_sequences)) {
         nlohmann::json fields;
@@ -316,6 +341,52 @@ void SequenceModel::fromJson(const nlohmann::json& json)
             m_sequences.append(imported);
         endInsertRows();
     }
+}
+
+QVariant SequenceModel::getSequence(int id) const
+{
+    if ( id > 0 && id < m_sequences.size() ) {
+        return QVariant::fromValue<Sequence>( m_sequences.at(id) );
+    }
+
+    return QVariant();
+}
+
+int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
+{
+    for (int i = 0; i < m_sequences.size(); i++) {
+        if (m_sequences.at(i).uuid() == uuid) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int SequenceModel::findSequenceByName(const QString& name) const
+{
+    for (int i = 0; i < m_sequences.size(); i++) {
+        if (m_sequences.at(i).name() == name) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int SequenceModel::findSequenceByBytes(const QByteArray& bytes) const
+{
+    for (int i = 0; i < m_sequences.size(); i++) {
+        QByteArray sq_bytes = m_sequences.at(i).bytes();
+
+        if (sq_bytes.isEmpty())
+            continue;
+
+        if (bytes == sq_bytes)
+            return i;
+    }
+
+    return -1;
 }
 
 

@@ -36,6 +36,12 @@ signals:
     void sStarted();
     void sStopted();
 
+private slots:
+    void sequenceActivated(int id);
+    void sequenceDisactivated(int id);
+
+    void timerEvent(QTimerEvent *event) override;
+
 private:
     MainClass();
    ~MainClass();
@@ -43,6 +49,7 @@ private:
     void init_factories();
     void init_logger();
     void init_syntaxes();
+    void connect_signals();
 
     void config_logger(const nlohmann::json& json);
     bool try_create_connection(const nlohmann::json& json);

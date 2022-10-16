@@ -96,3 +96,5 @@ private:
     QString m_description;
     QString m_binded_name;
 };
+
+Q_DECLARE_METATYPE(Sequence)
