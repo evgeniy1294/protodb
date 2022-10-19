@@ -1,7 +1,7 @@
 #include "MainClass.h"
 #include "mainwindow.h"
 #include "ProtodbSessionManager.h"
-#include "Sequence.h"
+#include "SequenceModel.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
@@ -45,4 +45,5 @@ int main(int argc, char *argv[])
 
 void registerMetaType() {
     qRegisterMetaType<Sequence>();
+    qRegisterMetaType< QSharedPointer<Sequence> >();
 }

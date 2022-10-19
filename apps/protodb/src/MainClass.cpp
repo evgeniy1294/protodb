@@ -247,8 +247,8 @@ void MainClass::sequenceActivated(int id)
     }
     else {
         auto var = m_incoming_sequences->getSequence(id);
-        if ( var.canConvert<Sequence>() ) {
-            auto sq = var.value<Sequence>();
+        if ( var.canConvert< QSharedPointer<Sequence> >() ) {
+            auto sq = var.value< QSharedPointer<Sequence> >();
             // Теперь необходимо скомпилировать последовательность
             // Нужно работать через указатель
         }

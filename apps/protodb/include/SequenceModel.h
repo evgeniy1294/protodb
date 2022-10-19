@@ -60,8 +60,8 @@ signals:
     void sSequenceDisactivated(int id);
 
 private:
-    QList<Sequence> m_sequences;
+    QList< QSharedPointer<Sequence> > m_sequences;
     bool m_mode;
 };
 
-
+Q_DECLARE_METATYPE(QSharedPointer<Sequence>)

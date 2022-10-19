@@ -32,61 +32,61 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
         auto& sq = m_sequences.at(row);
 
         if (role == kSequenceRole) {
-            return QVariant::fromValue<Sequence>( sq );
+            return QVariant::fromValue< QSharedPointer<Sequence> >( sq );
         }
 
         if (role == Qt::DisplayRole) {
             switch (col) {
                 case kColumnName:
-                    return sq.name();
+                    return sq->name();
 
                 case kColumnBindedName:
-                    return sq.bindedName();
+                    return sq->bindedName();
 
                 case kColumnPeriod: {
-                    quint32 period  = sq.period();
+                    quint32 period  = sq->period();
                     QString special = (isModeIncoming()) ?
                                             tr("No Delay") : tr("No Repeat");
 
-                    return (sq.period() == 0) ? special : QString("%1ms").arg(period);
+                    return (sq->period() == 0) ? special : QString("%1ms").arg(period);
                 }
 
                 case kColumnDescription:
-                    return sq.description();
+                    return sq->description();
 
                 case kColumnDsl:
-                    return sq.dslString();
+                    return sq->dslString();
 
                 case kColumnSyntaxId:
-                    return sq.formatId();
+                    return sq->formatId();
 
                 case kColumnActiveFlag:
-                    return sq.active();
+                    return sq->active();
             }
         }
 
         if (role == Qt::EditRole) {
             switch (col) {
                 case kColumnName:
-                    return sq.name();
+                    return sq->name();
 
                 case kColumnBindedName:
-                    return sq.bindedName();
+                    return sq->bindedName();
 
                 case kColumnPeriod:
-                    return sq.period();
+                    return sq->period();
 
                 case kColumnDescription:
-                    return sq.description();
+                    return sq->description();
 
                 case kColumnDsl:
-                    return sq.dslString();
+                    return sq->dslString();
 
                 case kColumnSyntaxId:
-                    return sq.formatId();
+                    return sq->formatId();
 
                 case kColumnActiveFlag:
-                    return sq.active();
+                    return sq->active();
             }
         }
     }
@@ -137,30 +137,30 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
         {
             switch (col) {
                 case kColumnName:
-                    sq.setName(value.toString());
+                    sq->setName(value.toString());
                     break;
 
                 case kColumnBindedName:
-                    sq.setBindedName(value.toString());
+                    sq->setBindedName(value.toString());
                     break;
 
                 case kColumnPeriod:
-                    sq.setPeriod(value.toInt());
+                    sq->setPeriod(value.toInt());
                     break;
                 case kColumnDescription:
-                    sq.setDescription(value.toString());
+                    sq->setDescription(value.toString());
                     break;
                 case kColumnDsl:
-                    sq.setDslString(value.toString());
+                    sq->setDslString(value.toString());
                     break;
                 case kColumnSyntaxId:
-                    sq.setFormatId(value.toInt());
+                    sq->setFormatId(value.toInt());
                     break;
                 case kColumnActiveFlag: {
                     auto active = value.toBool();
 
-                    if(sq.period() != 0) {
-                        sq.setActive( active );
+                    if(sq->period() != 0) {
+                        sq->setActive( active );
                     }
 
                     if (active)
@@ -178,10 +178,10 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
 
         if (role == kClickRole) {
             if (col == kColumnActiveFlag) {
-                auto active = !sq.active();
+                auto active = !sq->active();
 
-                if( m_mode || (sq.period() != 0) ) {
-                    sq.setActive( active );
+                if( m_mode || (sq->period() != 0) ) {
+                    sq->setActive( active );
                     emit dataChanged(index, index);
                 }
 
@@ -213,10 +213,10 @@ Qt::ItemFlags SequenceModel::flags(const QModelIndex& index) const
 
 bool SequenceModel::insertRows(int row, int count, const QModelIndex& parent)
 {
-    Sequence sq;
+    auto sq = QSharedPointer<Sequence>::create();
     beginInsertRows(QModelIndex(), row, row + count - 1);
 
-    sq.setName(tr("Sequence %1").arg(m_sequences.size()+1));
+    sq->setName(tr("Sequence %1").arg(m_sequences.size()+1));
     m_sequences.insert(row, sq);
 
     endInsertRows();
@@ -267,13 +267,13 @@ void SequenceModel::toJson(nlohmann::json& json) const
 {
     for (const auto& sequence: qAsConst(m_sequences)) {
         nlohmann::json fields;
-            fields["name"]        = sequence.name();
-            fields["binded_name"] = sequence.bindedName();
-            fields["period"]      = sequence.period();
-            fields["description"] = sequence.description();
-            fields["dsl"]         = sequence.dslString();
-            fields["syntax"]      = sequence.formatId();
-            fields["active"]      = sequence.active();
+            fields["name"]        = sequence->name();
+            fields["binded_name"] = sequence->bindedName();
+            fields["period"]      = sequence->period();
+            fields["description"] = sequence->description();
+            fields["dsl"]         = sequence->dslString();
+            fields["syntax"]      = sequence->formatId();
+            fields["active"]      = sequence->active();
 
         json.push_back(fields);
     }
@@ -281,7 +281,7 @@ void SequenceModel::toJson(nlohmann::json& json) const
 
 void SequenceModel::fromJson(const nlohmann::json& json)
 {
-    QList<Sequence> imported;
+    QList< QSharedPointer<Sequence> > imported;
     if ( !json.is_array() )
         return;
 
@@ -289,46 +289,46 @@ void SequenceModel::fromJson(const nlohmann::json& json)
         if (!it.is_object())
             continue;
 
-        Sequence s;
+        auto s = QSharedPointer<Sequence>::create();
         if ( it.contains("name")) {
             if ( it["name"].is_string() ) {
-                s.setName( it["name"] );
+                s->setName( it["name"] );
             }
         }
 
         if ( it.contains("binded_name") ) {
             if ( it["binded_name"].is_string() ) {
-                s.setBindedName( it["binded_name"] );
+                s->setBindedName( it["binded_name"] );
             }
         }
 
         if ( it.contains("period") ) {
             if ( it["period"].is_number() ) {
-                s.setPeriod( it["period"] );
+                s->setPeriod( it["period"] );
             }
         }
 
         if ( it.contains("description") ) {
             if ( it["description"].is_string() ) {
-                s.setDescription( it["description"] );
+                s->setDescription( it["description"] );
             }
         }
 
         if ( it.contains("dsl") ) {
             if ( it["dsl"].is_string() ) {
-                s.setDslString( it["dsl"] );
+                s->setDslString( it["dsl"] );
             }
         }
 
         if ( it.contains("syntax") ) {
             if ( it["syntax"].is_string() ) {
-                s.setDslString( it["syntax"] );
+                s->setDslString( it["syntax"] );
             }
         }
 
         if ( it.contains("active") ) {
             if ( it["active"].is_boolean() ) {
-                s.setActive( it["active"] );
+                s->setActive( it["active"] );
             }
         }
 
@@ -346,7 +346,7 @@ void SequenceModel::fromJson(const nlohmann::json& json)
 QVariant SequenceModel::getSequence(int id) const
 {
     if ( id > 0 && id < m_sequences.size() ) {
-        return QVariant::fromValue<Sequence>( m_sequences.at(id) );
+        return QVariant::fromValue< QSharedPointer<Sequence> >( m_sequences.at(id) );
     }
 
     return QVariant();
@@ -355,7 +355,7 @@ QVariant SequenceModel::getSequence(int id) const
 int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        if (m_sequences.at(i).uuid() == uuid) {
+        if (m_sequences.at(i)->uuid() == uuid) {
             return i;
         }
     }
@@ -366,7 +366,7 @@ int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
 int SequenceModel::findSequenceByName(const QString& name) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        if (m_sequences.at(i).name() == name) {
+        if (m_sequences.at(i)->name() == name) {
             return i;
         }
     }
@@ -377,7 +377,7 @@ int SequenceModel::findSequenceByName(const QString& name) const
 int SequenceModel::findSequenceByBytes(const QByteArray& bytes) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        QByteArray sq_bytes = m_sequences.at(i).bytes();
+        QByteArray sq_bytes = m_sequences.at(i)->bytes();
 
         if (sq_bytes.isEmpty())
             continue;
