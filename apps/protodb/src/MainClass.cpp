@@ -188,6 +188,28 @@ bool MainClass::try_create_connection(const nlohmann::json &json)
     return ret;
 }
 
+bool MainClass::send_sequence(QSharedPointer<Sequence>& sequence)
+{
+    if (!m_io->isWritable()) {
+        m_logger->error(tr("Can't write data to this IO Device. May be device is read only?"));
+        return false;
+    }
+
+    sequence->format();
+
+    auto bytes = sequence->bytes();
+    if (bytes.isEmpty()) {
+        m_logger->error(tr("Sequence %1 is empty or have invalid format").arg(sequence->name()));
+        return false;
+    }
+
+
+    m_io->write( bytes );
+    m_logger->log(Logger::ChannelSecond, bytes);
+
+    return true;
+}
+
 SequenceModel* MainClass::incomingSequences() const
 {
     return m_incoming_sequences;
@@ -240,29 +262,98 @@ void MainClass::stop()
     emit sStopted();
 }
 
-void MainClass::sequenceActivated(int id)
+void MainClass::sequenceActivated(QUuid uid)
 {
     if (sender() == m_outgoing_sequences) {
+        auto sequence = m_outgoing_sequences->getSequenceByUuid(uid);
+        if (!sequence.isNull()) {
+            if (m_io == nullptr) {
+                m_logger->error(tr("Please, set currect IO Device"));
+                return;
+            }
 
+            if (send_sequence(sequence) && sequence->active() && sequence->period() != 0) {
+                auto timer_id = startTimer(sequence->period(), Qt::PreciseTimer);
+
+                if (timer_id > 0) {
+                        m_repeat_timers[timer_id] = sequence->uuid();
+                }
+                else { qDebug() << "Can't create timer"; }
+            }
+        }
     }
     else {
-        auto var = m_incoming_sequences->getSequence(id);
-        if ( var.canConvert< QSharedPointer<Sequence> >() ) {
-            auto sq = var.value< QSharedPointer<Sequence> >();
-            // Теперь необходимо скомпилировать последовательность
-            // Нужно работать через указатель
+        auto sequence = m_incoming_sequences->getSequenceByUuid(uid);
+        if (!sequence.isNull()) {
+            sequence->format();
         }
     }
 }
 
-void MainClass::sequenceDisactivated(int id)
+void MainClass::sequenceDisactivated(QUuid uid)
 {
-    qDebug() << "Sequence disactivated: " << id;
+    int timer_id = sender() == m_outgoing_sequences ?
+                        m_repeat_timers.key(uid, -1) : m_singleshot_timers.key(uid, -1);
+
+    if (timer_id > 0) {
+        killTimer(timer_id);
+        m_repeat_timers.remove(timer_id);
+    }
 }
 
 void MainClass::timerEvent(QTimerEvent* event)
 {
-    auto id = event->timerId();
+    QSharedPointer<Sequence> sequence;
+    auto timer_id = event->timerId();
+
+    // This is repeat timers?
+    auto suid = m_repeat_timers.value(timer_id, QUuid());
+    if (!suid.isNull()) {
+        sequence = m_outgoing_sequences->getSequenceByUuid(suid);
+    }
+    else {
+        killTimer(timer_id);
+        suid = m_singleshot_timers.value(timer_id, QUuid());
+
+        if (suid.isNull()) {
+            return;
+        }
+
+        auto incoming = m_incoming_sequences->getSequenceByUuid(suid);
+        if (incoming.isNull()) {
+            return;
+        }
+
+        sequence = m_outgoing_sequences->getSequenceByName( incoming->bindedName() );
+    }
+
+    if (!sequence.isNull()) {
+       send_sequence(sequence);
+    }
+
+    return;
+}
+
+void MainClass::readyRead()
+{
+    // TODO: задействовать делиметр
+    auto bytes = m_io->readAll();
+
+    m_logger->log(Logger::ChannelFirst, bytes);
+
+    auto incoming = m_incoming_sequences->getSequenceByBytes(bytes);
+    if (!incoming.isNull()) {
+        if ( incoming->period() <= 0 ) {
+            auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());
+            send_sequence(sequence);
+        }
+        else {
+            auto timer_id = startTimer(incoming->period(), Qt::PreciseTimer);
+            m_singleshot_timers[timer_id] = incoming->uuid();
+        }
+    }
+
+    return;
 }
 
 QStringList MainClass::supportedSyntaxes() const

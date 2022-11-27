@@ -21,7 +21,7 @@ public:
      : m_uuid(QUuid::createUuid())
      , m_name()
      , m_dsl_string()
-     , m_format_id()
+     , m_format_id("ASCII")
      , m_cached(false)
      , m_bytes()
      , m_active(false)

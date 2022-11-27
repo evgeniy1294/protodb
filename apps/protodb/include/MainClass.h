@@ -1,9 +1,12 @@
 #pragma once
 
+#include "Sequence.h"
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QObject>
 #include <QStringList>
+#include <QSharedPointer>
+#include <QMap>
 
 class QIODevice;
 
@@ -37,10 +40,11 @@ signals:
     void sStopted();
 
 private slots:
-    void sequenceActivated(int id);
-    void sequenceDisactivated(int id);
+    void sequenceActivated(QUuid uid);
+    void sequenceDisactivated(QUuid uid);
 
     void timerEvent(QTimerEvent *event) override;
+    void readyRead();
 
 private:
     MainClass();
@@ -54,11 +58,16 @@ private:
     void config_logger(const nlohmann::json& json);
     bool try_create_connection(const nlohmann::json& json);
 
+    bool send_sequence(QSharedPointer<Sequence>& sequence);
+
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
     QStringList m_supported_syntaxes;
     QList<ScriptInterface*> m_script_interfaces;
+
+    QMap<int, QUuid> m_repeat_timers;
+    QMap<int, QUuid> m_singleshot_timers;
 
     Logger* m_logger;
     LogPrinter* m_log_printer;

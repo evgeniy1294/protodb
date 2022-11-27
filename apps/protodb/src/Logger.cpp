@@ -32,9 +32,19 @@ void Logger::comment(const QByteArray &text)
     log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelComment, .message = text } );
 }
 
+void Logger::comment(const QString& text)
+{
+    comment(text.toLatin1());
+}
+
 void Logger::error(const QByteArray& text)
 {
     log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelError, .message = text } );
+}
+
+void Logger::error(const QString& text)
+{
+    error(text.toLatin1());
 }
 
 void Logger::clear()

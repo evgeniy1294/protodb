@@ -49,15 +49,18 @@ public:
     void toJson(nlohmann::json& json) const;
     void fromJson(const nlohmann::json& json);
 
-    QVariant getSequence(int id) const;
+    QSharedPointer<Sequence> getSequenceByUuid(const QUuid& uid) const;
+    QSharedPointer<Sequence> getSequenceByName(const QString& name) const;
+    QSharedPointer<Sequence> getSequenceByBytes(const QByteArray& bytes) const;
+    QSharedPointer<Sequence> getSequenceByRow(int row) const;
 
     int findSequenceByUuid(const QUuid& uuid) const;
     int findSequenceByName(const QString& name) const;
     int findSequenceByBytes(const QByteArray& bytes) const;
 
 signals:
-    void sSequenceActivated(int id);
-    void sSequenceDisactivated(int id);
+    void sSequenceActivated(QUuid uid);
+    void sSequenceDisactivated(QUuid uid);
 
 private:
     QList< QSharedPointer<Sequence> > m_sequences;

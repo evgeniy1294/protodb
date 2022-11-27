@@ -164,9 +164,9 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                     }
 
                     if (active)
-                        emit sSequenceActivated(index.row());
+                        emit sSequenceActivated(sq->uuid());
                     else
-                        emit sSequenceDisactivated(index.row());
+                        emit sSequenceDisactivated(sq->uuid());
                 } break;
 
                 default:
@@ -186,9 +186,9 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                 }
 
                 if (active)
-                    emit sSequenceActivated(index.row());
+                    emit sSequenceActivated(sq->uuid());
                 else
-                    emit sSequenceDisactivated(index.row());
+                    emit sSequenceDisactivated(sq->uuid());
             }
 
         }
@@ -343,13 +343,46 @@ void SequenceModel::fromJson(const nlohmann::json& json)
     }
 }
 
-QVariant SequenceModel::getSequence(int id) const
+QSharedPointer<Sequence> SequenceModel::getSequenceByUuid(const QUuid& uid) const
 {
-    if ( id > 0 && id < m_sequences.size() ) {
-        return QVariant::fromValue< QSharedPointer<Sequence> >( m_sequences.at(id) );
+    if (!uid.isNull()) {
+        auto row = findSequenceByUuid(uid);
+
+        if (row >= 0) {
+            return m_sequences.at(row);
+        }
     }
 
-    return QVariant();
+    return QSharedPointer<Sequence>();
+}
+
+QSharedPointer<Sequence> SequenceModel::getSequenceByName(const QString& name) const
+{
+    auto row = findSequenceByName(name);
+    if (row >= 0) {
+        return m_sequences.at(row);
+    }
+
+    return QSharedPointer<Sequence>();
+}
+
+QSharedPointer<Sequence> SequenceModel::getSequenceByBytes(const QByteArray& bytes) const
+{
+    auto row = findSequenceByBytes(bytes);
+    if (row >= 0) {
+        return m_sequences.at(row);
+    }
+
+    return QSharedPointer<Sequence>();
+}
+
+QSharedPointer<Sequence> SequenceModel::getSequenceByRow(int row) const
+{
+    if ( row > 0 && row < m_sequences.size() ) {
+        return m_sequences.at(row);
+    }
+
+    return QSharedPointer<Sequence>();
 }
 
 int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
