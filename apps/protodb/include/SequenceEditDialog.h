@@ -10,6 +10,7 @@ class QLabel;
 class QLineEdit;
 class QPlainTextEdit;
 class QGroupBox;
+class QRadioButton;
 
 class SequenceEditDialog: public QDialog
 {
@@ -31,6 +32,8 @@ private:
     void createGui();
     void createConnections();
     void createSyntaxSelector();
+    void setFormatSelection(const QString& format_id);
+    QString getSelectedFormat() const;
 
 private:
     QPushButton* m_back_btn;
@@ -45,4 +48,5 @@ private:
     QGroupBox* m_syntax_selection_group;
     QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_btn;
+    QList<QRadioButton*> m_syntax_btns;
 };

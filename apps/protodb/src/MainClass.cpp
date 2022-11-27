@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "LogPrinter.h"
 #include "LogFormatter.h"
+#include "SequenceScriptFormatter.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
@@ -102,17 +103,13 @@ void MainClass::init_syntaxes()
     m_script_interfaces.clear();
         auto script_interface_creators = ScriptInterfaceFactory::globalInstance()->getAllCreators();
         for (auto& creator: script_interface_creators) {
-            m_script_interfaces.append( creator->create() );
+            m_script_interfaces.append( QSharedPointer<ScriptInterface>(creator->create()) );
         }
-
-    // Create base supported syntax list
-    m_supported_syntaxes.clear();
-        m_supported_syntaxes.append("ascii");
-        m_supported_syntaxes.append("hex");
 
     // Add script interface to supported syntax list
     for (auto& script_interface: m_script_interfaces) {
-        m_supported_syntaxes.append(script_interface->syntaxId());
+        auto formatter = QSharedPointer<SequenceScriptFormatter>::create(script_interface);
+        Sequence::addFormatter( qSharedPointerCast<SequenceFormatter> (formatter) );
     }
 }
 
@@ -354,9 +351,4 @@ void MainClass::readyRead()
     }
 
     return;
-}
-
-QStringList MainClass::supportedSyntaxes() const
-{
-    return m_supported_syntaxes;
 }

@@ -154,7 +154,7 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                     sq->setDslString(value.toString());
                     break;
                 case kColumnSyntaxId:
-                    sq->setFormatId(value.toInt());
+                    sq->setFormatId(value.toString());
                     break;
                 case kColumnActiveFlag: {
                     auto active = value.toBool();
@@ -378,7 +378,7 @@ QSharedPointer<Sequence> SequenceModel::getSequenceByBytes(const QByteArray& byt
 
 QSharedPointer<Sequence> SequenceModel::getSequenceByRow(int row) const
 {
-    if ( row > 0 && row < m_sequences.size() ) {
+    if ( row >= 0 && row < m_sequences.size() ) {
         return m_sequences.at(row);
     }
 

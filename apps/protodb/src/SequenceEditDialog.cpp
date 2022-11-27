@@ -43,7 +43,21 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* aMapper)
         m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);
 
         auto onIndexChanged = [this](int idx) {
-            if (m_mapper->model()->rowCount() > 0) {
+            auto model = qobject_cast<SequenceModel*>(m_mapper->model());
+            if (model == nullptr) {
+                return;
+            }
+
+            auto sequence = model->getSequenceByRow(idx);
+            if (!sequence.isNull()) {
+                setFormatSelection( sequence->formatId() );
+            }
+            else {
+                setFormatSelection( Sequence::DefaultFormatId );
+            }
+
+            if (model->rowCount() > 0) {
+
                 m_item_label->setText(QString("%1/%2").arg(idx+1).arg(m_mapper->model()->rowCount()));
 
                 m_name_edit->setDisabled(false);
@@ -151,13 +165,43 @@ void SequenceEditDialog::createGui()
 
 void SequenceEditDialog::createSyntaxSelector() {
     auto group_layout = new QHBoxLayout();
-        for (auto& syntax: MainClass::instance().supportedSyntaxes()) {
-            group_layout->addWidget(new QRadioButton(syntax));
+        for (auto& syntax: Sequence::supportedFormats()) {
+            auto btn = new QRadioButton(syntax);
+                m_syntax_btns.append(btn);
+                group_layout->addWidget(btn);
         }
         group_layout->addStretch(1);
 
-    m_syntax_selection_group = new QGroupBox();
+    setFormatSelection(Sequence::DefaultFormatId);
+
+    m_syntax_selection_group = new QGroupBox(this);
     m_syntax_selection_group->setLayout(group_layout);
+}
+
+void SequenceEditDialog::setFormatSelection(const QString& format_id)
+{
+    for (int i = 0; i < m_syntax_btns.size(); i++) {
+        auto btn = m_syntax_btns[i];
+
+        if (btn->text() == format_id) {
+            btn->setChecked(true);
+        }
+    }
+}
+
+QString SequenceEditDialog::getSelectedFormat() const
+{
+    QString ret = Sequence::DefaultFormatId;
+
+    for (int i = 0; i < m_syntax_btns.size(); i++) {
+        auto btn = m_syntax_btns[i];
+
+        if (btn->isChecked()) {
+            ret = btn->text();
+        }
+    }
+
+    return ret;
 }
 
 
@@ -194,20 +238,29 @@ void SequenceEditDialog::createConnections()
 void SequenceEditDialog::onDialogClicked(QAbstractButton* aBtn)
 {
     if( m_mapper != nullptr ) {
+        auto model = qobject_cast<SequenceModel*>(m_mapper->model());
+        if (model == nullptr) {
+            return;
+        }
+
+        auto sequence = model->getSequenceByRow(m_mapper->currentIndex());
 
         switch( m_dialog_btn->standardButton( aBtn ) )
         {
             case QDialogButtonBox::Apply:
                 m_mapper->submit();
+                sequence->setFormatId(getSelectedFormat());
                 break;
 
             case QDialogButtonBox::Ok:
                 m_mapper->submit();
+                sequence->setFormatId(getSelectedFormat());
                 accept();
                 break;
 
             case QDialogButtonBox::Reset:
                 m_mapper->revert();
+                setFormatSelection(sequence->formatId());
                 break;
 
             case QDialogButtonBox::Cancel:

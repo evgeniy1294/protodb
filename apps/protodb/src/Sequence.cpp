@@ -4,6 +4,7 @@
 #include <QSharedPointer>
 #include <QRegularExpression>
 
+const QString Sequence::DefaultFormatId = "ASCII";
 QStringList Sequence::m_supported_formats = {"HEX", "ASCII"};
 QList< QSharedPointer<SequenceFormatter> > Sequence::m_formatters = {};
 

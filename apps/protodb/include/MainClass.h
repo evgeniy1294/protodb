@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sequence.h"
+
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QObject>
@@ -29,8 +30,6 @@ public:
     SequenceModel* incomingSequences() const;
     SequenceModel* outgoingSequences() const;
     Logger* logger() const;
-
-    QStringList supportedSyntaxes() const;
 public slots:
     void start(const nlohmann::json& attr);
     void stop();
@@ -63,8 +62,7 @@ private:
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
-    QStringList m_supported_syntaxes;
-    QList<ScriptInterface*> m_script_interfaces;
+    QList<QSharedPointer<ScriptInterface>> m_script_interfaces;
 
     QMap<int, QUuid> m_repeat_timers;
     QMap<int, QUuid> m_singleshot_timers;

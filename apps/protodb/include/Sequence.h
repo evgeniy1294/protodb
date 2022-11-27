@@ -14,6 +14,8 @@ public:
     static QStringList supportedFormats() { return m_supported_formats; }
     static void addFormatter(QSharedPointer<SequenceFormatter>& formatter);
 
+    static const QString DefaultFormatId;
+
 public:
     friend class MainClass;
 
@@ -21,7 +23,7 @@ public:
      : m_uuid(QUuid::createUuid())
      , m_name()
      , m_dsl_string()
-     , m_format_id("ASCII")
+     , m_format_id(DefaultFormatId)
      , m_cached(false)
      , m_bytes()
      , m_active(false)
@@ -33,7 +35,7 @@ public:
       : m_uuid(seq.m_uuid)
       , m_name(seq.m_name)
       , m_dsl_string(seq.m_dsl_string)
-      , m_format_id()
+      , m_format_id(seq.m_format_id)
       , m_cached(seq.m_cached)
       , m_bytes(seq.m_bytes)
       , m_active(seq.m_active)
@@ -53,7 +55,7 @@ public:
     }
 
     QString formatId() const { return m_format_id; };
-    void setFormatId(int id) { m_format_id = id; }
+    void setFormatId(QString id) { m_format_id = id; }
 
     QString description() const { return m_description; }
     void setDescription(const QString& description) { m_description = description; }
