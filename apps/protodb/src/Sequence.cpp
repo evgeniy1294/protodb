@@ -4,7 +4,7 @@
 #include <QSharedPointer>
 #include <QRegularExpression>
 
-const QString Sequence::DefaultFormatId = "ASCII";
+const QString Sequence::DefaultFormatId = "HEX";
 QStringList Sequence::m_supported_formats = {"HEX", "ASCII"};
 QList< QSharedPointer<SequenceFormatter> > Sequence::m_formatters = {};
 
@@ -19,6 +19,22 @@ void Sequence::addFormatter(QSharedPointer<SequenceFormatter>& formatter)
     return;
 }
 
+void Sequence::setDslString(const QString &dsl) {
+    m_dsl_string = dsl;
+    m_cached = false;
+
+    format();
+}
+
+void Sequence::setFormatId(QString id) {
+    if (m_format_id == id) return;
+
+    m_format_id = id;
+    m_cached = false;
+
+    format();
+}
+
 // ([0-9a-fA-F]{2}\b)*
 // ([[:xdigit:]]{2}\b)+   - найдет все байты
 // [^0-9a-fA-F\s] - найдет все неподходящие символы
@@ -31,7 +47,7 @@ bool Sequence::format() {
         m_bytes = m_dsl_string.toLatin1();
     }
     else if (m_format_id == "HEX") {
-        static QRegularExpression re("[^0-9a-fA-F,(0x)\r\n\t\f\v]");
+        static QRegularExpression re("[^0-9a-fA-F,(0x)\r\\s\n\t\f\v]");
 
         QRegularExpressionMatch match = re.match(m_dsl_string);
         if ( !match.hasMatch() ) {

@@ -108,8 +108,11 @@ void MainClass::init_syntaxes()
 
     // Add script interface to supported syntax list
     for (auto& script_interface: m_script_interfaces) {
-        auto formatter = QSharedPointer<SequenceScriptFormatter>::create(script_interface);
-        Sequence::addFormatter( qSharedPointerCast<SequenceFormatter> (formatter) );
+        auto formatter = qSharedPointerCast<SequenceFormatter> (
+            QSharedPointer<SequenceScriptFormatter>::create(script_interface)
+        );
+
+        Sequence::addFormatter( formatter );
     }
 }
 
@@ -117,6 +120,7 @@ void MainClass::connect_signals()
 {
     connect(m_outgoing_sequences, &SequenceModel::sSequenceActivated, this, &MainClass::sequenceActivated);
     connect(m_outgoing_sequences, &SequenceModel::sSequenceDisactivated, this, &MainClass::sequenceDisactivated);
+    connect(m_incoming_sequences, &SequenceModel::sSequenceDisactivated, this, &MainClass::sequenceDisactivated);
 }
 
 void MainClass::config_logger(const nlohmann::json &json)
@@ -172,6 +176,8 @@ bool MainClass::try_create_connection(const nlohmann::json &json)
             return false;
         }
 
+        connect(m_io, &QIODevice::readyRead, this, &MainClass::readyRead);
+
         if (!m_log_printer->setEnabled()) {
             m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
         }
@@ -185,21 +191,22 @@ bool MainClass::try_create_connection(const nlohmann::json &json)
     return ret;
 }
 
-bool MainClass::send_sequence(QSharedPointer<Sequence>& sequence)
+bool MainClass::send_sequence(QSharedPointer<const Sequence>& sequence)
 {
+    if (sequence.isNull()) {
+        return false;
+    }
+
     if (!m_io->isWritable()) {
         m_logger->error(tr("Can't write data to this IO Device. May be device is read only?"));
         return false;
     }
 
-    sequence->format();
-
     auto bytes = sequence->bytes();
     if (bytes.isEmpty()) {
-        m_logger->error(tr("Sequence %1 is empty or have invalid format").arg(sequence->name()));
+        m_logger->error(tr("Sequence \"%1\" is empty or have invalid format").arg(sequence->name()));
         return false;
     }
-
 
     m_io->write( bytes );
     m_logger->log(Logger::ChannelSecond, bytes);
@@ -251,9 +258,8 @@ void MainClass::start(const nlohmann::json& attr)
 
 void MainClass::stop()
 {
-    auto io = m_io;
-        m_io = nullptr;
-        if (io) { io->close(); delete io; }
+    auto io = m_io; m_io = nullptr;
+        if (io) { io->close(); disconnect(io), delete io; }
 
     m_log_printer->setDisabled();
     emit sStopted();
@@ -273,18 +279,14 @@ void MainClass::sequenceActivated(QUuid uid)
                 auto timer_id = startTimer(sequence->period(), Qt::PreciseTimer);
 
                 if (timer_id > 0) {
-                        m_repeat_timers[timer_id] = sequence->uuid();
+                    m_repeat_timers[timer_id] = sequence->uuid();
                 }
                 else { qDebug() << "Can't create timer"; }
             }
         }
     }
-    else {
-        auto sequence = m_incoming_sequences->getSequenceByUuid(uid);
-        if (!sequence.isNull()) {
-            sequence->format();
-        }
-    }
+
+    return;
 }
 
 void MainClass::sequenceDisactivated(QUuid uid)
@@ -300,7 +302,7 @@ void MainClass::sequenceDisactivated(QUuid uid)
 
 void MainClass::timerEvent(QTimerEvent* event)
 {
-    QSharedPointer<Sequence> sequence;
+    QSharedPointer<const Sequence> sequence;
     auto timer_id = event->timerId();
 
     // This is repeat timers?
@@ -324,9 +326,7 @@ void MainClass::timerEvent(QTimerEvent* event)
         sequence = m_outgoing_sequences->getSequenceByName( incoming->bindedName() );
     }
 
-    if (!sequence.isNull()) {
-       send_sequence(sequence);
-    }
+    send_sequence(sequence);
 
     return;
 }
@@ -338,7 +338,7 @@ void MainClass::readyRead()
 
     m_logger->log(Logger::ChannelFirst, bytes);
 
-    auto incoming = m_incoming_sequences->getSequenceByBytes(bytes);
+    auto incoming = m_incoming_sequences->getSequenceByBytes(bytes, true);
     if (!incoming.isNull()) {
         if ( incoming->period() <= 0 ) {
             auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());

@@ -49,14 +49,14 @@ public:
     void toJson(nlohmann::json& json) const;
     void fromJson(const nlohmann::json& json);
 
-    QSharedPointer<Sequence> getSequenceByUuid(const QUuid& uid) const;
-    QSharedPointer<Sequence> getSequenceByName(const QString& name) const;
-    QSharedPointer<Sequence> getSequenceByBytes(const QByteArray& bytes) const;
-    QSharedPointer<Sequence> getSequenceByRow(int row) const;
+    QSharedPointer<const Sequence> getSequenceByUuid(const QUuid& uid, bool active_only = false) const;
+    QSharedPointer<const Sequence> getSequenceByName(const QString& name, bool active_only = false) const;
+    QSharedPointer<const Sequence> getSequenceByBytes(const QByteArray& bytes, bool active_only = false) const;
+    QSharedPointer<Sequence> getSequenceByRow(int row) const; // TODO: удалить метод
 
-    int findSequenceByUuid(const QUuid& uuid) const;
-    int findSequenceByName(const QString& name) const;
-    int findSequenceByBytes(const QByteArray& bytes) const;
+    int findSequenceByUuid(const QUuid& uuid, bool active_only = false) const;
+    int findSequenceByName(const QString& name, bool active_only = false) const;
+    int findSequenceByBytes(const QByteArray& bytes, bool active_only = false) const;
 
 signals:
     void sSequenceActivated(QUuid uid);

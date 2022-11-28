@@ -49,13 +49,10 @@ public:
     void setName(const QString& a_name) { m_name = a_name; }
 
     QString dslString() const { return m_dsl_string; };
-    void setDslString(const QString& dsl) {
-        m_dsl_string = dsl;
-        m_cached = false;
-    }
+    void setDslString(const QString& dsl);
 
     QString formatId() const { return m_format_id; };
-    void setFormatId(QString id) { m_format_id = id; }
+    void setFormatId(QString id);
 
     QString description() const { return m_description; }
     void setDescription(const QString& description) { m_description = description; }

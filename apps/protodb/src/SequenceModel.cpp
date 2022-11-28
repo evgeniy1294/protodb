@@ -343,37 +343,37 @@ void SequenceModel::fromJson(const nlohmann::json& json)
     }
 }
 
-QSharedPointer<Sequence> SequenceModel::getSequenceByUuid(const QUuid& uid) const
+QSharedPointer<const Sequence> SequenceModel::getSequenceByUuid(const QUuid& uid, bool active_only) const
 {
     if (!uid.isNull()) {
-        auto row = findSequenceByUuid(uid);
+        auto row = findSequenceByUuid(uid, active_only);
 
         if (row >= 0) {
             return m_sequences.at(row);
         }
     }
 
-    return QSharedPointer<Sequence>();
+    return QSharedPointer<const Sequence>();
 }
 
-QSharedPointer<Sequence> SequenceModel::getSequenceByName(const QString& name) const
+QSharedPointer<const Sequence> SequenceModel::getSequenceByName(const QString& name, bool active_only) const
 {
-    auto row = findSequenceByName(name);
+    auto row = findSequenceByName(name, active_only);
     if (row >= 0) {
         return m_sequences.at(row);
     }
 
-    return QSharedPointer<Sequence>();
+    return QSharedPointer<const Sequence>();
 }
 
-QSharedPointer<Sequence> SequenceModel::getSequenceByBytes(const QByteArray& bytes) const
+QSharedPointer<const Sequence> SequenceModel::getSequenceByBytes(const QByteArray& bytes, bool active_only) const
 {
-    auto row = findSequenceByBytes(bytes);
+    auto row = findSequenceByBytes(bytes, active_only);
     if (row >= 0) {
         return m_sequences.at(row);
     }
 
-    return QSharedPointer<Sequence>();
+    return QSharedPointer<const Sequence>();
 }
 
 QSharedPointer<Sequence> SequenceModel::getSequenceByRow(int row) const
@@ -385,10 +385,14 @@ QSharedPointer<Sequence> SequenceModel::getSequenceByRow(int row) const
     return QSharedPointer<Sequence>();
 }
 
-int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
+int SequenceModel::findSequenceByUuid(const QUuid& uuid, bool active_only) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        if (m_sequences.at(i)->uuid() == uuid) {
+        const auto s = m_sequences.at(i);
+
+        if (!s->active() && active_only) continue;
+
+        if (s->uuid() == uuid) {
             return i;
         }
     }
@@ -396,10 +400,14 @@ int SequenceModel::findSequenceByUuid(const QUuid& uuid) const
     return -1;
 }
 
-int SequenceModel::findSequenceByName(const QString& name) const
+int SequenceModel::findSequenceByName(const QString& name, bool active_only) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        if (m_sequences.at(i)->name() == name) {
+        const auto s = m_sequences.at(i);
+
+        if (!s->active() && active_only) continue;
+
+        if (s->name() == name) {
             return i;
         }
     }
@@ -407,10 +415,14 @@ int SequenceModel::findSequenceByName(const QString& name) const
     return -1;
 }
 
-int SequenceModel::findSequenceByBytes(const QByteArray& bytes) const
+int SequenceModel::findSequenceByBytes(const QByteArray& bytes, bool active_only) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
-        QByteArray sq_bytes = m_sequences.at(i)->bytes();
+        const auto s = m_sequences.at(i);
+
+        //if (!s->active() && active_only) continue;
+
+        QByteArray sq_bytes = s->bytes();
 
         if (sq_bytes.isEmpty())
             continue;

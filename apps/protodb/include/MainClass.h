@@ -57,7 +57,7 @@ private:
     void config_logger(const nlohmann::json& json);
     bool try_create_connection(const nlohmann::json& json);
 
-    bool send_sequence(QSharedPointer<Sequence>& sequence);
+    bool send_sequence(QSharedPointer<const Sequence>& sequence);
 
 private:
     SequenceModel* m_incoming_sequences;
