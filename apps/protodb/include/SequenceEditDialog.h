@@ -12,6 +12,8 @@ class QPlainTextEdit;
 class QGroupBox;
 class QRadioButton;
 
+class SequenceFormatSelectionWidget;
+
 class SequenceEditDialog: public QDialog
 {
     Q_OBJECT
@@ -31,9 +33,6 @@ private slots:
 private:
     void createGui();
     void createConnections();
-    void createSyntaxSelector();
-    void setFormatSelection(const QString& format_id);
-    QString getSelectedFormat() const;
 
 private:
     QPushButton* m_back_btn;
@@ -45,8 +44,8 @@ private:
     QLineEdit* m_name_edit;
     QPlainTextEdit* m_desc_editor;
     QPlainTextEdit* m_dsl_editor;
-    QGroupBox* m_syntax_selection_group;
     QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_btn;
-    QList<QRadioButton*> m_syntax_btns;
+
+    SequenceFormatSelectionWidget* m_format_selection_wgt;
 };

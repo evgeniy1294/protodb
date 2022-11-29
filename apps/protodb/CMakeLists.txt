@@ -39,6 +39,7 @@ set(SOURCES_LIST
     src/SequenceEditDialog.cpp
     src/SequenceTableView.cpp
     src/SequenceTableWidget.cpp
+    src/SequenceFormatSelectionWidget.cpp
     src/tool_bar.cpp
     src/ProtodbSessionManager.cpp
     src/MainClass.cpp
@@ -71,6 +72,7 @@ set(HEADERS_LIST
     include/SequenceEditDialog.h
     include/SequenceTableView.h
     include/SequenceTableWidget.h
+    include/SequenceFormatSelectionWidget.h
     include/tool_bar.h
     include/ProtodbSessionManager.h
     include/MainClass.h

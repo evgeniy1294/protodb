@@ -272,7 +272,7 @@ void SequenceModel::toJson(nlohmann::json& json) const
             fields["period"]      = sequence->period();
             fields["description"] = sequence->description();
             fields["dsl"]         = sequence->dslString();
-            fields["syntax"]      = sequence->formatId();
+            fields["format_id"]   = sequence->formatId();
             fields["active"]      = sequence->active();
 
         json.push_back(fields);
@@ -320,9 +320,9 @@ void SequenceModel::fromJson(const nlohmann::json& json)
             }
         }
 
-        if ( it.contains("syntax") ) {
-            if ( it["syntax"].is_string() ) {
-                s->setDslString( it["syntax"] );
+        if ( it.contains("format_id") ) {
+            if ( it["format_id"].is_string() ) {
+                s->setFormatId( it["format_id"] );
             }
         }
 
@@ -376,15 +376,6 @@ QSharedPointer<const Sequence> SequenceModel::getSequenceByBytes(const QByteArra
     return QSharedPointer<const Sequence>();
 }
 
-QSharedPointer<Sequence> SequenceModel::getSequenceByRow(int row) const
-{
-    if ( row >= 0 && row < m_sequences.size() ) {
-        return m_sequences.at(row);
-    }
-
-    return QSharedPointer<Sequence>();
-}
-
 int SequenceModel::findSequenceByUuid(const QUuid& uuid, bool active_only) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {
@@ -420,7 +411,7 @@ int SequenceModel::findSequenceByBytes(const QByteArray& bytes, bool active_only
     for (int i = 0; i < m_sequences.size(); i++) {
         const auto s = m_sequences.at(i);
 
-        //if (!s->active() && active_only) continue;
+        if (!s->active() && active_only) continue;
 
         QByteArray sq_bytes = s->bytes();
 

@@ -52,7 +52,6 @@ public:
     QSharedPointer<const Sequence> getSequenceByUuid(const QUuid& uid, bool active_only = false) const;
     QSharedPointer<const Sequence> getSequenceByName(const QString& name, bool active_only = false) const;
     QSharedPointer<const Sequence> getSequenceByBytes(const QByteArray& bytes, bool active_only = false) const;
-    QSharedPointer<Sequence> getSequenceByRow(int row) const; // TODO: удалить метод
 
     int findSequenceByUuid(const QUuid& uuid, bool active_only = false) const;
     int findSequenceByName(const QString& name, bool active_only = false) const;
