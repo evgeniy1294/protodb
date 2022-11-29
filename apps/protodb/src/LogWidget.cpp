@@ -72,13 +72,12 @@ void LogWidget::createGui()
 
 
     // ---------[COMBO BOX]---------- //
-    auto edit_mode_cmb = new QComboBox();
-        edit_mode_cmb->addItem("HEX");
-        edit_mode_cmb->addItem("LF");
-        edit_mode_cmb->addItem("CR");
-        edit_mode_cmb->addItem("CR/LF");
-        edit_mode_cmb->addItem("None");
-        edit_mode_cmb->addItem("DSL");
+    m_data_format_cmb = new QComboBox();
+        m_data_format_cmb->addItem("HEX",   Hex_Format);
+        m_data_format_cmb->addItem("LF",    Ascii_LF_Format);
+        m_data_format_cmb->addItem("CR",    Ascii_CR_Format);
+        m_data_format_cmb->addItem("CR/LF", Ascii_CRLF_Format);
+        m_data_format_cmb->addItem("None",  Ascii_None_Format);
 
     // ---------[LAYOUT]---------- //
     auto top_layout = new QHBoxLayout();
@@ -90,7 +89,7 @@ void LogWidget::createGui()
 
     auto bottom_layout = new QHBoxLayout();
         bottom_layout->addWidget(m_msg_le);
-        bottom_layout->addWidget(edit_mode_cmb);
+        bottom_layout->addWidget(m_data_format_cmb);
 
     QGridLayout* layout = new QGridLayout();
       layout->addLayout(top_layout, 0, 0);
@@ -102,6 +101,37 @@ void LogWidget::createGui()
 
 void LogWidget::createConnections()
 {
+    connect(m_data_format_cmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+        // В этой функции можно менять валидатор, если используется hex-строка
+    });
+
+    connect(m_msg_le, &QLineEdit::returnPressed, this, [this]() {
+        auto msg = m_msg_le->text().toLatin1();
+
+        if (msg.isEmpty()) {
+            return;
+        }
+
+        auto format = m_data_format_cmb->currentIndex();
+        if ( format == Hex_Format) {
+            msg = QByteArray::fromHex( msg );
+        }
+        else {
+            if (format == Ascii_LF_Format) {
+                msg.append('\n');
+            }
+            else if (format == Ascii_CR_Format) {
+                msg.append('\r');
+            }
+            else if (format == Ascii_CRLF_Format) {
+                msg.append('\n');
+                msg.append('\r');
+            }
+        }
+
+        MainClass::instance().sendBytes(msg);
+    });
+
     connect(m_run, &QPushButton::released, this, [this]() {
         auto logger = MainClass::instance().logger();
 

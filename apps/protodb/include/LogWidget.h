@@ -4,16 +4,19 @@
 #include "LogFormatter.h"
 #include <QWidget>
 
-class LogTableView;
 class QTableView;
 class QPushButton;
 class QLabel;
 class QLineEdit;
-class ConnectionConfigDialog;
+class QComboBox;
+
+class LuaApi;
+
+class LogTableView;
 class Logger;
 class LogDecorationDialog;
 class LogProxyModel;
-class LuaApi;
+class ConnectionConfigDialog;
 
 class LogWidget: public QWidget
 {
@@ -31,17 +34,28 @@ private:
     void createConnections();
 
 private:
-     QPushButton* m_mode_btn;
-     QPushButton* m_clr_btn;
-     QPushButton* m_run;
-     QPushButton* m_cfg_btn;
-     QLineEdit* m_find_le;
-     QLineEdit* m_msg_le;
-     LogTableView* m_view;
-     ConnectionConfigDialog* m_conn_dialog;
+    enum RawDataFormat {
+        Hex_Format        = 0,
+        Ascii_LF_Format   = 1,
+        Ascii_CR_Format   = 2,
+        Ascii_CRLF_Format = 3,
+        Ascii_None_Format = 4,
+    };
 
-     LuaApi* m_lua_api;
-     Logger* m_log_model;
-     LogProxyModel* m_log_proxy_model;
+    QPushButton* m_mode_btn;
+    QPushButton* m_clr_btn;
+    QPushButton* m_run;
+    QPushButton* m_cfg_btn;
+    QLineEdit* m_find_le;
+    QLineEdit* m_msg_le;
+    QComboBox* m_data_format_cmb;
+
+    LuaApi* m_lua_api;
+
+    ConnectionConfigDialog* m_conn_dialog;
+    Logger* m_log_model;
+    LogTableView* m_view;
+    LogProxyModel* m_log_proxy_model;
+
 };
 

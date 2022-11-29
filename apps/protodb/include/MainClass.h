@@ -30,9 +30,12 @@ public:
     SequenceModel* incomingSequences() const;
     SequenceModel* outgoingSequences() const;
     Logger* logger() const;
+
 public slots:
     void start(const nlohmann::json& attr);
     void stop();
+
+    void sendBytes(const QByteArray& bytes);
 
 signals:
     void sStarted();

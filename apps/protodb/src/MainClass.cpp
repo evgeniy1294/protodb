@@ -265,6 +265,21 @@ void MainClass::stop()
     emit sStopted();
 }
 
+void MainClass::sendBytes(const QByteArray& bytes)
+{
+    if (m_io == nullptr || bytes.isEmpty()) {
+        return;
+    }
+
+    if (!m_io->isWritable()) {
+        m_logger->error(tr("Can't write data to this IO Device. May be device is read only?"));
+        return;
+    }
+
+    m_io->write( bytes );
+    m_logger->log(Logger::ChannelSecond, bytes);
+}
+
 void MainClass::sequenceActivated(QUuid uid)
 {
     if (sender() == m_outgoing_sequences) {

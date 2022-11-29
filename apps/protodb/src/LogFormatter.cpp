@@ -114,7 +114,7 @@ QString LogFormatter::timestamp(const Logger::Event &event) const
 QString LogFormatter::data(const Logger::Event &event) const
 {
     bool ascii = event.channel == Logger::ChannelComment || event.channel == Logger::ChannelError || m_byte_format == AsciiFormat;
-    return ascii ? event.message : event.message.toHex(m_separator);
+    return ascii ? QString(event.message).trimmed() : event.message.toHex(m_separator);
 }
 
 QString LogFormatter::format(const Logger::Event &event, Flags flags) const
@@ -149,7 +149,7 @@ QString LogFormatter::format(const QDateTime &dt) const
 QString LogFormatter::format(Logger::Channel ch, const QByteArray &msg) const
 {
     bool ascii = ch == Logger::ChannelComment || ch == Logger::ChannelError || m_byte_format == AsciiFormat;
-    return ascii ? msg : msg.toHex(m_separator);
+    return ascii ? QString(msg).trimmed() : msg.toHex(m_separator);
 }
 
 QMap<Logger::Channel, QString> LogFormatter::defaultChannelNames()
@@ -177,7 +177,7 @@ QString LogFormatter::defaultFormat(const QDateTime &dt)
 QString LogFormatter::defaultFormat(Logger::Channel ch, const QByteArray &msg)
 {
     bool ascii = ch == Logger::ChannelComment || ch == Logger::ChannelError;
-    return ascii ? msg : msg.toHex(DefaultSeparator);
+    return ascii ? QString(msg).trimmed() : msg.toHex(DefaultSeparator);
 }
 
 QString LogFormatter::defaultFormat(const Logger::Event &event)
