@@ -197,6 +197,10 @@ bool MainClass::send_sequence(QSharedPointer<const Sequence>& sequence)
         return false;
     }
 
+    if (!isStarted()) {
+        start(); if (!isStarted()) return false;
+    }
+
     if (!m_io->isWritable()) {
         m_logger->error(tr("Can't write data to this IO Device. May be device is read only?"));
         return false;
@@ -234,18 +238,29 @@ bool MainClass::isStarted() const
     return m_io != nullptr;
 }
 
-#include <iostream>
-
-void MainClass::start(const nlohmann::json& attr)
+void MainClass::setSeanceConfigs(const nlohmann::json& cfg)
 {
-    std::cout << attr.dump(4) << std::endl;
+    m_seance_cfg = cfg;
+}
+
+void MainClass::seanceConfigs(nlohmann::json& cfg) const
+{
+    cfg = m_seance_cfg;
+}
+
+void MainClass::start()
+{
+    if (m_seance_cfg.empty()) {
+        m_logger->error(QString("Can't start seance: empty configs"));
+        return;
+    }
 
     // Configure logger
-    auto log_configs = attr.value("LogConfigs", nlohmann::json::object());
+    auto log_configs = m_seance_cfg.value("LogConfigs", nlohmann::json::object());
     config_logger(log_configs);
 
     // Init IODevice
-    auto io_cfg = attr.value("IODeviceConfigs", nlohmann::json::object());
+    auto io_cfg = m_seance_cfg.value("IODeviceConfigs", nlohmann::json::object());
     if (try_create_connection(io_cfg)) {
         emit sStarted();
     }
@@ -267,8 +282,12 @@ void MainClass::stop()
 
 void MainClass::sendBytes(const QByteArray& bytes)
 {
-    if (m_io == nullptr || bytes.isEmpty()) {
+    if (bytes.isEmpty()) {
         return;
+    }
+
+    if (!isStarted()) {
+        start(); if (!isStarted()) return;
     }
 
     if (!m_io->isWritable()) {
@@ -285,11 +304,6 @@ void MainClass::sequenceActivated(QUuid uid)
     if (sender() == m_outgoing_sequences) {
         auto sequence = m_outgoing_sequences->getSequenceByUuid(uid);
         if (!sequence.isNull()) {
-            if (m_io == nullptr) {
-                m_logger->error(tr("Please, set currect IO Device"));
-                return;
-            }
-
             if (send_sequence(sequence) && sequence->active() && sequence->period() != 0) {
                 auto timer_id = startTimer(sequence->period(), Qt::PreciseTimer);
 

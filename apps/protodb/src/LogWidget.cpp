@@ -140,18 +140,16 @@ void LogWidget::createConnections()
         }
         else
         {
-            nlohmann::json start_attr;
-                m_conn_dialog->connectionConfig(start_attr);
-
-            MainClass::instance().start(start_attr);
+            MainClass::instance().start();
         }
     });
 
     connect(m_conn_dialog, &QDialog::accepted, this, [this]() {
-        nlohmann::json start_attr;
-            m_conn_dialog->connectionConfig(start_attr);
+        nlohmann::json seance_cfg;
+            m_conn_dialog->connectionConfig(seance_cfg);
+            MainClass::instance().setSeanceConfigs(seance_cfg);
 
-        auto log_configs = start_attr.value("LogConfigs", nlohmann::json::object());
+        auto log_configs = seance_cfg.value("LogConfigs", nlohmann::json::object());
 
         auto formatter = m_view->formatter();
             formatter->setTimeFormat(log_configs.value("TimestampFormat", LogFormatter::DefaultTimeFormat));

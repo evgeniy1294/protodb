@@ -27,12 +27,15 @@ public:
     void init();
     bool isStarted() const;
 
+    void setSeanceConfigs(const nlohmann::json& cfg);
+    void seanceConfigs(nlohmann::json& cfg) const;
+
     SequenceModel* incomingSequences() const;
     SequenceModel* outgoingSequences() const;
     Logger* logger() const;
 
 public slots:
-    void start(const nlohmann::json& attr);
+    void start();
     void stop();
 
     void sendBytes(const QByteArray& bytes);
@@ -73,4 +76,6 @@ private:
     Logger* m_logger;
     LogPrinter* m_log_printer;
     QIODevice* m_io;
+
+    nlohmann::json m_seance_cfg;
 };
