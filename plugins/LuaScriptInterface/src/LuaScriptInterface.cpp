@@ -44,6 +44,11 @@ LuaScriptInterface::LuaScriptInterface(QObject* parent)
     m_lua["log"] = this;
 }
 
+QString LuaScriptInterface::fileExtention() const
+{
+    return ".lua";
+}
+
 QString LuaScriptInterface::syntaxId() const
 {
     return "lua";
@@ -55,7 +60,7 @@ bool LuaScriptInterface::setScriptFile(const QString& path)
     m_valid = false;
 
     if (std::filesystem::exists(script_path)) {
-        if (script_path.extension() == ".lua") {
+        if (script_path.extension() == fileExtention().toStdString()) {
             sol::protected_function_result pfr = m_lua.safe_script_file(script_path, &sol::script_pass_on_error);
 
             if (pfr.valid()) {

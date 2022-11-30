@@ -1,4 +1,4 @@
-#include "ConnectionConfigDialog.h"
+#include "SeanseConfigDialog.h"
 #include "LogFormatWidget.h"
 
 #include <protodb/IOWidget.h>
@@ -19,7 +19,7 @@
 #include <QLabel>
 #include <QAction>
 
-ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
+SeanceConfigDialog::SeanceConfigDialog(QWidget* aParent)
     : QDialog(aParent)
     , m_curr_cfg(nlohmann::json::object())
 {
@@ -27,7 +27,7 @@ ConnectionConfigDialog::ConnectionConfigDialog(QWidget* aParent)
     connectSignals();
 }
 
-void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
+void SeanceConfigDialog::connectionConfig(nlohmann::json& json)
 {
     json = nlohmann::json::object();
 
@@ -65,7 +65,7 @@ void ConnectionConfigDialog::connectionConfig(nlohmann::json& json)
     return;
 }
 
-void ConnectionConfigDialog::createGui()
+void SeanceConfigDialog::createGui()
 {
     // --------[CREATE DUMMY WIDGET]--------- //
     m_dummy_wgt = new QWidget();
@@ -171,7 +171,7 @@ void ConnectionConfigDialog::createGui()
     setLayout(m_layout);
 }
 
-void ConnectionConfigDialog::connectSignals()
+void SeanceConfigDialog::connectSignals()
 {
     auto factory = GlobalFactoryStorage::getFactory(IOWidgetFactory::fid());
     connect(factory, &FactoryAbstract::sCreatorAdded, this, [this](QString cid) {
@@ -274,7 +274,7 @@ void ConnectionConfigDialog::connectSignals()
     });
 }
 
-void ConnectionConfigDialog::replaceIOWiget(const QString& cid)
+void SeanceConfigDialog::replaceIOWiget(const QString& cid)
 {
     auto wgt = cid.isEmpty() ? m_dummy_wgt : m_io_widgets.value(cid, nullptr);
 
@@ -292,7 +292,7 @@ void ConnectionConfigDialog::replaceIOWiget(const QString& cid)
     }
 }
 
-void ConnectionConfigDialog::showFileDialog(QString& path)
+void SeanceConfigDialog::showFileDialog(QString& path)
 {
     QFileDialog fileDialog;
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -310,7 +310,7 @@ void ConnectionConfigDialog::showFileDialog(QString& path)
 }
 
 // Должна быть метка активного элемента
-void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
+void SeanceConfigDialog::setConfig(const nlohmann::json& json)
 {
     auto log_configs = json.value("LogConfigs", nlohmann::json::object());
         m_log_format_wiget->setConfig(log_configs);
@@ -343,7 +343,7 @@ void ConnectionConfigDialog::setConfig(const nlohmann::json& json)
     return;
 }
 
-void ConnectionConfigDialog::config(nlohmann::json& json) const
+void SeanceConfigDialog::config(nlohmann::json& json) const
 {        
     auto configs = nlohmann::json::object();
 
@@ -366,7 +366,7 @@ void ConnectionConfigDialog::config(nlohmann::json& json) const
     return;
 }
 
-void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
+void SeanceConfigDialog::defaultConfig(nlohmann::json& json) const
 {
     auto configs = nlohmann::json::object();
 
@@ -389,17 +389,17 @@ void ConnectionConfigDialog::defaultConfig(nlohmann::json& json) const
     return;
 }
 
-void ConnectionConfigDialog::setState(const nlohmann::json& json)
+void SeanceConfigDialog::setState(const nlohmann::json& json)
 {
 
 }
 
-void ConnectionConfigDialog::state(nlohmann::json& json) const
+void SeanceConfigDialog::state(nlohmann::json& json) const
 {
 
 }
 
-void ConnectionConfigDialog::defaultState(nlohmann::json& json) const
+void SeanceConfigDialog::defaultState(nlohmann::json& json) const
 {
 
 }

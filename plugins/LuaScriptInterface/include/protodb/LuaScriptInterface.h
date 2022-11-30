@@ -12,6 +12,7 @@ public:
     LuaScriptInterface(QObject* parent = nullptr);
    ~LuaScriptInterface() = default;
 
+    virtual QString fileExtention() const override;
     bool setScriptFile(const QString& path) override;
     bool isValid() const override;
 

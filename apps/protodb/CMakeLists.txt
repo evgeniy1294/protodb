@@ -15,7 +15,7 @@ set(SOURCES_LIST
     src/CellButtonDelegate.cpp
     src/CellCheckBoxDelegate.cpp
     src/CellSpinBoxDelegate.cpp
-    src/ConnectionConfigDialog.cpp
+    src/SeanseConfigDialog.cpp
     src/Logger.cpp
     src/LogFormatter.cpp
     src/LogPrinter.cpp
@@ -49,7 +49,7 @@ set(HEADERS_LIST
     include/CellButtonDelegate.h
     include/CellCheckBoxDelegate.h
     include/CellSpinBoxDelegate.h
-    include/ConnectionConfigDialog.h
+    include/SeanseConfigDialog.h
     include/Logger.h
     include/LogFormatter.h
     include/LogPrinter.h

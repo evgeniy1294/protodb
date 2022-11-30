@@ -17,6 +17,7 @@ public:
 
    ~ScriptInterface() = default;
 
+    virtual QString fileExtention() const = 0;
     virtual bool setScriptFile(const QString& path) = 0;
     virtual bool isValid() const = 0;
 
@@ -27,6 +28,7 @@ public:
 
     // Custom event handler
     virtual bool handleEvent(Event event, QByteArray& bytes) = 0;
+
 
 signals:
     void sErrorOccuared(QString detail);

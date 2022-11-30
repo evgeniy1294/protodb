@@ -252,6 +252,7 @@ void MainClass::start()
 {
     if (m_seance_cfg.empty()) {
         m_logger->error(QString("Can't start seance: empty configs"));
+        emit sStartFailed();
         return;
     }
 

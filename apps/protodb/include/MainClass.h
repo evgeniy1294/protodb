@@ -43,6 +43,7 @@ public slots:
 signals:
     void sStarted();
     void sStopted();
+    void sStartFailed();
 
 private slots:
     void sequenceActivated(QUuid uid);

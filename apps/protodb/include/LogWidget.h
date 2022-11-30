@@ -16,7 +16,7 @@ class LogTableView;
 class Logger;
 class LogDecorationDialog;
 class LogProxyModel;
-class ConnectionConfigDialog;
+class SeanceConfigDialog;
 
 class LogWidget: public QWidget
 {
@@ -52,7 +52,7 @@ private:
 
     LuaApi* m_lua_api;
 
-    ConnectionConfigDialog* m_conn_dialog;
+    SeanceConfigDialog* m_conn_dialog;
     Logger* m_log_model;
     LogTableView* m_view;
     LogProxyModel* m_log_proxy_model;

@@ -1,6 +1,6 @@
 #include "LogWidget.h"
 #include "LogTableView.h"
-#include "ConnectionConfigDialog.h"
+#include "SeanseConfigDialog.h"
 #include "LogFormatter.h"
 #include "LogProxyModel.h"
 #include "Logger.h"
@@ -22,7 +22,7 @@ LogWidget::LogWidget(QWidget* parent)
 {
     createGui();
 
-    m_conn_dialog = new ConnectionConfigDialog();
+    m_conn_dialog = new SeanceConfigDialog();
         m_conn_dialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         m_conn_dialog->resize(QSize(640, 540));
 
@@ -211,6 +211,8 @@ void LogWidget::createConnections()
     connect(&MainClass::instance(), &MainClass::sStopted, this, [this]() {
         m_run->setIcon(QIcon(":/icons/run.svg"));
     });
+
+    connect(&MainClass::instance(), &MainClass::sStartFailed, m_conn_dialog, &QWidget::show);
 }
 
 

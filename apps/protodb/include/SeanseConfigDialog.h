@@ -18,12 +18,12 @@ class IOWidgetFactory;
 class IOWidget;
 class LogFormatWidget;
 
-class ConnectionConfigDialog: public QDialog, public Configurable {
+class SeanceConfigDialog: public QDialog, public Configurable {
     Q_OBJECT
 
 public:
-    ConnectionConfigDialog(QWidget* aParent = nullptr);
-   ~ConnectionConfigDialog() = default;
+    SeanceConfigDialog(QWidget* aParent = nullptr);
+   ~SeanceConfigDialog() = default;
 
     void connectionConfig(nlohmann::json& json);
 
