@@ -13,16 +13,21 @@ public:
    ~LuaScriptInterface() = default;
 
     virtual QString fileExtention() const override;
+
     bool setScriptFile(const QString& path) override;
+    QString scriptFile() const override;
     bool isValid() const override;
 
     // Compile code to byte array
     QByteArray compileCode(const QString& code) const override;
 
     // Custom event handler
-    bool handleEvent(Event event, QByteArray& bytes) override;
+    bool handleDataEvent(Event event, QByteArray& bytes) override;
 
     QString syntaxId() const override;
+
+    void print(const char* str);
+private:
 
 private:
     bool m_valid = false;

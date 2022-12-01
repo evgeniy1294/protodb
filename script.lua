@@ -1,24 +1,30 @@
 function start()
-    log:print("Start session")
+    log:print("Seance started")
 end
 
 function stop()
-    log:print("Stop session")
+    log:print("Seance stoped")
 end
 
 function beforeTransmit(msg)
-    text = "Byte[0] = "..string.format("%x", msg[1])..'\n'
-    text = text.."Byte[1] = "..string.format("%x", msg[2])..'\n'
-    text = text.."Byte[2] = "..string.format("%x", msg[3])..'\n'
-    text = text.."Byte[3] = "..string.format("%x", msg[4])
+	text = "Bytes for transmit:\n"
+	for k=1,#msg do
+		text = text.."byte["..(k-1).."] = "..string.format("%x", msg[k])..'\n'
+		msg[k] = msg[k] + 1
+	end
+	
+	text = text.."Increment these bytes before transmit"
+	
     log:print(text)
 end
 
 function afterReceive(msg)
-    text = "Byte[0] = "..string.format("%x", msg[1])..'\n'
-    text = text.."Byte[1] = "..string.format("%x", msg[2])..'\n'
-    text = text.."Byte[2] = "..string.format("%x", msg[3])..'\n'
-    text = text.."Byte[3] = "..string.format("%x", msg[4])
+	text = "Cuptured data:\n"
+	for k=1,#msg do
+		text = text.."byte["..(k-1).."] = "..string.format("%x", msg[k])..'\n'
+		msg[k] = msg[k] + 1
+	end
+    
     log:print(text)
 end
 

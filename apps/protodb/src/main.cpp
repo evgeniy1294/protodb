@@ -1,7 +1,7 @@
 #include "MainClass.h"
 #include "mainwindow.h"
 #include "ProtodbSessionManager.h"
-#include "SequenceModel.h"
+#include "Sequence.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>

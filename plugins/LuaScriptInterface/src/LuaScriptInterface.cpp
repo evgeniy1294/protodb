@@ -2,8 +2,6 @@
 
 #include <protodb/utils/SolByteArrayWrapper.h>
 
-
-
 #include <iostream>
 #include <filesystem>
 
@@ -39,7 +37,7 @@ LuaScriptInterface::LuaScriptInterface(QObject* parent)
 
     auto log = m_lua["log"].get_or_create<sol::table>();
     log.new_usertype<LuaScriptInterface>("log",
-        "print", &LuaScriptInterface::sPrint);
+        "print", &LuaScriptInterface::print);
 
     m_lua["log"] = this;
 }
@@ -52,6 +50,11 @@ QString LuaScriptInterface::fileExtention() const
 QString LuaScriptInterface::syntaxId() const
 {
     return "lua";
+}
+
+void LuaScriptInterface::print(const char* str)
+{
+    emit sPrint(QString(str));
 }
 
 bool LuaScriptInterface::setScriptFile(const QString& path)
@@ -88,6 +91,11 @@ bool LuaScriptInterface::setScriptFile(const QString& path)
     return m_valid;
 }
 
+QString LuaScriptInterface::scriptFile() const
+{
+    return m_script_file_path;
+}
+
 bool LuaScriptInterface::isValid() const
 {
     return m_valid;
@@ -117,7 +125,7 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
     return ret;
 }
 
-bool LuaScriptInterface::handleEvent(Event event, QByteArray& bytes)
+bool LuaScriptInterface::handleDataEvent(Event event, QByteArray& bytes)
 {
     switch(event) {
         case Start: {

@@ -15,7 +15,7 @@ class Sequence;
 class Logger;
 class LogPrinter;
 class SequenceModel;
-class ScriptInterface;
+class ScriptMultiInterface;
 
 class MainClass final: public QObject
 {
@@ -38,7 +38,7 @@ public slots:
     void start();
     void stop();
 
-    void sendBytes(const QByteArray& bytes);
+    void sendBytes(QByteArray& bytes);
 
 signals:
     void sStarted();
@@ -69,7 +69,7 @@ private:
 private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
-    QList<QSharedPointer<ScriptInterface>> m_script_interfaces;
+    ScriptMultiInterface* m_script_multi_interface;
 
     QMap<int, QUuid> m_repeat_timers;
     QMap<int, QUuid> m_singleshot_timers;

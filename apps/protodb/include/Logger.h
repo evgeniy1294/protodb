@@ -38,12 +38,6 @@ public:
 public:
     Logger(QObject* parent = nullptr);
 
-    void log(Channel ch, const QByteArray& data, const QDateTime& timestamp = QDateTime::currentDateTime());
-    void comment(const QByteArray& text);
-    void comment(const QString& text);
-    void error(const QByteArray& text);
-    void error(const QString& text);
-
     void setChannelEnabled (Channel channel);
     void setChannelDisabled(Channel channel);
 
@@ -63,6 +57,12 @@ signals:
 public slots:
     void clear();
     void reload();
+
+    void log(Logger::Channel ch, const QByteArray& data, const QDateTime& timestamp = QDateTime::currentDateTime());
+    void comment(const QByteArray& text);
+    void comment(const QString& text);
+    void error(const QByteArray& text);
+    void error(const QString& text);
 
 private:
     void log(const Event& event);

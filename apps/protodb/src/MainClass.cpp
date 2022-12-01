@@ -4,6 +4,7 @@
 #include "LogPrinter.h"
 #include "LogFormatter.h"
 #include "SequenceScriptFormatter.h"
+#include "ScriptInterfaceGroup.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
@@ -22,6 +23,7 @@ MainClass::MainClass()
     , m_outgoing_sequences(new SequenceModel(this))
     , m_logger(new Logger(this))
     , m_log_printer(new LogPrinter(this))
+    , m_script_multi_interface(new ScriptMultiInterface(this))
 {
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
@@ -95,19 +97,25 @@ void MainClass::init_logger()
     m_log_printer->setLogFile("/tmp/protodb.log");
     m_log_printer->setAppendFile(true);
     connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
+
+    connect(m_script_multi_interface, &ScriptMultiInterface::sPrint,
+            m_logger, QOverload<const QString&>::of(&Logger::comment));
+
+    connect(m_script_multi_interface, &ScriptMultiInterface::sErrorOccuared,
+            m_logger, QOverload<const QString&>::of(&Logger::error));
 }
 
 void MainClass::init_syntaxes()
 {
     // Create script interfaces
-    m_script_interfaces.clear();
         auto script_interface_creators = ScriptInterfaceFactory::globalInstance()->getAllCreators();
         for (auto& creator: script_interface_creators) {
-            m_script_interfaces.append( QSharedPointer<ScriptInterface>(creator->create()) );
+            auto interface = QSharedPointer<ScriptInterface>(creator->create());
+                m_script_multi_interface->addScriptInterface( interface );
         }
 
     // Add script interface to supported syntax list
-    for (auto& script_interface: m_script_interfaces) {
+    for (auto& script_interface: m_script_multi_interface->scriptInterfaces()) {
         auto formatter = qSharedPointerCast<SequenceFormatter> (
             QSharedPointer<SequenceScriptFormatter>::create(script_interface)
         );
@@ -260,9 +268,18 @@ void MainClass::start()
     auto log_configs = m_seance_cfg.value("LogConfigs", nlohmann::json::object());
     config_logger(log_configs);
 
+    // Set script file
+    auto script_file = m_seance_cfg.value("ScriptFile", QString());
+    if (!script_file.isEmpty()) {
+        if (!m_script_multi_interface->setScriptFile(script_file)) {
+            m_logger->error(QString("Script file \"%1\" unsupported"));
+        }
+    }
+
     // Init IODevice
     auto io_cfg = m_seance_cfg.value("IODeviceConfigs", nlohmann::json::object());
     if (try_create_connection(io_cfg)) {
+        m_script_multi_interface->handleEvent( ScriptInterface::Start );
         emit sStarted();
     }
     else {
@@ -277,11 +294,12 @@ void MainClass::stop()
     auto io = m_io; m_io = nullptr;
         if (io) { io->close(); disconnect(io), delete io; }
 
+    m_script_multi_interface->handleEvent( ScriptInterface::Stop );
     m_log_printer->setDisabled();
     emit sStopted();
 }
 
-void MainClass::sendBytes(const QByteArray& bytes)
+void MainClass::sendBytes(QByteArray& bytes)
 {
     if (bytes.isEmpty()) {
         return;
@@ -296,6 +314,7 @@ void MainClass::sendBytes(const QByteArray& bytes)
         return;
     }
 
+    m_script_multi_interface->handleDataEvent( ScriptInterface::Transmit, bytes );
     m_io->write( bytes );
     m_logger->log(Logger::ChannelSecond, bytes);
 }
@@ -367,6 +386,8 @@ void MainClass::readyRead()
     auto bytes = m_io->readAll();
 
     m_logger->log(Logger::ChannelFirst, bytes);
+
+    m_script_multi_interface->handleDataEvent(ScriptInterface::Received, bytes);
 
     auto incoming = m_incoming_sequences->getSequenceByBytes(bytes, true);
     if (!incoming.isNull()) {

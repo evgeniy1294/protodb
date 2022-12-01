@@ -65,5 +65,3 @@ private:
     QList< QSharedPointer<Sequence> > m_sequences;
     bool m_mode;
 };
-
-Q_DECLARE_METATYPE(QSharedPointer<Sequence>)

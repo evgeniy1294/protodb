@@ -97,3 +97,4 @@ private:
 };
 
 Q_DECLARE_METATYPE(Sequence)
+Q_DECLARE_METATYPE(QSharedPointer<Sequence>)
