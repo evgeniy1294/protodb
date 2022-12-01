@@ -2,6 +2,8 @@
 
 #include <QString>
 
+namespace protodb {
+
 class Sequence;
 
 class SequenceFormatter {
@@ -11,3 +13,5 @@ public:
     virtual QString name() const = 0;
     virtual QByteArray format(const QString& code) { return QByteArray(); }
 };
+
+} // namespace protodb

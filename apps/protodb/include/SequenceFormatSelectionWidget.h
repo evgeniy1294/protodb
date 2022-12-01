@@ -4,6 +4,8 @@
 
 class QButtonGroup;
 
+namespace protodb {
+
 class SequenceFormatSelectionWidget: public QWidget
 {
     Q_OBJECT
@@ -28,3 +30,5 @@ private:
     QButtonGroup* m_btn_group;
     QString m_selected_format;
 };
+
+} // namespace protodb

@@ -4,6 +4,9 @@
 
 #include <QWidget>
 
+namespace protodb
+{
+
 class IOWidget: public QWidget, public Configurable
 {
     Q_OBJECT
@@ -15,3 +18,5 @@ public:
 
     virtual QString name() const = 0;
 };
+
+} // namespace protodb

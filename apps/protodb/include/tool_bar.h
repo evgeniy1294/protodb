@@ -9,6 +9,9 @@
 class QToolButton;
 class QMenu;
 class QAction;
+
+namespace protodb {
+
 class isa_menu;
 
 class isa_tool_bar : public QWidget
@@ -102,3 +105,5 @@ private:
 
     Q_DISABLE_COPY(isa_tool_bar)
 };
+
+} // namespace protodb

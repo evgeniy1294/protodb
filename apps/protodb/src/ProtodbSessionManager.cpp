@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+using namespace protodb;
+
 ProtodbSessionManager &ProtodbSessionManager::instance()
 {
     static ProtodbSessionManager m_instance;

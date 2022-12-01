@@ -3,6 +3,8 @@
 #include "Logger.h"
 #include <protodb/utils/SolByteArrayWrapper.h>
 
+using namespace protodb;
+
 LogProxyModel::LogProxyModel(QObject* parent)
     : QSortFilterProxyModel(parent)
     , m_bypass(true)

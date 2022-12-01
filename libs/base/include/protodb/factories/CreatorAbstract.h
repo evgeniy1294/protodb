@@ -5,16 +5,19 @@
 #include <QtPlugin>
 
 #ifndef MODULE_VERSION_MAJ
-#define MODULE_VERSION_MAJ 0
+    #define MODULE_VERSION_MAJ 0
 #endif
 
 #ifndef MODULE_VERSION_MIN
-#define MODULE_VERSION_MIN 0
+    #define MODULE_VERSION_MIN 0
 #endif
 
 #ifndef MODULE_VERSION_MIC
-#define MODULE_VERSION_MIC 0
+    #define MODULE_VERSION_MIC 1
 #endif
+
+namespace protodb
+{
 
 class CreatorAbstract
 {
@@ -34,4 +37,6 @@ public:
     }
 };
 
-Q_DECLARE_INTERFACE(CreatorAbstract, "ProtoDb.CreatorAbstract")
+} // namespace protodb
+
+Q_DECLARE_INTERFACE(protodb::CreatorAbstract, "ProtoDb.CreatorAbstract")

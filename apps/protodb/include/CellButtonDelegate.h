@@ -2,6 +2,8 @@
 
 #include <QStyledItemDelegate>
 
+namespace protodb {
+
 class CellButtonDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -33,3 +35,5 @@ private:
     bool  m_flat;
     int   m_active_row;
 };
+
+} // namespace protodb

@@ -2,6 +2,8 @@
 #include "factories/CreatorAbstract.h"
 #include "factories/GlobalFactoryStorage.h"
 
+using namespace protodb;
+
 FactoryAbstract::FactoryAbstract(QObject* parent)
     : QObject(parent)
 {

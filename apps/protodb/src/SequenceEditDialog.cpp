@@ -15,6 +15,7 @@
 #include <QGroupBox>
 #include <QRadioButton>
 
+using namespace protodb;
 
 SequenceEditDialog::SequenceEditDialog(QWidget* aParent)
     : QDialog(aParent)

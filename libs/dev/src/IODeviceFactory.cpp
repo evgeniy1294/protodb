@@ -3,6 +3,7 @@
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/creators/IODeviceCreatorInterface.h>
 
+using namespace protodb;
 
 IODeviceFactory::IODeviceFactory(QObject* parent)
     : FactoryAbstract(parent)

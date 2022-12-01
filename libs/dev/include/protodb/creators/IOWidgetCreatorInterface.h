@@ -5,6 +5,8 @@
 #include <QtPlugin>
 #include <nlohmann/json.hpp>
 
+namespace protodb {
+
 class IOWidget;
 
 class IOWidgetCreator: public CreatorAbstract
@@ -16,4 +18,6 @@ public:
     virtual IOWidget* create(const nlohmann::json&) const = 0;
 };
 
-Q_DECLARE_INTERFACE(IOWidgetCreator, "ProtoDb.IOWidgetCreatorInterface")
+} // namespace protodb
+
+Q_DECLARE_INTERFACE(protodb::IOWidgetCreator, "ProtoDb.IOWidgetCreatorInterface")

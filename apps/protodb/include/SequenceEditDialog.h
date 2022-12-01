@@ -12,6 +12,8 @@ class QPlainTextEdit;
 class QGroupBox;
 class QRadioButton;
 
+namespace protodb {
+
 class SequenceFormatSelectionWidget;
 
 class SequenceEditDialog: public QDialog
@@ -49,3 +51,5 @@ private:
 
     SequenceFormatSelectionWidget* m_format_selection_wgt;
 };
+
+} // namespace protodb

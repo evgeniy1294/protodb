@@ -3,6 +3,8 @@
 #include <QSortFilterProxyModel>
 #include <sol/sol.hpp>
 
+namespace protodb {
+
 class LogProxyModel: public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -28,3 +30,5 @@ private:
     sol::protected_function m_accept;
     bool m_bypass;
 };
+
+} // namespace protodb

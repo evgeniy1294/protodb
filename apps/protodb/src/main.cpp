@@ -11,6 +11,8 @@
 #include <QPluginLoader>
 #include <QDebug>
 
+using namespace protodb;
+
 void registerMetaType();
 
 int main(int argc, char *argv[])
@@ -28,7 +30,7 @@ int main(int argc, char *argv[])
     auto& main_class = MainClass::instance();
         main_class.init();
 
-    MainWindow w;
+    protodb::MainWindow w;
         w.restoreState();
         w.showMaximized();
 
@@ -44,6 +46,6 @@ int main(int argc, char *argv[])
 }
 
 void registerMetaType() {
-    qRegisterMetaType<Sequence>();
-    qRegisterMetaType< QSharedPointer<Sequence> >();
+    qRegisterMetaType<protodb::Sequence>();
+    qRegisterMetaType< QSharedPointer<protodb::Sequence> >();
 }

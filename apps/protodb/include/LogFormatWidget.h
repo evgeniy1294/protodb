@@ -6,6 +6,8 @@
 class QCheckBox;
 class QLineEdit;
 
+namespace protodb {
+
 class LogFormatWidget: public QWidget, public Configurable
 {
 public:
@@ -31,3 +33,4 @@ private:
     QLineEdit* m_separator;
 };
 
+} // namespace protodb

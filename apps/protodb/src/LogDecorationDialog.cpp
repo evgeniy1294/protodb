@@ -15,6 +15,8 @@
 #include <QCheckBox>
 #include <QLineEdit>
 
+using namespace protodb;
+
 LogDecorationDialog::LogDecorationDialog(QWidget *parent)
     : QDialog(parent)
 {

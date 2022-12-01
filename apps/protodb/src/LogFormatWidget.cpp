@@ -8,6 +8,8 @@
 #include <QCheckBox>
 #include <QLineEdit>
 
+using namespace protodb;
+
 LogFormatWidget::LogFormatWidget(QWidget* aParent)
     : QWidget(aParent)
 {

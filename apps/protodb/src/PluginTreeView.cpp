@@ -12,6 +12,9 @@
 #include <QSpacerItem>
 #include <QGridLayout>
 
+namespace protodb
+{
+
 PluginTreeView::PluginTreeView(QWidget* parent)
     : QTreeView(parent)
 {
@@ -115,3 +118,5 @@ void PluginTreeView::connectSignals()
         }
     });
 }
+
+} // namespace protodb

@@ -4,6 +4,7 @@
 
 #include <QApplication>
 
+using namespace protodb;
 
 LogDecorator::LogDecorator()
 {

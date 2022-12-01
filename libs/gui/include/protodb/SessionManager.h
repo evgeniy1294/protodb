@@ -6,6 +6,8 @@
 #include <QDateTime>
 #include <QFileInfoList>
 
+namespace protodb {
+
 class SessionManager: public QAbstractTableModel {
     Q_OBJECT
     Q_DISABLE_COPY(SessionManager)
@@ -105,3 +107,5 @@ protected:
 
     nlohmann::json m_user_data;
 };
+
+} // namespace protodb

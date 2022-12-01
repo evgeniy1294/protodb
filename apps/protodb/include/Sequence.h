@@ -5,7 +5,9 @@
 #include <QByteArray>
 #include <QUuid>
 
-class MainClass;
+
+namespace protodb  {
+
 class SequenceFormatter;
 
 class Sequence {
@@ -17,8 +19,6 @@ public:
     static const QString DefaultFormatId;
 
 public:
-    friend class MainClass;
-
     Sequence()
      : m_uuid(QUuid::createUuid())
      , m_name()
@@ -96,5 +96,7 @@ private:
     QString m_binded_name;
 };
 
-Q_DECLARE_METATYPE(Sequence)
-Q_DECLARE_METATYPE(QSharedPointer<Sequence>)
+} // namespace protodb
+
+Q_DECLARE_METATYPE(protodb::Sequence)
+Q_DECLARE_METATYPE(QSharedPointer<protodb::Sequence>)

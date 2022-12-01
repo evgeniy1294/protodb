@@ -4,6 +4,8 @@
 
 #include <QSerialPort>
 
+using namespace protodb;
+
 static QSerialPort::DataBits toDataBits(const QString& str) {
     if (str == "5") return QSerialPort::Data5;
     if (str == "6") return QSerialPort::Data6;

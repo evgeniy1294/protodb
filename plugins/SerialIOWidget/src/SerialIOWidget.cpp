@@ -12,7 +12,7 @@
 #include <QSerialPortInfo>
 #include <QIntValidator>
 
-
+using namespace protodb;
 
 SerialIOWidget::SerialIOWidget(QWidget* parent)
     : IOWidget(parent)

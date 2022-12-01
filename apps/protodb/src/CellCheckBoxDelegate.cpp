@@ -2,6 +2,7 @@
 
 #include <QApplication>
 
+using namespace protodb;
 
 CellCheckBoxDelegate::CellCheckBoxDelegate(QObject* parent)
     : QStyledItemDelegate(parent)

@@ -2,6 +2,8 @@
 
 #include <QStyledItemDelegate>
 
+namespace protodb {
+
 class CellCheckBoxDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -22,3 +24,4 @@ private:
     QString m_text;
 };
 
+} // namespace protodb

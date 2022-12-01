@@ -18,6 +18,8 @@
 
 #include <QRegularExpression>
 
+using namespace protodb;
+
 MainClass::MainClass()
     : m_incoming_sequences(new SequenceModel(this))
     , m_outgoing_sequences(new SequenceModel(this))

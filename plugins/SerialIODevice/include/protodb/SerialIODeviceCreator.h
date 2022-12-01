@@ -4,10 +4,12 @@
 
 #include <QIODevice>
 
+namespace protodb {
+
 class SerialIODeviceCreator: public QObject, public IODeviceCreator
 {
     Q_OBJECT
-    Q_INTERFACES(IODeviceCreator)
+    Q_INTERFACES(protodb::IODeviceCreator)
     Q_PLUGIN_METADATA(IID "ProtoDb.SerialIODeviceCreator" FILE "SerialIODevicePluginMetadata.json")
 
 public:
@@ -24,3 +26,5 @@ public:
     QIODevice* create() const override;
     QIODevice* create(const nlohmann::json& json) const override;
 };
+
+} // namespace protodb

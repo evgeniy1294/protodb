@@ -2,6 +2,9 @@
 
 #include <QtCore>
 
+namespace protodb
+{
+
 class FactoryAbstract;
 
 class GlobalFactoryStorage {
@@ -55,3 +58,5 @@ QPointer< T > GlobalFactoryStorage::factoriesByType( ) noexcept
 
     return ret;
 }
+
+} // namespace protodb

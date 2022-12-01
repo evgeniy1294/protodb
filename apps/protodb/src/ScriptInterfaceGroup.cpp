@@ -2,6 +2,8 @@
 
 #include <QSharedPointer>
 
+using namespace protodb;
+
 ScriptMultiInterface::ScriptMultiInterface(QObject* parent)
     : ScriptInterface(parent)
     , m_interface_id(-1) { }

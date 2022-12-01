@@ -5,6 +5,9 @@
 
 class QIODevice;
 
+namespace protodb
+{
+
 class IODeviceCreator: public CreatorAbstract
 {
 public:
@@ -14,4 +17,6 @@ public:
     virtual QIODevice* create(const nlohmann::json&) const = 0;
 };
 
-Q_DECLARE_INTERFACE(IODeviceCreator, "ProtoDb.IODeviceCreatorInterface")
+} // namespace protodb
+
+Q_DECLARE_INTERFACE(protodb::IODeviceCreator, "ProtoDb.IODeviceCreatorInterface")

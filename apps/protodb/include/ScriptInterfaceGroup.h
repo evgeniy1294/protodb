@@ -2,6 +2,8 @@
 
 #include <protodb/ScriptInterface.h>
 
+namespace protodb {
+
 class ScriptMultiInterface final: public ScriptInterface
 {
     Q_OBJECT
@@ -39,3 +41,5 @@ private:
     QString m_script_file;
     int m_interface_id;
 };
+
+} // namespace protodb

@@ -3,6 +3,8 @@
 #include <protodb/creators/IOWidgetCreatorInterface.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
+using namespace protodb;
+
 IOWidgetFactory::IOWidgetFactory(QObject* parent)
     : FactoryAbstract(parent)
 {

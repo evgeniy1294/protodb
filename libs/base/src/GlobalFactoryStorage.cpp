@@ -1,6 +1,8 @@
 #include "factories/GlobalFactoryStorage.h"
 #include "factories/FactoryAbstract.h"
 
+using namespace protodb;
+
 bool GlobalFactoryStorage::addFactory(const QString& name, const QPointer<FactoryAbstract>& factory)
 {
     if( ! factory || storage().contains( name ) )

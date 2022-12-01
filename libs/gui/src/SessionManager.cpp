@@ -11,6 +11,8 @@
 
 #include <filesystem>
 
+using namespace protodb;
+
 SessionManager::SessionManager(QObject *parent)
     : QAbstractTableModel(parent)
     , m_user_data(nlohmann::json::object())

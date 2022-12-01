@@ -4,6 +4,10 @@
 
 class QDataWidgetMapper;
 class QSortFilterProxyModel;
+
+namespace protodb
+{
+
 class PluginManager;
 class PluginDetailDialog;
 
@@ -34,3 +38,5 @@ private:
     PluginManager* m_pm;
     PluginDetailDialog* m_detail_dialog;
 };
+
+} // namespace protodb

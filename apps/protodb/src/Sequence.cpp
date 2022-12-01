@@ -4,6 +4,8 @@
 #include <QSharedPointer>
 #include <QRegularExpression>
 
+namespace protodb  {
+
 const QString Sequence::DefaultFormatId = "HEX";
 QStringList Sequence::m_supported_formats = {"HEX", "ASCII"};
 QList< QSharedPointer<SequenceFormatter> > Sequence::m_formatters = {};
@@ -65,3 +67,5 @@ bool Sequence::format() {
     m_cached = !m_bytes.isEmpty();
     return m_cached;
 }
+
+} // namespace protodb

@@ -6,6 +6,8 @@
 #include <QDir>
 #include <QJsonArray>
 
+namespace protodb {
+
 class PluginManagerPrivate
 {
     struct PluginInfo {
@@ -841,3 +843,6 @@ void PluginManager::mark_fault(const QString &group, QPluginLoader *loader)
         }
     }
 }
+
+
+} // namespace protodb

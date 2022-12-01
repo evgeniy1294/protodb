@@ -4,8 +4,9 @@
 #include "CellCheckBoxDelegate.h"
 #include "CellButtonDelegate.h"
 
-
 #include <QHeaderView>
+
+using namespace protodb;
 
 SequenceTableView::SequenceTableView(QWidget *parent)
 {

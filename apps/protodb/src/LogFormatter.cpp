@@ -1,6 +1,8 @@
 #include "LogFormatter.h"
 #include <protodb/utils/JsonUtils.h>
 
+namespace protodb {
+
 const QString LogFormatter::DefaultTimeFormat = "hh:mm:ss.zzz";
 const LogFormatter::ByteFormat LogFormatter::DefaultByteFormat = LogFormatter::HexFormat;
 const char LogFormatter::DefaultSeparator = ' ';
@@ -192,6 +194,6 @@ QString LogFormatter::defaultFormat(const Logger::Event &event)
         return ret;
 }
 
-
+} // namespace protodb
 
 

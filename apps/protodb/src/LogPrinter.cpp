@@ -1,6 +1,8 @@
 #include "LogPrinter.h"
 #include "LogFormatter.h"
 
+using namespace protodb;
+
 LogPrinter::LogPrinter(QObject *parent)
     : QObject(parent)
     , m_fmt(new LogFormatter)

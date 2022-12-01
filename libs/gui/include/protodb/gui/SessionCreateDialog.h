@@ -2,12 +2,15 @@
 
 #include <QDialog>
 
-class SessionManager;
 class QLineEdit;
 class QPlainTextEdit;
 class QAbstractButton;
 class QDialogButtonBox;
 class QLabel;
+
+namespace protodb {
+
+class SessionManager;
 
 class SessionCreateDialog: public QDialog
 {
@@ -42,3 +45,5 @@ private:
     QLineEdit* m_name;
     QPlainTextEdit* m_desc;
 };
+
+} // namespace protodb

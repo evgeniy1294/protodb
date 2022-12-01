@@ -4,6 +4,8 @@
 
 class QMouseEvent;
 
+namespace protodb {
+
 class isa_menu : public QMenu
 {
   Q_OBJECT
@@ -15,4 +17,4 @@ public:
   void mouseReleaseEvent( QMouseEvent * event ) override;
 };
 
-
+} // namespace protodb

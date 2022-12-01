@@ -1,6 +1,13 @@
 #pragma once
 
-#include <QtCore>
+#include <QObject>
+#include <QSharedPointer>
+#include <QPointer>
+#include <QString>
+#include <QList>
+#include <QHash>
+
+namespace protodb {
 
 class CreatorAbstract;
 
@@ -38,3 +45,5 @@ protected:
 private:
     Q_DISABLE_COPY(FactoryAbstract)
 };
+
+} // namespace protodb

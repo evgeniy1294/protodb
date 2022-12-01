@@ -2,10 +2,12 @@
 
 #include <protodb/creators/IOWidgetCreatorInterface.h>
 
+namespace protodb {
+
 class SerialIOWIdgetCreator: public QObject, public IOWidgetCreator
 {
     Q_OBJECT
-    Q_INTERFACES(IOWidgetCreator)
+    Q_INTERFACES(protodb::IOWidgetCreator)
     Q_PLUGIN_METADATA(IID "ProtoDb.SerialIOWidgetCreator" FILE "SerialIOWidgetPluginMetadata.json")
 
 public:
@@ -22,3 +24,5 @@ public:
     IOWidget* create() const override;
     IOWidget* create(const nlohmann::json& json) const override;
 };
+
+} // namespace protodb

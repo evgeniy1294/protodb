@@ -1,5 +1,6 @@
 #include "configurable/Configurable.h"
 
+using namespace protodb;
 
 QString Configurable::gcid() const
 {

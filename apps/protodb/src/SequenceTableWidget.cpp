@@ -16,7 +16,7 @@
 #include <QMenu>
 #include <QSortFilterProxyModel>
 
-
+using namespace protodb;
 
 SequenceTableWidget::SequenceTableWidget(QWidget* parent)
     : QWidget(parent)

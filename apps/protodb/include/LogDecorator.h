@@ -6,6 +6,8 @@
 #include <QColor>
 #include <QFont>
 
+namespace protodb {
+
 class LogDecorator
 {
 public:
@@ -49,3 +51,5 @@ private:
     QMap<Logger::Channel, QColor> m_ch_colors;
     QMap<Logger::Channel, QFont>  m_ch_fonts;
 };
+
+} // namespace protodb

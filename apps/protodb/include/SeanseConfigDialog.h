@@ -14,11 +14,15 @@ class QDialogButtonBox;
 class QLineEdit;
 class QVBoxLayout;
 class QGridLayout;
+
+namespace protodb {
+
 class IOWidgetFactory;
 class IOWidget;
 class LogFormatWidget;
 
-class SeanceConfigDialog: public QDialog, public Configurable {
+class SeanceConfigDialog: public QDialog, public Configurable
+{
     Q_OBJECT
 
 public:
@@ -63,3 +67,4 @@ private:
     nlohmann::json m_curr_cfg;
 };
 
+} // namespace protodb

@@ -2,6 +2,9 @@
 
 #include <QObject>
 
+namespace protodb
+{
+
 class ScriptInterface: public QObject
 {
     Q_OBJECT
@@ -38,3 +41,5 @@ signals:
     void sErrorOccuared(QString detail);
     void sPrint(QString text);
 };
+
+} // protodb

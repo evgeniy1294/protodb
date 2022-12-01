@@ -8,6 +8,8 @@
 #include <QVariant>
 #include <QList>
 
+namespace protodb {
+
 class SequenceModel: public QAbstractTableModel
 {
     Q_OBJECT
@@ -65,3 +67,5 @@ private:
     QList< QSharedPointer<Sequence> > m_sequences;
     bool m_mode;
 };
+
+} // namespace protodb

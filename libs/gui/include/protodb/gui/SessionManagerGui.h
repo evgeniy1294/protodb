@@ -14,6 +14,8 @@ class QLineEdit;
 class QSortFilterProxyModel;
 class QItemSelection;
 
+namespace protodb {
+
 class SessionManagerGui: public QDialog
 {
     Q_OBJECT
@@ -56,3 +58,5 @@ private:
     QPushButton*  m_import_btn;
     QPushButton*  m_export_btn;
 };
+
+} // namespace protodb

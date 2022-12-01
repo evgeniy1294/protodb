@@ -1,5 +1,7 @@
 #include "protodb/configurable/ConfigAggregator.h"
 
+using namespace protodb;
+
 ConfigAggregator::ConfigAggregator(QObject* parent)
     : QObject(parent)
     , Configurable()

@@ -5,6 +5,8 @@
 class QComboBox;
 class QValidator;
 
+namespace protodb {
+
 class SerialIOWidget final: public IOWidget
 {
   Q_OBJECT
@@ -34,3 +36,5 @@ private:
     QComboBox* m_open_mode;
     QComboBox* m_device;
 };
+
+} // namespace protodb

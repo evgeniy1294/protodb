@@ -13,6 +13,8 @@ class QPushButton;
 class QDialogButtonBox;
 class QLineEdit;
 
+namespace protodb {
+
 class LogDecorator;
 
 class LogDecorationDialog: public QDialog
@@ -75,3 +77,5 @@ private:
     QLineEdit* m_cmt_font_le;
     QLineEdit* m_attr_font_le;
 };
+
+} // namespace protodb

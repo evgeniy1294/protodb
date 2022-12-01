@@ -4,6 +4,8 @@
 #include <QToolButton>
 #include <QMenu>
 
+using namespace protodb;
+
 ///
 /// \brief isa_tool_bar::isa_tool_bar
 /// \param direction

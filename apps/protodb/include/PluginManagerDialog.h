@@ -6,6 +6,9 @@ class QPushButton;
 class QDialogButtonBox;
 class QAbstractButton;
 class QLineEdit;
+
+namespace protodb {
+
 class PluginTreeView;
 
 class PluginManagerDialog: public QDialog
@@ -29,3 +32,5 @@ private:
     QLineEdit* m_filter_line;
     QPushButton* m_detail_btn;
 };
+
+} // namespace protodb

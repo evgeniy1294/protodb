@@ -3,6 +3,9 @@
 #include "Logger.h"
 
 #include <QObject>
+#include <QFile>
+
+namespace protodb {
 
 class LogFormatter;
 
@@ -43,3 +46,5 @@ private:
     LogFormatter* m_fmt;
     int m_fmt_flags;
 };
+
+} // namespace protodb

@@ -4,6 +4,9 @@
 
 #include <nlohmann/json.hpp>
 
+namespace protodb
+{
+
 class ScriptInterfaceCreator;
 class ScriptInterface;
 
@@ -41,3 +44,4 @@ private:
     QString m_default_cid;
 };
 
+} // namespace protodb

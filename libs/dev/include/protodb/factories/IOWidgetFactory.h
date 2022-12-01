@@ -4,6 +4,9 @@
 
 #include <nlohmann/json.hpp>
 
+namespace protodb
+{
+
 class IOWidgetCreator;
 class IOWidget;
 
@@ -40,3 +43,5 @@ private:
     Q_DISABLE_COPY( IOWidgetFactory )
     QString m_default_cid;
 };
+
+} // namespace protodb

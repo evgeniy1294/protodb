@@ -12,6 +12,8 @@
 #include <QMenu>
 #include <QAction>
 
+using namespace protodb;
+
 LogTableView::LogTableView(QWidget *parent)
     : QTableView(parent)
 {

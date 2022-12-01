@@ -2,6 +2,8 @@
 
 #include "protodb/LuaScriptInterface.h"
 
+using namespace protodb;
+
 QString LuaScriptInterfaceCreator::cid() const
 {
     return creatorId();

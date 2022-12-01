@@ -5,6 +5,8 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
+using namespace protodb;
+
 QString NetIODeviceCreator::cid() const
 {
     return creatorId();

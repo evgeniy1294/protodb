@@ -3,6 +3,9 @@
 #include <protodb/configurable/Configurable.h>
 
 #include <QAbstractTableModel>
+#include <QDateTime>
+
+namespace protodb {
 
 class Logger: public QAbstractTableModel
 {
@@ -72,4 +75,6 @@ private:
     QMap<Channel, bool> m_flags;
 };
 
-Q_DECLARE_METATYPE(Logger::Event)
+} // namespace protodb
+
+Q_DECLARE_METATYPE(protodb::Logger::Event)

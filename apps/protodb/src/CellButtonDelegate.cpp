@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <iostream>
 
+using namespace protodb;
 
 CellButtonDelegate::CellButtonDelegate(QObject *parent)
      : QStyledItemDelegate(parent)

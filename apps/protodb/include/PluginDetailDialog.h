@@ -8,6 +8,8 @@ class QLineEdit;
 class QTextBrowser;
 class QAbstractButton;
 
+namespace protodb {
+
 class PluginDetailDialog: public QDialog
 {
     Q_OBJECT
@@ -36,3 +38,5 @@ private:
     QLineEdit* m_location;
     QTextBrowser* m_descr;
 };
+
+} // namespace protodb

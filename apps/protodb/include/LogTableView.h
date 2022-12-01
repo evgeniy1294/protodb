@@ -4,6 +4,9 @@
 
 class QMenu;
 class QAction;
+
+namespace protodb {
+
 class LogDecorationDialog;
 class LogItemDelegate;
 class LogFormatter;
@@ -46,3 +49,5 @@ private:
     LogDecorator* m_decorator;
     LogFormatter* m_formatter;
 };
+
+} // namespace protodb

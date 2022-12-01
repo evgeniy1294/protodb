@@ -3,6 +3,8 @@
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
+using namespace protodb;
+
 ScriptInterfaceFactory::ScriptInterfaceFactory(QObject* parent)
     : FactoryAbstract(parent)
 {

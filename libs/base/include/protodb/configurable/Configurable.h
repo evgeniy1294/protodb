@@ -2,7 +2,9 @@
 
 #include <protodb/utils/JsonBaseUtils.h>
 
-#include <QtCore>
+#include <QString>
+
+namespace protodb {
 
 class Configurable
 {
@@ -26,3 +28,5 @@ public:
     virtual bool writeState( const QString &path, const QString &extension = "json") const;
     virtual bool readState( const QString &path, const QString &extension = "json");
 };
+
+} // namespace protodb

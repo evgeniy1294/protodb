@@ -2,6 +2,10 @@
 
 #include <protodb/configurable/Configurable.h>
 
+#include <QObject>
+
+namespace protodb {
+
 class ConfigAggregator final:
     public QObject,
     public Configurable
@@ -91,3 +95,4 @@ private:
     Section& find_or_create(const QString& prefix, int priority = 50);
 };
 
+} // namespace protodb

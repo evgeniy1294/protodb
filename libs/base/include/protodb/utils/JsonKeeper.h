@@ -2,6 +2,11 @@
 
 #include <protodb/configurable/Configurable.h>
 
+#include <QObject>
+
+namespace protodb
+{
+
 class JsonKeeper final:
     public QObject,
     public Configurable
@@ -36,3 +41,5 @@ private:
     nlohmann::json m_config;
     nlohmann::json m_state;
 };
+
+} // namespace protodb

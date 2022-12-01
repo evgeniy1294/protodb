@@ -17,6 +17,8 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
+using namespace protodb;
+
 LogWidget::LogWidget(QWidget* parent)
   : QWidget(parent)
 {

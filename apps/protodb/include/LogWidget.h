@@ -10,7 +10,7 @@ class QLabel;
 class QLineEdit;
 class QComboBox;
 
-class LuaApi;
+namespace protodb {
 
 class LogTableView;
 class Logger;
@@ -50,8 +50,6 @@ private:
     QLineEdit* m_msg_le;
     QComboBox* m_data_format_cmb;
 
-    LuaApi* m_lua_api;
-
     SeanceConfigDialog* m_conn_dialog;
     Logger* m_log_model;
     LogTableView* m_view;
@@ -59,3 +57,4 @@ private:
 
 };
 
+} // namespace protodb

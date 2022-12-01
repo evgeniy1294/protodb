@@ -2,6 +2,8 @@
 
 #include <protodb/SessionManager.h>
 
+namespace protodb {
+
 class ProtodbSessionManager: public SessionManager
 {
     Q_OBJECT
@@ -16,3 +18,5 @@ private:
     bool load_session(const QString& path_to_folder) override;
     bool save_session(const QString& path_to_folder) override;
 };
+
+} // namespace protodb

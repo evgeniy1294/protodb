@@ -2,6 +2,8 @@
 
 #include <QSpinBox>
 
+using namespace protodb;
+
 CellSpinBoxDelegate::CellSpinBoxDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
     , m_min(0)

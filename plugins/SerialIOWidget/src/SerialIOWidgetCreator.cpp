@@ -1,6 +1,8 @@
 #include "protodb/SerialIOWidgetCreator.h"
 #include "protodb/SerialIOWidget.h"
 
+using namespace protodb;
+
 QString SerialIOWIdgetCreator::cid() const
 {
     return creatorId();

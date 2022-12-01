@@ -4,6 +4,8 @@
 
 #include <sol/sol.hpp>
 
+namespace protodb {
+
 class LuaScriptInterface final: public ScriptInterface
 {
     Q_OBJECT
@@ -40,3 +42,5 @@ private:
     sol::protected_function m_transmit;
     sol::protected_function m_received;
 };
+
+} // namespace protodb

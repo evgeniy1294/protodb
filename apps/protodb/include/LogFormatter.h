@@ -7,6 +7,8 @@
 #include <QFont>
 #include <QMap>
 
+namespace protodb {
+
 class LogFormatter
 {
 public:
@@ -69,4 +71,4 @@ private:
     char m_separator;
 };
 
-
+} // namespace protodb

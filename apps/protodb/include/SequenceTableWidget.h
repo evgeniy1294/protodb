@@ -9,6 +9,9 @@ class QMenu;
 class QPushButton;
 class QLineEdit;
 class QSortFilterProxyModel;
+
+namespace protodb {
+
 class SequenceModel;
 class SequenceTableView;
 class SequenceEditDialog;
@@ -54,4 +57,5 @@ private:
     SequenceEditDialog* m_edit_dialog;
 };
 
+} // namespace protodb
 

@@ -2,6 +2,8 @@
 
 #include <protodb/utils/JsonBaseUtils.h>
 
+using namespace protodb;
+
 Logger::Logger(QObject *parent)
     : QAbstractTableModel(parent)
 {

@@ -12,6 +12,7 @@
 #include <QIntValidator>
 #include <QHostAddress>
 
+using namespace protodb;
 
 NetIOWidget::NetIOWidget(QWidget* parent)
     : IOWidget(parent)

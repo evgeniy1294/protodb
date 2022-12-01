@@ -2,6 +2,8 @@
 
 #include <QTableView>
 
+namespace protodb {
+
 class CellButtonDelegate;
 class CellCheckBoxDelegate;
 class CellSpinBoxDelegate;
@@ -20,3 +22,4 @@ private:
     CellSpinBoxDelegate*  m_spinbox_delegate;
 };
 
+} // namespace protodb

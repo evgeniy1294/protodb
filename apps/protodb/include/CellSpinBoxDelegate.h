@@ -2,6 +2,8 @@
 
 #include <QStyledItemDelegate>
 
+namespace protodb {
+
 class CellSpinBoxDelegate: public QStyledItemDelegate
 {
     Q_OBJECT
@@ -42,3 +44,5 @@ private:
     QString m_suffix;
     QString m_special_text;
 };
+
+} // namespace protodb

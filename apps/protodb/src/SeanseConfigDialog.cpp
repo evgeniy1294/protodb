@@ -19,6 +19,8 @@
 #include <QLabel>
 #include <QAction>
 
+using namespace protodb;
+
 SeanceConfigDialog::SeanceConfigDialog(QWidget* aParent)
     : QDialog(aParent)
     , m_curr_cfg(nlohmann::json::object())

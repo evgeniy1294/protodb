@@ -3,6 +3,8 @@
 #include <QAbstractItemModel>
 #include <QPluginLoader>
 
+namespace protodb {
+
 class PluginManagerPrivate;
 
 class PluginManager: public QAbstractItemModel
@@ -98,3 +100,5 @@ QList<T*> PluginManager::getPlugins( const QString &group )
 
     return ret;
 }
+
+} // namespace protodb

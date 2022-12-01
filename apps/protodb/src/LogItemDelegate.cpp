@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <QApplication>
 
+using namespace protodb;
+
 LogItemDelegate::LogItemDelegate(QObject* aParent)
     : QStyledItemDelegate(aParent)
     , m_fmt(nullptr)

@@ -7,7 +7,7 @@ set(LIBRARY_DIST_SUFFIX "")
 set(${TARGET}_VERSION "0.0.1")
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
-option(${TARGET}_INSTALL "Generate the install target" OFF)
+option(${TARGET}_INSTALL "Generate the install target" ON)
 
 set(CMAKE_AUTOMOC ON)
 

@@ -5,6 +5,8 @@
 class QLineEdit;
 class QComboBox;
 
+namespace protodb {
+
 class NetIOWidget final: public IOWidget
 {
   Q_OBJECT
@@ -30,3 +32,4 @@ private:
     QComboBox* m_protocol;
 };
 
+} // namespace protodb

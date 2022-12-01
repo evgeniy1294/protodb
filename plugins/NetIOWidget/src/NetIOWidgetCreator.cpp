@@ -1,6 +1,8 @@
 #include "protodb/NetIOWidgetCreator.h"
 #include "protodb/NetIOWidget.h"
 
+using namespace protodb;
+
 QString NetIOWIdgetCreator::cid() const
 {
     return creatorId();

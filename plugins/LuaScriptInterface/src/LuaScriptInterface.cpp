@@ -5,6 +5,8 @@
 #include <iostream>
 #include <filesystem>
 
+using namespace protodb;
+
 static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
     // L is the lua state, which you can wrap in a state_view if necessary
     // maybe_exception will contain exception, if it exists

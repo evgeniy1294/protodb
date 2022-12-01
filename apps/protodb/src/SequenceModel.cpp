@@ -3,6 +3,8 @@
 #include <QPointer>
 #include <QDebug>
 
+using namespace protodb;
+
 SequenceModel::SequenceModel(QObject* parent)
     : QAbstractTableModel(parent)
     , m_mode(false)

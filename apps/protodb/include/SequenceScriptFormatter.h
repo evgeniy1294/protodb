@@ -4,6 +4,8 @@
 
 #include <QSharedPointer>
 
+namespace protodb {
+
 class ScriptInterface;
 
 class SequenceScriptFormatter: public SequenceFormatter
@@ -20,3 +22,5 @@ public:
 private:
     QSharedPointer<ScriptInterface> m_interface;
 };
+
+} // namespace protodb

@@ -2,6 +2,8 @@
 
 #include <protodb/ScriptInterface.h>
 
+using namespace protodb;
+
 QString SequenceScriptFormatter::name() const
 {
     return m_interface->syntaxId();

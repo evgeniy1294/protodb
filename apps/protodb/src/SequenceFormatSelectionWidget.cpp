@@ -5,6 +5,8 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 
+using namespace protodb;
+
 SequenceFormatSelectionWidget::SequenceFormatSelectionWidget(QObject* parent)
 {
     create_gui();

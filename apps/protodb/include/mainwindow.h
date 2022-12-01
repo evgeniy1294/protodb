@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include "tool_bar.h"
 #include <QMainWindow>
@@ -7,6 +6,8 @@
 namespace ads {
   class CDockManager;
 }
+
+namespace protodb {
 
 class PluginManagerDialog;
 class SessionManagerGui;
@@ -55,5 +56,4 @@ private:
   SessionManagerGui* m_session_manager_dialog;
 };
 
-
-#endif // MAINWINDOW_H
+} // namespace protodb

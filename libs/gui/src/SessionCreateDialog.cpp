@@ -8,6 +8,8 @@
 #include <QAbstractButton>
 #include <QLabel>
 
+using namespace protodb;
+
 SessionCreateDialog::SessionCreateDialog(QWidget *parent)
     : QDialog(parent)
     , m_mode(CreateMode)

@@ -12,7 +12,7 @@
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 
-
+using namespace protodb;
 
 PluginDetailDialog::PluginDetailDialog(QWidget* parent)
     : QDialog(parent)

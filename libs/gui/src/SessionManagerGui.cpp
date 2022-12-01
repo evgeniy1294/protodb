@@ -14,6 +14,8 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 
+using namespace protodb;
+
 SessionManagerGui::SessionManagerGui(QWidget *parent)
     : QDialog(parent)
 {

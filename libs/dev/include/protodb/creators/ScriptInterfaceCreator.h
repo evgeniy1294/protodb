@@ -3,6 +3,9 @@
 #include <protodb/factories/CreatorAbstract.h>
 #include <nlohmann/json.hpp>
 
+namespace protodb
+{
+
 class ScriptInterface;
 
 class ScriptInterfaceCreator: public CreatorAbstract
@@ -14,4 +17,6 @@ public:
     virtual ScriptInterface* create(const nlohmann::json&) const = 0;
 };
 
-Q_DECLARE_INTERFACE(ScriptInterfaceCreator, "ProtoDb.ScriptInterface")
+} // namespace protodb
+
+Q_DECLARE_INTERFACE(protodb::ScriptInterfaceCreator, "ProtoDb.ScriptInterface")

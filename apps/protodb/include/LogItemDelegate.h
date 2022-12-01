@@ -3,6 +3,8 @@
 #include "Logger.h"
 #include <QStyledItemDelegate>
 
+namespace protodb {
+
 class LogFormatter;
 class LogDecorator;
 
@@ -27,5 +29,5 @@ private:
     LogDecorator* m_dec;
 };
 
-
+} // namespace protodb
 

@@ -11,6 +11,7 @@
 #include <QSortFilterProxyModel>
 #include <QAbstractButton>
 
+using namespace protodb;
 
 PluginManagerDialog::PluginManagerDialog(QWidget* parent)
     : QDialog(parent)

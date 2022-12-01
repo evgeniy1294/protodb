@@ -7,8 +7,12 @@
 
 #include <nlohmann/json.hpp>
 
-class IODeviceCreator;
 class QIODevice;
+
+namespace protodb
+{
+
+class IODeviceCreator;
 
 class IODeviceFactory final: public FactoryAbstract
 {
@@ -44,3 +48,4 @@ private:
     QString m_default_cid;
 };
 
+} // namespace protodb

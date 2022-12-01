@@ -22,6 +22,7 @@
 #include <QInputDialog>
 #include <QSettings>
 
+using namespace protodb;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
