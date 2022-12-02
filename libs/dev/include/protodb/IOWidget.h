@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/configurable/Configurable.h>
 
 #include <QWidget>
@@ -7,7 +9,7 @@
 namespace protodb
 {
 
-class IOWidget: public QWidget, public Configurable
+class PROTODB_DEV_EXPORT IOWidget: public QWidget, public Configurable
 {
     Q_OBJECT
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <QDialog>
 
 class QLineEdit;
@@ -12,7 +14,7 @@ namespace protodb {
 
 class SessionManager;
 
-class SessionCreateDialog: public QDialog
+class PROTODB_GUI_EXPORT SessionCreateDialog: public QDialog
 {
     Q_OBJECT
 public:

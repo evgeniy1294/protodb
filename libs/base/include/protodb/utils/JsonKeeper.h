@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <protodb/configurable/Configurable.h>
 
 #include <QObject>
@@ -7,7 +9,7 @@
 namespace protodb
 {
 
-class JsonKeeper final:
+class PROTODB_BASE_EXPORT JsonKeeper final:
     public QObject,
     public Configurable
 {

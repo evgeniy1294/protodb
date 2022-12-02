@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <QAbstractItemModel>
 #include <QPluginLoader>
 
@@ -7,7 +9,7 @@ namespace protodb {
 
 class PluginManagerPrivate;
 
-class PluginManager: public QAbstractItemModel
+class PROTODB_BASE_EXPORT PluginManager: public QAbstractItemModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginManager)

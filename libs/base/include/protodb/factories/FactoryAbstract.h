@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <QObject>
 #include <QSharedPointer>
 #include <QPointer>
@@ -11,7 +13,7 @@ namespace protodb {
 
 class CreatorAbstract;
 
-class FactoryAbstract: public QObject
+class PROTODB_BASE_EXPORT FactoryAbstract: public QObject
 {
     Q_OBJECT
 

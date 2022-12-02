@@ -1,12 +1,14 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QString>
 
 namespace protodb {
 
-class Configurable
+class PROTODB_BASE_EXPORT Configurable
 {
 public:
     // Creator ID for widget factory

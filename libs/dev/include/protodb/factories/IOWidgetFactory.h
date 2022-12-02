@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/FactoryAbstract.h>
 
 #include <nlohmann/json.hpp>
@@ -10,7 +12,7 @@ namespace protodb
 class IOWidgetCreator;
 class IOWidget;
 
-class IOWidgetFactory final: public FactoryAbstract
+class PROTODB_DEV_EXPORT IOWidgetFactory final: public FactoryAbstract
 {
     Q_OBJECT
 

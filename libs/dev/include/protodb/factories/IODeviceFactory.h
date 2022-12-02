@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/FactoryAbstract.h>
 
 #include <QString>
@@ -14,7 +16,7 @@ namespace protodb
 
 class IODeviceCreator;
 
-class IODeviceFactory final: public FactoryAbstract
+class PROTODB_DEV_EXPORT IODeviceFactory final: public FactoryAbstract
 {
     Q_OBJECT
 

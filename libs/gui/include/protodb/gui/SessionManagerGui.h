@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <protodb/SessionManager.h>
 
 #include <QDialog>
@@ -16,7 +18,7 @@ class QItemSelection;
 
 namespace protodb {
 
-class SessionManagerGui: public QDialog
+class PROTODB_GUI_EXPORT SessionManagerGui: public QDialog
 {
     Q_OBJECT
 

@@ -1,8 +1,11 @@
 #pragma once
 
-#include <QtCore>
+#include <protodb/export/base_cfg.hpp>
 
-class FsIcon final: public QString {
+#include <qmetatype.h>
+#include <QString>
+
+class PROTODB_BASE_EXPORT FsIcon final: public QString {
 public:
     FsIcon(const QString& str): QString(str) {}
     FsIcon(const char* str): QString(str) {}

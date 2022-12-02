@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <QString>
 #include <QVersionNumber>
 #include <QtPlugin>
@@ -19,7 +21,7 @@
 namespace protodb
 {
 
-class CreatorAbstract
+class PROTODB_BASE_EXPORT CreatorAbstract
 {
 public:
     virtual ~CreatorAbstract() = default;

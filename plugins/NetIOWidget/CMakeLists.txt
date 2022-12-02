@@ -84,10 +84,10 @@ if(${TARGET}_INSTALL)
     # (by default it's /usr/local or C:/Program Files/${PROJECT_NAME})
     #---------------------------------------------------------------------------------------
 
-    install(FILES ${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET}")
+    #install(FILES ${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET}")
     install(TARGETS ${TARGET} EXPORT ${TARGET}
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}${LIBRARY_DIST_SUFFIX}/plugins"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}/plugins"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET}"
     )
 
@@ -96,19 +96,19 @@ if(${TARGET}_INSTALL)
     #---------------------------------------------------------------------------------------
 
     # set(project_config_in "${CMAKE_CURRENT_BINARY_DIR}/cmake/${TARGET}Config.cmake.in")
-    set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake")
-    set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}ConfigVersion.cmake")
-    set(config_targets_file "${TARGET}ConfigTargets.cmake")
-    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET}/cmake")
+    #set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}Config.cmake")
+    #set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}ConfigVersion.cmake")
+    #set(config_targets_file "${TARGET}ConfigTargets.cmake")
+    #set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET}/cmake")
 
-    install(EXPORT ${TARGET}
-            DESTINATION ${export_dest_dir}
-            NAMESPACE ${TARGET_NAMESPACE}::
-            FILE ${config_targets_file})
+    #install(EXPORT ${TARGET}
+    #        DESTINATION ${export_dest_dir}
+    #        NAMESPACE ${TARGET_NAMESPACE}::
+    #        FILE ${config_targets_file})
 
-    include(CMakePackageConfigHelpers)
-    # configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-    write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
-    install(FILES "${version_config_file}" DESTINATION "${export_dest_dir}")
+    #include(CMakePackageConfigHelpers)
+    ## configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+    #write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
+    #install(FILES "${version_config_file}" DESTINATION "${export_dest_dir}")
 
 endif()

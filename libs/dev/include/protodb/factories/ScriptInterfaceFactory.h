@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/FactoryAbstract.h>
 
 #include <nlohmann/json.hpp>
@@ -10,7 +12,7 @@ namespace protodb
 class ScriptInterfaceCreator;
 class ScriptInterface;
 
-class ScriptInterfaceFactory final: public FactoryAbstract
+class PROTODB_DEV_EXPORT ScriptInterfaceFactory final: public FactoryAbstract
 {
     Q_OBJECT
 

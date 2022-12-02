@@ -51,7 +51,7 @@ QString LuaScriptInterface::fileExtention() const
 
 QString LuaScriptInterface::syntaxId() const
 {
-    return "lua";
+    return "LUA";
 }
 
 void LuaScriptInterface::print(const char* str)
@@ -109,7 +109,6 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
         "function compile(bytes) \n %1 \n end"
     };
 
-    QByteArray ret;
     sol::state compiler;
 
     if (code.length() != 0) {
@@ -119,12 +118,24 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
         sol::protected_function_result pfr =
                 compiler.safe_script(m_template.arg(code).toStdString(), &sol::script_pass_on_error);
 
+        compiler["vec"] = std::vector<uint8_t>();
+
         if (pfr.valid()) {
-            pfr = compiler["compile"](ret);
+            pfr = compiler["compile"]( compiler["vec"] );
+
+            if (pfr.valid()) {
+                std::vector<uint8_t>& bytes = compiler["vec"];
+                return QByteArray(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+            }
+        }
+
+        if (!pfr.valid()) {
+            sol::error err = pfr;
+            std::cout << err.what() << std::endl;
         }
     }
 
-    return ret;
+    return QByteArray();
 }
 
 bool LuaScriptInterface::handleDataEvent(Event event, QByteArray& bytes)

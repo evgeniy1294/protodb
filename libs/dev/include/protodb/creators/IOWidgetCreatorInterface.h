@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/CreatorAbstract.h>
 
 #include <QtPlugin>
@@ -9,7 +11,7 @@ namespace protodb {
 
 class IOWidget;
 
-class IOWidgetCreator: public CreatorAbstract
+class PROTODB_DEV_EXPORT IOWidgetCreator: public CreatorAbstract
 {
 public:
     virtual ~IOWidgetCreator() override = default;

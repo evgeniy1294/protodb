@@ -1,7 +1,10 @@
 #pragma once
+
+#include <protodb/export/base_cfg.hpp>
+
 #include <QByteArray>
 
-class SolByteArrayWrapper {
+class PROTODB_BASE_EXPORT SolByteArrayWrapper {
 public:
     // QByteArray has char value type, but we can't use it in sol
     // We use qt-like declarations

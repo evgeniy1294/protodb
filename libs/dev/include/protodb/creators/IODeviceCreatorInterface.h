@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/CreatorAbstract.h>
 #include <nlohmann/json.hpp>
 
@@ -8,7 +10,7 @@ class QIODevice;
 namespace protodb
 {
 
-class IODeviceCreator: public CreatorAbstract
+class PROTODB_DEV_EXPORT IODeviceCreator: public CreatorAbstract
 {
 public:
     virtual ~IODeviceCreator() override = default;

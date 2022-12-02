@@ -1,11 +1,13 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <QObject>
 
 namespace protodb
 {
 
-class ScriptInterface: public QObject
+class PROTODB_DEV_EXPORT ScriptInterface: public QObject
 {
     Q_OBJECT
 

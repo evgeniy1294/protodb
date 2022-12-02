@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QAbstractTableModel>
@@ -8,7 +10,7 @@
 
 namespace protodb {
 
-class SessionManager: public QAbstractTableModel {
+class PROTODB_GUI_EXPORT SessionManager: public QAbstractTableModel {
     Q_OBJECT
     Q_DISABLE_COPY(SessionManager)
 

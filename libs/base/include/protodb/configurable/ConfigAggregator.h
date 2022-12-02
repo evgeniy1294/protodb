@@ -1,12 +1,14 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <protodb/configurable/Configurable.h>
 
 #include <QObject>
 
 namespace protodb {
 
-class ConfigAggregator final:
+class PROTODB_BASE_EXPORT ConfigAggregator final:
     public QObject,
     public Configurable
 {

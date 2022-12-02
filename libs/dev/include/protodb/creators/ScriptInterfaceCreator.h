@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <protodb/factories/CreatorAbstract.h>
 #include <nlohmann/json.hpp>
 
@@ -8,7 +10,7 @@ namespace protodb
 
 class ScriptInterface;
 
-class ScriptInterfaceCreator: public CreatorAbstract
+class PROTODB_DEV_EXPORT ScriptInterfaceCreator: public CreatorAbstract
 {
 public:
     virtual ~ScriptInterfaceCreator() override = default;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <QtCore>
 
 namespace protodb
@@ -7,7 +9,7 @@ namespace protodb
 
 class FactoryAbstract;
 
-class GlobalFactoryStorage {
+class PROTODB_BASE_EXPORT GlobalFactoryStorage {
 public:
     static bool addFactory( const QString &name, const QPointer< FactoryAbstract > &factory );
     static QPointer< FactoryAbstract > getFactory( const QString &name ) noexcept;

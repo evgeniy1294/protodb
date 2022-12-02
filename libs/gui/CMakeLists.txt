@@ -9,22 +9,31 @@ set(LIBRARY_DIST_SUFFIX "")
 set(${TARGET}_VERSION "0.0.1")
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
-option(${TARGET}_INSTALL "Generate the install target" OFF)
+option(${TARGET}_INSTALL "Generate the install target" ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # ------------ [ Sources ] ------------
 
-set( BaseHeaders
-    include/protodb/SessionManager.h
+set(
+  BaseHeaders
+      include/protodb/SessionManager.h
+)
+
+set(
+  UtilsHeaders
     include/protodb/utils/JsonUtils.h
     include/protodb/utils/MetaTypeUtils.h
+)
+
+set(
+  GuiHeaders
     include/protodb/gui/SessionManagerGui.h
     include/protodb/gui/SessionCreateDialog.h
 )
 
-set( BaseSources
+set( GuiSources
     src/JsonUtils.cpp
     src/MetaTypeUtils.cpp
     src/SessionManager.cpp
@@ -32,14 +41,16 @@ set( BaseSources
     src/SessionCreateDialog.cpp
 )
 
-set( BaseResources
+set( GuiResources
     resources/resources.qrc
 )
 
 set(SOURCES_LIST
     ${BaseHeaders}
-    ${BaseSources}
-    ${BaseResources}
+    ${UtilsHeaders}
+    ${GuiHeaders}
+    ${GuiSources}
+    ${GuiResources}
 )
 
 add_library(${TARGET} SHARED)
@@ -52,7 +63,10 @@ add_library(${TARGET_NAMESPACE}::${TARGET} ALIAS ${TARGET})
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp)
+generate_export_header(${TARGET}
+      EXPORT_FILE_NAME "${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export/${TARGET}_cfg.hpp"
+      EXPORT_MACRO_NAME PROTODB_GUI_EXPORT
+)
 
 # ------------ [ Depends ] ------------
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
@@ -87,7 +101,11 @@ target_include_directories(${TARGET} PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/>
 )
 
-target_include_directories( ${TARGET} PRIVATE include/${TARGET_NAMESPACE} )
+target_include_directories(
+  ${TARGET} PRIVATE
+      include/${TARGET_NAMESPACE}
+      ${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}export/
+)
 
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")
@@ -96,12 +114,14 @@ if(${TARGET}_INSTALL)
     # if we plan to export built library to CMAKE_INSTALL_PREFIX
     # (by default it's /usr/local or C:/Program Files/${PROJECT_NAME})
     #---------------------------------------------------------------------------------------
-
-    install(FILES ${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET}")
+    install(FILES ${BaseHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}" COMPONENT devel)
+    install(FILES ${UtilsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/utils" COMPONENT devel)
+    install(FILES ${GuiHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/gui" COMPONENT devel)
+    install(FILES "${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}/${TARGET_NAMESPACE}/export/${TARGET}_cfg.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export")
     install(TARGETS ${TARGET} EXPORT ${TARGET}
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_BINDIR}${LIBRARY_DIST_SUFFIX}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
     )
 
     #---------------------------------------------------------------------------------------
@@ -112,7 +132,7 @@ if(${TARGET}_INSTALL)
     set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config_version.cmake")
     set(config_targets_file "${TARGET}_config_targets.cmake")
-    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET}/cmake")
+    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}/cmake")
 
     install(EXPORT ${TARGET}
             DESTINATION ${export_dest_dir}
