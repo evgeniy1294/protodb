@@ -29,9 +29,6 @@ set(SOURCES_LIST
     src/main.cpp
     src/mainwindow.cpp
     src/menu.cpp
-    src/PluginDetailDialog.cpp
-    src/PluginManagerDialog.cpp
-    src/PluginTreeView.cpp
     src/Sequence.cpp
     src/SequenceScriptFormatter.cpp
     src/SequenceModel.cpp
@@ -63,9 +60,6 @@ set(HEADERS_LIST
     include/LogWidget.h
     include/mainwindow.h
     include/menu.h
-    include/PluginDetailDialog.h
-    include/PluginManagerDialog.h
-    include/PluginTreeView.h
     include/Sequence.h
     include/SequenceFormatter.h
     include/SequenceScriptFormatter.h

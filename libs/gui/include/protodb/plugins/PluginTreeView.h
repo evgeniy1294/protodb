@@ -9,7 +9,6 @@ namespace protodb
 {
 
 class PluginManager;
-class PluginDetailDialog;
 
 class PluginTreeView: public QTreeView
 {
@@ -34,9 +33,7 @@ private:
 
 private:
     QSortFilterProxyModel* m_fm;
-    QDataWidgetMapper* m_mapper;
     PluginManager* m_pm;
-    PluginDetailDialog* m_detail_dialog;
 };
 
 } // namespace protodb

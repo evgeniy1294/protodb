@@ -2,8 +2,6 @@
 
 #include <protodb/export/gui_cfg.hpp>
 
-#include <protodb/SessionManager.h>
-
 #include <QDialog>
 
 class QTableView;
@@ -17,6 +15,8 @@ class QSortFilterProxyModel;
 class QItemSelection;
 
 namespace protodb {
+
+class SessionManager;
 
 class PROTODB_GUI_EXPORT SessionManagerGui: public QDialog
 {

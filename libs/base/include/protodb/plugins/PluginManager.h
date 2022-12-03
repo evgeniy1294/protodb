@@ -24,6 +24,7 @@ public:
         kColVendor,
         kColDescription,
         kColFile,
+        kColRelations,
 
         kColCount
     };

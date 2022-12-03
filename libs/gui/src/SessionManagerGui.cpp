@@ -1,5 +1,6 @@
-#include <protodb/gui/SessionManagerGui.h>
-#include <protodb/gui/SessionCreateDialog.h>
+#include "protodb/sessions/SessionManagerGui.h"
+#include "protodb/sessions/SessionCreateDialog.h"
+#include <protodb/sessions/SessionManager.h>
 
 #include <QTableView>
 #include <QTextBrowser>

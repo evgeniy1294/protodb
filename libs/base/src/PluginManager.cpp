@@ -42,9 +42,9 @@ public:
     void searchPlugins();
     bool enablePlugin (PluginInfo &plugin);
     bool disablePlugin(PluginInfo &plugin);
+    QString getNameByIid(const QString& iid, const QString& defaultValue ) const;
 
 private:
-    QString getNameByIid(const QString& iid, const QString& defaultValue );
     QPair<int /*group*/, int /*plugin*/> findPluginByIid(const QString& iid) const;
     QStringList findConflicts(const PluginInfo& plugin, bool pedantic = false) const;
     QStringList findBrokenDependencies(const PluginInfo& plugin) const;
@@ -260,7 +260,7 @@ bool PluginManagerPrivate::disablePlugin(PluginInfo& plugin)
     return true;
 }
 
-QString PluginManagerPrivate::getNameByIid(const QString& iid, const QString& defaultValue)
+QString PluginManagerPrivate::getNameByIid(const QString& iid, const QString& defaultValue) const
 {
     auto [grp, idx] = findPluginByIid(iid);
     if (grp >= 0) {
@@ -585,6 +585,8 @@ QVariant PluginManager::headerData(int section, Qt::Orientation orientation, int
                     return tr("Location");
                 case kColDescription:
                     return tr("Description");
+                case kColRelations:
+                    return tr("Relations");
 
                 default:
                     break;
@@ -681,6 +683,17 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
 
                     case kColDescription:
                         return plugin.description;
+
+                    case kColRelations: {
+                        QString ret;
+                        for (int i = 0; i < plugin.deps.count(); i++) {
+                            auto iid = plugin.deps.at(i);
+
+                            ret.append(d->getNameByIid(iid, iid) + '\n');
+                        }
+
+                        return ret;
+                    }
 
                     default:
                         break;

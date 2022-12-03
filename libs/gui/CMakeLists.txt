@@ -17,8 +17,9 @@ set(CMAKE_AUTORCC ON)
 # ------------ [ Sources ] ------------
 
 set(
-  BaseHeaders
-      include/protodb/SessionManager.h
+  PluginsHeaders
+    include/protodb/plugins/PluginTreeView.h
+    include/protodb/plugins/PluginManagerDialog.h
 )
 
 set(
@@ -28,9 +29,10 @@ set(
 )
 
 set(
-  GuiHeaders
-    include/protodb/gui/SessionManagerGui.h
-    include/protodb/gui/SessionCreateDialog.h
+  SessionsHeaders
+    include/protodb/sessions/SessionManager.h
+    include/protodb/sessions/SessionManagerGui.h
+    include/protodb/sessions/SessionCreateDialog.h
 )
 
 set( GuiSources
@@ -39,6 +41,8 @@ set( GuiSources
     src/SessionManager.cpp
     src/SessionManagerGui.cpp
     src/SessionCreateDialog.cpp
+    src/PluginTreeView.cpp
+    src/PluginManagerDialog.cpp
 )
 
 set( GuiResources
@@ -46,9 +50,9 @@ set( GuiResources
 )
 
 set(SOURCES_LIST
-    ${BaseHeaders}
+    ${PluginsHeaders}
     ${UtilsHeaders}
-    ${GuiHeaders}
+    ${SessionsHeaders}
     ${GuiSources}
     ${GuiResources}
 )
@@ -114,9 +118,9 @@ if(${TARGET}_INSTALL)
     # if we plan to export built library to CMAKE_INSTALL_PREFIX
     # (by default it's /usr/local or C:/Program Files/${PROJECT_NAME})
     #---------------------------------------------------------------------------------------
-    install(FILES ${BaseHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}" COMPONENT devel)
+    install(FILES ${PluginsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/plugins" COMPONENT devel)
     install(FILES ${UtilsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/utils" COMPONENT devel)
-    install(FILES ${GuiHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/gui" COMPONENT devel)
+    install(FILES ${SessionsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/sessions" COMPONENT devel)
     install(FILES "${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}/${TARGET_NAMESPACE}/export/${TARGET}_cfg.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export")
     install(TARGETS ${TARGET} EXPORT ${TARGET}
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"

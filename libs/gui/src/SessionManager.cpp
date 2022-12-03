@@ -1,4 +1,4 @@
-#include "protodb/SessionManager.h"
+#include "protodb/sessions/SessionManager.h"
 
 #include "protodb/utils/JsonBaseUtils.h"
 #include "protodb/utils/ziputils.h"

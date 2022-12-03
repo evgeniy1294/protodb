@@ -6,6 +6,9 @@ class QPushButton;
 class QDialogButtonBox;
 class QAbstractButton;
 class QLineEdit;
+class QTextBrowser;
+class QDataWidgetMapper;
+class QPlainTextEdit;
 
 namespace protodb {
 
@@ -22,14 +25,20 @@ public:
 private:
     void createGui();
     void connectSignals();
+    void initMapper();
 
 private slots:
     void onDialogClicked(QAbstractButton* aBtn);
 
 private:
     PluginTreeView* m_view;
+
+    QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_buttons;
     QLineEdit* m_filter_line;
+    QLineEdit* m_plugin_location;
+    QTextBrowser* m_plugin_descr;
+    QPlainTextEdit* m_plugin_deps;
     QPushButton* m_detail_btn;
 };
 

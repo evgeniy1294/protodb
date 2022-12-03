@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/SessionManager.h>
+#include <protodb/sessions/SessionManager.h>
 
 namespace protodb {
 

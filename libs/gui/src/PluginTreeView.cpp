@@ -1,6 +1,4 @@
-#include "PluginManagerDialog.h"
-#include "PluginDetailDialog.h"
-#include "PluginTreeView.h"
+#include "protodb/plugins/PluginTreeView.h"
 
 #include <protodb/plugins/PluginManager.h>
 
@@ -43,14 +41,7 @@ PluginTreeView::PluginTreeView(QWidget* parent)
         hh->hideSection(PluginManager::kColGroup);
         hh->hideSection(PluginManager::kColFile);
         hh->hideSection(PluginManager::kColDescription);
-
-    m_mapper = new QDataWidgetMapper(this);
-        m_mapper->setModel(m_pm);
-        m_mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
-
-    m_detail_dialog = new PluginDetailDialog(this);
-        m_detail_dialog->resize(540, 480);
-        m_detail_dialog->setMapper(m_mapper);
+        hh->hideSection(PluginManager::kColRelations);
 
     expandAll();
     connectSignals();
@@ -107,16 +98,7 @@ void PluginTreeView::createActions()
 
 void PluginTreeView::connectSignals()
 {
-    connect(this, &PluginTreeView::doubleClicked, this, [this](const QModelIndex &a_index) {
-        auto index = m_fm->mapToSource(a_index);
 
-        if (!m_pm->hasChildren(index) && index.column() == PluginManager::kColName) {
-            m_mapper->setRootIndex(index.parent());
-            m_mapper->setCurrentModelIndex(index);
-
-            m_detail_dialog->show();
-        }
-    });
 }
 
 } // namespace protodb

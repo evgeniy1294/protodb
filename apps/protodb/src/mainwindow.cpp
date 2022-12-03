@@ -2,12 +2,12 @@
 #include "SequenceModel.h"
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
-#include "PluginManagerDialog.h"
 #include "ProtodbSessionManager.h"
 #include "MainClass.h"
 
+#include <protodb/plugins/PluginManagerDialog.h>
+#include <protodb/sessions/SessionManagerGui.h>
 #include <protodb/utils/JsonUtils.h>
-#include <protodb/gui/SessionManagerGui.h>
 
 #include <DockManager.h>
 

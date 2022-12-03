@@ -1,5 +1,4 @@
-#include <protodb/gui/SessionCreateDialog.h>
-#include <protodb/SessionManager.h>
+#include "protodb/sessions/SessionCreateDialog.h"
 
 #include <QLineEdit>
 #include <QPlainTextEdit>
