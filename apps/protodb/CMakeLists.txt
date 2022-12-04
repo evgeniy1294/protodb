@@ -40,6 +40,8 @@ set(SOURCES_LIST
     src/ScriptInterfaceGroup.cpp
     src/tool_bar.cpp
     src/ProtodbSessionManager.cpp
+    src/ProtodbConfigDialog.cpp
+    src/ProtodbConfigStorage.cpp
     src/MainClass.cpp
 )
 
@@ -71,6 +73,8 @@ set(HEADERS_LIST
     include/ScriptInterfaceGroup.h
     include/tool_bar.h
     include/ProtodbSessionManager.h
+    include/ProtodbConfigDialog.h
+    include/ProtodbConfigStorage.h
     include/MainClass.h
 )
 

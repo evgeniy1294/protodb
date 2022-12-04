@@ -2,6 +2,7 @@
 #include "MainClass.h"
 #include "SequenceModel.h"
 
+#include <nlohmann/json_fwd.hpp>
 #include <protodb/utils/JsonUtils.h>
 
 #include <QDebug>

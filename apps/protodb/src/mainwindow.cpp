@@ -3,6 +3,7 @@
 #include "SequenceTableWidget.h"
 #include "LogWidget.h"
 #include "ProtodbSessionManager.h"
+#include "ProtodbConfigDialog.h"
 #include "MainClass.h"
 
 #include <protodb/plugins/PluginManagerDialog.h>
@@ -51,6 +52,7 @@ void MainWindow::createGui()
 
     setCentralWidget(central_widget);
 
+    m_config_dialog = new ProtodbConfigDialog(this);
     m_plugin_manager_dialog = new PluginManagerDialog(this);
     m_session_manager_dialog = new SessionManagerGui(this);
         m_session_manager_dialog->setSessionManager(&ProtodbSessionManager::instance());
@@ -134,6 +136,8 @@ void MainWindow::connectSignals()
     connect(m_plugins, &QAction::triggered, this, [this]() {
         m_plugin_manager_dialog->show();
     });
+
+    connect(m_options, &QAction::triggered, m_config_dialog, &QDialog::show);
 
     connect(m_about, &QAction::triggered, this, [this]() {
         QMessageBox box;

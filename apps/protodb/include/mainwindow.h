@@ -11,6 +11,7 @@ namespace protodb {
 
 class PluginManagerDialog;
 class SessionManagerGui;
+class ProtodbConfigDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -54,6 +55,7 @@ private:
 
   PluginManagerDialog* m_plugin_manager_dialog;
   SessionManagerGui* m_session_manager_dialog;
+  ProtodbConfigDialog* m_config_dialog;
 };
 
 } // namespace protodb
