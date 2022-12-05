@@ -8,7 +8,7 @@ class LuaScriptInterfaceCreator: public QObject, public ScriptInterfaceCreator
 {
     Q_OBJECT
     Q_INTERFACES(protodb::ScriptInterfaceCreator)
-    Q_PLUGIN_METADATA(IID "ProtoDb.LuaScriptInterfaceCreator" FILE "LuaScriptInterfacePluginMetadata.json")
+    Q_PLUGIN_METADATA(IID "protodb.LuaScriptInterfaceCreator" FILE "LuaScriptInterfacePluginMetadata.json")
 
 public:
     explicit LuaScriptInterfaceCreator() = default;

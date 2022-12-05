@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
     registerMetaType();
     registerCustomConverters();
 
-    PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins");
-    PluginManager::instance().setManualInstallDirectory("/tmp/test/");
+    PluginManager::instance().setMainDirectory("/tmp/protodb/lib/protodb/plugins/");
+    PluginManager::instance().setManualInstallDirectory("/tmp/protodb/lib/protodb/plugins/");
     PluginManager::instance().loadPlugins(QMap<QString, bool>());
 
     auto& main_class = MainClass::instance();

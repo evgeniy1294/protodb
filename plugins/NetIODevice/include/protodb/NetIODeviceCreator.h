@@ -10,7 +10,7 @@ class NetIODeviceCreator: public QObject, public IODeviceCreator
 {
     Q_OBJECT
     Q_INTERFACES(protodb::IODeviceCreator)
-    Q_PLUGIN_METADATA(IID "ProtoDb.NetIODeviceCreator" FILE "NetIODevicePluginMetadata.json")
+    Q_PLUGIN_METADATA(IID "protodb.NetIODeviceCreator" FILE "NetIODevicePluginMetadata.json")
 
 public:
     explicit NetIODeviceCreator() = default;

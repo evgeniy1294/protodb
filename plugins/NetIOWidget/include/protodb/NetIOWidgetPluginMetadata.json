@@ -5,5 +5,5 @@
     "Vendor": "Evgenii Fedoseev",
     "Description": "Виджет для настройки TCP/UDP сокетов",
     "Platform": "All",
-    "Dependencies": ["ProtoDb.NetIODeviceCreator"]
+    "Dependencies": ["protodb.NetIODeviceCreator"]
 }

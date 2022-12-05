@@ -7,7 +7,7 @@ namespace protodb {
 class NetIOWIdgetCreator: public QObject, public IOWidgetCreator
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "ProtoDb.NetIOWidgetCreatorInterface" FILE "NetIOWidgetPluginMetadata.json")
+    Q_PLUGIN_METADATA(IID "protodb.NetIOWidgetCreatorInterface" FILE "NetIOWidgetPluginMetadata.json")
     Q_INTERFACES(protodb::IOWidgetCreator)
 
 public:

@@ -10,7 +10,7 @@ class SerialIODeviceCreator: public QObject, public IODeviceCreator
 {
     Q_OBJECT
     Q_INTERFACES(protodb::IODeviceCreator)
-    Q_PLUGIN_METADATA(IID "ProtoDb.SerialIODeviceCreator" FILE "SerialIODevicePluginMetadata.json")
+    Q_PLUGIN_METADATA(IID "protodb.SerialIODeviceCreator" FILE "SerialIODevicePluginMetadata.json")
 
 public:
     explicit SerialIODeviceCreator() = default;

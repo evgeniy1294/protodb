@@ -8,7 +8,7 @@ class SerialIOWIdgetCreator: public QObject, public IOWidgetCreator
 {
     Q_OBJECT
     Q_INTERFACES(protodb::IOWidgetCreator)
-    Q_PLUGIN_METADATA(IID "ProtoDb.SerialIOWidgetCreator" FILE "SerialIOWidgetPluginMetadata.json")
+    Q_PLUGIN_METADATA(IID "protodb.SerialIOWidgetCreator" FILE "SerialIOWidgetPluginMetadata.json")
 
 public:
     explicit SerialIOWIdgetCreator() = default;
