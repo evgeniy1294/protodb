@@ -6,6 +6,7 @@
 #include <zip.h>
 
 #include <QApplication>
+#include <QDebug>
 #include <QUuid>
 #include <QFont>
 
@@ -29,9 +30,10 @@ bool SessionManager::setWorkingDirectory(const QString &path)
     std::filesystem::path working_dir = path.toStdString();
     if (!std::filesystem::exists(working_dir)) {
         std::error_code ec;
-        std::filesystem::create_directory(working_dir, ec);
+        std::filesystem::create_directories(working_dir, ec);
 
         if (ec) {
+            qDebug() << path << QString::fromStdString(ec.message());
             return false;
         }
     }

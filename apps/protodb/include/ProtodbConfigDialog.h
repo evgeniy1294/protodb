@@ -22,6 +22,7 @@ public:
 private:
     void create_gui();
     void connect_signals();
+    bool event(QEvent *e) override;
 
 private:
     QLineEdit* m_plugin_install_path;

@@ -21,7 +21,6 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QInputDialog>
-#include <QSettings>
 
 using namespace protodb;
 
@@ -32,6 +31,12 @@ MainWindow::MainWindow(QWidget *parent)
   connectSignals();
 }
 
+
+MainWindow& MainWindow::instance()
+{
+    static auto m_instance = MainWindow();
+    return m_instance;
+}
 
 void MainWindow::createGui()
 {
@@ -227,31 +232,28 @@ void MainWindow::connectSignals()
     });
 }
 
-void MainWindow::saveState()
+void MainWindow::getState(nlohmann::json& json) const
 {
-    QSettings settings;
-
-    settings.setValue("MainWindow/Geometry", saveGeometry());
-    settings.setValue("MainWindow/DockingState", m_dock_man->saveState());
+    json["MainWindowGeometry"] = saveGeometry();
+    json["DockingState"] = m_dock_man->saveState();
 }
 
-void MainWindow::restoreState()
+void MainWindow::setState(const nlohmann::json& json)
 {
-    QSettings settings;
-
-    if (settings.contains("MainWindow/Geometry")) {
-        auto geometry = settings.value("MainWindow/Geometry").toByteArray();
+    if (json.contains("MainWindowGeometry")) {
+        auto geometry = json.value("MainWindowGeometry", QByteArray());
+        if (!geometry.isEmpty())
             restoreGeometry(geometry);
     }
 
-    if (settings.contains("MainWindow/DockingState")) {
-        auto state = settings.value("MainWindow/DockingState").toByteArray();
+    if (json.contains("DockingState")) {
+        auto state = json.value("DockingState", QByteArray());
+        if (!state.isEmpty())
           m_dock_man->restoreState(state);
     }
 }
 
 void MainWindow::exit(){
-  saveState();
   QApplication::exit(0);
 
   return;

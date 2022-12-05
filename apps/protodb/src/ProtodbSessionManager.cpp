@@ -1,5 +1,7 @@
 #include "ProtodbSessionManager.h"
+
 #include "MainClass.h"
+#include "mainwindow.h"
 #include "SequenceModel.h"
 
 #include <nlohmann/json_fwd.hpp>
@@ -26,9 +28,11 @@ ProtodbSessionManager::ProtodbSessionManager(QObject *parent)
 bool ProtodbSessionManager::load_session(const QString& path_to_folder)
 {
     // Загрузка настроек и параметров
-    QFile configs(path_to_folder+"/configs.json");
-    if ( configs.exists() ) {
-
+    nlohmann::json seances;
+    bool ok = readFromFile(path_to_folder+"/seances.json", seances);
+    if (ok) {
+        if (!seances.empty())
+            MainClass::instance().setSeanceConfigs(seances);
     }
 
     auto& main_class = MainClass::instance();
@@ -41,7 +45,7 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
 
     // Загрузка последовательностей
     nlohmann::json sequences;
-    bool ok = readFromFile(path_to_folder+"/sequences.json", sequences);
+    ok = readFromFile(path_to_folder+"/sequences.json", sequences);
 
     if (ok) {
         if (sequences["incoming"].is_array()) {
@@ -54,9 +58,11 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
     }
 
     // Загрузка состояний окон
-    QFile gui(path_to_folder+"/gui.json");
-    if ( gui.exists() ) {
-
+    nlohmann::json gui;
+    ok = readFromFile(path_to_folder+"/gui.json", gui);
+    if (ok) {
+        if (!gui.empty())
+            protodb::MainWindow::instance().setState(gui);
     }
 
     return true;
@@ -65,6 +71,14 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
 bool ProtodbSessionManager::save_session(const QString& path_to_folder)
 {
     auto& main_class = MainClass::instance();
+    nlohmann::json seances;
+        main_class.seanceConfigs(seances);
+
+    if (! writeToFile(path_to_folder+"/seances.json", seances) ) {
+        std::cerr << "Error when write to file: " << (path_to_folder+"/seances.json").toStdString() << std::endl;
+        return false;
+    }
+
     nlohmann::json sequences;
 
     nlohmann::json outgoing;
@@ -80,6 +94,13 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
         return false;
     }
 
+    nlohmann::json gui;
+    protodb::MainWindow::instance().getState(gui);
+
+    if (! writeToFile(path_to_folder+"/gui.json", gui) ) {
+        std::cerr << "Error when write to file: " << (path_to_folder+"/gui.json").toStdString() << std::endl;
+        return false;
+    }
 
     return true;
 }

@@ -3,9 +3,8 @@
 
 #include <protodb/utils/JsonBaseUtils.h>
 
-#include <QDir>
-#include <QDesktopServices>
-#include <QAction>
+#include <QEvent>
+#include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QPushButton>
@@ -81,36 +80,14 @@ void ProtodbConfigDialog::create_gui()
 
 void ProtodbConfigDialog::connect_signals()
 {
-    auto plugin_location_act = new QAction();
-        plugin_location_act->setIcon(QIcon(":/icons/search.svg"));
-    m_plugin_install_path->addAction(plugin_location_act, QLineEdit::TrailingPosition);
-
-    connect(plugin_location_act, &QAction::triggered, this, [this]() {
-          auto path = m_plugin_install_path->text();
-          path = QDir::toNativeSeparators(path);
-
-          QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-    });
-
-    auto session_location_act = new QAction();
-        session_location_act->setIcon(QIcon(":/icons/search.svg"));
-    m_sessions_storage_path->addAction(session_location_act, QLineEdit::TrailingPosition);
-
-    connect(session_location_act, &QAction::triggered, this, [this]() {
-          auto path = m_sessions_storage_path->text();
-          path = QDir::toNativeSeparators(path);
-
-          QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-    });
-
     connect(m_plugin_install_fd, &QPushButton::released, this, [this]() {
-        auto path = QFileDialog::getExistingDirectory();
+        auto path = QFileDialog::getExistingDirectory(nullptr, QString(), m_plugin_install_path->text());
         if (!path.isEmpty())
             m_plugin_install_path->setText(path);
     });
 
     connect(m_sessions_storage_fd, &QPushButton::released, this, [this]() {
-        auto path = QFileDialog::getExistingDirectory();
+        auto path = QFileDialog::getExistingDirectory(nullptr, QString(), m_sessions_storage_path->text());
         if (!path.isEmpty())
             m_sessions_storage_path->setText(path);
     });
@@ -130,10 +107,23 @@ void ProtodbConfigDialog::connect_signals()
             } break;
 
             case QDialogButtonBox::RestoreDefaults: {
-                ProtodbConfigStorage::instance().setDefaultConfig();
-                nlohmann::json cfg; ProtodbConfigStorage::instance().config(cfg);
+                QMessageBox msgbox;
+                {
+                    msgbox.setText( tr("Restore default configs?") );
+                    msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                    msgbox.setDefaultButton(QMessageBox::No);
+                    msgbox.setIcon(QMessageBox::Icon::Warning);
 
-                setState(cfg);
+                        msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
+                        msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
+                }
+
+                if (msgbox.exec() == QMessageBox::Yes) {
+                    ProtodbConfigStorage::instance().setDefaultConfig();
+                    nlohmann::json cfg; ProtodbConfigStorage::instance().config(cfg);
+
+                    setState(cfg);
+                }
             } break;
 
             case QDialogButtonBox::Reset: {
@@ -151,4 +141,16 @@ void ProtodbConfigDialog::connect_signals()
                 break;
         }
     });
+}
+
+bool ProtodbConfigDialog::event(QEvent* e)
+{
+    if (e->type() == QEvent::Hide) {
+        nlohmann::json cfg; ProtodbConfigStorage::instance().config(cfg);
+        setState(cfg);
+
+        return true;
+    }
+
+    return QWidget::event(e);
 }

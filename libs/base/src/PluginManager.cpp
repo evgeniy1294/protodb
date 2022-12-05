@@ -20,12 +20,12 @@ class PluginManagerPrivate
         QStringList relations;
         QStringList deps;
 
-        bool saved_state;
-        bool enabled;
-        bool loaded;
-        bool fault;
+        bool saved_state = false;
+        bool enabled = false;
+        bool loaded = false;
+        bool fault = false;
 
-        QPluginLoader* loader;
+        QPluginLoader* loader = nullptr;
     };
 
     struct Group {
@@ -115,7 +115,7 @@ void PluginManagerPrivate::searchPlugins()
     }
 
     dir.setPath(m_manual_install_directory);
-    if (!dir.exists() && m_manual_install_directory != m_main_directory)
+    if (dir.exists() && m_manual_install_directory != m_main_directory)
     {
         for(auto& file: dir.entryList()) {
             filePathList << dir.absoluteFilePath(file);

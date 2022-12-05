@@ -3,6 +3,7 @@
 #include "ProtodbSessionManager.h"
 #include "Sequence.h"
 
+#include <ProtodbConfigStorage.h>
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/utils/MetaTypeUtils.h>
@@ -23,24 +24,29 @@ int main(int argc, char *argv[])
     registerMetaType();
     registerCustomConverters();
 
-    PluginManager::instance().setMainDirectory("/tmp/protodb/lib/protodb/plugins/");
-    PluginManager::instance().setManualInstallDirectory("/tmp/protodb/lib/protodb/plugins/");
-    PluginManager::instance().loadPlugins(QMap<QString, bool>());
+    ProtodbConfigStorage::instance().loadConfig();
+        auto userPluginsLocation = ProtodbConfigStorage::instance().userPluginsLocation();
+        auto sessionsLocation = ProtodbConfigStorage::instance().sessionsLocation();
+        auto pluginsState = ProtodbConfigStorage::instance().lastPluginsState();
+
+    PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins/");
+    PluginManager::instance().setManualInstallDirectory(userPluginsLocation);
+    PluginManager::instance().loadPlugins(pluginsState);
 
     auto& main_class = MainClass::instance();
         main_class.init();
 
-    protodb::MainWindow w;
-        w.restoreState();
-        w.showMaximized();
+    protodb::MainWindow::instance().showMaximized();
 
     auto& session_manager = ProtodbSessionManager::instance();
-        session_manager.setWorkingDirectory("/tmp/protodb/sessions/");
+        session_manager.setWorkingDirectory(sessionsLocation);
 
     int ret = a.exec();
 
     session_manager.saveCurrentSession();
     session_manager.saveCurrentState();
+
+    ProtodbConfigStorage::instance().saveConfig();
 
     return ret;
 }

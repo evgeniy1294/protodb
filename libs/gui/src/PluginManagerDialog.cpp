@@ -4,7 +4,8 @@
 #include <protodb/plugins/PluginManager.h>
 
 #include <QApplication>
-#include <QClipboard>
+#include <QDir>
+#include <QDesktopServices>
 #include <QAction>
 #include <QDataWidgetMapper>
 #include <QPushButton>
@@ -100,14 +101,12 @@ void PluginManagerDialog::createGui()
 void PluginManagerDialog::connectSignals()
 {
     auto copy = new QAction();
-        copy->setIcon(QIcon(":/icons/copy.svg"));
+        copy->setIcon(QIcon(":/icons/folder.svg"));
     m_plugin_location->addAction(copy, QLineEdit::TrailingPosition);
 
     connect(copy, &QAction::triggered, this, [this](bool checked) {
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText( m_plugin_location->text() );
-
-        m_plugin_location->selectAll();
+        auto dir = QFileInfo( m_plugin_location->text() ).absoluteDir();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absolutePath()));
     });
 
     connect(m_view, &QTreeView::activated, this, [this](const QModelIndex& index) {

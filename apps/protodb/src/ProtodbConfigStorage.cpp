@@ -3,6 +3,7 @@
 #include <QStandardPaths>
 
 #include <protodb/utils/JsonBaseUtils.h>
+#include <protodb/plugins/PluginManager.h>
 
 using namespace protodb;
 
@@ -25,6 +26,11 @@ QString ProtodbConfigStorage::sessionsLocation() const
 QString ProtodbConfigStorage::userPluginsLocation() const
 {
     return m_user_plugins_location;
+}
+
+QMap<QString, bool> ProtodbConfigStorage::lastPluginsState() const
+{
+    return m_last_plugins_state;
 }
 
 QString ProtodbConfigStorage::defaultSessionsLocation()
@@ -57,6 +63,11 @@ void ProtodbConfigStorage::setConfig(const nlohmann::json& cfg)
     if (cfg.is_object()) {
         m_user_plugins_location = cfg.value("UserPluginsLocation", defaultUserPluginsLocation());
         m_sessons_locaction = cfg.value("SessionsLocation", defaultSessionsLocation());
+
+        auto plugins = cfg.value("Plugins", nlohmann::json::object());
+        for (auto& [key, value]: plugins.items()) {
+            m_last_plugins_state[QString::fromStdString(key)] = value;
+        }
     }
 }
 
@@ -65,6 +76,17 @@ void ProtodbConfigStorage::config(nlohmann::json& cfg) const
     cfg = nlohmann::json::object();
         cfg["UserPluginsLocation"] = m_user_plugins_location;
         cfg["SessionsLocation"]    = m_sessons_locaction;
+
+    auto plugins_state = PluginManager::instance().getPluginsState();
+
+    nlohmann::json plugins = nlohmann::json::object();
+    for (auto it = plugins_state.constKeyValueBegin(); it != plugins_state.constKeyValueEnd(); ++it) {
+        auto name = it->first.toStdString();
+        plugins[name] = it->second;
+    }
+    cfg["Plugins"] = plugins;
+
+    return;
 }
 
 void ProtodbConfigStorage::setDefaultConfig()
@@ -84,7 +106,7 @@ void ProtodbConfigStorage::loadConfig()
 void ProtodbConfigStorage::saveConfig() const
 {
     nlohmann::json cfg; config(cfg);
-    writeToFile(applicationConfigLocation() + "/config.json", cfg);
+    writeToFile(applicationConfigLocation() + "/config.json", cfg, 4);
 }
 
 

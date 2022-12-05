@@ -1,6 +1,8 @@
 #pragma once
 
+#include <QMap>
 #include <QString>
+
 #include <nlohmann/json.hpp>
 
 namespace protodb {
@@ -11,6 +13,7 @@ public:
 
     QString sessionsLocation() const;
     QString userPluginsLocation() const;
+    QMap<QString, bool> lastPluginsState() const;
 
     static QString defaultSessionsLocation();
     static QString defaultUserPluginsLocation();
@@ -33,6 +36,7 @@ private:
 private:
     QString m_sessons_locaction;
     QString m_user_plugins_location;
+    QMap<QString, bool> m_last_plugins_state;
 };
 
 } // namespace protodb

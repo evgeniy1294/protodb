@@ -1,7 +1,10 @@
 #pragma once
 
 #include "tool_bar.h"
+
 #include <QMainWindow>
+
+#include <nlohmann/json.hpp>
 
 namespace ads {
   class CDockManager;
@@ -18,16 +21,18 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
-  ~MainWindow() = default;
+  static MainWindow& instance();
 
-  void restoreState();
-  void saveState();
+  void getState(nlohmann::json& json) const;
+  void setState(const nlohmann::json& json);
 
 private slots:
   void exit();
 
 private:
+  explicit MainWindow(QWidget *parent = nullptr);
+  ~MainWindow() = default;
+
   void createGui();
   void createDock();
   void createActions();
