@@ -17,6 +17,7 @@ public:
 
     QString name() const override { return QString("Network"); }
     QString gcid() const override;
+    QString deviceCID() const override;
 
     void setConfig(const nlohmann::json& json) override;
     void config(nlohmann::json& json) const override;

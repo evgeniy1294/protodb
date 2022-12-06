@@ -29,7 +29,7 @@ public:
     SeanceConfigDialog(QWidget* aParent = nullptr);
    ~SeanceConfigDialog() = default;
 
-    void connectionConfig(nlohmann::json& json);
+    //void seanceConfig(nlohmann::json& json);
 
     void setConfig(const nlohmann::json& json) override;
     void config(nlohmann::json& json) const override;
@@ -46,6 +46,7 @@ private:
 
 private slots:
     void showFileDialog(QString& path);
+    bool event(QEvent *e) override;
 
 private:
     QPushButton* m_log_btn;

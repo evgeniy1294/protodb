@@ -8,6 +8,7 @@
 #include <protodb/utils/JsonUtils.h>
 
 #include <QDebug>
+#include <QApplication>
 
 #include <iostream>
 
@@ -95,6 +96,10 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
     }
 
     nlohmann::json gui;
+    QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
+    for (auto wgt = topLevelWidgets.begin(); wgt != topLevelWidgets.end(); i++) {
+        auto main_window = qobject_cast<MainWindow*>(wgt);
+    }
     protodb::MainWindow::instance().getState(gui);
 
     if (! writeToFile(path_to_folder+"/gui.json", gui) ) {

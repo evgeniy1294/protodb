@@ -28,50 +28,49 @@ QString SerialIOWidget::gcid() const
     return SerialIOWIdgetCreator::creatorId();
 }
 
+QString SerialIOWidget::deviceCID() const
+{
+    return SerialIODeviceCreator::creatorId();
+}
+
 void SerialIOWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["CID"] = SerialIODeviceCreator::creatorId();
-    nlohmann::json attr;
-        attr["PortName"]    = "";
-        attr["OpenMode"]    = "Communication";
-        attr["Baudrate"]    = "115200";
-        attr["DataBits"]    = "8";
-        attr["Parity"]      = "None";
-        attr["StopBits"]    = "1";
-        attr["FlowControl"] = "None";
-    json["Attributes"] = attr;
+    json["gcid"]        = SerialIOWIdgetCreator::creatorId();
+    json["PortName"]    = "";
+    json["OpenMode"]    = "Communication";
+    json["Baudrate"]    = "115200";
+    json["DataBits"]    = "8";
+    json["Parity"]      = "None";
+    json["StopBits"]    = "1";
+    json["FlowControl"] = "None";
 }
 
 void SerialIOWidget::config(nlohmann::json &json) const
 {
-    json["CID"]         = "SerialIODeviceCreator";
-    nlohmann::json attr;
-        attr["PortName"]    = m_device->currentText();
-        attr["OpenMode"]    = m_open_mode->currentText();
-        attr["Baudrate"]    = m_baudrate->currentText();
-        attr["DataBits"]    = m_data_bits->currentText();
-        attr["Parity"]      = m_parity->currentText();
-        attr["StopBits"]    = m_stop_bits->currentText();
-        attr["FlowControl"] = m_flow_ctrl->currentText();
-    json["Attributes"] = attr;
+    json["gcid"]        = SerialIOWIdgetCreator::creatorId();
+    json["PortName"]    = m_device->currentText();
+    json["OpenMode"]    = m_open_mode->currentText();
+    json["Baudrate"]    = m_baudrate->currentText();
+    json["DataBits"]    = m_data_bits->currentText();
+    json["Parity"]      = m_parity->currentText();
+    json["StopBits"]    = m_stop_bits->currentText();
+    json["FlowControl"] = m_flow_ctrl->currentText();
 }
 
 void SerialIOWidget::setConfig(const nlohmann::json &json)
 {
-    nlohmann::json attr = json.value("Attributes", nlohmann::json::object());
-
-    QString baudrate = attr.value("Baudrate", QString());
+    QString baudrate = json.value("Baudrate", QString());
     if (m_baudrate->findText(baudrate) == -1) {
         m_baudrate->setItemText(m_baudrate->count() - 1, baudrate);
     }
     m_baudrate->setCurrentText(baudrate);
 
-    m_device->setCurrentText(attr.value("PortName", QString()));
-    m_open_mode->setCurrentText(attr.value("OpenMode", QString()));
-    m_data_bits->setCurrentText(attr.value("DataBits", QString()));
-    m_parity->setCurrentText(attr.value("Parity", QString()));
-    m_stop_bits->setCurrentText(attr.value("StopBits", QString()));
-    m_flow_ctrl->setCurrentText(attr.value("FlowControl", QString()));
+    m_device->setCurrentText(json.value("PortName", QString()));
+    m_open_mode->setCurrentText(json.value("OpenMode", QString()));
+    m_data_bits->setCurrentText(json.value("DataBits", QString()));
+    m_parity->setCurrentText(json.value("Parity", QString()));
+    m_stop_bits->setCurrentText(json.value("StopBits", QString()));
+    m_flow_ctrl->setCurrentText(json.value("FlowControl", QString()));
 }
 
 void SerialIOWidget::createGui()

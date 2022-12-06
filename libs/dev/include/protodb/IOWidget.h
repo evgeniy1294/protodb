@@ -19,6 +19,7 @@ public:
     virtual ~IOWidget() = default;
 
     virtual QString name() const = 0;
+    virtual QString deviceCID() const = 0;
 };
 
 } // namespace protodb

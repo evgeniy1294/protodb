@@ -29,14 +29,20 @@ int main(int argc, char *argv[])
         auto sessionsLocation = ProtodbConfigStorage::instance().sessionsLocation();
         auto pluginsState = ProtodbConfigStorage::instance().lastPluginsState();
 
-    PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins/");
+    #ifdef _WIN32
+        PluginManager::instance().setMainDirectory(QCoreApplication::applicationFilePath() + "/plugins");
+    #else
+        PluginManager::instance().setMainDirectory("/usr/lib/");
+    #endif
+
     PluginManager::instance().setManualInstallDirectory(userPluginsLocation);
     PluginManager::instance().loadPlugins(pluginsState);
 
     auto& main_class = MainClass::instance();
         main_class.init();
 
-    protodb::MainWindow::instance().showMaximized();
+    MainWindow w = new QMainWindow();
+        w.showMaximized();
 
     auto& session_manager = ProtodbSessionManager::instance();
         session_manager.setWorkingDirectory(sessionsLocation);

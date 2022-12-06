@@ -158,7 +158,7 @@ void MainClass::config_logger(const nlohmann::json &json)
         m_log_printer->setTimestampEnabled(json.value("TimestampEnabled", true));
 }
 
-bool MainClass::try_create_connection(const nlohmann::json &json)
+bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &cfg)
 {
     bool ret = false;
 
@@ -168,8 +168,6 @@ bool MainClass::try_create_connection(const nlohmann::json &json)
         factory = IODeviceFactory::globalInstance();
     }
 
-    auto cid = json.value("CID", QString());
-    auto cfg = json.value("Attributes", nlohmann::json::object());
     m_io = factory->createIODevice(cid, cfg);
     if (m_io) {
         if (cfg.value("OpenMode", QString()) == "Monitoring") {
@@ -279,8 +277,11 @@ void MainClass::start()
     }
 
     // Init IODevice
-    auto io_cfg = m_seance_cfg.value("IODeviceConfigs", nlohmann::json::object());
-    if (try_create_connection(io_cfg)) {
+    auto cid = m_seance_cfg.value("SelectedCID", std::string("Null"));
+    auto device_configs = m_seance_cfg.value("Configs", nlohmann::json::object());
+    auto cfg = device_configs.value(cid, nlohmann::json::object());
+
+    if (try_create_connection(QString::fromStdString(cid), cfg)) {
         m_script_multi_interface->handleEvent( ScriptInterface::Start );
         emit sStarted();
     }

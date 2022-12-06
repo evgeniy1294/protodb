@@ -28,35 +28,32 @@ QString NetIOWidget::gcid() const
     return NetIOWIdgetCreator::creatorId();
 }
 
+QString NetIOWidget::deviceCID() const
+{
+    return NetIODeviceCreator::creatorId();
+}
+
 void NetIOWidget::defaultConfig(nlohmann::json& json) const
 {
-    json["CID"] = NetIODeviceCreator::creatorId();
-
-    nlohmann::json attr;
-        attr["RemoteIp"] = "localhost";
-        attr["Port"]     = "0";
-        attr["Protocol"] = "TCP";
-    json["Attributes"] = attr;
+    json["gcid"]     = NetIOWIdgetCreator::creatorId();
+    json["RemoteIp"] = "127.0.0.1";
+    json["Port"]     = "0";
+    json["Protocol"] = "TCP";
 }
 
 void NetIOWidget::config(nlohmann::json& json) const
 {
-    json["CID"] = "NetIODeviceCreator";
-
-    nlohmann::json attr;
-        attr["RemoteIp"] = m_ip->text();
-        attr["Port"]     = m_port->text();
-        attr["Protocol"] = m_protocol->currentText();
-    json["Attributes"] = attr;
+    json["gcid"]     = NetIOWIdgetCreator::creatorId();
+    json["RemoteIp"] = m_ip->text();
+    json["Port"]     = m_port->text();
+    json["Protocol"] = m_protocol->currentText();
 }
 
 void NetIOWidget::setConfig(const nlohmann::json& json)
 {
-    nlohmann::json attr = json.value<nlohmann::json>("Attributes", nlohmann::json());
-
-    m_ip->setText(json.value<QString>("RemoteIp", QString()));
-    m_port->setText(json.value<QString>("Port", QString()));
-    m_protocol->setCurrentText(json.value<QString>("Protocol", QString()));
+    m_ip->setText(json.value<QString>("RemoteIp", QString("127.0.0.1")));
+    m_port->setText(json.value<QString>("Port", QString("0")));
+    m_protocol->setCurrentText(json.value<QString>("Protocol", QString("TCP")));
 }
 
 void NetIOWidget::createGui()

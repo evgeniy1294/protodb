@@ -148,7 +148,7 @@ void LogWidget::createConnections()
 
     connect(m_conn_dialog, &QDialog::accepted, this, [this]() {
         nlohmann::json seance_cfg;
-            m_conn_dialog->connectionConfig(seance_cfg);
+            m_conn_dialog->state(seance_cfg);
             MainClass::instance().setSeanceConfigs(seance_cfg);
 
         auto log_configs = seance_cfg.value("LogConfigs", nlohmann::json::object());

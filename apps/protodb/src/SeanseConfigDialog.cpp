@@ -1,5 +1,6 @@
 #include "SeanseConfigDialog.h"
 #include "LogFormatWidget.h"
+#include "MainClass.h"
 
 #include <protodb/IOWidget.h>
 #include <protodb/factories/IOWidgetFactory.h>
@@ -27,45 +28,12 @@ SeanceConfigDialog::SeanceConfigDialog(QWidget* aParent)
 {
     createGui();
     connectSignals();
-}
 
-void SeanceConfigDialog::connectionConfig(nlohmann::json& json)
-{
-    json = nlohmann::json::object();
+    nlohmann::json state = nlohmann::json::object();
+    MainClass::instance().seanceConfigs(state);
 
-    if (!m_curr_cid.isEmpty()) {
-        auto configs = m_curr_cfg.value("Configs", nlohmann::json::object());
-
-        if (m_io_widgets.contains(m_curr_cid)) {
-            std::string cid = m_curr_cid.toStdString();
-
-            if ( !configs.contains(cid) ) {
-                nlohmann::json cfg = nlohmann::json::object();
-                m_io_widgets[m_curr_cid]->config(cfg);
-
-                configs[cid]  = cfg;
-            }
-
-
-            json["IODeviceConfigs"]   = configs[cid];
-        }
-    }
-    else {
-        auto cfg = nlohmann::json::object();
-            cfg["CID"] = "Null";
-        json["IODeviceConfigs"] = cfg;
-    }
-
-    if ( !m_curr_cfg.contains("LogConfigs")) {
-        nlohmann::json log_configs = nlohmann::json::object();
-        m_log_format_wiget->config(log_configs);
-
-        m_curr_cfg["LogConfigs"] = log_configs;
-    }
-    json["LogConfigs"] = m_curr_cfg["LogConfigs"];
-    json["ScriptFile"] = m_curr_cfg["ScriptFile"];
-
-    return;
+    if (state.empty())
+        setDefaultState();
 }
 
 void SeanceConfigDialog::createGui()
@@ -219,30 +187,30 @@ void SeanceConfigDialog::connectSignals()
     connect(m_dialog_btn, &QDialogButtonBox::clicked, this, [this](QAbstractButton* btn){
         switch( m_dialog_btn->standardButton( btn ) )
         {
-            case QDialogButtonBox::Apply:
-                config(m_curr_cfg);
+            case QDialogButtonBox::Apply: {
+                state(m_curr_cfg);
                 emit accepted();
-                break;
+            } break;
 
             case QDialogButtonBox::Ok:
-                config(m_curr_cfg);
+                state(m_curr_cfg);
                 hide();
                 emit accepted();
                 break;
 
             case QDialogButtonBox::RestoreDefaults:
-                setDefaultConfig();
-                config(m_curr_cfg);
+                setDefaultState();
+                state(m_curr_cfg);
                 emit accepted();
 
                 break;
 
             case QDialogButtonBox::Reset:
-                setConfig(m_curr_cfg);
+                setState(m_curr_cfg);
                 break;
 
             case QDialogButtonBox::Cancel:
-                setConfig(m_curr_cfg);
+                setState(m_curr_cfg);
                 hide();
                 break;
 
@@ -312,102 +280,133 @@ void SeanceConfigDialog::showFileDialog(QString& path)
     }
 }
 
+bool SeanceConfigDialog::event(QEvent *e)
+{
+    if (e->type() == QEvent::Show) {
+        nlohmann::json cfg; MainClass::instance().seanceConfigs(cfg);
+        setState(cfg);
+
+        return true;
+    }
+
+    return QWidget::event(e);
+}
+
 // Должна быть метка активного элемента
 void SeanceConfigDialog::setConfig(const nlohmann::json& json)
 {
+
+}
+
+void SeanceConfigDialog::config(nlohmann::json& json) const
+{        
+
+}
+
+void SeanceConfigDialog::defaultConfig(nlohmann::json& json) const
+{
+
+}
+
+void SeanceConfigDialog::setState(const nlohmann::json& json)
+{
+    if (!json.is_object()) {
+        return;
+    }
+
     auto log_configs = json.value("LogConfigs", nlohmann::json::object());
         m_log_format_wiget->setConfig(log_configs);
 
     QString script_file_path = json.value("ScriptFile", QString());
-    m_scr_le->setText(script_file_path);
+        m_scr_le->setText(script_file_path);
 
     auto configs  = json.value("Configs",  nlohmann::json::object());
     for (auto& [cid, cfg] : configs.items()) {
-        auto key = QString(cid.c_str());
+        auto gcid = cfg.value("gcid", QString("Null"));
 
-        if (m_io_widgets.contains(key)) {
-            m_io_widgets[key]->setConfig(cfg);
+        if (m_io_widgets.contains(gcid)) {
+            m_io_widgets[gcid]->setConfig(cfg);
         }
     }
 
-    auto selected = json.value("Selected", QString());
-    if (m_io_widgets.contains(selected)) {
+    auto selectedCID = json.value("SelectedCID", std::string("Null"));
+    auto deviceCfg = configs.value(selectedCID, nlohmann::json::object());
+    auto gcid = deviceCfg.value("gcid", QString("Null"));
+
+    if (m_io_widgets.contains(gcid)) {
         auto buttons = m_selection_group->buttons();
 
         for (int i = 0; i < buttons.size(); ++i) {
             auto btn = buttons[i];
-            if ( m_selection_btns.key(btn, QString()) == selected ) {
+            if ( m_selection_btns.key(btn, QString()) == gcid ) {
                 btn->setChecked(true);
-                replaceIOWiget(selected);
+                replaceIOWiget(gcid);
             }
         }
     }
 
     m_curr_cfg.clear();
-    config(m_curr_cfg);
+    state(m_curr_cfg);
 
     return;
-}
-
-void SeanceConfigDialog::config(nlohmann::json& json) const
-{        
-    auto configs = nlohmann::json::object();
-
-    auto log_configs = nlohmann::json::object();
-        m_log_format_wiget->config(log_configs);
-
-    const auto keys = m_io_widgets.keys();
-
-    for (int i = 0; i < keys.size(); ++i) {
-        nlohmann::json cfg; auto cid = keys.at(i);
-            m_io_widgets.value(cid)->config(cfg);
-
-        configs[cid.toStdString()] = cfg;
-    }
-
-    json["Configs"]    = configs;
-    json["LogConfigs"] = log_configs;
-    json["Selected"]   = m_curr_cid;
-    json["ScriptFile"] = m_scr_le->text();
-
-    return;
-}
-
-void SeanceConfigDialog::defaultConfig(nlohmann::json& json) const
-{
-    auto configs = nlohmann::json::object();
-
-    auto log_configs = nlohmann::json::object();
-        m_log_format_wiget->defaultConfig(log_configs);
-
-    const auto keys = m_io_widgets.keys();
-
-    for (int i = 0; i < keys.size(); ++i) {
-        nlohmann::json cfg; auto cid = keys.at(i);
-            m_io_widgets.value(cid)->defaultConfig(cfg);
-
-        configs[cid.toStdString()] = cfg;
-    }
-
-    json["Configs"]    = configs;
-    json["LogConfigs"] = log_configs;
-    json["Selected"]   = m_curr_cid;
-    json["ScriptFile"] = QString();
-
-    return;
-}
-
-void SeanceConfigDialog::setState(const nlohmann::json& json)
-{
-
 }
 
 void SeanceConfigDialog::state(nlohmann::json& json) const
 {
+    json = nlohmann::json::object();
 
+    auto log_configs = nlohmann::json::object();
+        m_log_format_wiget->config(log_configs);
+
+    auto configs = nlohmann::json::object();
+    for (auto it = m_io_widgets.begin(); it != m_io_widgets.end(); ++it) {
+        nlohmann::json cfg = nlohmann::json::object();
+            it.value()->config(cfg);
+
+        auto deviceCID = it.value()->deviceCID().toStdString();
+        configs[deviceCID] = cfg;
+    }
+
+    if (m_io_widgets.contains(m_curr_cid)) {
+        json["SelectedCID"] = m_io_widgets[m_curr_cid]->deviceCID().toStdString();
+    }
+    else {
+        json["SelectedCID"] = "Null";
+    }
+
+    json["Configs"]     = configs;
+    json["LogConfigs"]  = log_configs;
+    json["ScriptFile"]  = m_scr_le->text();
+
+    return;
 }
 
 void SeanceConfigDialog::defaultState(nlohmann::json& json) const
 {
+    json = nlohmann::json::object();
 
+    auto log_configs = nlohmann::json::object();
+        m_log_format_wiget->config(log_configs);
+
+    auto configs = nlohmann::json::object();
+    for (auto it = m_io_widgets.begin(); it != m_io_widgets.end(); ++it) {
+        nlohmann::json cfg = nlohmann::json::object();
+            it.value()->defaultConfig(cfg);
+
+        auto deviceCID = it.value()->deviceCID().toStdString();
+        configs[deviceCID] = cfg;
+    }
+
+    if (m_io_widgets.contains(m_curr_cid)) {
+        json["SelectedCID"] = m_io_widgets[m_curr_cid]->deviceCID().toStdString();
+    }
+    else {
+        json["SelectedCID"] = "Null";
+    }
+
+    json["Configs"]     = configs;
+    json["LogConfigs"]  = log_configs;
+    json["ScriptFile"]  = m_scr_le->text();
+
+    return;
 }

@@ -31,13 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
   connectSignals();
 }
 
-
-MainWindow& MainWindow::instance()
-{
-    static auto m_instance = MainWindow();
-    return m_instance;
-}
-
 void MainWindow::createGui()
 {
     createActions();
