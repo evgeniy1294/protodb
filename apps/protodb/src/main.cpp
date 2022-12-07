@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     auto& main_class = MainClass::instance();
         main_class.init();
 
-    MainWindow w = new QMainWindow();
-        w.showMaximized();
+    MainWindow* w = new MainWindow();
+        w->showMaximized();
 
     auto& session_manager = ProtodbSessionManager::instance();
         session_manager.setWorkingDirectory(sessionsLocation);

@@ -14,6 +14,19 @@
 
 using namespace protodb;
 
+MainWindow* getMainWindow() {
+    QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
+
+    for (auto it = topLevelWidgets.begin(); it != topLevelWidgets.end(); it++)
+    {
+        auto wgt = qobject_cast<MainWindow*>(*it);
+        if (wgt)
+            return wgt;
+    }
+
+    return nullptr;
+}
+
 ProtodbSessionManager &ProtodbSessionManager::instance()
 {
     static ProtodbSessionManager m_instance;
@@ -62,8 +75,12 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
     nlohmann::json gui;
     ok = readFromFile(path_to_folder+"/gui.json", gui);
     if (ok) {
-        if (!gui.empty())
-            protodb::MainWindow::instance().setState(gui);
+        if (!gui.empty()) {
+            auto main_window = getMainWindow();
+            if (main_window != nullptr) {
+                main_window->setState(gui);
+            }
+        }
     }
 
     return true;
@@ -96,11 +113,10 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
     }
 
     nlohmann::json gui;
-    QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
-    for (auto wgt = topLevelWidgets.begin(); wgt != topLevelWidgets.end(); i++) {
-        auto main_window = qobject_cast<MainWindow*>(wgt);
+    auto main_window = getMainWindow();
+    if (main_window != nullptr) {
+        main_window->getState(gui);
     }
-    protodb::MainWindow::instance().getState(gui);
 
     if (! writeToFile(path_to_folder+"/gui.json", gui) ) {
         std::cerr << "Error when write to file: " << (path_to_folder+"/gui.json").toStdString() << std::endl;
