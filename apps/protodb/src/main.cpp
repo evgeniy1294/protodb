@@ -49,11 +49,6 @@ int main(int argc, char *argv[])
 
     int ret = a.exec();
 
-    session_manager.saveCurrentSession();
-    session_manager.saveCurrentState();
-
-    ProtodbConfigStorage::instance().saveConfig();
-
     return ret;
 }
 

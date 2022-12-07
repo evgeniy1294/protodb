@@ -6,8 +6,11 @@
 
 #include <nlohmann/json.hpp>
 
+class QMenu;
+
 namespace ads {
   class CDockManager;
+  class CDockWidget;
 }
 
 namespace protodb {
@@ -38,10 +41,7 @@ private:
     void connectSignals();
 
 private:
-    QAction* m_new;
-    QAction* m_save;
-    QAction* m_save_as;
-    QAction* m_open;
+    QAction* m_show_wgt_menu;
     QAction* m_options;
     QAction* m_plugins;
     QAction* m_export_tables;
@@ -53,6 +53,7 @@ private:
     QAction* m_help_content;
     QAction* m_sessions;
     QAction* m_exit;
+    QMenu*   m_wgt_menu;
     isa_tool_bar* m_toolbar;
     ads::CDockManager* m_dock_man;
 

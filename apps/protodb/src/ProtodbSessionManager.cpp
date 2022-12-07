@@ -92,7 +92,7 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
     nlohmann::json seances;
         main_class.seanceConfigs(seances);
 
-    if (! writeToFile(path_to_folder+"/seances.json", seances) ) {
+    if (! writeToFile(path_to_folder+"/seances.json", seances, 4) ) {
         std::cerr << "Error when write to file: " << (path_to_folder+"/seances.json").toStdString() << std::endl;
         return false;
     }
@@ -107,7 +107,7 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
         main_class.incomingSequences()->toJson(incoming);
         sequences["incoming"] = incoming;
 
-    if (! writeToFile(path_to_folder+"/sequences.json", sequences) ) {
+    if (! writeToFile(path_to_folder+"/sequences.json", sequences, 4) ) {
         std::cerr << "Error when write to file: " << (path_to_folder+"/sequences.json").toStdString() << std::endl;
         return false;
     }

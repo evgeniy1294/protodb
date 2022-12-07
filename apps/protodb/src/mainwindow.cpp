@@ -4,6 +4,7 @@
 #include "LogWidget.h"
 #include "ProtodbSessionManager.h"
 #include "ProtodbConfigDialog.h"
+#include "ProtodbConfigStorage.h"
 #include "MainClass.h"
 
 #include <protodb/plugins/PluginManagerDialog.h>
@@ -15,6 +16,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QMenuBar>
+#include <QMenu>
 #include <QToolBar>
 #include <QIcon>
 #include <QMessageBox>
@@ -61,18 +63,27 @@ void MainWindow::createDock()
     ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);
     ads::CDockManager::setConfigFlag(ads::CDockManager::AlwaysShowTabs, true);
 
-    auto log_widget = new ads::CDockWidget("Log");
-        log_widget->setWidget(new LogWidget());
+    auto seance_widget = new ads::CDockWidget("Seance");
+        seance_widget->setObjectName("SeanceWidget");
+        seance_widget->setWidget(new LogWidget());
+
+        m_wgt_menu->addAction(seance_widget->toggleViewAction());
 
     auto& main_class = MainClass::instance();
-    auto incoming_table_widget = new ads::CDockWidget("Incoming");
+    auto incoming_table_widget = new ads::CDockWidget("Incoming sequences");
+        incoming_table_widget->setObjectName("IncomingSequences");
         incoming_table_widget->setWidget(new SequenceTableWidget(main_class.incomingSequences()));
 
-    auto outgoing_table_widget = new ads::CDockWidget("Outgoing");
+        m_wgt_menu->addAction(incoming_table_widget->toggleViewAction());
+
+    auto outgoing_table_widget = new ads::CDockWidget("Outgoing sequences");
+        outgoing_table_widget->setObjectName("OutgoingSequences");
         outgoing_table_widget->setWidget(new SequenceTableWidget(main_class.outgoingSequences()));
 
+        m_wgt_menu->addAction(outgoing_table_widget->toggleViewAction());
+
     m_dock_man = new ads::CDockManager();
-    m_dock_man->addDockWidget(ads::RightDockWidgetArea, log_widget);
+    m_dock_man->addDockWidget(ads::RightDockWidgetArea, seance_widget);
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, outgoing_table_widget);
     m_dock_man->addDockWidgetTab(ads::BottomDockWidgetArea, incoming_table_widget);
 }
@@ -80,11 +91,8 @@ void MainWindow::createDock()
 
 void MainWindow::createActions()
 {
-    m_new = new QAction(QIcon(":/icons/new_sessions.svg"), tr("&New..."), this);
-    m_save = new QAction(QIcon(":/icons/save.svg"), tr("&Save"), this);
+    m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
-    m_save_as = new QAction(QIcon(":/icons/save_as.svg"), tr("&Save As..."), this);
-    m_open = new QAction(QIcon(":/icons/open.svg"), tr("&Open..."), this);
     m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
     m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_import_tables = new QAction(tr("&Import tables"), this);
@@ -104,11 +112,7 @@ void MainWindow::createToolBar() {
     m_toolbar = new isa_tool_bar( QBoxLayout::TopToBottom );
     m_toolbar->setButtonSize( QSize( 28, 28 ) );
 
-    m_toolbar->addToolAction(m_new, false);
-    m_toolbar->addToolAction(m_open);
-    m_toolbar->addToolAction(m_save);
-    m_toolbar->addToolAction(m_save_as, false);
-    m_toolbar->addMenuSeparator();
+    m_toolbar->addToolAction(m_show_wgt_menu, false);
     m_toolbar->addToolAction(m_export_tables, false);
     m_toolbar->addToolAction(m_import_tables, false);
     m_toolbar->addMenuSeparator();
@@ -124,6 +128,9 @@ void MainWindow::createToolBar() {
     m_toolbar->addToolAction(m_about, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_exit, false);
+
+    m_wgt_menu = new QMenu();
+        m_show_wgt_menu->setMenu(m_wgt_menu);
 }
 
 void MainWindow::connectSignals()
@@ -246,8 +253,14 @@ void MainWindow::setState(const nlohmann::json& json)
     }
 }
 
+
 void MainWindow::exit(){
-  QApplication::exit(0);
+    ProtodbSessionManager::instance().saveCurrentSession();
+    ProtodbSessionManager::instance().saveCurrentState();
+
+    ProtodbConfigStorage::instance().saveConfig();
+
+    QApplication::quit();
 
   return;
 }
