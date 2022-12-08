@@ -1,0 +1,29 @@
+pkgname=protodb-git
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="A graphical software for reverse engineering and debugging protocols"
+arch=('x86_64')
+url="https://github.com/evgeniy1294/protodb"
+license=('BSD')
+depends=('qt5-base' 'qt5-serialport' 'nlohmann-json' 'sol2')
+makedepends=('cmake')
+source=(${pkgname}::git+https://github.com/evgeniy1294/protodb)
+md5sums=('SKIP')
+
+build() {
+  cd ${srcdir}/$pkgname
+  cmake ./ -B ./build
+  cmake --build ./build --target all -- -j8
+}
+
+package() {
+  cd ${srcdir}/$pkgname
+  cmake --install ./build --prefix "$pkgdir/usr/"
+
+  mkdir -p $pkgdir/etc/ld.so.conf.d/
+  cd $pkgdir/etc/ld.so.conf.d/
+
+  touch ./protodb.conf
+  echo "/usr/lib/protodb" > ./protodb.conf
+
+}
