@@ -135,7 +135,7 @@ void MainWindow::createToolBar() {
 
 void MainWindow::connectSignals()
 {
-    connect(m_exit, &QAction::triggered, this, &MainWindow::exit);
+    connect(m_exit, &QAction::triggered, QApplication::instance(), &QApplication::quit);
     connect(m_about_qt, &QAction::triggered, &QApplication::aboutQt);
 
     connect(m_plugins, &QAction::triggered, this, [this]() {
@@ -232,6 +232,11 @@ void MainWindow::connectSignals()
     });
 }
 
+void MainWindow::hideEvent(QHideEvent *event)
+{
+    QApplication::quit();
+}
+
 void MainWindow::getState(nlohmann::json& json) const
 {
     json["MainWindowGeometry"] = saveGeometry();
@@ -249,18 +254,6 @@ void MainWindow::setState(const nlohmann::json& json)
     if (json.contains("DockingState")) {
         auto state = json.value("DockingState", QByteArray());
         if (!state.isEmpty())
-          m_dock_man->restoreState(state);
+            m_dock_man->restoreState(state);
     }
-}
-
-
-void MainWindow::exit(){
-    ProtodbSessionManager::instance().saveCurrentSession();
-    ProtodbSessionManager::instance().saveCurrentState();
-
-    ProtodbConfigStorage::instance().saveConfig();
-
-    QApplication::quit();
-
-  return;
 }

@@ -36,7 +36,15 @@ ProtodbSessionManager &ProtodbSessionManager::instance()
 ProtodbSessionManager::ProtodbSessionManager(QObject *parent)
     : SessionManager(parent)
 {
+    connect_signals();
+}
 
+void ProtodbSessionManager::connect_signals()
+{
+    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, [this]() {
+        saveCurrentSession();
+        saveCurrentState();
+    });
 }
 
 bool ProtodbSessionManager::load_session(const QString& path_to_folder)

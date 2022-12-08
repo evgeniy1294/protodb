@@ -30,15 +30,14 @@ public:
      void getState(nlohmann::json& json) const;
      void setState(const nlohmann::json& json);
 
-private slots:
-    void exit();
-
 private:
     void createGui();
     void createDock();
     void createActions();
     void createToolBar();
     void connectSignals();
+
+    void hideEvent(QHideEvent *event);
 
 private:
     QAction* m_show_wgt_menu;

@@ -17,6 +17,7 @@
 #include <protodb/ScriptInterface.h>
 
 #include <QRegularExpression>
+#include <QApplication>
 
 using namespace protodb;
 
