@@ -23,7 +23,5 @@ package() {
   mkdir -p $pkgdir/etc/ld.so.conf.d/
   cd $pkgdir/etc/ld.so.conf.d/
 
-  touch ./protodb.conf
   echo "/usr/lib/protodb" > ./protodb.conf
-
 }
