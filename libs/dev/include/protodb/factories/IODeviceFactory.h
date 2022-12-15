@@ -39,11 +39,11 @@ public:
     void setDefaultCreator( const QString &cid );
 
     // ------------ [ Create new ephemers ] --------- //
-    QIODevice* createIODevice() const;
-    QIODevice* createIODevice(const nlohmann::json& json) const;
+    QIODevice* createIODevice(QString& desc) const;
+    QIODevice* createIODevice(const nlohmann::json& json, QString& desc) const;
 
-    QIODevice* createIODevice(const QString &cid) const;
-    QIODevice* createIODevice(const QString &cid, const nlohmann::json& json) const;
+    QIODevice* createIODevice(const QString &cid, QString& desc) const;
+    QIODevice* createIODevice(const QString &cid, const nlohmann::json& json, QString& desc) const;
 
 private:
     Q_DISABLE_COPY( IODeviceFactory )

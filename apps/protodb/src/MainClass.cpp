@@ -169,7 +169,7 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         factory = IODeviceFactory::globalInstance();
     }
 
-    m_io = factory->createIODevice(cid, cfg);
+    m_io = factory->createIODevice(cid, cfg, m_seance_desc);
     if (m_io) {
         if (cfg.value("OpenMode", QString()) == "Monitoring") {
             m_io->open(QIODevice::ReadOnly);
@@ -284,7 +284,7 @@ void MainClass::start()
 
     if (try_create_connection(QString::fromStdString(cid), cfg)) {
         m_script_multi_interface->handleEvent( ScriptInterface::Start );
-        emit sStarted();
+        emit sStarted(m_seance_desc);
     }
     else {
         stop();

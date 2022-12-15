@@ -65,17 +65,17 @@ void IODeviceFactory::setDefaultCreator(const QString& cid)
         m_default_cid = cid;
 }
 
-QIODevice* IODeviceFactory::createIODevice() const
+QIODevice* IODeviceFactory::createIODevice(QString& desc) const
 {
-    return createIODevice(m_default_cid);
+    return createIODevice(m_default_cid, desc);
 }
 
-QIODevice* IODeviceFactory::createIODevice(const nlohmann::json& json) const
+QIODevice* IODeviceFactory::createIODevice(const nlohmann::json& json, QString& desc) const
 {
-    return createIODevice(m_default_cid, json);
+    return createIODevice(m_default_cid, json, desc);
 }
 
-QIODevice* IODeviceFactory::createIODevice(const QString& cid) const
+QIODevice* IODeviceFactory::createIODevice(const QString& cid, QString& desc) const
 {
     if( m_creators.contains(cid) )
     {
@@ -83,13 +83,13 @@ QIODevice* IODeviceFactory::createIODevice(const QString& cid) const
         if( ! creator )
             return nullptr;
 
-        return creator->create();
+        return creator->create(desc);
     }
 
     return nullptr;
 }
 
-QIODevice* IODeviceFactory::createIODevice(const QString& cid, const nlohmann::json& json) const
+QIODevice* IODeviceFactory::createIODevice(const QString& cid, const nlohmann::json& json, QString& desc) const
 {
     if( m_creators.contains(cid) )
     {
@@ -97,7 +97,7 @@ QIODevice* IODeviceFactory::createIODevice(const QString& cid, const nlohmann::j
         if( ! creator )
             return nullptr;
 
-        return creator->create(json);
+        return creator->create(json, desc);
     }
 
     return nullptr;

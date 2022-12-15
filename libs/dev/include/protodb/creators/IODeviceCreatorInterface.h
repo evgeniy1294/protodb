@@ -15,8 +15,8 @@ class PROTODB_DEV_EXPORT IODeviceCreator: public CreatorAbstract
 public:
     virtual ~IODeviceCreator() override = default;
 
-    virtual QIODevice* create() const = 0;
-    virtual QIODevice* create(const nlohmann::json&) const = 0;
+    virtual QIODevice* create(QString& desc) const = 0;
+    virtual QIODevice* create(const nlohmann::json&, QString& desc) const = 0;
 };
 
 } // namespace protodb

@@ -26,23 +26,29 @@ QString NetIODeviceCreator::iconName() const {
     return QString();
 }
 
-QIODevice* NetIODeviceCreator::create() const
+QIODevice* NetIODeviceCreator::create(QString& desc) const
 {
-    return new QTcpSocket();
+    desc = QString("TCP:- -:-");
+    auto socket = new QTcpSocket();
+
+    return socket;
 }
 
-QIODevice* NetIODeviceCreator::create(const nlohmann::json& json) const
+QIODevice* NetIODeviceCreator::create(const nlohmann::json& json, QString& desc) const
 {
     if (json.is_null())
-        return create();
+        return create(desc);
 
+    desc = QString("%1:%2 %3:%4");
     auto protocol = json.value("Protocol", QString());
     QAbstractSocket* socket;
         if (protocol == "UDP") {
             socket = new QUdpSocket();
+            desc = desc.arg("UDP");
         }
         else {
-            socket = new QUdpSocket();
+            socket = new QTcpSocket();
+            desc = desc.arg("TCP");
         }
 
     bool ok = false;
@@ -51,6 +57,9 @@ QIODevice* NetIODeviceCreator::create(const nlohmann::json& json) const
         remote_port = ok ? remote_port : 0;
 
     socket->bind(QHostAddress(remote_ip), remote_port);
+        desc = desc.arg(socket->localPort());
+        desc = desc.arg(socket->peerAddress().toString());
+        desc = desc.arg(socket->peerPort());
 
     return socket;
 }

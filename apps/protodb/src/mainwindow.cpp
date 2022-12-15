@@ -230,6 +230,16 @@ void MainWindow::connectSignals()
     connect(m_sessions, &QAction::triggered, this, [this]() {
         m_session_manager_dialog->show();
     });
+
+    connect(&MainClass::instance(), &MainClass::sStarted, this, [this](QString str) {
+        auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
+        seance_widget->setWindowTitle(QString("Seance: %1").arg(str));
+    });
+
+    connect(&MainClass::instance(), &MainClass::sStopted, this, [this]() {
+        auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
+        seance_widget->setWindowTitle(QString("Seance"));
+    });
 }
 
 void MainWindow::hideEvent(QHideEvent *event)

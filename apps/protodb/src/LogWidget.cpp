@@ -206,7 +206,8 @@ void LogWidget::createConnections()
         m_find_le->setPalette(palette);
     });
 
-    connect(&MainClass::instance(), &MainClass::sStarted, this, [this]() {
+    connect(&MainClass::instance(), &MainClass::sStarted, this, [this](QString str) {
+        Q_UNUSED(str)
         m_run->setIcon(QIcon(":/icons/stop_rect.svg"));
     });
 

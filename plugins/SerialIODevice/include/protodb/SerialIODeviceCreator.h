@@ -23,8 +23,8 @@ public:
 
     QString iconName() const override;
 
-    QIODevice* create() const override;
-    QIODevice* create(const nlohmann::json& json) const override;
+    QIODevice* create(QString& desc) const override;
+    QIODevice* create(const nlohmann::json& json, QString& desc) const override;
 };
 
 } // namespace protodb
