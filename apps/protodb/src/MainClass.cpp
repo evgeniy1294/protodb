@@ -186,6 +186,7 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         }
 
         connect(m_io, &QIODevice::readyRead, this, &MainClass::readyRead);
+        connect(m_io, &QIODevice::aboutToClose, this, &MainClass::stop);
 
         if (!m_log_printer->setEnabled()) {
             m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
@@ -296,7 +297,7 @@ void MainClass::start()
 void MainClass::stop()
 {
     auto io = m_io; m_io = nullptr;
-        if (io) { io->close(); disconnect(io), delete io; }
+        if (io) { disconnect(io); io->close(); delete io; }
 
     m_script_multi_interface->handleEvent( ScriptInterface::Stop );
     m_log_printer->setDisabled();

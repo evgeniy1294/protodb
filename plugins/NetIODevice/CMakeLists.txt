@@ -14,10 +14,14 @@ set(CMAKE_AUTOMOC ON)
 # ------------ [ Sources ] ------------
 set( BaseHeaders
     include/protodb/NetIODeviceCreator.h
+    include/protodb/TcpSocket.h
+    include/protodb/UdpSocket.h
 )
 
 set( BaseSources
     src/NetIODeviceCreator.cpp
+    src/TcpSocket.cpp
+    src/UdpSocket.cpp
 )
 
 set(SOURCES_LIST

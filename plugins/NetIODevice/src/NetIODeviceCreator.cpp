@@ -1,4 +1,6 @@
 #include "protodb/NetIODeviceCreator.h"
+#include "protodb/TcpSocket.h"
+#include "protodb/UdpSocket.h"
 
 #include <protodb/utils/JsonBaseUtils.h>
 
@@ -28,8 +30,8 @@ QString NetIODeviceCreator::iconName() const {
 
 QIODevice* NetIODeviceCreator::create(QString& desc) const
 {
-    desc = QString("TCP:- -:-");
-    auto socket = new QTcpSocket();
+    desc = QString("TCP -:-");
+    auto socket = new TcpSocket();
 
     return socket;
 }
@@ -39,27 +41,30 @@ QIODevice* NetIODeviceCreator::create(const nlohmann::json& json, QString& desc)
     if (json.is_null())
         return create(desc);
 
-    desc = QString("%1:%2 %3:%4");
+    desc = QString("%1 %3:%4");
     auto protocol = json.value("Protocol", QString());
-    QAbstractSocket* socket;
-        if (protocol == "UDP") {
-            socket = new QUdpSocket();
-            desc = desc.arg("UDP");
-        }
-        else {
-            socket = new QTcpSocket();
-            desc = desc.arg("TCP");
-        }
-
-    bool ok = false;
     auto remote_ip   = json.value("RemoteIp", QString());
+    bool ok = false;
     auto remote_port = json.value("Port", QString()).toInt(&ok);
         remote_port = ok ? remote_port : 0;
 
-    socket->bind(QHostAddress(remote_ip), remote_port);
-        desc = desc.arg(socket->localPort());
-        desc = desc.arg(socket->peerAddress().toString());
-        desc = desc.arg(socket->peerPort());
+    desc = desc.arg(protocol);
+    desc = desc.arg(remote_ip);
+    desc = desc.arg(remote_port);
 
-    return socket;
+    QAbstractSocket* ret;
+    if (protocol == "UDP") {
+        auto socket = new UdpSocket();
+            socket->setHostAddress(QHostAddress(remote_ip));
+            socket->setPort(remote_port);
+        ret = socket;
+    }
+    else {
+        auto socket = new TcpSocket();
+            socket->setHostAddress(QHostAddress(remote_ip));
+            socket->setPort(remote_port);
+        ret = socket;
+    }
+
+    return ret;
 }

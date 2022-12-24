@@ -2,7 +2,7 @@
 
 #include <protodb/creators/IODeviceCreatorInterface.h>
 
-#include <QIODevice>
+class QIODevice;
 
 namespace protodb {
 

@@ -11,6 +11,8 @@
 #include <QLayout>
 #include <QSerialPortInfo>
 #include <QIntValidator>
+#include <QEvent>
+#include <QPushButton>
 
 using namespace protodb;
 
@@ -99,10 +101,15 @@ void SerialIOWidget::createGui()
     m_open_mode = new QComboBox();
         m_open_mode->addItems(open_mode_list);
     m_device    = new QComboBox();
+        m_device->setDuplicatesEnabled(false);
 
     for (auto& port: QSerialPortInfo::availablePorts()) {
         m_device->addItem(port.systemLocation());
     }
+
+    m_refresh_btn = new QPushButton();
+        m_refresh_btn->setIcon(QIcon(":/icons/refresh.svg"));
+        m_refresh_btn->setFixedSize(32, 32);
 
     // --------[LABELS]-------- //
     auto label_baudrate  = new QLabel(tr("Baudrate"));
@@ -118,18 +125,19 @@ void SerialIOWidget::createGui()
         cfg_layout->setAlignment(Qt::AlignTop);
         cfg_layout->addWidget(label_device, 0, 0);
         cfg_layout->addWidget(m_device, 0, 1);
-        cfg_layout->addWidget(label_baudrate, 0, 2);
-        cfg_layout->addWidget(m_baudrate, 0, 3);
+        cfg_layout->addWidget(m_refresh_btn, 0, 2);
         cfg_layout->addWidget(label_open_mode, 1, 0);
         cfg_layout->addWidget(m_open_mode, 1, 1);
-        cfg_layout->addWidget(label_data_bits, 1, 2);
-        cfg_layout->addWidget(m_data_bits, 1, 3);
+        cfg_layout->addWidget(label_baudrate, 1, 2);
+        cfg_layout->addWidget(m_baudrate, 1, 3);
         cfg_layout->addWidget(label_flow_ctrl, 2, 0);
         cfg_layout->addWidget(m_flow_ctrl, 2, 1);
-        cfg_layout->addWidget(label_stop_bits, 2, 2);
-        cfg_layout->addWidget(m_stop_bits, 2, 3);
+        cfg_layout->addWidget(label_data_bits, 2, 2);
+        cfg_layout->addWidget(m_data_bits, 2, 3);
         cfg_layout->addWidget(label_parity, 3, 0);
         cfg_layout->addWidget(m_parity, 3, 1);
+        cfg_layout->addWidget(label_stop_bits, 3, 2);
+        cfg_layout->addWidget(m_stop_bits, 3, 3);
 
         cfg_layout->setColumnStretch(0, 0);
         cfg_layout->setColumnStretch(1, 0);
@@ -147,6 +155,10 @@ void SerialIOWidget::createGui()
 
 void SerialIOWidget::connectSignals()
 {
+    connect(m_refresh_btn, &QPushButton::clicked, this, [this]() {
+        refreshPortList();
+    });
+
     connect(m_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         if (index == m_baudrate->count() - 1) {
             m_baudrate->setEditable(true);
@@ -159,4 +171,26 @@ void SerialIOWidget::connectSignals()
     });
 
 
+}
+
+void SerialIOWidget::refreshPortList()
+{
+    const auto& ports = QSerialPortInfo::availablePorts();
+    int idx = m_device->currentIndex();
+        idx = idx >= ports.count() ? 0 : idx;
+
+    m_device->clear();
+        for (auto& p: ports) {
+            m_device->addItem(p.systemLocation());
+        }
+    m_device->setCurrentIndex(idx);
+}
+
+bool SerialIOWidget::event(QEvent* e)
+{
+    if (e->type() == QEvent::Show) {
+        refreshPortList();
+    }
+
+    return QWidget::event(e);
 }

@@ -4,6 +4,7 @@
 
 class QComboBox;
 class QValidator;
+class QPushButton;
 
 namespace protodb {
 
@@ -26,6 +27,8 @@ public:
 private:
     void createGui();
     void connectSignals();
+    void refreshPortList();
+    bool event(QEvent* e) override;
 
 private:
     QValidator* m_baudrate_validator;
@@ -36,6 +39,7 @@ private:
     QComboBox* m_stop_bits;
     QComboBox* m_open_mode;
     QComboBox* m_device;
+    QPushButton* m_refresh_btn;
 };
 
 } // namespace protodb

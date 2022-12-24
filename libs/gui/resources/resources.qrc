@@ -35,5 +35,6 @@
         <file alias="red_cross.svg">icons/red_cross.svg</file>
         <file alias="orange_minus.svg">icons/orange_minus.svg</file>
         <file alias="info.svg">icons/info.svg</file>
+        <file alias="refresh.svg">icons/refresh.svg</file>
     </qresource>
 </RCC>
