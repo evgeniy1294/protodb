@@ -64,6 +64,13 @@ void LogWidget::createGui()
         m_cfg_btn->setIconSize(QSize(18,18));
         m_cfg_btn->setFixedSize(32, 32);
 
+    m_auto_scroll = new QPushButton();
+        m_auto_scroll->setIcon(QIcon(":/icons/sort_down.svg"));
+        m_auto_scroll->setIconSize(QSize(18,18));
+        m_auto_scroll->setFixedSize(32, 32);
+        m_auto_scroll->setCheckable(true);
+        m_auto_scroll->setChecked(true);
+
     // ---------[LINE EDIT]---------- //
     m_find_le = new QLineEdit();
         m_find_le->setPlaceholderText(tr("Find sequence"));
@@ -87,6 +94,7 @@ void LogWidget::createGui()
         top_layout->addWidget(m_find_le);
         top_layout->addWidget(m_run);
         top_layout->addWidget(m_mode_btn);
+        top_layout->addWidget(m_auto_scroll);
         top_layout->addWidget(m_cfg_btn);
 
     auto bottom_layout = new QHBoxLayout();
@@ -103,6 +111,11 @@ void LogWidget::createGui()
 
 void LogWidget::createConnections()
 {
+    connect(m_log_proxy_model, &QAbstractProxyModel::rowsInserted, this, [this]() {
+        if (m_auto_scroll->isChecked())
+            m_view->scrollToBottom();
+    });
+
     connect(m_data_format_cmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
         // В этой функции можно менять валидатор, если используется hex-строка
     });

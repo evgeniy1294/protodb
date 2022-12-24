@@ -37,7 +37,7 @@ private:
     void createToolBar();
     void connectSignals();
 
-    void hideEvent(QHideEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private:
     QAction* m_show_wgt_menu;

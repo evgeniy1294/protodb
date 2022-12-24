@@ -36,5 +36,7 @@
         <file alias="orange_minus.svg">icons/orange_minus.svg</file>
         <file alias="info.svg">icons/info.svg</file>
         <file alias="refresh.svg">icons/refresh.svg</file>
+        <file alias="sort_down_alt.svg">icons/sort_down_alt.svg</file>
+        <file alias="sort_down.svg">icons/sort_down.svg</file>
     </qresource>
 </RCC>

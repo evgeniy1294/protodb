@@ -45,6 +45,7 @@ private:
     QPushButton* m_mode_btn;
     QPushButton* m_clr_btn;
     QPushButton* m_run;
+    QPushButton* m_auto_scroll;
     QPushButton* m_cfg_btn;
     QLineEdit* m_find_le;
     QLineEdit* m_msg_le;

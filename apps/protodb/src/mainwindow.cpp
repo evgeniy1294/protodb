@@ -242,7 +242,7 @@ void MainWindow::connectSignals()
     });
 }
 
-void MainWindow::hideEvent(QHideEvent *event)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
     QApplication::quit();
 }

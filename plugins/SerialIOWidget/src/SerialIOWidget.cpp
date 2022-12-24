@@ -169,8 +169,6 @@ void SerialIOWidget::connectSignals()
             m_baudrate->setEditable(false);
         }
     });
-
-
 }
 
 void SerialIOWidget::refreshPortList()
