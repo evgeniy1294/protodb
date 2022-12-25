@@ -13,14 +13,14 @@ option(${TARGET}_INSTALL "Generate the install target" ON)
 
 set(
   Images
-      images/browse.png
-      images/fadedfilemenu.png
-      images/filedialog.png
-      images/handbook.png
-      images/icon.png
-      images/mainwindow.png
-      images/open.png
-      images/wildcard.png
+      content/images/browse.png
+      content/images/fadedfilemenu.png
+      content/images/filedialog.png
+      content/images/handbook.png
+      content/images/icon.png
+      content/images/mainwindow.png
+      content/images/open.png
+      content/images/wildcard.png
 )
 
 set(
@@ -47,8 +47,9 @@ set(GeneratedHelpFiles
 )
 
 add_custom_command(OUTPUT ${GeneratedHelpFiles}
-                        COMMAND qhelpgenerator ARGS ${CMAKE_CURRENT_LIST_DIR}/protodb.qhp -o ${CMAKE_CURRENT_BINARY_DIR}/protodb.qch
-                        COMMAND qhelpgenerator ARGS ${CMAKE_CURRENT_LIST_DIR}/protodb.qhcp -o ${CMAKE_CURRENT_BINARY_DIR}/protodb.qhc
+                        COMMAND qhelpgenerator ARGS ${CMAKE_CURRENT_LIST_DIR}/protodb.qhcp -o ${CMAKE_CURRENT_LIST_DIR}/protodb.qhc
+                        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/protodb.qch ${CMAKE_CURRENT_LIST_DIR}/protodb.qhc ${CMAKE_CURRENT_BINARY_DIR}/
+                        COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_LIST_DIR}/protodb.qch ${CMAKE_CURRENT_LIST_DIR}/protodb.qhc
                    COMMENT "generating docs"
 )
 

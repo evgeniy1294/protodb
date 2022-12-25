@@ -37,13 +37,13 @@
             <file>content/intro.html</file>
             <file>content/openfile.html</file>
             <file>content/wildcardmatching.html</file>
-            <file>images/browse.png</file>
-            <file>images/fadedfilemenu.png</file>
-            <file>images/filedialog.png</file>
-            <file>images/handbook.png</file>
-            <file>images/mainwindow.png</file>
-            <file>images/open.png</file>
-            <file>images/wildcard.png</file>
+            <file>content/images/browse.png</file>
+            <file>content/images/fadedfilemenu.png</file>
+            <file>content/images/filedialog.png</file>
+            <file>content/images/handbook.png</file>
+            <file>content/images/mainwindow.png</file>
+            <file>content/images/open.png</file>
+            <file>content/images/wildcard.png</file>
         </files>
     </filterSection>
 </QtHelpProject>
