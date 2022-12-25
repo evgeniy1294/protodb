@@ -4,7 +4,7 @@
 #include "LogWidget.h"
 #include "ProtodbSessionManager.h"
 #include "ProtodbConfigDialog.h"
-#include "ProtodbConfigStorage.h"
+#include "Assistant.h"
 #include "MainClass.h"
 
 #include <protodb/plugins/PluginManagerDialog.h>
@@ -140,6 +140,10 @@ void MainWindow::connectSignals()
 
     connect(m_plugins, &QAction::triggered, this, [this]() {
         m_plugin_manager_dialog->show();
+    });
+
+    connect(m_help_content, &QAction::triggered, this, [this]() {
+        Assistant::instance().showDocumentation("content/index.html");
     });
 
     connect(m_options, &QAction::triggered, m_config_dialog, &QDialog::show);

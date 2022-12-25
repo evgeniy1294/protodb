@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>Simple Text Viewer</title>
+        <applicationIcon>images/handbook.png</applicationIcon>
+        <cacheDirectory>protodb</cacheDirectory>
+        <startPage>qthelp://org.protodb.app/doc/index.html</startPage>
+        <aboutMenuText>
+            <text>About Simple Text Viewer</text>
+        </aboutMenuText>
+        <aboutDialog>
+            <file>content/about.txt</file>
+            <icon>images/icon.png</icon>
+        </aboutDialog>
+        <enableDocumentationManager>false</enableDocumentationManager>
+        <enableAddressBar>false</enableAddressBar>
+        <enableFilterFunctionality>false</enableFilterFunctionality>
+    </assistant>
+    <docFiles>
+        <generate>
+            <file>
+                <input>protodb.qhp</input>
+                <output>protodb.qch</output>
+            </file>
+        </generate>
+        <register>
+            <file>protodb.qch</file>
+        </register>
+    </docFiles>
+</QHelpCollectionProject>

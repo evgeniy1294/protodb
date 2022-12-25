@@ -12,6 +12,7 @@ set(CMAKE_AUTORCC ON)
 
 # ------------ [ Sources ] ------------
 set(SOURCES_LIST
+    src/Assistant.cpp
     src/CellButtonDelegate.cpp
     src/CellCheckBoxDelegate.cpp
     src/CellSpinBoxDelegate.cpp
@@ -46,6 +47,7 @@ set(SOURCES_LIST
 )
 
 set(HEADERS_LIST
+    include/Assistant.h
     include/CellButtonDelegate.h
     include/CellCheckBoxDelegate.h
     include/CellSpinBoxDelegate.h

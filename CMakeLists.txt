@@ -15,3 +15,6 @@ add_subdirectory(plugins/NetIODevice)
 add_subdirectory(plugins/SerialIOWidget)
 add_subdirectory(plugins/SerialIODevice)
 add_subdirectory(plugins/LuaScriptInterface)
+
+# docs
+add_subdirectory(documentation/)

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>org.protodb.app</namespace>
+    <virtualFolder>doc</virtualFolder>
+    <filterSection>
+        <toc>
+            <section title="Simple Text Viewer" ref="content/index.html">
+                <section title="Find File" ref="content/findfile.html">
+                    <section title="File Dialog" ref="content/filedialog.html"/>
+                    <section title="Wildcard Matching" ref="content/wildcardmatching.html"/>
+                    <section title="Browse" ref="content/browse.html"/>
+                </section>
+                <section title="Open File" ref="content/openfile.html"/>
+            </section>
+        </toc>
+        <keywords>
+            <keyword name="Display" ref="content/index.html"/>
+            <keyword name="Rich text" ref="content/index.html"/>
+            <keyword name="Plain text" ref="content/index.html"/>
+            <keyword name="Find" ref="content/findfile.html"/>
+            <keyword name="File menu" ref="content/findfile.html"/>
+            <keyword name="File name" ref="content/filedialog.html"/>
+            <keyword name="File dialog" ref="content/filedialog.html"/>
+            <keyword name="File globbing" ref="content/wildcardmatching.html"/>
+            <keyword name="Wildcard matching" ref="content/wildcardmatching.html"/>
+            <keyword name="Wildcard syntax" ref="content/wildcardmatching.html"/>
+            <keyword name="Browse" ref="content/browse.html"/>
+            <keyword name="Directory" ref="content/browse.html"/>
+            <keyword name="Open" ref="content/openfile.html"/>
+            <keyword name="Select" ref="content/openfile.html"/>
+        </keywords>
+        <files>
+            <file>content/browse.html</file>
+            <file>content/filedialog.html</file>
+            <file>content/findfile.html</file>
+            <file>content/index.html</file>
+            <file>content/intro.html</file>
+            <file>content/openfile.html</file>
+            <file>content/wildcardmatching.html</file>
+            <file>images/browse.png</file>
+            <file>images/fadedfilemenu.png</file>
+            <file>images/filedialog.png</file>
+            <file>images/handbook.png</file>
+            <file>images/mainwindow.png</file>
+            <file>images/open.png</file>
+            <file>images/wildcard.png</file>
+        </files>
+    </filterSection>
+</QtHelpProject>
