@@ -4,46 +4,46 @@
     <virtualFolder>doc</virtualFolder>
     <filterSection>
         <toc>
-            <section title="Simple Text Viewer" ref="content/index.html">
-                <section title="Find File" ref="content/findfile.html">
-                    <section title="File Dialog" ref="content/filedialog.html"/>
-                    <section title="Wildcard Matching" ref="content/wildcardmatching.html"/>
-                    <section title="Browse" ref="content/browse.html"/>
+            <section title="Protocol Debugger" ref="content/index.html">
+                <section title="Окно программы" ref="content/mainwindow.html">
+                    <section title="Сеанс" ref="content/seance.html">
+                        <section title="Настройка сеанса" ref="content/seance_config.html"/>
+                        <section title="Лог" ref="content/log.html"/>
+                    </section>
+                    <section title="Таблицы последовательностей" ref="content/tables.html"/>
                 </section>
-                <section title="Open File" ref="content/openfile.html"/>
+                <section title="Скриптинг" ref="content/scripting.html"/>
+                <section title="Глобальные настройки" ref="content/options.html"/>
+                <section title="Менеджер плагинов" ref="content/plugins.html"/>
+                <section title="Менеджер сессий" ref="content/session.html"/>
             </section>
         </toc>
         <keywords>
             <keyword name="Display" ref="content/index.html"/>
             <keyword name="Rich text" ref="content/index.html"/>
             <keyword name="Plain text" ref="content/index.html"/>
-            <keyword name="Find" ref="content/findfile.html"/>
-            <keyword name="File menu" ref="content/findfile.html"/>
-            <keyword name="File name" ref="content/filedialog.html"/>
-            <keyword name="File dialog" ref="content/filedialog.html"/>
-            <keyword name="File globbing" ref="content/wildcardmatching.html"/>
-            <keyword name="Wildcard matching" ref="content/wildcardmatching.html"/>
-            <keyword name="Wildcard syntax" ref="content/wildcardmatching.html"/>
-            <keyword name="Browse" ref="content/browse.html"/>
-            <keyword name="Directory" ref="content/browse.html"/>
-            <keyword name="Open" ref="content/openfile.html"/>
-            <keyword name="Select" ref="content/openfile.html"/>
         </keywords>
         <files>
-            <file>content/browse.html</file>
-            <file>content/filedialog.html</file>
-            <file>content/findfile.html</file>
             <file>content/index.html</file>
             <file>content/intro.html</file>
-            <file>content/openfile.html</file>
-            <file>content/wildcardmatching.html</file>
-            <file>content/images/browse.png</file>
-            <file>content/images/fadedfilemenu.png</file>
-            <file>content/images/filedialog.png</file>
-            <file>content/images/handbook.png</file>
+            <file>content/mainwindow.html</file>
+            <file>content/options.html</file>
+            <file>content/plugins.html</file>
+            <file>content/scripting.html</file>
+            <file>content/seance.html</file>
+            <file>content/seance_config.html</file>
+            <file>content/log.html</file>
+            <file>content/session.html</file>
+            <file>content/tables.html</file>
             <file>content/images/mainwindow.png</file>
-            <file>content/images/open.png</file>
-            <file>content/images/wildcard.png</file>
+            <file>content/images/mainwindow_label.png</file>
+            <file>content/images/mainwindow_mod.png</file>
+            <file>content/images/handbook.png</file>
+            <file>content/images/seance.png</file>
+            <file>content/images/seance_config.png</file>
+            <file>content/images/log.png</file>
+            <file>content/images/log_decoration.png</file>
+            <file>content/images/log_filtered.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

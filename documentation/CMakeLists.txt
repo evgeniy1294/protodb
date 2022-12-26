@@ -13,25 +13,30 @@ option(${TARGET}_INSTALL "Generate the install target" ON)
 
 set(
   Images
-      content/images/browse.png
-      content/images/fadedfilemenu.png
-      content/images/filedialog.png
       content/images/handbook.png
-      content/images/icon.png
       content/images/mainwindow.png
-      content/images/open.png
-      content/images/wildcard.png
+      content/images/mainwindow_mod.png
+      content/images/mainwindow_label.png
+      content/images/seance.png
+      content/images/seance_config.png
+      content/images/log.png
+      content/images/log_decoration.png
+      content/images/log_filtered.png
 )
 
 set(
   ContentFiles
       content/about.txt
-      content/browse.html
-      content/filedialog.html
-      content/findfile.html
       content/index.html
-      content/intro.html
-      content/openfile.html
+      content/mainwindow.html
+      content/options.html
+      content/plugins.html
+      content/scripting.html
+      content/seance.html
+      content/seance_config.html
+      content/session.html
+      content/log.html
+      content/tables.html
 )
 
 set(SOURCES_LIST
