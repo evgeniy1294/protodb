@@ -297,9 +297,11 @@ void MainClass::start()
 void MainClass::stop()
 {
     auto io = m_io; m_io = nullptr;
-        if (io) { disconnect(io); io->close(); delete io; }
+    if (io) {
+        disconnect(io); io->close(); delete io;
+        m_script_multi_interface->handleEvent( ScriptInterface::Stop );
+    }
 
-    m_script_multi_interface->handleEvent( ScriptInterface::Stop );
     m_log_printer->setDisabled();
     emit sStopted();
 }

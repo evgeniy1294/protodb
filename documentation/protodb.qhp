@@ -12,7 +12,7 @@
                     </section>
                     <section title="Таблицы последовательностей" ref="content/tables.html"/>
                 </section>
-                <section title="Скриптинг" ref="content/scripting.html"/>
+                <section title="Скрипты" ref="content/scripting.html"/>
                 <section title="Глобальные настройки" ref="content/options.html"/>
                 <section title="Менеджер плагинов" ref="content/plugins.html"/>
                 <section title="Менеджер сессий" ref="content/session.html"/>
@@ -44,6 +44,11 @@
             <file>content/images/log.png</file>
             <file>content/images/log_decoration.png</file>
             <file>content/images/log_filtered.png</file>
+            <file>content/images/tables.png</file>
+            <file>content/images/sequence_editor.png</file>
+            <file>content/images/options.png</file>
+            <file>content/images/sessions.png</file>
+            <file>content/images/plugin_manager.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

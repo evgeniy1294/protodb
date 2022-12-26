@@ -16,7 +16,7 @@ void LogProxyModel::createBaseConstant()
 {
     m_lua["RX"]  = Logger::ChannelFirst;
     m_lua["TX"]  = Logger::ChannelSecond;
-    m_lua["LUA"] = Logger::ChannelComment;
+    m_lua["COM"] = Logger::ChannelComment;
     m_lua["ERR"] = Logger::ChannelError;
 }
 

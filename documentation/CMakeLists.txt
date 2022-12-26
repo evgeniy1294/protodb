@@ -22,6 +22,9 @@ set(
       content/images/log.png
       content/images/log_decoration.png
       content/images/log_filtered.png
+      content/images/sequence_editor.png
+      content/images/options.png
+      content/images/sessions.png
 )
 
 set(
