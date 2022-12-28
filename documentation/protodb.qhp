@@ -12,16 +12,16 @@
                     </section>
                     <section title="Таблицы последовательностей" ref="content/tables.html"/>
                 </section>
-                <section title="Скрипты" ref="content/scripting.html"/>
+                <section title="Скрипты" ref="content/scripting.html">
+                      <section title="LUA-скрипты" ref="content/scripting_lua.html"/>
+                </section>
                 <section title="Глобальные настройки" ref="content/options.html"/>
                 <section title="Менеджер плагинов" ref="content/plugins.html"/>
                 <section title="Менеджер сессий" ref="content/session.html"/>
             </section>
         </toc>
         <keywords>
-            <keyword name="Display" ref="content/index.html"/>
-            <keyword name="Rich text" ref="content/index.html"/>
-            <keyword name="Plain text" ref="content/index.html"/>
+
         </keywords>
         <files>
             <file>content/index.html</file>
@@ -30,6 +30,7 @@
             <file>content/options.html</file>
             <file>content/plugins.html</file>
             <file>content/scripting.html</file>
+            <file>content/scripting_lua.html</file>
             <file>content/seance.html</file>
             <file>content/seance_config.html</file>
             <file>content/log.html</file>

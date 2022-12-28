@@ -35,6 +35,7 @@ set(
       content/options.html
       content/plugins.html
       content/scripting.html
+      content/scripting_lua.html
       content/seance.html
       content/seance_config.html
       content/session.html
