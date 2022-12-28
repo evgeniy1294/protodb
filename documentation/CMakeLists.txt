@@ -25,6 +25,7 @@ set(
       content/images/sequence_editor.png
       content/images/options.png
       content/images/sessions.png
+      content/images/sequence_lua.png
 )
 
 set(

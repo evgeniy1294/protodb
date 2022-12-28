@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QHelpCollectionProject version="1.0">
     <assistant>
-        <title>Simple Text Viewer</title>
+        <title>Protocol Debugger Help</title>
         <applicationIcon>content/images/handbook.png</applicationIcon>
         <cacheDirectory>protodb</cacheDirectory>
         <startPage>qthelp://org.protodb.app/doc/index.html</startPage>
         <aboutMenuText>
-            <text>About Simple Text Viewer</text>
+            <text>About protodb</text>
         </aboutMenuText>
         <aboutDialog>
             <file>content/about.txt</file>

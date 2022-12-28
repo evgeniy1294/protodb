@@ -222,8 +222,7 @@ bool MainClass::send_sequence(QSharedPointer<const Sequence>& sequence)
         return false;
     }
 
-    m_io->write( bytes );
-    m_logger->log(Logger::ChannelSecond, bytes);
+    sendBytes(bytes);
 
     return true;
 }
@@ -272,10 +271,8 @@ void MainClass::start()
 
     // Set script file
     auto script_file = m_seance_cfg.value("ScriptFile", QString());
-    if (!script_file.isEmpty()) {
-        if (!m_script_multi_interface->setScriptFile(script_file)) {
-            m_logger->error(QString("Script file \"%1\" unsupported"));
-        }
+    if (!m_script_multi_interface->setScriptFile(script_file)) {
+        m_logger->error(QString("Script file \"%1\" unsupported"));
     }
 
     // Init IODevice

@@ -140,6 +140,7 @@ void SeanceConfigDialog::createGui()
         m_layout->setRowStretch(4, 0);
 
     setLayout(m_layout);
+    setWindowTitle("Seance config");
 }
 
 void SeanceConfigDialog::connectSignals()

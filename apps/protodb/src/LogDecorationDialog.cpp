@@ -215,6 +215,7 @@ void LogDecorationDialog::createGui()
         main_layout->addLayout(inner_layout);
         main_layout->addWidget(m_dialog_btn);
     setLayout(main_layout);
+    setWindowTitle(tr("Log style"));
 }
 
 void LogDecorationDialog::createConnections()

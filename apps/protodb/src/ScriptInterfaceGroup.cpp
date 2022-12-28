@@ -52,6 +52,12 @@ QStringList ScriptMultiInterface::fileExtensions() const
 
 bool ScriptMultiInterface::setScriptFile(const QString& path)
 {
+    if (path.isEmpty()) {
+        m_script_file.clear();
+        m_interface_id = -1;
+        return true;
+    }
+
     for (int i = 0; i < m_script_interfaces.size(); i++) {
         if (m_script_interfaces[i]->setScriptFile(path)) {
             m_interface_id = i;
