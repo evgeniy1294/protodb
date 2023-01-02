@@ -11,20 +11,18 @@ using namespace protodb;
 
 static QString documentationDirectory()
 {
-    /*
     QStringList paths;
-#ifdef SRCDIR
-    paths.append(QLatin1String(SRCDIR));
-#endif
-    paths.append(QLibraryInfo::location(QLibraryInfo::ExamplesPath));
+
     paths.append(QCoreApplication::applicationDirPath());
-    paths.append(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
+    paths.append(QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation));
+
     for (const auto &dir : qAsConst(paths)) {
-        const QString path = dir + QLatin1String("/documentation");
+        const QString path = dir + QLatin1String("/doc/protodb");
         if (QFileInfo::exists(path))
             return path;
-    }*/
-    return QString("/tmp/protodb/install/share/doc/protodb/");
+    }
+
+    return QString();
 }
 
 Assistant& Assistant::instance()
