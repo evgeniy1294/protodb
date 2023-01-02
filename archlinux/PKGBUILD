@@ -32,6 +32,8 @@ package() {
   #Remove ADS from package files
   rm ${pkgdir}/usr/lib/libqtadvanceddocking_static.a
   rm -rf ${pkgdir}/usr/license/ads
+  rm -rf ${pkgdir}/usr/lib/cmake
+  rm ${pkgdir}/usr/include/*.h
 
   mkdir -p ${pkgdir}/etc/ld.so.conf.d/
   cd ${pkgdir}/etc/ld.so.conf.d/
