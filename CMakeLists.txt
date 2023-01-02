@@ -5,6 +5,7 @@ project(ProtodbProject VERSION "0.0.1")
 add_subdirectory(libs/base)
 add_subdirectory(libs/gui)
 add_subdirectory(libs/dev)
+add_subdirectory(libs/qt-ads)
 
 # Apps
 add_subdirectory(apps/protodb)
