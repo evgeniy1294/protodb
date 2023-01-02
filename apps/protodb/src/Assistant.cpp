@@ -68,7 +68,12 @@ bool Assistant::startAssistant()
     }
 
     if (m_process->state() != QProcess::Running) {
-        QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
+        #else
+            QString app = QLibraryInfo::path(QLibraryInfo::BinariesPath) + QDir::separator();
+        #endif
+
 #ifndef Q_OS_DARWIN
         app += QLatin1String("assistant");
 #else

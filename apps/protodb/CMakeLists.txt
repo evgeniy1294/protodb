@@ -85,7 +85,9 @@ target_sources(${TARGET} PRIVATE ${SOURCES_LIST} ${HEADERS_LIST})
 target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # ------------ [ Depends ] ------------
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
+
 find_library(ADS NAMES qtadvanceddocking REQUIRED)
 find_package(Lua REQUIRED)
 
@@ -93,9 +95,9 @@ target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
     ${LUA_LIBRARIES}
     qtadvanceddocking
 )

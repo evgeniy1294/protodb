@@ -39,19 +39,16 @@ include(GenerateExportHeader)
 generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp)
 
 # ------------ [ Depends ] ------------
-find_package(Qt5 COMPONENTS Core Gui Widgets SerialPort REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 find_package(Lua REQUIRED)
 
 target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-    Qt5::SerialPort
-	
-	${LUA_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Core
+    ${LUA_LIBRARIES}
 )
 
 target_link_libraries(${TARGET}

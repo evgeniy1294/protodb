@@ -63,15 +63,15 @@ generate_export_header(${TARGET}
 )
 
 # ------------ [ Depends ] ------------
-
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
 target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
 )
 
 target_link_libraries(${TARGET}

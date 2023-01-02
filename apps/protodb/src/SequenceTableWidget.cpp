@@ -181,9 +181,6 @@ void SequenceTableWidget::onClickRemove()
         msgbox.setDefaultButton(QMessageBox::No);
         msgbox.setIcon(QMessageBox::Icon::Warning);
         msgbox.setFixedSize( QSize(480, 240) );
-
-            msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-            msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
     }
 
     if (msgbox.exec() == QMessageBox::Yes) {
@@ -217,9 +214,6 @@ void SequenceTableWidget::onClickClear()
         msgbox.setDefaultButton(QMessageBox::No);
         msgbox.setIcon(QMessageBox::Icon::Warning);
         msgbox.resize( 680, 240 );
-
-            msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-            msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
     }
 
     if (msgbox.exec() == QMessageBox::Yes) {

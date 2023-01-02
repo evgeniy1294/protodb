@@ -113,9 +113,6 @@ void ProtodbConfigDialog::connect_signals()
                     msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                     msgbox.setDefaultButton(QMessageBox::No);
                     msgbox.setIcon(QMessageBox::Icon::Warning);
-
-                        msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-                        msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
                 }
 
                 if (msgbox.exec() == QMessageBox::Yes) {

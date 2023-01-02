@@ -258,9 +258,6 @@ void LogDecorationDialog::onDialogButtonClicked(QAbstractButton* btn)
                 msgbox.setDefaultButton(QMessageBox::No);
                 msgbox.setIcon(QMessageBox::Icon::Warning);
                 msgbox.setFixedSize( QSize(680, 240) );
-
-                    msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-                    msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
             }
 
             if (msgbox.exec() == QMessageBox::Yes) {

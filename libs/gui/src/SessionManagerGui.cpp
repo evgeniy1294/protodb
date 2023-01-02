@@ -186,9 +186,6 @@ void SessionManagerGui::onRmClicked()
         msgbox.setDefaultButton(QMessageBox::No);
         msgbox.setIcon(QMessageBox::Icon::Warning);
         msgbox.setFixedSize( QSize(480, 240) );
-
-            msgbox.setButtonText(QMessageBox::Yes, QObject::tr("Yes") );
-            msgbox.setButtonText(QMessageBox::No, QObject::tr("No") );
     }
 
     if (msgbox.exec() == QMessageBox::Yes) {

@@ -624,17 +624,35 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
                 if (index.column() == kColName) {
                     if ( plugin.loaded ) {
                         QVariant var = QVariant::fromValue(FsIcon(":/icons/check.svg"));
-                        var.convert( QVariant::Icon );
+
+                        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            var.convert( QVariant::Icon );
+                        #else
+                            var.convert( QMetaType(QMetaType::QIcon) );
+                        #endif
+
                         return var;
                     }
                     else if ( plugin.fault ) {
                         QVariant var = QVariant::fromValue(FsIcon(":/icons/red_cross.svg"));
-                        var.convert( QVariant::Icon );
+
+                        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            var.convert( QVariant::Icon );
+                        #else
+                            var.convert( QMetaType(QMetaType::QIcon) );
+                        #endif
+
                         return var;
                     }
                     else {
                         QVariant var = QVariant::fromValue(FsIcon(":/icons/red_cross.svg"));
-                        var.convert( QVariant::Icon );
+
+                        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            var.convert( QVariant::Icon );
+                        #else
+                            var.convert( QMetaType(QMetaType::QIcon) );
+                        #endif
+
                         return var;
                     }
                 }
@@ -645,7 +663,13 @@ QVariant PluginManager::data(const QModelIndex &index, int role) const
             case Qt::ForegroundRole: {
                 if( plugin.fault ) {
                     QVariant var = QVariant("#ff0000");
-                    var.convert( QVariant::Color );
+
+                    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                        var.convert( QVariant::Color );
+                    #else
+                        var.convert( QMetaType(QMetaType::QColor) );
+                    #endif
+
                     return var;
                 }
                 else
