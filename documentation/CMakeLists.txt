@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
 set(TARGET docs)
 set(TARGET_NAMESPACE protodb)
-set(DOC_PREFIX "/usr/share/doc")
+#set(DOC_PREFIX "/usr/share/doc")
 
 set(${TARGET}_VERSION "0.0.1")
 
@@ -68,5 +68,5 @@ target_sources(${TARGET} PRIVATE ${SOURCES_LIST})
 
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")
-    install(FILES ${GeneratedHelpFiles} DESTINATION "${CMAKE_INSTALL_PREFIX}/${DOC_PREFIX}/${TARGET_NAMESPACE}/" COMPONENT devel)
+    install(FILES ${GeneratedHelpFiles} DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/doc/${TARGET_NAMESPACE}/" COMPONENT devel)
 endif()

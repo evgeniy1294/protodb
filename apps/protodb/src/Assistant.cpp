@@ -24,7 +24,7 @@ static QString documentationDirectory()
         if (QFileInfo::exists(path))
             return path;
     }*/
-    return QString("/tmp/protodb/install/usr/share/doc/protodb/");
+    return QString("/tmp/protodb/install/share/doc/protodb/");
 }
 
 Assistant& Assistant::instance()
