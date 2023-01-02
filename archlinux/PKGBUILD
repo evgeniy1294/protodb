@@ -10,10 +10,19 @@ makedepends=('cmake')
 source=(${pkgname}::git+https://github.com/evgeniy1294/protodb)
 md5sums=('SKIP')
 
+prepare() {
+  cd ${srcdir}/$pkgname
+    git submodule init
+    git submodule update
+  
+  cd ${srcdir}/$pkgname/libs/qt-ads
+    git checkout tags/4.0.1 -b builds
+}
+
 build() {
   cd ${srcdir}/$pkgname
-  cmake ./ -B ./build
-  cmake --build ./build --target all -- -j8
+    cmake ./ -B ./build -DBUILD_EXAMPLES:BOOL=OFF -DBUILD_STATIC:BOOL=ON
+    cmake --build ./build --target all -- -j8
 }
 
 package() {

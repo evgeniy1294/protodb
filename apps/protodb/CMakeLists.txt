@@ -88,7 +88,6 @@ target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
 
-find_library(ADS NAMES qtadvanceddocking REQUIRED)
 find_package(Lua REQUIRED)
 
 target_link_libraries(${TARGET}
