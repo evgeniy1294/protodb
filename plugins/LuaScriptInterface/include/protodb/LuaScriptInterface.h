@@ -28,8 +28,9 @@ public:
 
     QString syntaxId() const override;
 
-    void print(const char* str);
 private:
+    void print(const char* str);
+    void initStandartFunction();
 
 private:
     bool m_valid = false;

@@ -159,7 +159,7 @@ QMap<Logger::Channel, QString> LogFormatter::defaultChannelNames()
     static const QMap<Logger::Channel, QString> DefaultNames = {
         {Logger::ChannelFirst,  "RX"},
         {Logger::ChannelSecond, "TX"},
-        {Logger::ChannelComment,"COM"},
+        {Logger::ChannelComment,"USR"},
         {Logger::ChannelError,  "ERR"}
     };
 

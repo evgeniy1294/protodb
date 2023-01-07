@@ -37,11 +37,7 @@ LuaScriptInterface::LuaScriptInterface(QObject* parent)
     m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
     m_lua.set_exception_handler(exceptionHandler);
 
-    auto log = m_lua["log"].get_or_create<sol::table>();
-    log.new_usertype<LuaScriptInterface>("log",
-        "print", &LuaScriptInterface::print);
-
-    m_lua["log"] = this;
+    initStandartFunction();
 }
 
 QString LuaScriptInterface::fileExtention() const
@@ -57,6 +53,69 @@ QString LuaScriptInterface::syntaxId() const
 void LuaScriptInterface::print(const char* str)
 {
     emit sPrint(QString(str));
+}
+
+void LuaScriptInterface::initStandartFunction()
+{
+    // log:print()
+    auto log = m_lua["log"].get_or_create<sol::table>();
+    log.new_usertype<LuaScriptInterface>("log",
+        "print", &LuaScriptInterface::print);
+
+    m_lua["log"] = this;
+
+    // Utils
+    auto utils = m_lua["utils"].get_or_create<sol::table>();
+
+    // utils: bytesToFloat
+    utils.set_function("bytesToFloat",
+        [](uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4) -> float
+        {
+            uint32_t tmp = (b4 << 24) | (b3 << 16) | (b2 << 8 ) | b1;
+            return *reinterpret_cast<float*>(&tmp);
+        }
+    );
+
+    // utils: bytesToDouble
+    utils.set_function("bytesToDouble",
+        [](uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4,
+           uint8_t b5, uint8_t b6, uint8_t b7, uint8_t b8) -> double
+        {
+            uint64_t tmp = ((uint64_t)b8 << 56) | ((uint64_t)b7 << 48) |
+                           ((uint64_t)b6 << 40) | ((uint64_t)b5 << 32) |
+                           ((uint64_t)b4 << 24) | ((uint64_t)b3 << 16) |
+                           ((uint64_t)b2 << 8 ) | (uint64_t)b1;
+
+            return *reinterpret_cast<double*>(&tmp);
+        }
+    );
+
+    // utils: floatToBytes
+    utils.set_function("floatToBytes", [](float val) {
+        uint32_t tmp = *reinterpret_cast<uint32_t*>(&val);
+            uint8_t b1 = tmp & 0xff;
+            uint8_t b2 = (tmp >> 8)  & 0xff;
+            uint8_t b3 = (tmp >> 16) & 0xff;
+            uint8_t b4 = (tmp >> 24) & 0xff;
+
+        return std::make_tuple(b1, b2, b3, b4);
+    });
+
+    // utils: doubleToBytes
+    utils.set_function("doubleToBytes", [](double val) {
+        uint64_t tmp = *reinterpret_cast<uint64_t*>(&val);
+            uint8_t b1 = tmp & 0xff;
+            uint8_t b2 = (tmp >> 8)  & 0xff;
+            uint8_t b3 = (tmp >> 16) & 0xff;
+            uint8_t b4 = (tmp >> 24) & 0xff;
+            uint8_t b5 = (tmp >> 32) & 0xff;
+            uint8_t b6 = (tmp >> 40) & 0xff;
+            uint8_t b7 = (tmp >> 48) & 0xff;
+            uint8_t b8 = (tmp >> 56) & 0xff;
+
+        return std::make_tuple(b1, b2, b3, b4, b5, b6, b7, b8);
+    });
+
 }
 
 bool LuaScriptInterface::setScriptFile(const QString& path)
