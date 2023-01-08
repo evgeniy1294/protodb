@@ -2,8 +2,11 @@
 
 #include <protodb/utils/SolByteArrayWrapper.h>
 
+#include <QDebug>
+
 #include <iostream>
 #include <filesystem>
+#include <tuple>
 
 using namespace protodb;
 
@@ -55,38 +58,74 @@ void LuaScriptInterface::print(const char* str)
     emit sPrint(QString(str));
 }
 
+void LuaScriptInterface::log_clear()
+{
+    emit sLogClear();
+}
+
 void LuaScriptInterface::initStandartFunction()
 {
     // log:print()
     auto log = m_lua["log"].get_or_create<sol::table>();
     log.new_usertype<LuaScriptInterface>("log",
-        "print", &LuaScriptInterface::print);
+        "print", &LuaScriptInterface::print,
+        "clear", &LuaScriptInterface::log_clear
+    );
 
     m_lua["log"] = this;
 
     // Utils
     auto utils = m_lua["utils"].get_or_create<sol::table>();
 
-    // utils: bytesToFloat
-    utils.set_function("bytesToFloat",
-        [](uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4) -> float
+    // utils: tableToFloat
+    utils.set_function("tableToFloat",
+        [](const sol::table& parent, const sol::table& table) -> float
         {
-            uint32_t tmp = (b4 << 24) | (b3 << 16) | (b2 << 8 ) | b1;
-            return *reinterpret_cast<float*>(&tmp);
+            Q_UNUSED(parent)
+            auto ret = std::numeric_limits<float>::quiet_NaN();
+
+            if (table.get_type() == sol::type::table) {
+                if (table.size() >= 4) {
+                    uint32_t tmp = 0;
+
+                    tmp |= table.raw_get_or<uint8_t>(1, 0);
+                    tmp |= table.raw_get_or<uint8_t>(2, 0) << 8;
+                    tmp |= table.raw_get_or<uint8_t>(3, 0) << 16;
+                    tmp |= table.raw_get_or<uint8_t>(4, 0) << 24;
+
+                    ret = *reinterpret_cast<float*>(&tmp);
+                }
+            }
+
+            return ret;
         }
     );
 
-    // utils: bytesToDouble
-    utils.set_function("bytesToDouble",
-        [](uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4,
-           uint8_t b5, uint8_t b6, uint8_t b7, uint8_t b8) -> double
+    // utils: tableToDouble
+    utils.set_function("tableToDouble",
+        [](const sol::table& parent, const sol::table& table) -> double
         {
-            uint64_t tmp = ((uint64_t)b8 << 56) | ((uint64_t)b7 << 48) |
-                           ((uint64_t)b6 << 40) | ((uint64_t)b5 << 32) |
-                           ((uint64_t)b4 << 24) | ((uint64_t)b3 << 16) |
-                           ((uint64_t)b2 << 8 ) | (uint64_t)b1;
+            Q_UNUSED(parent)
+            auto ret = std::numeric_limits<float>::quiet_NaN();
 
-            return *reinterpret_cast<double*>(&tmp);
+            if (table.get_type() == sol::type::table) {
+                if (table.size() >= 8) {
+                    uint64_t tmp = 0;
+
+                    tmp |=  table.raw_get_or<uint64_t>(1, 0) & 0xff;
+                    tmp |= (table.raw_get_or<uint64_t>(2, 0) & 0xff) << 8;
+                    tmp |= (table.raw_get_or<uint64_t>(3, 0) & 0xff) << 16;
+                    tmp |= (table.raw_get_or<uint64_t>(4, 0) & 0xff) << 24;
+                    tmp |= (table.raw_get_or<uint64_t>(5, 0) & 0xff) << 32;
+                    tmp |= (table.raw_get_or<uint64_t>(6, 0) & 0xff) << 40;
+                    tmp |= (table.raw_get_or<uint64_t>(7, 0) & 0xff) << 48;
+                    tmp |= (table.raw_get_or<uint64_t>(8, 0) & 0xff) << 56;
+
+                    ret = *reinterpret_cast<double*>(&tmp);
+                }
+            }
+
+            return ret;
         }
     );
 

@@ -30,6 +30,7 @@ public:
 
 private:
     void print(const char* str);
+    void log_clear();
     void initStandartFunction();
 
 private:

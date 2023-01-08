@@ -99,10 +99,14 @@ void MainClass::init_logger()
 {
     m_log_printer->setLogFile("/tmp/protodb.log");
     m_log_printer->setAppendFile(true);
+
     connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
 
     connect(m_script_multi_interface, &ScriptMultiInterface::sPrint,
             m_logger, QOverload<const QString&>::of(&Logger::comment));
+
+    connect(m_script_multi_interface, &ScriptMultiInterface::sLogClear,
+            m_logger, &Logger::clear);
 
     connect(m_script_multi_interface, &ScriptMultiInterface::sErrorOccuared,
             m_logger, QOverload<const QString&>::of(&Logger::error));

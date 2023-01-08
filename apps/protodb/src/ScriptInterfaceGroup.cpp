@@ -18,6 +18,7 @@ void ScriptMultiInterface::addScriptInterface(QSharedPointer<ScriptInterface>& i
     m_script_interfaces.append(interface);
     connect(interface.data(), &ScriptInterface::sErrorOccuared, this, &ScriptMultiInterface::error_occuared);
     connect(interface.data(), &ScriptInterface::sPrint, this, &ScriptMultiInterface::print);
+    connect(interface.data(), &ScriptInterface::sLogClear, this, &ScriptMultiInterface::log_clear);
 }
 
 void ScriptMultiInterface::rmScriptInterface(QSharedPointer<ScriptInterface>& interface)
@@ -119,4 +120,9 @@ void ScriptMultiInterface::error_occuared(QString detail)
 void ScriptMultiInterface::print(QString text)
 {
     emit sPrint(text);
+}
+
+void ScriptMultiInterface::log_clear()
+{
+    emit sLogClear();
 }
