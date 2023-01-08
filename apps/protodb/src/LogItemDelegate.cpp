@@ -63,7 +63,11 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
         m_option.palette.setColor(QPalette::HighlightedText, color);
 
 
-        QColor selection_color = QApplication::style()->standardPalette().color(QPalette::Inactive, QPalette::Highlight);
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QColor selection_color = QApplication::style()->standardPalette().color(QPalette::Inactive, QPalette::Highlight);
+        #else
+            QColor selection_color = QApplication::style()->standardPalette().color(QPalette::Inactive, QPalette::ToolTipBase);
+        #endif
         if (m_option.state & QStyle::State_Selected) {
             painter->fillRect(m_option.rect, selection_color);
         }
