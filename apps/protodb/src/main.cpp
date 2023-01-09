@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
     #ifdef _WIN32
         PluginManager::instance().setMainDirectory(QCoreApplication::applicationFilePath() + "/plugins");
     #else
-        //PluginManager::instance().setMainDirectory("/usr/lib/protodb/plugins");
-        PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins/");
+        PluginManager::instance().setMainDirectory("/usr/lib/protodb/plugins");
+        //PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins/");
     #endif
 
     PluginManager::instance().setManualInstallDirectory(userPluginsLocation);
