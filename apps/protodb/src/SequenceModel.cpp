@@ -378,6 +378,15 @@ QSharedPointer<const Sequence> SequenceModel::getSequenceByBytes(const QByteArra
     return QSharedPointer<const Sequence>();
 }
 
+void SequenceModel::disableAll()
+{
+    beginResetModel();
+        for (int i = 0; i < m_sequences.count(); i++) {
+            m_sequences[i]->setActive(false);
+        }
+    endResetModel();
+}
+
 int SequenceModel::findSequenceByUuid(const QUuid& uuid, bool active_only) const
 {
     for (int i = 0; i < m_sequences.size(); i++) {

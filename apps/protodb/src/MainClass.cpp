@@ -306,6 +306,15 @@ void MainClass::stop()
         m_script_multi_interface->handleEvent( ScriptInterface::Stop );
     }
 
+    auto timers = m_repeat_timers.keys();
+        timers.append(m_singleshot_timers.keys());
+            m_repeat_timers.clear();
+            m_singleshot_timers.clear();
+    for (int i = 0; i < timers.count(); i++) {
+        killTimer(i);
+    }
+
+    m_outgoing_sequences->disableAll();
     m_log_printer->setDisabled();
     emit sStopted();
 }
@@ -364,6 +373,11 @@ void MainClass::timerEvent(QTimerEvent* event)
 {
     QSharedPointer<const Sequence> sequence;
     auto timer_id = event->timerId();
+
+    if (!isStarted()) {
+        killTimer(timer_id);
+        return;
+    }
 
     // This is repeat timers?
     auto suid = m_repeat_timers.value(timer_id, QUuid());
