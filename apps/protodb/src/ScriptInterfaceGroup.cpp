@@ -19,6 +19,7 @@ void ScriptMultiInterface::addScriptInterface(QSharedPointer<ScriptInterface>& i
     connect(interface.data(), &ScriptInterface::sErrorOccuared, this, &ScriptMultiInterface::error_occuared);
     connect(interface.data(), &ScriptInterface::sPrint, this, &ScriptMultiInterface::print);
     connect(interface.data(), &ScriptInterface::sLogClear, this, &ScriptMultiInterface::log_clear);
+    connect(interface.data(), &ScriptInterface::sStopSession, this, &ScriptMultiInterface::session_stop);
 }
 
 void ScriptMultiInterface::rmScriptInterface(QSharedPointer<ScriptInterface>& interface)
@@ -125,4 +126,9 @@ void ScriptMultiInterface::print(QString text)
 void ScriptMultiInterface::log_clear()
 {
     emit sLogClear();
+}
+
+void ScriptMultiInterface::session_stop()
+{
+    emit sStopSession();
 }

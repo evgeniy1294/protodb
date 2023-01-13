@@ -180,8 +180,8 @@ void SeanceConfigDialog::connectSignals()
             m_selector_layout->removeWidget(btn);
             m_selection_group->removeButton(btn);
 
-            delete wgt;
-            delete btn;
+            wgt->deleteLater();
+            btn->deleteLater();
         }
     });
 

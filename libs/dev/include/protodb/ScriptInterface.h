@@ -43,6 +43,7 @@ signals:
     void sErrorOccuared(QString detail);
     void sPrint(QString text);
     void sLogClear();
+    void sStopSession();
 };
 
 } // protodb

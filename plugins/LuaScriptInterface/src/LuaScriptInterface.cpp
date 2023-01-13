@@ -74,6 +74,14 @@ void LuaScriptInterface::initStandartFunction()
 
     m_lua["log"] = this;
 
+    // session
+    auto session = m_lua["session"].get_or_create<sol::table>();
+
+    // session: stop
+    session.set_function("stop", [this]() {
+        emit sStopSession();
+    });
+
     // Utils
     auto utils = m_lua["utils"].get_or_create<sol::table>();
 

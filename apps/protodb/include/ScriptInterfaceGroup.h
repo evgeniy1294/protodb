@@ -36,6 +36,7 @@ private slots:
     void error_occuared(QString detail);
     void print(QString text);
     void log_clear();
+    void session_stop();
 
 private:
     QList<QSharedPointer<ScriptInterface>> m_script_interfaces;

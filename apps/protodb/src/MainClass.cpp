@@ -110,6 +110,9 @@ void MainClass::init_logger()
 
     connect(m_script_multi_interface, &ScriptMultiInterface::sErrorOccuared,
             m_logger, QOverload<const QString&>::of(&Logger::error));
+
+    connect(m_script_multi_interface, &ScriptMultiInterface::sStopSession,
+            this, &MainClass::stop);
 }
 
 void MainClass::init_syntaxes()
@@ -299,7 +302,7 @@ void MainClass::stop()
 {
     auto io = m_io; m_io = nullptr;
     if (io) {
-        disconnect(io); io->close(); delete io;
+        disconnect(io); io->close(); io->deleteLater();
         m_script_multi_interface->handleEvent( ScriptInterface::Stop );
     }
 
