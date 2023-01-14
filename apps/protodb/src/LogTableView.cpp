@@ -29,6 +29,7 @@ LogTableView::LogTableView(QWidget *parent)
     setWordWrap(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setShowGrid(false);
+    setTextElideMode(Qt::ElideNone);
 
     QHeaderView* vh = verticalHeader();
         vh->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -180,6 +181,7 @@ void LogTableView::connectSignals()
     connect(m_dec_dialog, &LogDecorationDialog::sConfigChanged, this, [this]() {
         m_dec_dialog->apply(m_decorator);
         reset();
+        resizeRowsToContents();
     });
 }
 

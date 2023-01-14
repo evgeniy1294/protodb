@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Logger.h"
 #include <QStyledItemDelegate>
 
 namespace protodb {
@@ -15,6 +14,8 @@ class LogItemDelegate: public QStyledItemDelegate
 public:
     explicit LogItemDelegate(QObject* aParent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const override;
 
     QString message(const QModelIndex& index);
 

@@ -171,6 +171,7 @@ void LogWidget::createConnections()
             formatter->setSeparator(log_configs.value<char>("CharSeparator", LogFormatter::DefaultSeparator));
 
         m_view->reset();
+        m_view->resizeRowsToContents();
     });
 
     connect(m_clr_btn, &QPushButton::released, this, [this]() {
@@ -192,11 +193,13 @@ void LogWidget::createConnections()
        if (state) {
            m_view->formatter()->setByteFormat(LogFormatter::AsciiFormat);
            m_view->reset();
+           m_view->resizeRowsToContents();
            m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
            m_view->formatter()->setByteFormat(LogFormatter::HexFormat);
            m_view->reset();
+           m_view->resizeRowsToContents();
            m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }
 
