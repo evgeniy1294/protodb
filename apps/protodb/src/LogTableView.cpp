@@ -87,6 +87,12 @@ void LogTableView::setChannelNameVisible(bool visible)
         hideColumn(Logger::ColumnChannel);
 }
 
+void LogTableView::reset()
+{
+
+    QTableView::reset();
+}
+
 
 void LogTableView::createMenu()
 {

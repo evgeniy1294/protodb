@@ -169,6 +169,24 @@ void LogWidget::createConnections()
         auto formatter = m_view->formatter();
             formatter->setTimeFormat(log_configs.value("TimestampFormat", LogFormatter::DefaultTimeFormat));
             formatter->setSeparator(log_configs.value<char>("CharSeparator", LogFormatter::DefaultSeparator));
+            formatter->setChannelName(Logger::ChannelFirst, log_configs.value("FirstChannelName", QString()));
+            formatter->setChannelName(Logger::ChannelSecond, log_configs.value("SecondChannelName", QString()));
+            formatter->setChannelName(Logger::ChannelComment, log_configs.value("CommentChannelName", QString()));
+
+        bool enabled = log_configs.value("FirstChannelEnabled", true);
+            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelFirst, enabled);
+
+        enabled = log_configs.value("SecondChannelEnabled", true);
+            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelSecond, enabled);
+
+        enabled = log_configs.value("CommentChannelEnabled", true);
+            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelComment, enabled);
+
+        enabled = log_configs.value("TimestampEnabled", true);
+            m_view->setTimestampVisible(enabled);
+
+        enabled = log_configs.value("ChannelNameEnabled", true);
+            m_view->setChannelNameVisible(enabled);
 
         m_view->reset();
         m_view->resizeRowsToContents();

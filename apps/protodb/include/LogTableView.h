@@ -27,6 +27,9 @@ public:
     void setTimestampVisible(bool visible);
     void setChannelNameVisible(bool visible);
 
+public slots:
+    void reset() override;
+
 private:
     void createMenu();
     void createActions();

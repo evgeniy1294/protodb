@@ -133,14 +133,14 @@ bool Logger::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRol
 }
 
 
-void Logger::setChannelEnabled(Channel channel)
+void Logger::setChannelEnabled(Channel channel, bool enabled)
 {
-    m_flags[channel] = true;
+    m_flags[channel] = enabled;
 }
 
-void Logger::setChannelDisabled(Channel channel)
+void Logger::setChannelDisabled(Channel channel, bool disabled)
 {
-    m_flags[channel] = false;
+    m_flags[channel] = !disabled;
 }
 
 void Logger::toJson(nlohmann::json& json) const

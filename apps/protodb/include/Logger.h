@@ -41,8 +41,8 @@ public:
 public:
     Logger(QObject* parent = nullptr);
 
-    void setChannelEnabled (Channel channel);
-    void setChannelDisabled(Channel channel);
+    void setChannelEnabled (Channel channel, bool enabled = true);
+    void setChannelDisabled(Channel channel, bool disabled = true);
 
     void toJson(nlohmann::json& json) const;
     void fromJson(const nlohmann::json& json);

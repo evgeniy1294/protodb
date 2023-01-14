@@ -65,7 +65,9 @@ void LogFormatter::fromJson(const nlohmann::json& json)
 
 void LogFormatter::setChannelName(Logger::Channel ch, const QString &name)
 {
-    m_ch_names[ch] = name;
+    if (!name.isEmpty()) {
+        m_ch_names[ch] = name;
+    }
 }
 
 QString LogFormatter::channelName(Logger::Channel ch) const
