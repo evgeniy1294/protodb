@@ -100,7 +100,7 @@ void LogTableView::createMenu()
         m_base_menu->addAction(m_options);
 
     m_data_channel_menu = new QMenu();
-        m_data_channel_menu->addAction(m_add_to_analyzer);
+        // m_data_channel_menu->addAction(m_add_to_analyzer);
         m_data_channel_menu->addAction(m_copy);
         m_data_channel_menu->addAction(m_copy_as_bytes);
         m_data_channel_menu->addAction(m_copy_as_string);

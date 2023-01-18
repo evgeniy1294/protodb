@@ -5,7 +5,7 @@
 #include <variant>
 #include <limits>
 
-namespace ant::api {
+namespace protodb {
 
 using Crc = std::uint64_t;
 
@@ -30,13 +30,21 @@ public:
 
     CrcModel model();
     bool setModel(const CrcModel& a_model);
-    bool validateModel(const CrcModel& a_model);
+
+    void setWidth(std::size_t width);
+    void setPoly(Crc poly);
+    void setSeed(Crc seed);
+    void setXorOut(Crc value);
+    void setReflectIn(bool reflect = true);
+    void setReflectOut(bool reflect = true);
 
     Crc finalize();
     std::size_t validBytes();
     void calculate(const std::uint8_t* data, const std::uint8_t* end);
 
 private:
+    bool m_table_inited;
+
     std::size_t m_width;
     Crc m_poly;
     Crc m_seed;

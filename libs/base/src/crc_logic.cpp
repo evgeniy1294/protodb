@@ -1,6 +1,6 @@
-#include "ant/api/crc_logic.hpp"
+#include "utils/crc_logic.h"
 
-using namespace ant::api;
+using namespace protodb;
 
 static Crc Reflect ( Crc x, std::size_t bits )
 {
@@ -18,7 +18,8 @@ static Crc Reflect ( Crc x, std::size_t bits )
 
 
 CrcLogic::CrcLogic()
-    : m_width()
+    : m_table_inited(false)
+    , m_width()
     , m_poly()
     , m_seed()
     , m_xor_out()
@@ -28,9 +29,9 @@ CrcLogic::CrcLogic()
 
 }
 
-CrcLogic::CrcLogic(const CrcModel &a_model)
+CrcLogic::CrcLogic(const CrcModel& model)
 {
-    setModel(a_model);
+    setModel(model);
 }
 
 CrcModel CrcLogic::model()
@@ -38,17 +39,17 @@ CrcModel CrcLogic::model()
     return {m_width, m_poly, m_seed, m_xor_out, m_ref_in, m_ref_out};
 }
 
-bool CrcLogic::setModel(const CrcModel &a_model)
+bool CrcLogic::setModel(const CrcModel& model)
 {
     bool ret = false;
 
-    if (validateModel(a_model)) {
-        m_width       = a_model.width;
-        m_poly        = a_model.poly;
-        m_seed        = a_model.seed;
-        m_xor_out     = a_model.xor_out;
-        m_ref_in      = a_model.ref_in;
-        m_ref_out     = a_model.ref_out;
+    if (model.width > k_min_poly_size && model.width < k_max_poly_size) {
+        m_width       = model.width;
+        m_poly        = model.poly;
+        m_seed        = model.seed;
+        m_xor_out     = model.xor_out;
+        m_ref_in      = model.ref_in;
+        m_ref_out     = model.ref_out;
         m_result_mask = std::numeric_limits<Crc>::max() >> ( sizeof( Crc )*8u - m_width);
 
         m_crc = m_seed;
@@ -60,9 +61,52 @@ bool CrcLogic::setModel(const CrcModel &a_model)
     return ret;
 }
 
-bool CrcLogic::validateModel(const CrcModel &a_model)
+void CrcLogic::setWidth(std::size_t width)
 {
-    return a_model.width >= 3 && a_model.width <= 64;
+    if (width < k_min_poly_size || width > k_max_poly_size)
+        return;
+
+    if (m_width != width){
+        m_width = width;
+        m_crc = m_seed;
+        m_table_inited = false;
+    }
+}
+
+void CrcLogic::setPoly(Crc poly)
+{
+    if (m_poly != poly) {
+        m_poly = poly;
+        m_crc = m_seed;
+        m_table_inited = false;
+    }
+}
+
+void CrcLogic::setSeed(Crc seed)
+{
+    if (m_seed != seed) {
+        m_seed = seed;
+        m_crc = m_seed;
+    }
+}
+
+void CrcLogic::setXorOut(Crc value)
+{
+    m_xor_out = value;
+}
+
+void CrcLogic::setReflectIn(bool reflect)
+{
+    if (m_ref_in != reflect) {
+        m_ref_in = reflect;
+        m_crc = m_seed;
+        m_table_inited = false;
+    }
+}
+
+void CrcLogic::setReflectOut(bool reflect)
+{
+    m_ref_out = reflect;
 }
 
 Crc CrcLogic::finalize()
@@ -156,6 +200,8 @@ void CrcLogic::calculateTable() {
 
       m_table[i] = static_cast<Crc>(x & m_result_mask);
     }
+
+    m_table_inited = true;
 }
 
 

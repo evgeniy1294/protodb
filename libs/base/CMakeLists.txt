@@ -35,6 +35,7 @@ set(
       include/protodb/utils/FsIcon.h
       include/protodb/utils/JsonKeeper.h
       include/protodb/utils/ziputils.h
+      include/protodb/utils/crc_logic.h
 )
 
 set(
@@ -52,6 +53,7 @@ set( BaseSources
     src/PluginManager.cpp
     src/SolByteArrayWrapper.cpp
     src/ziputils.cpp
+    src/crc_logic.cpp
 )
 
 set(SOURCES_LIST
