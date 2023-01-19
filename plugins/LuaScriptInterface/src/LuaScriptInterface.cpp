@@ -1,6 +1,7 @@
 #include "protodb/LuaScriptInterface.h"
 
 #include <protodb/utils/SolByteArrayWrapper.h>
+#include <protodb/utils/crc_logic.h>
 
 #include <QDebug>
 
@@ -8,170 +9,45 @@
 #include <filesystem>
 #include <tuple>
 
+#include "utils.cpp"
+
 using namespace protodb;
 
-static float tableToFloat(const sol::table& parent, const sol::table& table)
-{
-    Q_UNUSED(parent)
-    auto ret = std::numeric_limits<float>::quiet_NaN();
-
-    if (table.get_type() == sol::type::table) {
-        if (table.size() >= 4) {
-            uint32_t tmp = 0;
-
-            tmp |= table.raw_get_or<uint8_t>(1, 0);
-            tmp |= table.raw_get_or<uint8_t>(2, 0) << 8;
-            tmp |= table.raw_get_or<uint8_t>(3, 0) << 16;
-            tmp |= table.raw_get_or<uint8_t>(4, 0) << 24;
-
-            ret = *reinterpret_cast<float*>(&tmp);
-        }
-    }
-
-    return ret;
+static void bindUtils(sol::state& lua) {
+    auto utils = lua["utils"].get_or_create<sol::table>();
+        utils.set_function("tableToFloat", tableToFloat);
+        utils.set_function("tableToDouble", tableToDouble);
+        utils.set_function("tableToShort", tableToShort);
+        utils.set_function("tableToWord", tableToWord);
+        utils.set_function("tableToDword", tableToDword);
+        utils.set_function("floatToBytes", floatToBytes);
+        utils.set_function("doubleToBytes", doubleToBytes);
+        utils.set_function("shortToBytes", shortToBytes);
+        utils.set_function("wordToBytes", wordToBytes);
+        utils.set_function("dwordToBytes", dwordToBytes);
 }
 
-static double tableToDouble(const sol::table& parent, const sol::table& table)
-{
-    Q_UNUSED(parent)
-    auto ret = std::numeric_limits<double>::quiet_NaN();
+static void bindCrcCalculatorClass(sol::state& lua) {
+    sol::usertype<CrcLogic> crc_logic_type = lua.new_usertype<CrcLogic>("CrcLogic", sol::constructors<CrcLogic()>());
+        crc_logic_type.set_function("setWidth", &CrcLogic::setWidth);
+        crc_logic_type.set_function("setPoly", &CrcLogic::setPoly);
+        crc_logic_type.set_function("setSeed", &CrcLogic::setSeed);
+        crc_logic_type.set_function("setXorOut", &CrcLogic::setXorOut);
+        crc_logic_type.set_function("setReflectIn", &CrcLogic::setReflectIn);
+        crc_logic_type.set_function("setReflectOut", &CrcLogic::setReflectOut);
+        crc_logic_type.set_function("finalize", &CrcLogic::finalize);
+        crc_logic_type.set_function("validBytes", &CrcLogic::validBytes);
+        crc_logic_type.set_function("calculate", [](CrcLogic& self, sol::nested< std::vector<uint8_t> > src) {
+            const auto& vec = src.value();
+            const uint8_t* data = &(*vec.data());
+            const uint8_t* end  = &(*vec.end());
 
-    if (table.get_type() == sol::type::table) {
-        if (table.size() >= 8) {
-            uint64_t tmp = 0;
+            self.calculate(data, end);
 
-            tmp |=  table.raw_get_or<uint64_t>(1, 0) & 0xff;
-            tmp |= (table.raw_get_or<uint64_t>(2, 0) & 0xff) << 8;
-            tmp |= (table.raw_get_or<uint64_t>(3, 0) & 0xff) << 16;
-            tmp |= (table.raw_get_or<uint64_t>(4, 0) & 0xff) << 24;
-            tmp |= (table.raw_get_or<uint64_t>(5, 0) & 0xff) << 32;
-            tmp |= (table.raw_get_or<uint64_t>(6, 0) & 0xff) << 40;
-            tmp |= (table.raw_get_or<uint64_t>(7, 0) & 0xff) << 48;
-            tmp |= (table.raw_get_or<uint64_t>(8, 0) & 0xff) << 56;
+            return;
+        });
 
-            ret = *reinterpret_cast<double*>(&tmp);
-        }
-    }
-
-    return ret;
-}
-
-static uint16_t tableToShort(const sol::table& parent, const sol::table& table)
-{
-    Q_UNUSED(parent)
-    uint16_t ret = 0;
-
-    if (table.get_type() == sol::type::table) {
-        if (table.size() >= 2) {
-            ret = table.raw_get_or<uint8_t>(1, 0);
-            ret |= table.raw_get_or<uint8_t>(2, 0) << 8;
-        }
-    }
-
-    return ret;
-}
-
-static uint32_t tableToWord(const sol::table& parent, const sol::table& table)
-{
-    Q_UNUSED(parent)
-    uint32_t ret = 0;
-
-    if (table.get_type() == sol::type::table) {
-        if (table.size() >= 4) {
-            ret = table.raw_get_or<uint8_t>(1, 0);
-            ret |= table.raw_get_or<uint8_t>(2, 0) << 8;
-            ret |= table.raw_get_or<uint8_t>(3, 0) << 16;
-            ret |= table.raw_get_or<uint8_t>(4, 0) << 24;
-        }
-    }
-
-    return ret;
-}
-
-static uint64_t tableToDword(const sol::table& parent, const sol::table& table)
-{
-    Q_UNUSED(parent)
-    uint64_t ret = 0;
-
-    if (table.get_type() == sol::type::table) {
-        if (table.size() >= 8) {
-            ret =  table.raw_get_or<uint64_t>(1, 0) & 0xff;
-            ret |= (table.raw_get_or<uint64_t>(2, 0) & 0xff) << 8;
-            ret |= (table.raw_get_or<uint64_t>(3, 0) & 0xff) << 16;
-            ret |= (table.raw_get_or<uint64_t>(4, 0) & 0xff) << 24;
-            ret |= (table.raw_get_or<uint64_t>(5, 0) & 0xff) << 32;
-            ret |= (table.raw_get_or<uint64_t>(6, 0) & 0xff) << 40;
-            ret |= (table.raw_get_or<uint64_t>(7, 0) & 0xff) << 48;
-            ret |= (table.raw_get_or<uint64_t>(8, 0) & 0xff) << 56;
-        }
-    }
-
-    return ret;
-}
-
-static auto floatToBytes(const sol::table& parent, float val)
-{
-    Q_UNUSED(parent)
-    uint32_t tmp = *reinterpret_cast<uint32_t*>(&val);
-        uint8_t b1 = tmp & 0xff;
-        uint8_t b2 = (tmp >> 8)  & 0xff;
-        uint8_t b3 = (tmp >> 16) & 0xff;
-        uint8_t b4 = (tmp >> 24) & 0xff;
-
-    return std::make_tuple(b1, b2, b3, b4);
-}
-
-static auto doubleToBytes(const sol::table& parent, double val)
-{
-    Q_UNUSED(parent)
-    uint64_t tmp = *reinterpret_cast<uint64_t*>(&val);
-        uint8_t b1 = tmp & 0xff;
-        uint8_t b2 = (tmp >> 8)  & 0xff;
-        uint8_t b3 = (tmp >> 16) & 0xff;
-        uint8_t b4 = (tmp >> 24) & 0xff;
-        uint8_t b5 = (tmp >> 32) & 0xff;
-        uint8_t b6 = (tmp >> 40) & 0xff;
-        uint8_t b7 = (tmp >> 48) & 0xff;
-        uint8_t b8 = (tmp >> 56) & 0xff;
-
-    return std::make_tuple(b1, b2, b3, b4, b5, b6, b7, b8);
-}
-
-static auto shortToBytes(const sol::table& parent, uint16_t val)
-{
-    Q_UNUSED(parent)
-    uint8_t b1 = val & 0xff;
-    uint8_t b2 = (val >> 8)  & 0xff;
-
-    return std::make_tuple(b1, b2);
-}
-
-static auto wordToBytes(const sol::table& parent, uint32_t val)
-{
-    Q_UNUSED(parent)
-
-    uint8_t b1 = val & 0xff;
-    uint8_t b2 = (val >> 8)  & 0xff;
-    uint8_t b3 = (val >> 16) & 0xff;
-    uint8_t b4 = (val >> 24) & 0xff;
-
-    return std::make_tuple(b1, b2, b3, b4);
-}
-
-static auto dwordToBytes(const sol::table& parent, uint64_t val)
-{
-    Q_UNUSED(parent)
-
-    uint8_t b1 = val & 0xff;
-    uint8_t b2 = (val >> 8)  & 0xff;
-    uint8_t b3 = (val >> 16) & 0xff;
-    uint8_t b4 = (val >> 24) & 0xff;
-    uint8_t b5 = (val >> 32) & 0xff;
-    uint8_t b6 = (val >> 40) & 0xff;
-    uint8_t b7 = (val >> 48) & 0xff;
-    uint8_t b8 = (val >> 56) & 0xff;
-
-    return std::make_tuple(b1, b2, b3, b4, b5, b6, b7, b8);
+        lua["crc"] = crc_logic_type;
 }
 
 static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
@@ -247,18 +123,10 @@ void LuaScriptInterface::initStandartFunction()
     });
 
     // Utils
-    auto utils = m_lua["utils"].get_or_create<sol::table>();
+    bindUtils(m_lua);
 
-    utils.set_function("tableToFloat", tableToFloat);
-    utils.set_function("tableToDouble", tableToDouble);
-    utils.set_function("tableToShort", tableToShort);
-    utils.set_function("tableToWord", tableToWord);
-    utils.set_function("tableToDword", tableToDword);
-    utils.set_function("floatToBytes", floatToBytes);
-    utils.set_function("doubleToBytes", doubleToBytes);
-    utils.set_function("shortToBytes", shortToBytes);
-    utils.set_function("wordToBytes", wordToBytes);
-    utils.set_function("dwordToBytes", dwordToBytes);
+    // crc
+    bindCrcCalculatorClass(m_lua);
 }
 
 bool LuaScriptInterface::setScriptFile(const QString& path)

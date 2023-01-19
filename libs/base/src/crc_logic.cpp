@@ -19,7 +19,7 @@ static Crc Reflect ( Crc x, std::size_t bits )
 
 CrcLogic::CrcLogic()
     : m_table_inited(false)
-    , m_width()
+    , m_width(32)
     , m_poly()
     , m_seed()
     , m_xor_out()
@@ -50,7 +50,6 @@ bool CrcLogic::setModel(const CrcModel& model)
         m_xor_out     = model.xor_out;
         m_ref_in      = model.ref_in;
         m_ref_out     = model.ref_out;
-        m_result_mask = std::numeric_limits<Crc>::max() >> ( sizeof( Crc )*8u - m_width);
 
         m_crc = m_seed;
 
@@ -135,6 +134,10 @@ std::size_t CrcLogic::validBytes()
 
 void CrcLogic::calculate(const uint8_t *data, const uint8_t *end)
 {
+    if (!m_table_inited) {
+        calculateTable();
+    }
+
     if (m_ref_in)
     {
         while ( data < reinterpret_cast< const std::uint8_t* >( end ) ) {
@@ -174,8 +177,9 @@ void CrcLogic::calculate(const uint8_t *data, const uint8_t *end)
 
 void CrcLogic::calculateTable() {
     Crc ref_poly = Reflect(m_poly, m_width);
-    Crc mask = (m_ref_in) ? static_cast<Crc>(1u) :
-                            static_cast<Crc>(1u) << ( m_width - 1u );
+    Crc mask = (m_ref_in) ? static_cast<Crc>(1u) : static_cast<Crc>(1u) << ( m_width - 1u );
+
+    m_result_mask = std::numeric_limits<Crc>::max() >> ( sizeof( Crc )*8u - m_width);
 
     for (std::size_t i = 0u; i < k_table_size; i++) {
         Crc x = 0;
