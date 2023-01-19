@@ -77,7 +77,7 @@ static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> m
 LuaScriptInterface::LuaScriptInterface(QObject* parent)
     : ScriptInterface(parent)
 {
-    m_lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
+    m_lua.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
     m_lua.set_exception_handler(exceptionHandler);
 
     initStandartFunction();
@@ -182,7 +182,7 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
     sol::state compiler;
 
     if (code.length() != 0) {
-        compiler.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
+        compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
         compiler.set_exception_handler(exceptionHandler);
 
         sol::protected_function_result pfr =
