@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <QDialog>
 
 class QPushButton;
@@ -14,7 +16,7 @@ namespace protodb {
 
 class PluginTreeView;
 
-class PluginManagerDialog: public QDialog
+class PROTODB_GUI_EXPORT PluginManagerDialog: public QDialog
 {
     Q_OBJECT
 

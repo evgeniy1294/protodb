@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/base_cfg.hpp>
+
 #include <cstdint>
 #include <array>
 #include <variant>
@@ -9,7 +11,7 @@ namespace protodb {
 
 using Crc = std::uint64_t;
 
-struct CrcModel {
+struct PROTODB_BASE_EXPORT CrcModel {
     std::size_t width;
     Crc poly;
     Crc seed;
@@ -18,7 +20,7 @@ struct CrcModel {
     bool ref_out;
 };
 
-class CrcLogic final {
+class PROTODB_BASE_EXPORT CrcLogic final {
 public:
     static constexpr std::size_t k_table_size    = 16u;
     static constexpr std::size_t k_min_poly_size = 3u;

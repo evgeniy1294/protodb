@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <QTreeView>
 
 class QDataWidgetMapper;
@@ -10,7 +12,7 @@ namespace protodb
 
 class PluginManager;
 
-class PluginTreeView: public QTreeView
+class PROTODB_GUI_EXPORT PluginTreeView: public QTreeView
 {
     Q_OBJECT
 
