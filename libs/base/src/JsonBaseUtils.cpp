@@ -169,7 +169,7 @@ void from_json(const nlohmann::json& j, QByteArray& array)
         return;
     }
 
-    array.resize(j.size());
+    array.resize(static_cast<int>(j.size()));
     for(int i = 0; i < j.size(); i++) {
         array[i] = j[i].get<std::uint8_t>();
     }

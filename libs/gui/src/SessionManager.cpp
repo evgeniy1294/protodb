@@ -27,7 +27,7 @@ bool SessionManager::setWorkingDirectory(const QString &path)
         return true;
     }
 
-    std::filesystem::path working_dir = path.toStdString();
+    std::filesystem::path working_dir = path.toLocal8Bit().toStdString();
     if (!std::filesystem::exists(working_dir)) {
         std::error_code ec;
         std::filesystem::create_directories(working_dir, ec);
@@ -118,13 +118,13 @@ QString SessionManager::createSession(const QString &name, const QString &descri
         return QString();
     }
 
-    std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+    std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toLocal8Bit().toStdString();
     std::filesystem::create_directory(session_dir);
 
     if ( !origin.isEmpty() ) {
         int id = findSessionByName(origin);
         if (id >= 0) {
-            std::filesystem::path origin_dir = (m_working_dir_path + "/" + m_sessions.at(id).name).toStdString();
+            std::filesystem::path origin_dir = (m_working_dir_path + "/" + m_sessions.at(id).name).toLocal8Bit().toStdString();
 
             if ( std::filesystem::exists(origin_dir) ) {
                 std::error_code ec;
@@ -159,8 +159,8 @@ bool SessionManager::renameSession(int id, const QString& name)
     if ( id >= 0 && id < m_sessions.count() ) {
         auto& s = m_sessions[id];
 
-        std::filesystem::path old_p = (m_working_dir_path + "/" + s.name).toStdString();
-        std::filesystem::path new_p = (m_working_dir_path + "/" + name).toStdString();
+        std::filesystem::path old_p = (m_working_dir_path + "/" + s.name).toLocal8Bit().toStdString();
+        std::filesystem::path new_p = (m_working_dir_path + "/" + name).toLocal8Bit().toStdString();
 
         std::error_code ec;
         std::filesystem::rename(old_p, new_p, ec);
@@ -195,7 +195,7 @@ bool SessionManager::removeSession(int id)
             Session s = m_sessions.at(id);
 
             std::error_code err;
-            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toLocal8Bit().toStdString();
                 std::filesystem::remove_all(session_dir, err);
 
             if (err) {
@@ -252,7 +252,7 @@ bool SessionManager::saveCurrentSession()
 
 bool SessionManager::importSession(const QString &path)
 {
-    std::filesystem::path fp = path.toStdString();
+    std::filesystem::path fp = path.toLocal8Bit().toStdString();
 
     if ( !std::filesystem::exists(fp) ) {
         m_last_error = tr("Import session failed: archive not exists");
@@ -278,7 +278,7 @@ bool SessionManager::importSession(const QString &path)
     std::filesystem::path meta_path = tmp / "meta.json";
     if (std::filesystem::exists(meta_path)) {
         nlohmann::json meta;
-        if ( readFromFile(meta_path.c_str(), meta) ) {
+        if ( readFromFile(meta_path.string().c_str(), meta) ) {
             // 4 - Проверить метаинформацию
             if ( QCoreApplication::applicationName() != meta.value( "application", QString("Unknown") ) ) {
                 m_last_error = tr("Import session failed: session is not supported");
@@ -321,7 +321,7 @@ bool SessionManager::importSession(const QString &path)
 
             // 6 - скопировать данные в рабочий каталог
             {
-                std::filesystem::path from = tmp / name.toStdString();
+                std::filesystem::path from = tmp / name.toLocal8Bit().toStdString();
                 if ( !std::filesystem::exists(from) ) {
                     m_last_error = tr("Import session failed: broken format");
                     std::filesystem::remove_all(tmp);
@@ -330,7 +330,7 @@ bool SessionManager::importSession(const QString &path)
                 }
 
                 std::error_code ec;
-                std::filesystem::path to = (m_working_dir_path + "/" + s.name).toStdString();
+                std::filesystem::path to = (m_working_dir_path + "/" + s.name).toLocal8Bit().toStdString();
                 std::filesystem::rename(from, to, ec);
 
                 if (ec) {
@@ -403,14 +403,14 @@ bool SessionManager::exportSession(int id, const QString &path)
         std::filesystem::create_directory(tmp);
 
         if ( std::filesystem::exists(tmp) ) {
-            if ( !writeToFile( QString(tmp.c_str()) + "/meta.json", meta) ) {
+            if ( !writeToFile( QString(tmp.string().c_str()) + "/meta.json", meta) ) {
                 return false;
             }
 
-            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toStdString();
+            std::filesystem::path session_dir = (m_working_dir_path + "/" + s.name).toLocal8Bit().toStdString();
 
             if ( std::filesystem::exists(session_dir) ) {
-                std::filesystem::path tmp_session_dir  = tmp / s.name.toStdString();
+                std::filesystem::path tmp_session_dir  = tmp / s.name.toLocal8Bit().toStdString();
 
                 std::error_code ec;
                 std::filesystem::copy(session_dir, tmp_session_dir, ec);

@@ -26,12 +26,12 @@ void Logger::log(const Event &event)
 
 void Logger::log(Channel ch, const QByteArray& data, const QDateTime& timestamp)
 {
-    log( {.timestamp = timestamp, .channel = ch, .message = data} );
+    log( {timestamp, ch, data} );
 }
 
 void Logger::comment(const QByteArray &text)
 {
-    log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelComment, .message = text } );
+    log( { QDateTime::currentDateTime(), ChannelComment, text } );
 }
 
 void Logger::comment(const QString& text)
@@ -41,7 +41,7 @@ void Logger::comment(const QString& text)
 
 void Logger::error(const QByteArray& text)
 {
-    log( { .timestamp = QDateTime::currentDateTime(), .channel = ChannelError, .message = text } );
+    log( { QDateTime::currentDateTime(), ChannelError, text } );
 }
 
 void Logger::error(const QString& text)

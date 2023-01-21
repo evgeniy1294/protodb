@@ -18,8 +18,12 @@ void registerMetaType();
 
 int main(int argc, char *argv[])
 {
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("protodb");
+
+    // TODO: перенести ресурсы в отдельную библиотеку. После чего убрать set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) для gui
+    Q_INIT_RESOURCE(gui_resources);
 
     registerMetaType();
     registerCustomConverters();
@@ -30,7 +34,7 @@ int main(int argc, char *argv[])
         auto pluginsState = ProtodbConfigStorage::instance().lastPluginsState();
 
     #ifdef _WIN32
-        PluginManager::instance().setMainDirectory(QCoreApplication::applicationFilePath() + "/plugins");
+        PluginManager::instance().setMainDirectory(QCoreApplication::applicationDirPath() + "/plugins");
     #else
         PluginManager::instance().setMainDirectory("/usr/lib/protodb/plugins");
         //PluginManager::instance().setMainDirectory("/tmp/protodb/install/lib/protodb/plugins/");

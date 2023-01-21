@@ -20,7 +20,7 @@ static bool zip_walk_directory(zip_t* zipper, const std::filesystem::path &dir, 
 
     for (const fs::directory_entry& entry: fs::directory_iterator(dir)) {
         if (is_directory(entry)) {
-            if (zip_dir_add(zipper, fs::relative(entry.path(), relative).c_str(), ZIP_FL_ENC_UTF_8) < 0) {
+            if (zip_dir_add(zipper, fs::relative(entry.path(), relative).string().c_str(), ZIP_FL_ENC_UTF_8) < 0) {
                 std::cerr << "Failed to add directory to zip: " + std::string(zip_strerror(zipper));
                 return false;
             }
@@ -30,13 +30,13 @@ static bool zip_walk_directory(zip_t* zipper, const std::filesystem::path &dir, 
             }
         }
         else {
-            zip_source_t *source = zip_source_file(zipper, entry.path().c_str(), 0, 0);
+            zip_source_t *source = zip_source_file(zipper, entry.path().string().c_str(), 0, 0);
             if (source == nullptr) {
                 std::cerr << "Failed to add file to zip: " + std::string(zip_strerror(zipper));
                 return false;
             }
 
-            if (zip_file_add(zipper, fs::relative(entry.path(), relative).c_str(), source, ZIP_FL_ENC_UTF_8 | ZIP_FL_OVERWRITE) < 0) {
+            if (zip_file_add(zipper, fs::relative(entry.path(), relative).string().c_str(), source, ZIP_FL_ENC_UTF_8 | ZIP_FL_OVERWRITE) < 0) {
                 zip_source_free(source);
                 std::cerr << "Failed to add file to zip: " + std::string(zip_strerror(zipper));
                 return false;
@@ -70,7 +70,7 @@ bool zipDirectory(const fs::path &dir, const fs::path &zip)
         return false;
     }
 
-    int errorp; zip_t *zipper = zip_open(zip.c_str(), ZIP_CREATE | ZIP_TRUNCATE, &errorp);
+    int errorp; zip_t *zipper = zip_open(zip.string().c_str(), ZIP_CREATE | ZIP_TRUNCATE, &errorp);
     if (zipper == nullptr) {
         zip_error_t ziperror;
             zip_error_init_with_code(&ziperror, errorp);
@@ -106,7 +106,7 @@ bool unzipToDirectory(const std::filesystem::path& zip, const std::filesystem::p
         return false;
     }
 
-    int errorp; zip_t *za = zip_open(zip.c_str(), 0, &errorp);
+    int errorp; zip_t *za = zip_open(zip.string().c_str(), 0, &errorp);
     if (za == nullptr) {
         zip_error_t ziperror;
             zip_error_init_with_code(&ziperror, errorp);

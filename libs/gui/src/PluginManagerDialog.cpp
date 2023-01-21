@@ -109,7 +109,7 @@ void PluginManagerDialog::connectSignals()
         QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absolutePath()));
     });
 
-    connect(m_view, &QTreeView::activated, this, [this](const QModelIndex& index) {
+    connect(m_view, &QTreeView::clicked, this, [this](const QModelIndex& index) {
         if (!m_mapper->model()->hasChildren(index)) {
             m_mapper->setRootIndex(index.parent());
             m_mapper->setCurrentModelIndex(index);

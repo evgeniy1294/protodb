@@ -13,6 +13,7 @@ option(${TARGET}_INSTALL "Generate the install target" ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 # ------------ [ Sources ] ------------
 
@@ -46,7 +47,7 @@ set( GuiSources
 )
 
 set( GuiResources
-    resources/resources.qrc
+    resources/gui_resources.qrc
 )
 
 set(SOURCES_LIST

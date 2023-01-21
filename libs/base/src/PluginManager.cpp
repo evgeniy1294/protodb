@@ -65,8 +65,8 @@ private:
 
 
 PluginManagerPrivate::PluginManagerPrivate()
-    : q_ptr(nullptr)
-    , m_latch(false)
+    : m_latch(false)
+    , q_ptr(nullptr)
 {
 
 }
@@ -290,7 +290,6 @@ QPair<int, int> PluginManagerPrivate::findPluginByIid(const QString &iid) const
 
 QStringList PluginManagerPrivate::findConflicts(const PluginInfo& plugin, bool pedantic) const
 {
-    Q_Q(const PluginManager);
     QStringList ret;
 
     for( int i = 0; i < m_groups.size(); i++ )
@@ -317,7 +316,6 @@ QStringList PluginManagerPrivate::findConflicts(const PluginInfo& plugin, bool p
 
 QStringList PluginManagerPrivate::findBrokenDependencies(const PluginInfo& plugin) const
 {
-    Q_Q(const PluginManager);
     QStringList ret;
 
     if (plugin.deps.contains(plugin.iid)) {
@@ -343,8 +341,6 @@ QStringList PluginManagerPrivate::findBrokenDependencies(const PluginInfo& plugi
 
 void PluginManagerPrivate::loadPlugin(PluginInfo &plugin, const QMap<QString, bool>& iids)
 {
-    Q_Q(PluginManager);
-
     if (!plugin.enabled)
         return;
 

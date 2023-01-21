@@ -131,12 +131,12 @@ void LuaScriptInterface::initStandartFunction()
 
 bool LuaScriptInterface::setScriptFile(const QString& path)
 {
-    std::filesystem::path script_path = path.toStdString();
+    std::filesystem::path script_path = path.toLocal8Bit().toStdString();
     m_valid = false;
 
     if (std::filesystem::exists(script_path)) {
         if (script_path.extension() == fileExtention().toStdString()) {
-            sol::protected_function_result pfr = m_lua.safe_script_file(script_path, &sol::script_pass_on_error);
+            sol::protected_function_result pfr = m_lua.safe_script_file(script_path.string(), &sol::script_pass_on_error);
 
             if (pfr.valid()) {
                 m_start    = m_lua["start"];
@@ -195,7 +195,7 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
 
             if (pfr.valid()) {
                 std::vector<uint8_t>& bytes = compiler["vec"];
-                return QByteArray(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+                return QByteArray(reinterpret_cast<const char*>(bytes.data()), static_cast<int>(bytes.size()));
             }
         }
 
