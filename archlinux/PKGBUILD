@@ -16,7 +16,7 @@ prepare() {
     git submodule update
   
   cd ${srcdir}/$pkgname/libs/qt-ads
-    git checkout tags/4.0.1 -b builds
+    git checkout tags/4.0.2 -b builds
 }
 
 build() {
