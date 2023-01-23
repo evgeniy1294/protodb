@@ -109,7 +109,7 @@ bool SessionManager::containsSession(const QString &name) const
 QString SessionManager::createSession(const QString &name, const QString &description, const QString &origin)
 {
     Session s;
-        s.name = getUniqueSessionName(name);
+        s.name = getUniqueSessionName(name.isEmpty() ? origin : name);
         s.description  = description;
         s.last_changed = QDateTime::currentDateTime();
 
@@ -125,6 +125,7 @@ QString SessionManager::createSession(const QString &name, const QString &descri
         int id = findSessionByName(origin);
         if (id >= 0) {
             std::filesystem::path origin_dir = (m_working_dir_path + "/" + m_sessions.at(id).name).toLocal8Bit().toStdString();
+            s.description = s.description.isEmpty() ? m_sessions.at(id).description : s.description;
 
             if ( std::filesystem::exists(origin_dir) ) {
                 std::error_code ec;

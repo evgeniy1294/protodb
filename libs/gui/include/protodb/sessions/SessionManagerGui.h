@@ -37,7 +37,9 @@ private:
 
 private slots:
     void onCreateClicked();
-    void onChangeClicked();
+    void onSwitchToClicked();
+    void onCopyClicked();
+    void onEditClicked();
     void onRmClicked();
     void onExportClicked();
     void onImportClicked();
@@ -56,7 +58,7 @@ private:
     QPushButton*  m_change_btn;
     QPushButton*  m_copy_btn;
     QPushButton*  m_rm_btn;
-    QPushButton*  m_select_btn;
+    QPushButton*  m_switch_to_btn;
     QPushButton*  m_import_btn;
     QPushButton*  m_export_btn;
 };

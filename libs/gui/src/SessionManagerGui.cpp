@@ -43,13 +43,13 @@ void SessionManagerGui::create_gui()
     m_change_btn = new QPushButton(tr("Edit"));
     m_copy_btn = new QPushButton(tr("Copy"));
     m_rm_btn = new QPushButton(tr("Delete"));
-    m_select_btn = new QPushButton(tr("Switch to"));
+    m_switch_to_btn = new QPushButton(tr("Switch to"));
     m_import_btn = new QPushButton(tr("Import"));
     m_export_btn = new QPushButton(tr("Export"));
 
     auto btn_layout = new QVBoxLayout;
         btn_layout->setAlignment(Qt::AlignTop);
-        btn_layout->addWidget(m_select_btn);
+        btn_layout->addWidget(m_switch_to_btn);
         btn_layout->addWidget(m_create_btn);
         btn_layout->addWidget(m_import_btn);
         btn_layout->addWidget(m_export_btn);
@@ -79,8 +79,10 @@ void SessionManagerGui::create_gui()
 
 void SessionManagerGui::create_connections()
 {
+    connect(m_switch_to_btn, &QPushButton::clicked, this, &SessionManagerGui::onSwitchToClicked);
     connect(m_create_btn, &QPushButton::clicked, this, &SessionManagerGui::onCreateClicked);
-    connect(m_change_btn, &QPushButton::clicked, this, &SessionManagerGui::onChangeClicked);
+    connect(m_copy_btn, &QPushButton::clicked, this, &SessionManagerGui::onCopyClicked);
+    connect(m_change_btn, &QPushButton::clicked, this, &SessionManagerGui::onEditClicked);
     connect(m_rm_btn, &QPushButton::clicked, this, &SessionManagerGui::onRmClicked);
     connect(m_filter_le, &QLineEdit::textChanged, m_proxy_model, &QSortFilterProxyModel::setFilterFixedString);
     connect(m_export_btn, &QPushButton::clicked, this, &SessionManagerGui::onExportClicked);
@@ -97,7 +99,7 @@ void SessionManagerGui::disable_control_btn()
     m_change_btn->setDisabled(true);
     m_copy_btn->setDisabled(true);
     m_rm_btn->setDisabled(true);
-    m_select_btn->setDisabled(true);
+    m_switch_to_btn->setDisabled(true);
     m_export_btn->setDisabled(true);
 }
 
@@ -106,7 +108,7 @@ void SessionManagerGui::enable_control_btn()
     m_change_btn->setEnabled(true);
     m_copy_btn->setEnabled(true);
     m_rm_btn->setEnabled(true);
-    m_select_btn->setEnabled(true);
+    m_switch_to_btn->setEnabled(true);
     m_export_btn->setEnabled(true);
 }
 
@@ -130,7 +132,28 @@ void SessionManagerGui::onCreateClicked()
     return;
 }
 
-void SessionManagerGui::onChangeClicked()
+void SessionManagerGui::onSwitchToClicked()
+{
+    auto idx = m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row();
+
+    hide();
+
+    m_sm->saveCurrentSession();
+    m_sm->loadSession(idx);
+}
+
+void SessionManagerGui::onCopyClicked()
+{
+    auto selected = m_sessions_table->selectionModel()->selectedRows();
+    if (selected.empty())
+        return;
+
+    QString origin = selected.first().data().toString();
+
+    m_sm->createSession(QString(), QString(), origin);
+}
+
+void SessionManagerGui::onEditClicked()
 {
     auto idx = m_proxy_model->mapToSource( m_sessions_table->selectionModel()->selectedRows().first() ).row();
 

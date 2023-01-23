@@ -61,9 +61,9 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
         main_class.stop();
 
         auto incoming_seq = main_class.incomingSequences();
-            // incoming_seq->clear();
+            incoming_seq->removeRows(0, incoming_seq->rowCount());
         auto outgoing_seq = main_class.outgoingSequences();
-            // outgoing_seq->clear();
+            outgoing_seq->removeRows(0, outgoing_seq->rowCount());
 
     // Загрузка последовательностей
     nlohmann::json sequences;
