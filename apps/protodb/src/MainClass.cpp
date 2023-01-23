@@ -97,7 +97,10 @@ void MainClass::init_factories()
 
 void MainClass::init_logger()
 {
-    m_log_printer->setLogFile("/tmp/protodb.log");
+    m_log_printer->setLogFile (
+        QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QDir::separator() +"protodb.log"
+    );
+
     m_log_printer->setAppendFile(true);
 
     connect(m_logger, &Logger::sEventOccuaried, m_log_printer, &LogPrinter::print);
@@ -275,6 +278,13 @@ void MainClass::start()
     // Configure logger
     auto log_configs = m_seance_cfg.value("LogConfigs", nlohmann::json::object());
     config_logger(log_configs);
+
+    auto log_file = m_seance_cfg.value("LogFile", QString());
+    if (log_file.isEmpty()) {
+        log_file = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QDir::separator() + "protodb.log";
+    }
+
+    m_log_printer->setLogFile(log_file);
 
     // Set script file
     auto script_file = m_seance_cfg.value("ScriptFile", QString());

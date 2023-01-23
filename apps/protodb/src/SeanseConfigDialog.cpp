@@ -318,6 +318,9 @@ void SeanceConfigDialog::setState(const nlohmann::json& json)
     auto log_configs = json.value("LogConfigs", nlohmann::json::object());
         m_log_format_wiget->setConfig(log_configs);
 
+    QString log_file_path = json.value("LogFile", QString());
+        m_log_le->setText(log_file_path);
+
     QString script_file_path = json.value("ScriptFile", QString());
         m_scr_le->setText(script_file_path);
 
@@ -378,6 +381,7 @@ void SeanceConfigDialog::state(nlohmann::json& json) const
     json["Configs"]     = configs;
     json["LogConfigs"]  = log_configs;
     json["ScriptFile"]  = m_scr_le->text();
+    json["LogFile"]     = m_log_le->text();
 
     return;
 }
@@ -407,7 +411,7 @@ void SeanceConfigDialog::defaultState(nlohmann::json& json) const
 
     json["Configs"]     = configs;
     json["LogConfigs"]  = log_configs;
-    json["ScriptFile"]  = m_scr_le->text();
+    json["ScriptFile"]  = "";
 
     return;
 }

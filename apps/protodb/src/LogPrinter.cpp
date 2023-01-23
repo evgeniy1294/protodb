@@ -1,6 +1,8 @@
 #include "LogPrinter.h"
 #include "LogFormatter.h"
 
+#include <QTimer>
+
 using namespace protodb;
 
 LogPrinter::LogPrinter(QObject *parent)
@@ -63,7 +65,9 @@ bool LogPrinter::enabled() const
 bool LogPrinter::setDisabled(bool disabled)
 {
     if (disabled) {
-        m_log_file.close();
+        QTimer::singleShot(5, this, [this]() {
+            m_log_file.close();
+        });
     }
     else {
         m_log_file.open(QFile::WriteOnly);

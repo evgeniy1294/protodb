@@ -189,21 +189,20 @@ void LogDecorationDialog::createGui()
         inner_layout->addWidget(m_ch2_font_btn, 1, 2);
         inner_layout->addWidget(m_ch2_color_btn, 1, 3);
 
-        inner_layout->addWidget( new QLabel(tr("Attribute")), 2, 0 );
-        inner_layout->addWidget(m_attr_font_le, 2, 1);
-        inner_layout->addWidget(m_attr_font_btn, 2, 2);
-        inner_layout->addWidget(m_attr_color_btn, 2, 3);
+        inner_layout->addWidget( new QLabel(tr("Comments")), 2, 0 );
+        inner_layout->addWidget(m_cmt_font_le, 2, 1);
+        inner_layout->addWidget(m_cmt_font_btn, 2, 2);
+        inner_layout->addWidget(m_cmt_color_btn, 2, 3);
 
-        inner_layout->addWidget( new QLabel(tr("Comments")), 3, 0 );
-        inner_layout->addWidget(m_cmt_font_le, 3, 1);
-        inner_layout->addWidget(m_cmt_font_btn, 3, 2);
-        inner_layout->addWidget(m_cmt_color_btn, 3, 3);
+        inner_layout->addWidget( new QLabel(tr("Errors")), 3, 0 );
+        inner_layout->addWidget(m_err_font_le, 3, 1);
+        inner_layout->addWidget(m_err_font_btn, 3, 2);
+        inner_layout->addWidget(m_err_color_btn, 3, 3);
 
-        inner_layout->addWidget( new QLabel(tr("Errors")), 4, 0 );
-        inner_layout->addWidget(m_err_font_le, 4, 1);
-        inner_layout->addWidget(m_err_font_btn, 4, 2);
-        inner_layout->addWidget(m_err_color_btn, 4, 3);
-
+        inner_layout->addWidget( new QLabel(tr("Attribute")), 4, 0 );
+        inner_layout->addWidget(m_attr_font_le, 4, 1);
+        inner_layout->addWidget(m_attr_font_btn, 4, 2);
+        inner_layout->addWidget(m_attr_color_btn, 4, 3);
 
         inner_layout->setAlignment(Qt::AlignTop);
         inner_layout->setColumnStretch(0, 0);
