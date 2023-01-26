@@ -103,8 +103,12 @@ void SerialIOWidget::createGui()
     m_device    = new QComboBox();
         m_device->setDuplicatesEnabled(false);
 
-    for (auto& port: QSerialPortInfo::availablePorts()) {
-        m_device->addItem(port.systemLocation());
+    for (auto& p: QSerialPortInfo::availablePorts()) {
+        #ifdef _WIN32
+            m_device->addItem(p.portName());
+        #else
+            m_device->addItem(p.systemLocation());
+        #endif
     }
 
     m_refresh_btn = new QPushButton();
@@ -179,7 +183,11 @@ void SerialIOWidget::refreshPortList()
 
     m_device->clear();
         for (auto& p: ports) {
-            m_device->addItem(p.systemLocation());
+            #ifdef _WIN32
+                m_device->addItem(p.portName());
+            #else
+                m_device->addItem(p.systemLocation());
+            #endif
         }
     m_device->setCurrentIndex(idx);
 }
