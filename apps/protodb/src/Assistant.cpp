@@ -66,17 +66,22 @@ bool Assistant::startAssistant()
     }
 
     if (m_process->state() != QProcess::Running) {
-        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
-        #else
-            QString app = QLibraryInfo::path(QLibraryInfo::BinariesPath) + QDir::separator();
-        #endif
 
-#ifndef Q_OS_DARWIN
-        app += QLatin1String("assistant");
-#else
-        app += QLatin1String("Assistant.app/Contents/MacOS/Assistant");
-#endif
+        #ifdef _WINDOWS
+            QString app = QCoreApplication::applicationDirPath() + QDir::separator() + QLatin1String("assistant");
+        #else
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
+            #else
+                QString app = QLibraryInfo::path(QLibraryInfo::BinariesPath) + QDir::separator();
+            #endif
+
+            #ifdef Q_OS_DARWIN
+                app += QLatin1String("Assistant.app/Contents/MacOS/Assistant");
+            #else
+                app += QLatin1String("assistant");
+            #endif
+        #endif
 
         const QString collectionDirectory = documentationDirectory();
         if (collectionDirectory.isEmpty()) {
