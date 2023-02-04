@@ -191,7 +191,7 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         if (!m_io->isOpen()) {
             qDebug() << m_io->errorString();
             m_logger->error(QString("Can't open device: %2").
-                                arg(m_io->errorString()).toLatin1());
+                                arg(m_io->errorString()).toLocal8Bit());
             return false;
         }
 
@@ -199,13 +199,13 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         connect(m_io, &QIODevice::aboutToClose, this, &MainClass::stop);
 
         if (!m_log_printer->setEnabled()) {
-            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLatin1());
+            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLocal8Bit());
         }
 
         ret = true;
     }
     else {
-        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLatin1());
+        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLocal8Bit());
     }
 
     return ret;
@@ -289,7 +289,7 @@ void MainClass::start()
     // Set script file
     auto script_file = m_seance_cfg.value("ScriptFile", QString());
     if (!m_script_multi_interface->setScriptFile(script_file)) {
-        m_logger->error(QString("Script file \"%1\" unsupported"));
+        m_logger->error(QString("Script file \"%1\" unsupported").arg(script_file).toLocal8Bit());
     }
 
     // Init IODevice
