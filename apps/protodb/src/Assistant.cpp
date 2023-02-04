@@ -13,11 +13,14 @@ static QString documentationDirectory()
 {
     QStringList paths;
 
-    paths.append(QCoreApplication::applicationDirPath());
-    paths.append(QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation));
+    paths.append(QCoreApplication::applicationDirPath() + QLatin1String("/doc"));
 
-    for (const auto &dir : qAsConst(paths)) {
-        const QString path = dir + QLatin1String("/doc/protodb");
+    auto sl = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+    for (const auto& location : qAsConst(sl)) {
+        paths.append(location + QLatin1String("/doc/protodb"));
+    }
+
+    for (const auto& path : qAsConst(paths)) {
         if (QFileInfo::exists(path))
             return path;
     }
