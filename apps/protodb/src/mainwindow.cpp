@@ -40,7 +40,6 @@ void MainWindow::createGui()
     createDock();
 
     setWindowTitle("Protocol Debugger");
-    setWindowIcon(QIcon(":/icons/network.svg"));
     setIconSize({18,18});
 
     auto main_layout = new QHBoxLayout();

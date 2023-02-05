@@ -11,6 +11,7 @@
 #include <QFrame>
 #include <QFileDialog>
 #include <QDialogButtonBox>
+#include <QMessageBox>
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QPushButton>
@@ -199,12 +200,22 @@ void SeanceConfigDialog::connectSignals()
                 emit accepted();
                 break;
 
-            case QDialogButtonBox::RestoreDefaults:
-                setDefaultState();
-                state(m_curr_cfg);
-                emit accepted();
+            case QDialogButtonBox::RestoreDefaults: {
+                QMessageBox msgbox;
+                {
+                    msgbox.setText( tr("Restore default configs?") );
+                    msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                    msgbox.setDefaultButton(QMessageBox::No);
+                    msgbox.setIcon(QMessageBox::Icon::Warning);
+                }
 
-                break;
+                if (msgbox.exec() == QMessageBox::Yes) {
+                    setDefaultState();
+                    state(m_curr_cfg);
+                    emit accepted();
+                }
+
+            } break;
 
             case QDialogButtonBox::Reset:
                 setState(m_curr_cfg);
@@ -391,11 +402,13 @@ void SeanceConfigDialog::defaultState(nlohmann::json& json) const
     json = nlohmann::json::object();
 
     auto log_configs = nlohmann::json::object();
+        m_log_format_wiget->setDefaultConfig();
         m_log_format_wiget->config(log_configs);
 
     auto configs = nlohmann::json::object();
     for (auto it = m_io_widgets.begin(); it != m_io_widgets.end(); ++it) {
         nlohmann::json cfg = nlohmann::json::object();
+            it.value()->setDefaultConfig();
             it.value()->defaultConfig(cfg);
 
         auto deviceCID = it.value()->deviceCID().toStdString();

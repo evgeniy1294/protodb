@@ -33,7 +33,7 @@ void Configurable::setDefaultState()
 {
     nlohmann::json json;
         defaultState( json );
-        setConfig(json);
+        setState(json);
 }
 
 void Configurable::setState(const nlohmann::json &json)

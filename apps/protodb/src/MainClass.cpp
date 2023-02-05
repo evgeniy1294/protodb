@@ -191,7 +191,7 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         if (!m_io->isOpen()) {
             qDebug() << m_io->errorString();
             m_logger->error(QString("Can't open device: %2").
-                                arg(m_io->errorString()).toLocal8Bit());
+                                arg(m_io->errorString()).toUtf8());
             return false;
         }
 
@@ -199,13 +199,13 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         connect(m_io, &QIODevice::aboutToClose, this, &MainClass::stop);
 
         if (!m_log_printer->setEnabled()) {
-            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toLocal8Bit());
+            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toUtf8());
         }
 
         ret = true;
     }
     else {
-        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toLocal8Bit());
+        m_logger->error(QString("Can't create IODevice: %1").arg(cid).toUtf8());
     }
 
     return ret;
@@ -228,7 +228,7 @@ bool MainClass::send_sequence(QSharedPointer<const Sequence>& sequence)
 
     auto bytes = sequence->bytes();
     if (bytes.isEmpty()) {
-        m_logger->error(tr("Sequence \"%1\" is empty or have invalid format").arg(sequence->name()));
+        m_logger->error(tr("Sequence \"%1\" is empty or have invalid format").arg(sequence->name()).toUtf8());
         return false;
     }
 
@@ -289,7 +289,7 @@ void MainClass::start()
     // Set script file
     auto script_file = m_seance_cfg.value("ScriptFile", QString());
     if (!m_script_multi_interface->setScriptFile(script_file)) {
-        m_logger->error(QString("Script file \"%1\" unsupported").arg(script_file).toLocal8Bit());
+        m_logger->error(QString("Script file \"%1\" unsupported").arg(script_file).toUtf8());
     }
 
     // Init IODevice
@@ -312,8 +312,10 @@ void MainClass::stop()
 {
     auto io = m_io; m_io = nullptr;
     if (io) {
-        disconnect(io); io->close(); io->deleteLater();
-        m_script_multi_interface->handleEvent( ScriptInterface::Stop );
+        if (io->isOpen()) {
+            disconnect(io); io->close(); io->deleteLater();
+            m_script_multi_interface->handleEvent( ScriptInterface::Stop );
+        }
     }
 
     auto timers = m_repeat_timers.keys();

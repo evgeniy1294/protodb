@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
         a.setStyle("Fusion");
+        a.setWindowIcon(QIcon(":/icons/terminal.svg"));
     QCoreApplication::setApplicationName("protodb");
 
     // TODO: перенести ресурсы в отдельную библиотеку. После чего убрать set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) для gui
