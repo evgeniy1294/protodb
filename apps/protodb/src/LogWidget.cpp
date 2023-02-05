@@ -116,7 +116,7 @@ void LogWidget::createConnections()
             m_view->scrollToBottom();
     });
 
-    connect(m_data_format_cmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+    connect(m_data_format_cmb, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [](int idx) {
         // В этой функции можно менять валидатор, если используется hex-строка
     });
 
@@ -147,9 +147,7 @@ void LogWidget::createConnections()
         MainClass::instance().sendBytes(msg);
     });
 
-    connect(m_run, &QPushButton::released, this, [this]() {
-        auto logger = MainClass::instance().logger();
-
+    connect(m_run, &QPushButton::released, this, []() {
         if (MainClass::instance().isStarted()) {
             MainClass::instance().stop();
         }

@@ -146,7 +146,7 @@ void LogTableView::connectSignals()
     });
 
     connect(m_copy_message, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data().toString();
+        auto msg = model()->data(model()->index(currentIndex().row(), Logger::ColumnMsg)).toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
@@ -154,14 +154,15 @@ void LogTableView::connectSignals()
 
     connect(m_copy_as_bytes, &QAction::triggered, this, [this]() {
         char separator = m_item_delegate->formatter()->separator();
-        auto msg = currentIndex().data().toByteArray().toHex(separator);
+        auto msg = model()->data(model()->index(currentIndex().row(), Logger::ColumnMsg))
+                .toByteArray().toHex(separator);
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
     });
 
     connect(m_copy_as_string, &QAction::triggered, this, [this]() {
-        auto msg = currentIndex().data(Qt::DisplayRole).toString();
+        auto msg = model()->data(model()->index(currentIndex().row(), Logger::ColumnMsg)).toString();
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);

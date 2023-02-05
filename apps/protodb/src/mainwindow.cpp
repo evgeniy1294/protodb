@@ -141,13 +141,13 @@ void MainWindow::connectSignals()
         m_plugin_manager_dialog->show();
     });
 
-    connect(m_help_content, &QAction::triggered, this, [this]() {
+    connect(m_help_content, &QAction::triggered, this, []() {
         Assistant::instance().showDocumentation("content/index.html");
     });
 
     connect(m_options, &QAction::triggered, m_config_dialog, &QDialog::show);
 
-    connect(m_about, &QAction::triggered, this, [this]() {
+    connect(m_about, &QAction::triggered, this, []() {
         QMessageBox box;
         box.setText("Protocol debugger is powerful terminal software.\n"
                     "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
@@ -156,7 +156,7 @@ void MainWindow::connectSignals()
     });
 
     connect(m_export_log, &QAction::triggered, this, [this]() {
-        QString exportPath = QDir::homePath() + "/" + "log.zip";
+        QString exportPath = QDir::homePath() + "/" + "log.json";
         exportPath = QFileDialog::getSaveFileName(this,
             tr("Select session"), exportPath, tr("Log files (*.json)"));
 
@@ -176,7 +176,7 @@ void MainWindow::connectSignals()
 
     });
 
-    connect(m_export_tables, &QAction::triggered, this, [this]() {
+    connect(m_export_tables, &QAction::triggered, this, []() {
         QFileDialog fileDialog;
         fileDialog.setAcceptMode(QFileDialog::AcceptSave);
         fileDialog.setFileMode(QFileDialog::AnyFile);
@@ -203,7 +203,7 @@ void MainWindow::connectSignals()
         }
     });
 
-    connect(m_import_tables, &QAction::triggered, this, [this]() {
+    connect(m_import_tables, &QAction::triggered, this, []() {
         QFileDialog fileDialog;
         fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
         fileDialog.setFileMode(QFileDialog::AnyFile);
