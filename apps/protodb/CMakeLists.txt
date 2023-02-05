@@ -80,8 +80,12 @@ set(HEADERS_LIST
     include/MainClass.h
 )
 
-add_executable(${TARGET})
-target_sources(${TARGET} PRIVATE ${SOURCES_LIST} ${HEADERS_LIST})
+set( WIN_RESOURCES
+    resources/protodb.rc
+)
+
+add_executable(${TARGET} WIN32)
+target_sources(${TARGET} PRIVATE ${SOURCES_LIST} ${HEADERS_LIST} ${WIN_RESOURCES})
 target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # ------------ [ Depends ] ------------
