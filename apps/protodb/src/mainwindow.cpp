@@ -92,7 +92,7 @@ void MainWindow::createActions()
 {
     m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
-    m_options = new QAction(QIcon(":/icons/options.svg"), tr("&Options..."), this);
+    m_options = new QAction(QIcon(), tr("&Options..."), this);
     m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
     m_import_tables = new QAction(tr("&Import tables"), this);
     m_export_tables = new QAction(tr("&Export tables"), this);
