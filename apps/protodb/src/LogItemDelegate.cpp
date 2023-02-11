@@ -52,8 +52,15 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             font  = m_dec != nullptr ? m_dec->channelFont (channel) : LogDecorator::defaultChannelFonts ().value(channel);
 
             auto raw_data = index.model()->data(index).toByteArray();
-            data = m_fmt != nullptr ? m_fmt->format( channel, raw_data ) :
-                                      LogFormatter::defaultFormat(channel, raw_data);
+            if (m_fmt != nullptr) {
+                flags |= m_fmt->byteFormat() == LogFormatter::AsciiFormat ?
+                            Qt::TextWrapAnywhere : Qt::TextWordWrap;
+                data = m_fmt->format( channel, raw_data );
+            }
+            else {
+                data = LogFormatter::defaultFormat(channel, raw_data);
+                flags |= Qt::TextWordWrap;
+            }
 
         } break;
     }
@@ -69,10 +76,11 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
             painter->fillRect(m_option.rect, selection_color);
         }
 
-        QApplication::style()->drawItemText(painter, option.rect, flags, m_option.palette, true, data);
+        QApplication::style()->drawItemText(painter, m_option.rect, flags, m_option.palette, true, data);
 
     painter->restore();
 }
+
 
 QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
@@ -81,24 +89,30 @@ QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModel
         auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
 
         if (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond) {
-            if (m_fmt->byteFormat() == LogFormatter::HexFormat) {
-                QSize cell_size = option.rect.size();
-                auto font  = m_dec != nullptr ? m_dec->channelFont (channel) :
-                                                LogDecorator::defaultChannelFonts ().value(channel);
+            QSize cell_size = option.rect.size();
+            auto font  = m_dec != nullptr ? m_dec->channelFont (channel) :
+                                            LogDecorator::defaultChannelFonts ().value(channel);
 
-                auto raw_data = index.model()->data(index).toByteArray();
-                auto data = m_fmt != nullptr ? m_fmt->format( channel, raw_data ) :
-                                          LogFormatter::defaultFormat(channel, raw_data);
-
-                auto fm = QFontMetrics(font);
-                    int width = fm.horizontalAdvance(data, Qt::TextWordWrap);
-                    int height = fm.height()*width/cell_size.width() +
-                                    ((width % cell_size.width() != 0) ? fm.height() : 0);
-
-                cell_size.setHeight(height);
-
-                return cell_size;
+            auto raw_data = index.model()->data(index).toByteArray();
+            QString data; int flags = 0;
+            if (m_fmt != nullptr) {
+                flags |= m_fmt->byteFormat() == LogFormatter::AsciiFormat ?
+                            Qt::TextWrapAnywhere : Qt::TextWordWrap;
+                data = m_fmt->format( channel, raw_data );
             }
+            else {
+                data = LogFormatter::defaultFormat(channel, raw_data);
+                flags |= Qt::TextWordWrap;
+            }
+
+            auto fm = QFontMetrics(font);
+                int width = fm.horizontalAdvance(data, flags);
+                int height = fm.height()*width/cell_size.width() +
+                                ((width % cell_size.width() != 0) ? fm.height() : 0);
+
+            cell_size.setHeight(height);
+
+            return cell_size;
         }
     }
 

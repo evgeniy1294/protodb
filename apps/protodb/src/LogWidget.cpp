@@ -39,6 +39,39 @@ LogWidget::LogWidget(QWidget* parent)
     createConnections();
 }
 
+void LogWidget::setSeanceState(const nlohmann::json state)
+{
+    if (!state.is_object())
+        return;
+
+    auto log_configs = state.value("LogConfigs", nlohmann::json::object());
+
+    auto formatter = m_view->formatter();
+        formatter->setTimeFormat(log_configs.value("TimestampFormat", LogFormatter::DefaultTimeFormat));
+        formatter->setSeparator(log_configs.value<char>("CharSeparator", LogFormatter::DefaultSeparator));
+        formatter->setChannelName(Logger::ChannelFirst, log_configs.value("FirstChannelName", QString()));
+        formatter->setChannelName(Logger::ChannelSecond, log_configs.value("SecondChannelName", QString()));
+        formatter->setChannelName(Logger::ChannelComment, log_configs.value("CommentChannelName", QString()));
+
+    bool enabled = log_configs.value("FirstChannelEnabled", true);
+        MainClass::instance().logger()->setChannelEnabled(Logger::ChannelFirst, enabled);
+
+    enabled = log_configs.value("SecondChannelEnabled", true);
+        MainClass::instance().logger()->setChannelEnabled(Logger::ChannelSecond, enabled);
+
+    enabled = log_configs.value("CommentChannelEnabled", true);
+        MainClass::instance().logger()->setChannelEnabled(Logger::ChannelComment, enabled);
+
+    enabled = log_configs.value("TimestampEnabled", true);
+        m_view->setTimestampVisible(enabled);
+
+    enabled = log_configs.value("ChannelNameEnabled", true);
+        m_view->setChannelNameVisible(enabled);
+
+    m_view->reset();
+    m_view->resizeRowsToContents();
+}
+
 void LogWidget::createGui()
 {
     // ---------[LOG VIEW]---------- //
@@ -73,7 +106,7 @@ void LogWidget::createGui()
 
     // ---------[LINE EDIT]---------- //
     m_find_le = new QLineEdit();
-        m_find_le->setPlaceholderText(tr("Find sequence"));
+        m_find_le->setPlaceholderText(tr("Find message"));
         m_find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
 
     m_msg_le = new QLineEdit();
@@ -139,8 +172,8 @@ void LogWidget::createConnections()
                 msg.append('\r');
             }
             else if (format == Ascii_CRLF_Format) {
-                msg.append('\n');
                 msg.append('\r');
+                msg.append('\n');
             }
         }
 
@@ -161,33 +194,7 @@ void LogWidget::createConnections()
         nlohmann::json seance_cfg;
             m_conn_dialog->state(seance_cfg);
             MainClass::instance().setSeanceConfigs(seance_cfg);
-
-        auto log_configs = seance_cfg.value("LogConfigs", nlohmann::json::object());
-
-        auto formatter = m_view->formatter();
-            formatter->setTimeFormat(log_configs.value("TimestampFormat", LogFormatter::DefaultTimeFormat));
-            formatter->setSeparator(log_configs.value<char>("CharSeparator", LogFormatter::DefaultSeparator));
-            formatter->setChannelName(Logger::ChannelFirst, log_configs.value("FirstChannelName", QString()));
-            formatter->setChannelName(Logger::ChannelSecond, log_configs.value("SecondChannelName", QString()));
-            formatter->setChannelName(Logger::ChannelComment, log_configs.value("CommentChannelName", QString()));
-
-        bool enabled = log_configs.value("FirstChannelEnabled", true);
-            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelFirst, enabled);
-
-        enabled = log_configs.value("SecondChannelEnabled", true);
-            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelSecond, enabled);
-
-        enabled = log_configs.value("CommentChannelEnabled", true);
-            MainClass::instance().logger()->setChannelEnabled(Logger::ChannelComment, enabled);
-
-        enabled = log_configs.value("TimestampEnabled", true);
-            m_view->setTimestampVisible(enabled);
-
-        enabled = log_configs.value("ChannelNameEnabled", true);
-            m_view->setChannelNameVisible(enabled);
-
-        m_view->reset();
-        m_view->resizeRowsToContents();
+            setSeanceState(seance_cfg);
     });
 
     connect(m_clr_btn, &QPushButton::released, this, [this]() {

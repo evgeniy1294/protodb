@@ -53,8 +53,9 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
     nlohmann::json seances;
     bool ok = readFromFile(path_to_folder+"/seances.json", seances);
     if (ok) {
-        if (!seances.empty())
+        if (!seances.empty()) {
             MainClass::instance().setSeanceConfigs(seances);
+        }
     }
 
     auto& main_class = MainClass::instance();
@@ -85,8 +86,10 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
     if (ok) {
         if (!gui.empty()) {
             auto main_window = getMainWindow();
+
             if (main_window != nullptr) {
-                main_window->setState(gui);
+                main_window->setWidgetsState(gui);
+                main_window->updateSeanceState();
             }
         }
     }
@@ -123,7 +126,7 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
     nlohmann::json gui;
     auto main_window = getMainWindow();
     if (main_window != nullptr) {
-        main_window->getState(gui);
+        main_window->getWidgetsState(gui);
     }
 
     if (! writeToFile(path_to_folder+"/gui.json", gui) ) {

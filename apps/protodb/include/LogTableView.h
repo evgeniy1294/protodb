@@ -39,6 +39,7 @@ private:
     QMenu* m_base_menu;
     QMenu* m_data_channel_menu;
     QMenu* m_info_channel_menu;
+    QMenu* m_group_menu;
 
     QAction* m_copy;
     QAction* m_copy_message;

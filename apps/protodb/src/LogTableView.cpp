@@ -112,6 +112,11 @@ void LogTableView::createMenu()
         m_info_channel_menu->addAction(m_copy_message);
         m_info_channel_menu->addSeparator();
         m_info_channel_menu->addAction(m_options);
+
+    m_group_menu = new QMenu();
+        m_group_menu->addAction(m_copy);
+        m_group_menu->addSeparator();
+        m_group_menu->addAction(m_options);
 }
 
 void LogTableView::createActions()
@@ -131,18 +136,32 @@ void LogTableView::connectSignals()
         auto row  = indexAt(pos).row();
 
         if (row != -1) {
-            auto channel = model()->data( model()->index( row, Logger::ColumnChannel ) ).toInt();
+            auto row_list = selectionModel()->selectedRows();
+            if (row_list.size() > 1) {
+                menu = m_group_menu;
+            }
+            else {
+                auto channel = model()->data( model()->index( row, Logger::ColumnChannel ) ).toInt();
 
-            menu = (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) ?
-                m_data_channel_menu : m_info_channel_menu;
+                menu = (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond ) ?
+                    m_data_channel_menu : m_info_channel_menu;
+            }
         }
 
         menu->popup(viewport()->mapToGlobal(pos));
     });
 
     connect(m_copy, &QAction::triggered, this, [this]() {
+        auto row_list = selectionModel()->selectedRows();
+
+        QString text;
+        for (int i = 0; i < row_list.count(); i++) {
+            text.append(m_item_delegate->message( row_list.at(i) ));
+            text.append('\n');
+        }
+
         QClipboard* pcb = QApplication::clipboard();
-            pcb->setText( m_item_delegate->message( currentIndex() ) );
+            pcb->setText(text);
     });
 
     connect(m_copy_message, &QAction::triggered, this, [this]() {

@@ -27,8 +27,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() = default;
 
-     void getState(nlohmann::json& json) const;
-     void setState(const nlohmann::json& json);
+    void updateSeanceState();
+
+    void getWidgetsState(nlohmann::json& json) const;
+    void setWidgetsState(const nlohmann::json& json);
 
 private:
     void createGui();
