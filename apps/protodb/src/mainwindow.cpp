@@ -149,7 +149,7 @@ void MainWindow::connectSignals()
 
     connect(m_about, &QAction::triggered, this, []() {
         QMessageBox box;
-        box.setText("Protocol debugger is powerful terminal software.\n"
+        box.setText("Protocol debugger v1.0.1\n\nProtocol Debugger is powerful terminal software.\n"
                     "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
         box.setIcon(QMessageBox::Icon::Information);
         box.exec();
