@@ -6,6 +6,7 @@ add_subdirectory(libs/base)
 add_subdirectory(libs/gui)
 add_subdirectory(libs/dev)
 add_subdirectory(libs/qt-ads)
+add_subdirectory(libs/sol)
 
 # Apps
 add_subdirectory(apps/protodb)

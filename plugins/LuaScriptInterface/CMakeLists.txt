@@ -49,6 +49,7 @@ target_link_libraries(${TARGET}
 
     Qt${QT_VERSION_MAJOR}::Core
     ${LUA_LIBRARIES}
+    sol::sol
 )
 
 target_link_libraries(${TARGET}

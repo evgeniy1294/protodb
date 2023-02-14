@@ -101,8 +101,9 @@ target_link_libraries(${TARGET}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
-    ${LUA_LIBRARIES}
     qtadvanceddocking
+    ${LUA_LIBRARIES}
+    sol::sol
 )
 
 target_link_libraries(${TARGET}
