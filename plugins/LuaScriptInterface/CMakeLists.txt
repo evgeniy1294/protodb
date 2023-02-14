@@ -54,12 +54,6 @@ target_link_libraries(${TARGET}
 
 target_link_libraries(${TARGET}
 
-    INTERFACE
-    sol::sol
-)
-
-target_link_libraries(${TARGET}
-
     PRIVATE
 
     protodb::base
