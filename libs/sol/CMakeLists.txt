@@ -22,6 +22,10 @@ target_sources(${TARGET} PRIVATE ${SOURCES_LIST})
 
 add_library(${TARGET_NAMESPACE}::${TARGET} ALIAS ${TARGET})
 
+target_include_directories(
+  ${TARGET} INTERFACE
+      include/
+)
 
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")
