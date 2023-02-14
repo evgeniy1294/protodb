@@ -23,6 +23,7 @@ SerialIOWidget::SerialIOWidget(QWidget* parent)
     connectSignals();
 
     setDefaultConfig();
+    refreshPortList();
 }
 
 QString SerialIOWidget::gcid() const
@@ -50,7 +51,7 @@ void SerialIOWidget::defaultConfig(nlohmann::json &json) const
 void SerialIOWidget::config(nlohmann::json &json) const
 {
     json["gcid"]        = SerialIOWIdgetCreator::creatorId();
-    json["PortName"]    = m_device->currentText();
+    json["PortName"]    = m_device->currentData().toString();
     json["OpenMode"]    = m_open_mode->currentText();
     json["Baudrate"]    = m_baudrate->currentText();
     json["DataBits"]    = m_data_bits->currentText();
@@ -67,7 +68,10 @@ void SerialIOWidget::setConfig(const nlohmann::json &json)
     }
     m_baudrate->setCurrentText(baudrate);
 
-    m_device->setCurrentText(json.value("PortName", QString()));
+    auto idx = m_device->findData(json.value("PortName", QString()));
+        idx = idx < 0 ? 0 : idx;
+        m_device->setCurrentIndex(idx);
+
     m_open_mode->setCurrentText(json.value("OpenMode", QString()));
     m_data_bits->setCurrentText(json.value("DataBits", QString()));
     m_parity->setCurrentText(json.value("Parity", QString()));
@@ -103,14 +107,6 @@ void SerialIOWidget::createGui()
     m_device    = new QComboBox();
         m_device->setDuplicatesEnabled(false);
 
-    for (auto& p: QSerialPortInfo::availablePorts()) {
-        #ifdef _WIN32
-            m_device->addItem(p.portName());
-        #else
-            m_device->addItem(p.systemLocation());
-        #endif
-    }
-
     m_refresh_btn = new QPushButton();
         m_refresh_btn->setIcon(QIcon(":/icons/refresh.svg"));
         m_refresh_btn->setFixedSize(32, 32);
@@ -128,8 +124,8 @@ void SerialIOWidget::createGui()
     auto cfg_layout = new QGridLayout();
         cfg_layout->setAlignment(Qt::AlignTop);
         cfg_layout->addWidget(label_device, 0, 0);
-        cfg_layout->addWidget(m_device, 0, 1);
-        cfg_layout->addWidget(m_refresh_btn, 0, 2);
+        cfg_layout->addWidget(m_device, 0, 1, 1, 3);
+        cfg_layout->addWidget(m_refresh_btn, 0, 4);
         cfg_layout->addWidget(label_open_mode, 1, 0);
         cfg_layout->addWidget(m_open_mode, 1, 1);
         cfg_layout->addWidget(label_baudrate, 1, 2);
@@ -184,10 +180,14 @@ void SerialIOWidget::refreshPortList()
     m_device->clear();
         for (auto& p: ports) {
             #ifdef _WIN32
-                m_device->addItem(p.portName());
+                auto str = p.portName();
             #else
-                m_device->addItem(p.systemLocation());
+                auto str = p.systemLocation();
             #endif
+
+            auto desc = QSerialPortInfo(p).description();
+                if (!desc.isEmpty()) str = str + QString(" (%1)").arg(desc);
+            m_device->addItem(str, p.systemLocation());
         }
     m_device->setCurrentIndex(idx);
 }

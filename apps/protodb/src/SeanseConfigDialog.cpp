@@ -30,11 +30,7 @@ SeanceConfigDialog::SeanceConfigDialog(QWidget* aParent)
     createGui();
     connectSignals();
 
-    nlohmann::json state = nlohmann::json::object();
-    MainClass::instance().seanceConfigs(state);
-
-    if (state.empty())
-        setDefaultState();
+    setDefaultState();
 }
 
 void SeanceConfigDialog::createGui()

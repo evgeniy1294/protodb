@@ -149,7 +149,7 @@ void MainWindow::connectSignals()
 
     connect(m_about, &QAction::triggered, this, []() {
         QMessageBox box;
-        box.setText("Protocol debugger is powerful terminal software.\n"
+        box.setText("Protocol debugger v1.0.1\n\nProtocol Debugger is powerful terminal software.\n"
                     "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
         box.setIcon(QMessageBox::Icon::Information);
         box.exec();
@@ -250,13 +250,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QApplication::quit();
 }
 
-void MainWindow::getState(nlohmann::json& json) const
+void MainWindow::getWidgetsState(nlohmann::json& json) const
 {
     json["MainWindowGeometry"] = saveGeometry();
     json["DockingState"] = m_dock_man->saveState();
 }
 
-void MainWindow::setState(const nlohmann::json& json)
+void MainWindow::setWidgetsState(const nlohmann::json& json)
 {
     if (json.contains("MainWindowGeometry")) {
         auto geometry = json.value("MainWindowGeometry", QByteArray());
@@ -269,4 +269,11 @@ void MainWindow::setState(const nlohmann::json& json)
         if (!state.isEmpty())
             m_dock_man->restoreState(state);
     }
+}
+
+void MainWindow::updateSeanceState()
+{
+    nlohmann::json state; MainClass::instance().seanceConfigs(state);
+        auto wgt = static_cast<LogWidget*>(m_dock_man->findDockWidget("SeanceWidget")->widget());
+        wgt->setSeanceState(state);
 }

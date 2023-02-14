@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
 set(TARGET protodb)
-set(${TARGET}_VERSION "0.0.1")
+set(${TARGET}_VERSION "1.0.1")
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
 

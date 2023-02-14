@@ -421,6 +421,8 @@ void MainClass::readyRead()
 {
     // TODO: задействовать делиметр
     auto bytes = m_io->readAll();
+    if (bytes.isEmpty())
+        return;
 
     m_logger->log(Logger::ChannelFirst, bytes);
 

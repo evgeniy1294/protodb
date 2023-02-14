@@ -26,6 +26,8 @@ public:
     explicit LogWidget(QWidget* parent = nullptr);
     ~LogWidget() = default;
 
+    void setSeanceState(const nlohmann::json cfg);
+
 signals:
     void sByteFormatChanged(LogFormatter::ByteFormat format);
 

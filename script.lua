@@ -19,7 +19,7 @@ function beforeTransmit(msg)
 end
 
 function afterReceive(msg)
-    text = "Cuptured data:\n"
+    text = "Captured data:\n"
     for k=1,#msg do
         text = text.."byte["..(k-1).."] = "..string.format("%x", msg[k])..'\n'
         msg[k] = msg[k] + 1
