@@ -10,6 +10,8 @@ set(${TARGET}_VERSION "3.3.0")
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
 option(${TARGET}_INSTALL "Generate the install target" OFF)
 
+find_package(Lua REQUIRED)
+
 # ------------ [ Sources ] ------------
 
 set(SOURCES_LIST
@@ -25,6 +27,7 @@ add_library(${TARGET_NAMESPACE}::${TARGET} ALIAS ${TARGET})
 target_include_directories(
   ${TARGET} INTERFACE
       ${CMAKE_CURRENT_LIST_DIR}/include/
+	  ${LUA_INCLUDE_DIR}
 )
 
 if(${TARGET}_INSTALL)
