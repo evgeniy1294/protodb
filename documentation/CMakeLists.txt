@@ -63,8 +63,7 @@ add_custom_command(OUTPUT ${GeneratedHelpFiles}
                    COMMENT "generating docs"
 )
 
-add_custom_target(${TARGET} ALL DEPENDS ${GeneratedHelpFiles})
-target_sources(${TARGET} PRIVATE ${SOURCES_LIST})
+add_custom_target(${TARGET} ALL DEPENDS ${GeneratedHelpFiles} SOURCES ${SOURCES_LIST})
 
 if(${TARGET}_INSTALL)
     message(STATUS "Generating install for ${TARGET}")

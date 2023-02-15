@@ -13,18 +13,18 @@ option(${TARGET}_INSTALL "Generate the install target" OFF)
 # ------------ [ Sources ] ------------
 
 set(SOURCES_LIST
-    include/sol/sol.hpp
-    include/sol/config.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/sol/sol.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/sol/config.hpp
 )
 
 add_library(${TARGET} INTERFACE)
-target_sources(${TARGET} PRIVATE ${SOURCES_LIST})
+target_sources(${TARGET} INTERFACE ${SOURCES_LIST})
 
 add_library(${TARGET_NAMESPACE}::${TARGET} ALIAS ${TARGET})
 
 target_include_directories(
   ${TARGET} INTERFACE
-      include/
+      ${CMAKE_CURRENT_LIST_DIR}/include/
 )
 
 if(${TARGET}_INSTALL)
