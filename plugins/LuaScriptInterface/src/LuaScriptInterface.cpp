@@ -4,6 +4,7 @@
 #include <protodb/utils/crc_logic.h>
 
 #include <QDebug>
+#include <QTimer>
 
 #include <iostream>
 #include <filesystem>
@@ -48,6 +49,32 @@ static void bindCrcCalculatorClass(sol::state& lua) {
         });
 
         lua["crc"] = crc_logic_type;
+}
+
+static void bindQTimer(QObject* parent, sol::state& lua) {
+    sol::usertype<QTimer> qtimer_type = lua.new_usertype<QTimer>("QTimer", sol::constructors<QTimer()>());
+        qtimer_type.set_function("isActive", &QTimer::isActive);
+        qtimer_type.set_function("timerId", &QTimer::timerId);
+        qtimer_type.set_function("setInterval", sol::resolve<void(int)>(&QTimer::setInterval));
+        qtimer_type.set_function("interval", &QTimer::interval);
+        qtimer_type.set_function("remainingTime", &QTimer::remainingTime);
+        qtimer_type.set_function("setTimerType", &QTimer::setTimerType);
+        qtimer_type.set_function("timerType", &QTimer::timerType);
+        qtimer_type.set_function("setSingleShot", &QTimer::setSingleShot);
+        qtimer_type.set_function("isSingleShot", &QTimer::isSingleShot);
+        qtimer_type.set_function("stop", &QTimer::stop);
+        qtimer_type.set_function("start", sol::resolve<void()>(&QTimer::start));
+        qtimer_type.set_function("startInterval", sol::resolve<void(int)>(&QTimer::start));
+        qtimer_type.set_function("connect", [parent](QTimer& self, sol::function func) {
+            parent->connect(&self, &QTimer::timeout, parent, func);
+            return;
+        });
+        qtimer_type.set_function("disconnect", [](QTimer& self, sol::function func) {
+            self.disconnect();
+            return;
+        });
+
+        lua["qtimer"] = qtimer_type;
 }
 
 static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
@@ -127,6 +154,9 @@ void LuaScriptInterface::initStandartFunction()
 
     // crc
     bindCrcCalculatorClass(m_lua);
+
+    // QTimer
+    bindQTimer(this, m_lua);
 }
 
 bool LuaScriptInterface::setScriptFile(const QString& path)
