@@ -44,6 +44,7 @@ signals:
     void sPrint(QString text);
     void sLogClear();
     void sStopSession();
+    void sSendBytes(QByteArray bytes);
 };
 
 } // protodb

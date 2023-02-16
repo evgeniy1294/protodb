@@ -47,18 +47,36 @@ static void bindCrcCalculatorClass(sol::state& lua) {
 
             return;
         });
-
-        lua["crc"] = crc_logic_type;
 }
 
 static void bindQTimer(QObject* parent, sol::state& lua) {
-    sol::usertype<QTimer> qtimer_type = lua.new_usertype<QTimer>("QTimer", sol::constructors<QTimer()>());
+    sol::usertype<QTimer> qtimer_type = lua.new_usertype<QTimer>("QTimer",
+        sol::call_constructor,
+        sol::factories( [parent]() -> QTimer*{
+            auto timer = new QTimer(parent);
+            return timer;
+        }),
+        sol::meta_function::garbage_collect,
+        sol::destructor([](QTimer& instance) {
+            instance.stop();
+            instance.disconnect();
+            instance.deleteLater();
+        })
+    );
         qtimer_type.set_function("isActive", &QTimer::isActive);
         qtimer_type.set_function("timerId", &QTimer::timerId);
         qtimer_type.set_function("setInterval", sol::resolve<void(int)>(&QTimer::setInterval));
         qtimer_type.set_function("interval", &QTimer::interval);
         qtimer_type.set_function("remainingTime", &QTimer::remainingTime);
-        qtimer_type.set_function("setTimerType", &QTimer::setTimerType);
+        qtimer_type.set_function("setPreciseTimerType", [](QTimer& self) {
+            self.setTimerType(Qt::TimerType::PreciseTimer);
+        });
+        qtimer_type.set_function("setCoarseTimerType", [](QTimer& self) {
+            self.setTimerType(Qt::TimerType::CoarseTimer);
+        });
+        qtimer_type.set_function("setVeryCoarseTimerType", [](QTimer& self) {
+            self.setTimerType(Qt::TimerType::VeryCoarseTimer);
+        });
         qtimer_type.set_function("timerType", &QTimer::timerType);
         qtimer_type.set_function("setSingleShot", &QTimer::setSingleShot);
         qtimer_type.set_function("isSingleShot", &QTimer::isSingleShot);
@@ -73,8 +91,6 @@ static void bindQTimer(QObject* parent, sol::state& lua) {
             self.disconnect();
             return;
         });
-
-        lua["qtimer"] = qtimer_type;
 }
 
 static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
@@ -142,11 +158,21 @@ void LuaScriptInterface::initStandartFunction()
     m_lua["log"] = this;
 
     // session
-    auto session = m_lua["session"].get_or_create<sol::table>();
+    auto seance = m_lua["seance"].get_or_create<sol::table>();
 
     // session: stop
-    session.set_function("stop", [this]() {
+    seance.set_function("stop", [this]() {
         emit sStopSession();
+    });
+
+    // session: send
+    seance.set_function("send", [this](const sol::table&, sol::nested< std::vector<uint8_t> > src) {
+        const auto& vec = src.value();
+            const uint8_t* data = &(*vec.data());
+            const uint8_t* end  = &(*vec.end());
+
+        QByteArray bytes((char*)vec.data(), vec.size());
+        emit sSendBytes(bytes);
     });
 
     // Utils

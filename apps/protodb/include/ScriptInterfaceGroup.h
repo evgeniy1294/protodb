@@ -37,6 +37,7 @@ private slots:
     void print(QString text);
     void log_clear();
     void session_stop();
+    void send_bytes(QByteArray bytes);
 
 private:
     QList<QSharedPointer<ScriptInterface>> m_script_interfaces;

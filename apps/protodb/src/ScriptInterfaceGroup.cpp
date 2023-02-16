@@ -1,4 +1,5 @@
 #include "ScriptInterfaceGroup.h"
+#include "MainClass.h"
 
 #include <QSharedPointer>
 
@@ -20,6 +21,7 @@ void ScriptMultiInterface::addScriptInterface(QSharedPointer<ScriptInterface>& i
     connect(interface.data(), &ScriptInterface::sPrint, this, &ScriptMultiInterface::print);
     connect(interface.data(), &ScriptInterface::sLogClear, this, &ScriptMultiInterface::log_clear);
     connect(interface.data(), &ScriptInterface::sStopSession, this, &ScriptMultiInterface::session_stop);
+    connect(interface.data(), &ScriptInterface::sSendBytes, this, &ScriptMultiInterface::send_bytes);
 }
 
 void ScriptMultiInterface::rmScriptInterface(QSharedPointer<ScriptInterface>& interface)
@@ -131,4 +133,9 @@ void ScriptMultiInterface::log_clear()
 void ScriptMultiInterface::session_stop()
 {
     emit sStopSession();
+}
+
+void ScriptMultiInterface::send_bytes(QByteArray bytes)
+{
+    MainClass::instance().sendBytes(bytes);
 }
