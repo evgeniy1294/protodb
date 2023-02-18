@@ -4,6 +4,7 @@
 #include "LogFormatter.h"
 #include "LogProxyModel.h"
 #include "Logger.h"
+#include "LogDecorator.h"
 #include "MainClass.h"
 
 #include <QApplication>
@@ -70,6 +71,16 @@ void LogWidget::setSeanceState(const nlohmann::json state)
 
     m_view->resizeRowsToContents();
     m_view->resizeColumnsToContents();
+}
+
+void LogWidget::getLogStyle(nlohmann::json& json) const
+{
+    m_view->decorator()->toJson(json);
+}
+
+void LogWidget::setLogStyle(const nlohmann::json& json)
+{
+    m_view->decorator()->fromJson(json);
 }
 
 void LogWidget::createGui()

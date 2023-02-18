@@ -252,8 +252,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::getWidgetsState(nlohmann::json& json) const
 {
+    auto log = static_cast<LogWidget*>(m_dock_man->findDockWidget("SeanceWidget")->widget());
+
     json["MainWindowGeometry"] = saveGeometry();
     json["DockingState"] = m_dock_man->saveState();
+
+    nlohmann::json log_style;
+        log->getLogStyle(log_style);
+    json["LogStyle"] = log_style;
+
 }
 
 void MainWindow::setWidgetsState(const nlohmann::json& json)
@@ -268,6 +275,11 @@ void MainWindow::setWidgetsState(const nlohmann::json& json)
         auto state = json.value("DockingState", QByteArray());
         if (!state.isEmpty())
             m_dock_man->restoreState(state);
+    }
+
+    if (json.contains("LogStyle")) {
+        auto log = static_cast<LogWidget*>(m_dock_man->findDockWidget("SeanceWidget")->widget());
+        log->setLogStyle(json.value("LogStyle", nlohmann::json::object()));
     }
 }
 

@@ -27,6 +27,8 @@ public:
     ~LogWidget() = default;
 
     void setSeanceState(const nlohmann::json cfg);
+    void getLogStyle(nlohmann::json& json) const;
+    void setLogStyle(const nlohmann::json& json);
 
 signals:
     void sByteFormatChanged(LogFormatter::ByteFormat format);

@@ -47,9 +47,6 @@ private:
     QColor m_attr_color;
     QColor m_temp_attr_color;
 
-    QFont m_attr_font;
-    QFont m_temp_attr_font;
-
     QMap<Logger::Channel, QColor> m_ch_colors;
     QMap<Logger::Channel, QColor> m_temp_ch_colors;
 

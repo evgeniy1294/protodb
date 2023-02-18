@@ -39,6 +39,10 @@ void LogDecorationDialog::readOrigin(LogDecorator* dec)
     m_ch_colors  = dec->channelColors();
     m_ch_fonts   = dec->channelFonts();
 
+    m_temp_attr_color = m_attr_color;
+    m_temp_ch_colors  = m_ch_colors;
+    m_temp_ch_fonts   = m_ch_fonts;
+
     resetGui();
 }
 
@@ -47,7 +51,6 @@ void LogDecorationDialog::applyValue()
     m_attr_color = m_temp_attr_color;
     m_ch_colors  = m_temp_ch_colors;
 
-    m_attr_font  = m_temp_attr_font;
     m_ch_fonts   = m_temp_ch_fonts;
 
     emit sConfigChanged();
@@ -67,7 +70,6 @@ void LogDecorationDialog::restoreValue()
 {
     m_temp_attr_color = m_attr_color;
     m_temp_ch_colors  = m_ch_colors;
-    m_temp_attr_font  = m_attr_font;
     m_temp_ch_fonts   = m_ch_fonts;
 
     resetGui();
@@ -114,10 +116,6 @@ void LogDecorationDialog::resetGui()
     font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
         m_err_font_le->setFont(font);
         m_err_font_le->setText(font_str);
-
-    font_str = QString("%1, %2").arg(m_attr_font.family()).arg(m_attr_font.pointSize());
-        m_attr_font_le->setFont(m_attr_font);
-        m_attr_font_le->setText(font_str);
 }
 
 
@@ -332,10 +330,7 @@ void LogDecorationDialog::onFontButtonClicked()
     auto signalSender = sender();
     QFont previos_font;
 
-    if (signalSender == m_attr_font_btn) {
-        previos_font = m_temp_attr_font;
-    }
-    else if (signalSender == m_cmt_font_btn) {
+    if (signalSender == m_cmt_font_btn) {
         previos_font = m_temp_ch_fonts.value(Logger::ChannelComment, LogDecorator::defaultChannelFont(Logger::ChannelComment));
     }
     else if (signalSender == m_err_font_btn) {
@@ -358,13 +353,7 @@ void LogDecorationDialog::onFontButtonClicked()
         QFont font = dialog.selectedFont();
         QString font_str = QString("%1, %2").arg(font.family()).arg(font.pointSize());
 
-        if (signalSender == m_attr_font_btn) {
-            m_temp_attr_font = font;
-            m_attr_font_le->setFont(font);
-            m_attr_font_le->setText(font_str);
-
-        }
-        else if (signalSender == m_cmt_font_btn) {
+        if (signalSender == m_cmt_font_btn) {
             m_temp_ch_fonts[Logger::ChannelComment] = font;
             m_cmt_font_le->setFont(font);
             m_cmt_font_le->setText(font_str);
