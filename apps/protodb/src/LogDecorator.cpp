@@ -14,7 +14,6 @@ LogDecorator::LogDecorator()
 LogDecorator::LogDecorator(const LogDecorator &other)
 {
     m_attr_color = other.m_attr_color;
-    m_attr_font  = other.m_attr_font;
     m_ch_colors  = other.m_ch_colors;
     m_ch_fonts   = other.m_ch_fonts;
 }
@@ -27,16 +26,6 @@ void LogDecorator::setAttributeColor(const QColor& color)
 QColor LogDecorator::attributeColor() const
 {
     return m_attr_color;
-}
-
-void LogDecorator::setAttributeFont(const QFont& font)
-{
-    m_attr_font = font;
-}
-
-QFont LogDecorator::attributeFont() const
-{
-    return m_attr_font;
 }
 
 void LogDecorator::setChannelColors(const QMap<Logger::Channel, QColor>& colors)
@@ -101,7 +90,6 @@ void LogDecorator::setDefault()
     auto fonts  = defaultChannelFonts();
 
     m_attr_color = defaultAttributeColor();
-    m_attr_font  = defaultAttributeFont();
     m_ch_colors[Logger::ChannelFirst]   = colors[Logger::ChannelFirst];
     m_ch_fonts [Logger::ChannelFirst]   = fonts [Logger::ChannelFirst];
     m_ch_colors[Logger::ChannelSecond]  = colors[Logger::ChannelSecond];
@@ -115,7 +103,6 @@ void LogDecorator::setDefault()
 void LogDecorator::toJson(nlohmann::json& json) const
 {
     json["AttributeColor"] = m_attr_color;
-    json["AttributeFont"]  = m_attr_font;
 
     nlohmann::json colors;
         colors["First"]   = m_ch_colors.value(Logger::ChannelFirst  , defaultChannelColor(Logger::ChannelFirst));
@@ -137,7 +124,6 @@ void LogDecorator::toJson(nlohmann::json& json) const
 void LogDecorator::fromJson(const nlohmann::json& json)
 {
     m_attr_color = json.value("AttributeColor", defaultAttributeColor());
-    m_attr_font  = json.value("AttributeFont", defaultAttributeFont());
 
     nlohmann::json colors = json.value("ChannelColors", nlohmann::json::object());
         m_ch_colors[Logger::ChannelFirst]   = colors.value("First"  , defaultChannelColor(Logger::ChannelFirst));
@@ -181,17 +167,12 @@ QColor LogDecorator::defaultAttributeColor()
     return QColor(Qt::darkGreen);
 }
 
-QFont LogDecorator::defaultAttributeFont()
-{
-    return QApplication::font();
-}
-
 QColor LogDecorator::defaultChannelColor(Logger::Channel channel)
 {
-    return defaultChannelColors()[channel];
+    return defaultChannelColors().value(channel);
 }
 
 QFont LogDecorator::defaultChannelFont(Logger::Channel channel)
 {
-    return defaultChannelFonts()[channel];
+    return defaultChannelFonts().value(channel);
 }

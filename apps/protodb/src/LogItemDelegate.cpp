@@ -32,7 +32,7 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
     switch ( index.column() ) {
         case Logger::ColumnTimestamp: {
             color = m_dec != nullptr ? m_dec->attributeColor() : LogDecorator::defaultAttributeColor();
-            font  = m_dec != nullptr ? m_dec->attributeFont () : LogDecorator::defaultAttributeFont();
+            font  = m_dec != nullptr ? m_dec->channelFont(channel) : LogDecorator::defaultChannelFont(channel);
             flags = Qt::AlignCenter;
 
             auto dt = model->data( index ).value<QDateTime>();
@@ -41,7 +41,7 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
         case Logger::ColumnChannel: {
             color = m_dec != nullptr ? m_dec->attributeColor() : LogDecorator::defaultAttributeColor();
-            font  = m_dec != nullptr ? m_dec->attributeFont () : LogDecorator::defaultAttributeFont();
+            font  = m_dec != nullptr ? m_dec->channelFont(channel) : LogDecorator::defaultChannelFont(channel);
 
             data  = m_fmt != nullptr ? m_fmt->format(channel) : LogFormatter::defaultFormat(channel);
         } break;
@@ -84,17 +84,20 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
 QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    auto model = index.model();
+    auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
+    auto font  = m_dec != nullptr ? m_dec->channelFont (channel) :
+                                    LogDecorator::defaultChannelFonts ().value(channel);
+    QSize cell_size = option.rect.size();
+    QString data;
+
     if (index.column() == Logger::ColumnMsg) {
-        auto model = index.model();
-        auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
+        if (cell_size.isEmpty())
+            return QStyledItemDelegate::sizeHint(option, index);
 
         if (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond) {
-            QSize cell_size = option.rect.size();
-            auto font  = m_dec != nullptr ? m_dec->channelFont (channel) :
-                                            LogDecorator::defaultChannelFonts ().value(channel);
-
             auto raw_data = index.model()->data(index).toByteArray();
-            QString data; int flags = 0;
+            int flags = 0;
             if (m_fmt != nullptr) {
                 flags |= m_fmt->byteFormat() == LogFormatter::AsciiFormat ?
                             Qt::TextWrapAnywhere : Qt::TextWordWrap;
@@ -114,6 +117,24 @@ QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModel
 
             return cell_size;
         }
+    }
+    else
+    {
+        if (index.column() == Logger::ColumnTimestamp) {
+            auto dt = model->data( index ).value<QDateTime>();
+            data = m_fmt != nullptr ? m_fmt->format( dt ) : LogFormatter::defaultFormat( dt );
+        }
+        else {
+            data  = m_fmt != nullptr ? m_fmt->format(channel) : LogFormatter::defaultFormat(channel);
+        }
+
+        auto fm = QFontMetrics(font);
+            int width  = fm.horizontalAdvance(data)*1.15;
+            int height = fm.height();
+
+        cell_size.setHeight(height);
+        cell_size.setWidth(width);
+        return cell_size;
     }
 
 

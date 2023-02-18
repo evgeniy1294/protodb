@@ -68,8 +68,8 @@ void LogWidget::setSeanceState(const nlohmann::json state)
     enabled = log_configs.value("ChannelNameEnabled", true);
         m_view->setChannelNameVisible(enabled);
 
-    m_view->reset();
     m_view->resizeRowsToContents();
+    m_view->resizeColumnsToContents();
 }
 
 void LogWidget::createGui()

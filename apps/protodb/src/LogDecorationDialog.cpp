@@ -29,7 +29,6 @@ LogDecorationDialog::LogDecorationDialog(QWidget *parent)
 void LogDecorationDialog::apply(LogDecorator* dec)
 {
     dec->setAttributeColor(m_attr_color);
-    dec->setAttributeFont (m_attr_font);
     dec->setChannelColors (m_ch_colors);
     dec->setChannelFonts  (m_ch_fonts);
 }
@@ -38,8 +37,6 @@ void LogDecorationDialog::readOrigin(LogDecorator* dec)
 {
     m_attr_color = dec->attributeColor();
     m_ch_colors  = dec->channelColors();
-
-    m_attr_font  = dec->attributeFont();
     m_ch_fonts   = dec->channelFonts();
 
     resetGui();
@@ -60,8 +57,6 @@ void LogDecorationDialog::restoreDefaultValue()
 {
     m_attr_color = LogDecorator::defaultAttributeColor();
     m_ch_colors = LogDecorator::defaultChannelColors();
-
-    m_attr_font  = LogDecorator::defaultAttributeFont();
     m_ch_fonts  = LogDecorator::defaultChannelFonts();
 
     restoreValue();
@@ -159,10 +154,12 @@ void LogDecorationDialog::createGui()
     m_attr_font_le = new QLineEdit();
         m_attr_font_le->setReadOnly(true);
         m_attr_font_le->setText(font_str_default);
+        m_attr_font_le->setDisabled(true);
 
     // Font buttons
     m_attr_font_btn = new QPushButton();
         m_attr_font_btn->setIcon(QIcon(":/icons/edit.svg"));
+        m_attr_font_btn->setDisabled(true);
 
     m_cmt_font_btn = new QPushButton();
         m_cmt_font_btn->setIcon(QIcon(":/icons/edit.svg"));
