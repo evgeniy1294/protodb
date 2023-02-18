@@ -25,13 +25,13 @@ QString LuaScriptInterfaceCreator::iconName() const {
 
 ScriptInterface* LuaScriptInterfaceCreator::create() const
 {
-    return new LuaScriptInterface();
+    return new LuaInterface();
 }
 
 ScriptInterface* LuaScriptInterfaceCreator::create(const nlohmann::json& json) const
 {
     Q_UNUSED(json)
-    auto lua_script_interface = new LuaScriptInterface();
+    auto lua_script_interface = new LuaInterface();
 
     return lua_script_interface;
 }

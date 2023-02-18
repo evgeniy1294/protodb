@@ -6,13 +6,15 @@
 
 namespace protodb {
 
-class LuaScriptInterface final: public ScriptInterface
+class LuaInterfacePrivate;
+
+class LuaInterface final: public ScriptInterface
 {
     Q_OBJECT
 
 public:
-    LuaScriptInterface(QObject* parent = nullptr);
-   ~LuaScriptInterface() = default;
+    LuaInterface(QObject* parent = nullptr);
+   ~LuaInterface();
 
     virtual QString fileExtention() const override;
 
@@ -29,11 +31,9 @@ public:
     QString syntaxId() const override;
 
 private:
-    void print(const char* str);
-    void log_clear();
-    void initStandartFunction();
+    Q_DECLARE_PRIVATE(LuaInterface)
+    LuaInterfacePrivate* const d_ptr;
 
-private:
     bool m_valid = false;
 
     sol::state m_lua;
@@ -43,6 +43,7 @@ private:
     sol::protected_function m_stop;
     sol::protected_function m_transmit;
     sol::protected_function m_received;
+    sol::environment m_env;
 };
 
 } // namespace protodb

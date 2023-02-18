@@ -15,11 +15,13 @@ set(CMAKE_AUTOMOC ON)
 set( BaseHeaders
     include/protodb/LuaScriptInterfaceCreator.h
     include/protodb/LuaScriptInterface.h
+    include/protodb/LuaInterfaceDetail.h
 )
 
 set( BaseSources
     src/LuaScriptInterfaceCreator.cpp
     src/LuaScriptInterface.cpp
+    src/LuaInterfaceDetail.cpp
 )
 
 set(SOURCES_LIST

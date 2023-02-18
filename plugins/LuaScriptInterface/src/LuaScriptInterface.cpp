@@ -1,204 +1,56 @@
 #include "protodb/LuaScriptInterface.h"
+#include "protodb/LuaInterfaceDetail.h"
 
 #include <protodb/utils/SolByteArrayWrapper.h>
-#include <protodb/utils/crc_logic.h>
 
-#include <QDebug>
-#include <QTimer>
-
-#include <iostream>
 #include <filesystem>
-#include <tuple>
-
-#include "utils.cpp"
 
 using namespace protodb;
 
-static void bindUtils(sol::state& lua) {
-    auto utils = lua["utils"].get_or_create<sol::table>();
-        utils.set_function("tableToFloat", tableToFloat);
-        utils.set_function("tableToDouble", tableToDouble);
-        utils.set_function("tableToShort", tableToShort);
-        utils.set_function("tableToWord", tableToWord);
-        utils.set_function("tableToDword", tableToDword);
-        utils.set_function("floatToBytes", floatToBytes);
-        utils.set_function("doubleToBytes", doubleToBytes);
-        utils.set_function("shortToBytes", shortToBytes);
-        utils.set_function("wordToBytes", wordToBytes);
-        utils.set_function("dwordToBytes", dwordToBytes);
-}
-
-static void bindCrcCalculatorClass(sol::state& lua) {
-    sol::usertype<CrcLogic> crc_logic_type = lua.new_usertype<CrcLogic>("CrcLogic", sol::constructors<CrcLogic()>());
-        crc_logic_type.set_function("setWidth", &CrcLogic::setWidth);
-        crc_logic_type.set_function("setPoly", &CrcLogic::setPoly);
-        crc_logic_type.set_function("setSeed", &CrcLogic::setSeed);
-        crc_logic_type.set_function("setXorOut", &CrcLogic::setXorOut);
-        crc_logic_type.set_function("setReflectIn", &CrcLogic::setReflectIn);
-        crc_logic_type.set_function("setReflectOut", &CrcLogic::setReflectOut);
-        crc_logic_type.set_function("finalize", &CrcLogic::finalize);
-        crc_logic_type.set_function("validBytes", &CrcLogic::validBytes);
-        crc_logic_type.set_function("calculate", [](CrcLogic& self, sol::nested< std::vector<uint8_t> > src) {
-            const auto& vec = src.value();
-            const uint8_t* data = &(*vec.data());
-            const uint8_t* end  = &(*vec.end());
-
-            self.calculate(data, end);
-
-            return;
-        });
-}
-
-static void bindQTimer(QObject* parent, sol::state& lua) {
-    sol::usertype<QTimer> qtimer_type = lua.new_usertype<QTimer>("QTimer",
-        sol::call_constructor,
-        sol::factories( [parent]() -> QTimer*{
-            auto timer = new QTimer(parent);
-            return timer;
-        }),
-        sol::meta_function::garbage_collect,
-        sol::destructor([](QTimer& instance) {
-            instance.stop();
-            instance.disconnect();
-            instance.deleteLater();
-        })
-    );
-        qtimer_type.set_function("isActive", &QTimer::isActive);
-        qtimer_type.set_function("timerId", &QTimer::timerId);
-        qtimer_type.set_function("setInterval", sol::resolve<void(int)>(&QTimer::setInterval));
-        qtimer_type.set_function("interval", &QTimer::interval);
-        qtimer_type.set_function("remainingTime", &QTimer::remainingTime);
-        qtimer_type.set_function("setPreciseTimerType", [](QTimer& self) {
-            self.setTimerType(Qt::TimerType::PreciseTimer);
-        });
-        qtimer_type.set_function("setCoarseTimerType", [](QTimer& self) {
-            self.setTimerType(Qt::TimerType::CoarseTimer);
-        });
-        qtimer_type.set_function("setVeryCoarseTimerType", [](QTimer& self) {
-            self.setTimerType(Qt::TimerType::VeryCoarseTimer);
-        });
-        qtimer_type.set_function("timerType", &QTimer::timerType);
-        qtimer_type.set_function("setSingleShot", &QTimer::setSingleShot);
-        qtimer_type.set_function("isSingleShot", &QTimer::isSingleShot);
-        qtimer_type.set_function("stop", &QTimer::stop);
-        qtimer_type.set_function("start", sol::resolve<void()>(&QTimer::start));
-        qtimer_type.set_function("startInterval", sol::resolve<void(int)>(&QTimer::start));
-        qtimer_type.set_function("connect", [parent](QTimer& self, sol::function func) {
-            parent->connect(&self, &QTimer::timeout, parent, func);
-            return;
-        });
-        qtimer_type.set_function("disconnect", [](QTimer& self, sol::function func) {
-            self.disconnect();
-            return;
-        });
-}
-
-static int exceptionHandler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
-    // L is the lua state, which you can wrap in a state_view if necessary
-    // maybe_exception will contain exception, if it exists
-    // description will either be the what() of the exception or a description saying that we hit the general-case catch(...)
-    std::cout << "An exception occurred in a function, here's what it says ";
-    if (maybe_exception) {
-        std::cout << "(straight from the exception): ";
-        const std::exception& ex = *maybe_exception;
-        std::cout << ex.what() << std::endl;
-    }
-    else {
-        std::cout << "(from the description parameter): ";
-        std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
-        std::cout << std::endl;
-    }
-
-    // you must push 1 element onto the stack to be
-    // transported through as the error object in Lua
-    // note that Lua -- and 99.5% of all Lua users and libraries -- expects a string
-    // so we push a single string (in our case, the description of the error)
-    return sol::stack::push(L, description);
-}
-
-
-LuaScriptInterface::LuaScriptInterface(QObject* parent)
+LuaInterface::LuaInterface(QObject* parent)
     : ScriptInterface(parent)
+    , d_ptr( new LuaInterfacePrivate() )
 {
-    m_lua.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
-    m_lua.set_exception_handler(exceptionHandler);
+    Q_D(LuaInterface);
+        d->q_ptr = this;
 
-    initStandartFunction();
+    m_lua.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
+    d->setExceptionHandler(m_lua);
+    d->bindAll(m_lua);
 }
 
-QString LuaScriptInterface::fileExtention() const
+LuaInterface::~LuaInterface()
+{
+    Q_D(LuaInterface);
+        delete(d);
+}
+
+QString LuaInterface::fileExtention() const
 {
     return ".lua";
 }
 
-QString LuaScriptInterface::syntaxId() const
+QString LuaInterface::syntaxId() const
 {
     return "LUA";
 }
 
-void LuaScriptInterface::print(const char* str)
-{
-    emit sPrint(QString(str));
-}
-
-void LuaScriptInterface::log_clear()
-{
-    emit sLogClear();
-}
-
-void LuaScriptInterface::initStandartFunction()
-{
-    // log:print()
-    auto log = m_lua["log"].get_or_create<sol::table>();
-    log.new_usertype<LuaScriptInterface>("log",
-        "print", &LuaScriptInterface::print,
-        "clear", &LuaScriptInterface::log_clear
-    );
-
-    m_lua["log"] = this;
-
-    // session
-    auto seance = m_lua["seance"].get_or_create<sol::table>();
-
-    // session: stop
-    seance.set_function("stop", [this]() {
-        emit sStopSession();
-    });
-
-    // session: send
-    seance.set_function("send", [this](const sol::table&, sol::nested< std::vector<uint8_t> > src) {
-        const auto& vec = src.value();
-            const uint8_t* data = &(*vec.data());
-            const uint8_t* end  = &(*vec.end());
-
-        QByteArray bytes((char*)vec.data(), vec.size());
-        emit sSendBytes(bytes);
-    });
-
-    // Utils
-    bindUtils(m_lua);
-
-    // crc
-    bindCrcCalculatorClass(m_lua);
-
-    // QTimer
-    bindQTimer(this, m_lua);
-}
-
-bool LuaScriptInterface::setScriptFile(const QString& path)
+bool LuaInterface::setScriptFile(const QString& path)
 {
     std::filesystem::path script_path = path.toLocal8Bit().toStdString();
     m_valid = false;
 
     if (std::filesystem::exists(script_path)) {
         if (script_path.extension() == fileExtention().toStdString()) {
-            sol::protected_function_result pfr = m_lua.safe_script_file(script_path.string(), &sol::script_pass_on_error);
+            m_env = sol::environment(m_lua, sol::create, m_lua.globals());
+            sol::protected_function_result pfr =
+                    m_lua.safe_script_file(script_path.string(), m_env, &sol::script_pass_on_error);
 
             if (pfr.valid()) {
-                m_start    = m_lua["start"];
-                m_stop     = m_lua["stop"];
-                m_transmit = m_lua["beforeTransmit"];
-                m_received = m_lua["afterReceive"];
+                m_start    = m_env["start"];
+                m_stop     = m_env["stop"];
+                m_transmit = m_env["beforeTransmit"];
+                m_received = m_env["afterReceive"];
 
                 m_valid = true;
             }
@@ -219,27 +71,28 @@ bool LuaScriptInterface::setScriptFile(const QString& path)
     return m_valid;
 }
 
-QString LuaScriptInterface::scriptFile() const
+QString LuaInterface::scriptFile() const
 {
     return m_script_file_path;
 }
 
-bool LuaScriptInterface::isValid() const
+bool LuaInterface::isValid() const
 {
     return m_valid;
 }
 
-QByteArray LuaScriptInterface::compileCode(const QString& code) const
+QByteArray LuaInterface::compileCode(const QString& code) const
 {
+    const Q_D(LuaInterface);
+
     static const QString m_template = {
         "function compile(bytes) \n %1 \n end"
     };
 
     sol::state compiler;
-
     if (code.length() != 0) {
         compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
-        compiler.set_exception_handler(exceptionHandler);
+        d->setExceptionHandler(compiler);
 
         sol::protected_function_result pfr =
                 compiler.safe_script(m_template.arg(code).toStdString(), &sol::script_pass_on_error);
@@ -264,8 +117,10 @@ QByteArray LuaScriptInterface::compileCode(const QString& code) const
     return QByteArray();
 }
 
-bool LuaScriptInterface::handleDataEvent(Event event, QByteArray& bytes)
+bool LuaInterface::handleDataEvent(Event event, QByteArray& bytes)
 {
+    Q_D(LuaInterface);
+
     switch(event) {
         case Start: {
             if (m_start.valid()) {
@@ -286,7 +141,10 @@ bool LuaScriptInterface::handleDataEvent(Event event, QByteArray& bytes)
                     sol::error err = pfr;
                     emit sErrorOccuared(err.what());
                 }
-             }
+            }
+            m_env = sol::nil;
+            d->deleteUserObjects();
+
         } break;
 
         case Transmit: {

@@ -59,7 +59,11 @@ end
         </p>
 
         <p>
-        <b>session:stop()</b> - остановка сессии.
+        <b>seance:stop()</b> - остановка сеанса.
+        </p>
+
+        <p>
+        <b>seance:send(bytes)</b> - запись данных в порт. Процедура отправки аналогична другим, будет вызван обработчик beforeTransmit.
         </p>
 
         <p><center><h3>Вспомогательные функции</h3></center></p>
@@ -111,7 +115,7 @@ end
         </p>
         <p><pre>
 local bt = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39 }
-crc = CrcLogic:new()
+crc = Checksum()
     crc:setWidth(16)        -- Установка длина полинома в битах (от 3-х до 64-х).
     crc:setPoly(0x8005)     -- Значение полинома.
     crc:setSeed(0)          -- Начальное значение.
@@ -122,6 +126,79 @@ crc = CrcLogic:new()
 
 result = crc:finalize()     -- Получение результата(uint64_t) и сброс логики.
         </pre></p>
+
+<p><center><h3>Таймеры</h3></center></p>
+<p>
+Пользователю доступен функционал таймеров, реализованный в виде биндинга QTimer в Lua,
+подробную информацию о котором можно посмотреть в справке на фреймворк Qt. Доступные функции:
+</p>
+<p>
+<b>timer:isActive()</b> - возвращает true если таймер включен, иначе false.
+</p>
+<p>
+<b>timer:timerId()</b> - идентификатор таймера (int).
+</p>
+<p>
+<b>timer:setInterval(ms)</b> - устанавливает период таймера в [мс].
+</p>
+<p>
+<b>timer:interval()</b> - возвращает установленный интервал в [мс].
+</p>
+<p>
+<b>timer:remainingTime()</b> - возвращает остаток времени до срабатывания таймера [мс].
+</p>
+<p>
+<b>timer:setPreciseTimerType()</b> - устанока режима повышенной точности (до миллисекунды).
+</p>
+<p>
+<b>timer:setCoarseTimerType()</b> - устанока режима базовой точности (до 5% периода). Режим по-умолчанию.
+</p>
+<p>
+<b>timer:setVeryCoarseTimerType()</b> - устанока режима низкой точности (до секунды).
+</p>
+<p>
+<b>timer:setSingleShot()</b> - установка режима однократного срабатывания.
+</p>
+<p>
+<b>timer:isSingleShot()</b> - вернет true если установлен режим однократного срабатывания, иначе false.
+</p>
+<p>
+<b>timer:stop()</b> - остановка таймера.
+</p>
+<p>
+<b>timer:start()</b> - запуск таймера с предустановленным интервалом.
+</p>
+<p>
+<b>timer:startInterval(ms)</b> - установка интервала и запуск таймера.
+</p>
+<p>
+<b>timer:connect(function)</b> - установка обработчика.
+</p>
+<p>
+<b>timer:disconnect()</b> - сброс обработчика.
+</p>
+
+<p><pre>
+timer = QTimer()
+
+function test()
+    local bt = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}
+    seance:send(bt)
+end
+
+function start()
+    log:print("Seance started")
+
+    timer:setPreciseTimerType()
+    timer:connect(test)
+    timer:startInterval(250)
+end
+
+function stop()
+    timer:stop()
+    log:print("Seance stoped")
+end
+</pre></p>
 
         <p><center><h3>Генерация последовательностей с помощью LUA</h3></center></p>
 
