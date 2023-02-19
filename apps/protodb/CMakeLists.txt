@@ -90,7 +90,7 @@ target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets REQUIRED)
 
 find_package(Lua REQUIRED)
 
@@ -98,9 +98,9 @@ target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_BUILD_VERSION}::Core
+    Qt${QT_BUILD_VERSION}::Gui
+    Qt${QT_BUILD_VERSION}::Widgets
     qtadvanceddocking
     ${LUA_LIBRARIES}
     sol::sol

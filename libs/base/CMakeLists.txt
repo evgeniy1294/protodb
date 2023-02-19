@@ -9,6 +9,7 @@ set(${TARGET}_VERSION "0.0.1")
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
 option(${TARGET}_INSTALL "Generate the install target" ON)
+option(${TARGET}_INSTALL_HEADERS "Generate the install target public headers" OFF)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -81,13 +82,13 @@ generate_export_header(${TARGET}
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets REQUIRED)
 find_package(libzip REQUIRED)
 target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_BUILD_VERSION}::Core
     libzip::zip
     ${LUA_LIBRARIES}
 )
@@ -118,11 +119,14 @@ if(${TARGET}_INSTALL)
     # if we plan to export built library to CMAKE_INSTALL_PREFIX
     # (by default it's /usr/local or C:/Program Files/${PROJECT_NAME})
     #---------------------------------------------------------------------------------------
-    install(FILES ${ConfigurableHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/configurable/" COMPONENT devel)
-    install(FILES ${FactoriesHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/factories" COMPONENT devel)
-    install(FILES ${UtilsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/utils" COMPONENT devel)
-    install(FILES ${PluginsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/plugins" COMPONENT devel)
-    install(FILES "${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export/${TARGET}_cfg.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export")
+    if(${TARGET}_INSTALL_HEADERS)
+        install(FILES ${ConfigurableHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/configurable/" COMPONENT devel)
+        install(FILES ${FactoriesHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/factories" COMPONENT devel)
+        install(FILES ${UtilsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/utils" COMPONENT devel)
+        install(FILES ${PluginsHeaders} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/plugins" COMPONENT devel)
+        install(FILES "${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export/${TARGET}_cfg.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET_NAMESPACE}/export")
+    endif()
+
     install(TARGETS ${TARGET} EXPORT ${TARGET}
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"

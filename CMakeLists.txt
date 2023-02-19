@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 project(ProtodbProject VERSION "0.0.1")
 
+set(QT_BUILD_VERSION "6")
+
 # Libs
 add_subdirectory(libs/base)
 add_subdirectory(libs/gui)

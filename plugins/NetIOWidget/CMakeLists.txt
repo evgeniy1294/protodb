@@ -40,16 +40,16 @@ generate_export_header(${TARGET} EXPORT_FILE_NAME ${INCLUDE_PREFIX}${TARGET}/${T
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets Network REQUIRED)
+find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets Network REQUIRED)
 
 target_link_libraries(${TARGET}
 
     PRIVATE
 
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_BUILD_VERSION}::Core
+    Qt${QT_BUILD_VERSION}::Gui
+    Qt${QT_BUILD_VERSION}::Widgets
+    Qt${QT_BUILD_VERSION}::Network
 )
 
 target_link_libraries(${TARGET}
