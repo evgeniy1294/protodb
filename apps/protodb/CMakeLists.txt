@@ -90,6 +90,10 @@ target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+if(NOT DEFINED QT_BUILD_VERSION)
+    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
+endif()
+
 find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets REQUIRED)
 
 find_package(Lua REQUIRED)

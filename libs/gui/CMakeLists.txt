@@ -76,6 +76,10 @@ generate_export_header(${TARGET}
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+if(NOT DEFINED QT_BUILD_VERSION)
+    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
+endif()
+
 find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets REQUIRED)
 
 target_link_libraries(${TARGET}
