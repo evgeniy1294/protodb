@@ -1,0 +1,444 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 72271a6..459b0f5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -25,8 +25,9 @@ endif()
+ 
+ project(QtADS LANGUAGES CXX VERSION ${VERSION_SHORT})
+ 
+-option(BUILD_STATIC "Build the static library" OFF)
+-option(BUILD_EXAMPLES "Build the examples" ON)
++option(ADS_BUILD_STATIC "Build the static library" OFF)
++option(ADS_BUILD_EXAMPLES "Build the examples" ON)
++option(ADS_INSTALL "Generate the install target." ON)
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
+     set(ads_PlatformDir "x86")
+@@ -36,7 +37,7 @@ endif()
+ 
+ add_subdirectory(src)
+ 
+-if(BUILD_EXAMPLES)
++if(ADS_BUILD_EXAMPLES)
+     add_subdirectory(examples)
+     add_subdirectory(demo)
+ endif()
+diff --git a/demo/CMakeLists.txt b/demo/CMakeLists.txt
+index 37fc435..ae3d29c 100644
+--- a/demo/CMakeLists.txt
++++ b/demo/CMakeLists.txt
+@@ -2,9 +2,14 @@ cmake_minimum_required(VERSION 3.5)
+ project(ads_demo VERSION ${VERSION_SHORT}) 
+ 
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+-if(WIN32 AND QT_VERSION_MAJOR LESS 6)
+-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AxContainer REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++
++if(WIN32 AND QT_BUILD_VERSION LESS 6)
++    find_package(Qt${QT_BUILD_VERSION} COMPONENTS AxContainer REQUIRED)
+ endif()
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ set(ads_demo_SRCS
+@@ -19,11 +24,11 @@ set(ads_demo_SRCS
+ )
+ add_executable(AdvancedDockingSystemDemo WIN32 ${ads_demo_SRCS})
+ target_include_directories(AdvancedDockingSystemDemo PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+-target_link_libraries(AdvancedDockingSystemDemo PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                                       Qt${QT_VERSION_MAJOR}::Gui 
+-                                                       Qt${QT_VERSION_MAJOR}::Widgets)
+-if(WIN32 AND QT_VERSION_MAJOR LESS 6)
+-    target_link_libraries(AdvancedDockingSystemDemo PUBLIC Qt${QT_VERSION_MAJOR}::AxContainer)
++target_link_libraries(AdvancedDockingSystemDemo PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                                       Qt${QT_BUILD_VERSION}::Gui
++                                                       Qt${QT_BUILD_VERSION}::Widgets)
++if(WIN32 AND QT_BUILD_VERSION LESS 6)
++    target_link_libraries(AdvancedDockingSystemDemo PUBLIC Qt${QT_BUILD_VERSION}::AxContainer)
+ endif()
+ target_link_libraries(AdvancedDockingSystemDemo PRIVATE qtadvanceddocking)
+ set_target_properties(AdvancedDockingSystemDemo PROPERTIES 
+diff --git a/examples/autohide/CMakeLists.txt b/examples/autohide/CMakeLists.txt
+index cec3910..fbb037d 100644
+--- a/examples/autohide/CMakeLists.txt
++++ b/examples/autohide/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_autohide VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(AutoHideExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(AutoHideExample WIN32
+ )
+ target_include_directories(AutoHideExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(AutoHideExample PRIVATE qtadvanceddocking)
+-target_link_libraries(AutoHideExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                                  Qt${QT_VERSION_MAJOR}::Gui 
+-                                                  Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(AutoHideExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                                  Qt${QT_BUILD_VERSION}::Gui
++                                                  Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(AutoHideExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/centralwidget/CMakeLists.txt b/examples/centralwidget/CMakeLists.txt
+index 7f57821..6cba6b0 100644
+--- a/examples/centralwidget/CMakeLists.txt
++++ b/examples/centralwidget/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_centralwidget VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(CentralWidgetExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(CentralWidgetExample WIN32
+ )
+ target_include_directories(CentralWidgetExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(CentralWidgetExample PRIVATE qtadvanceddocking)
+-target_link_libraries(CentralWidgetExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                                  Qt${QT_VERSION_MAJOR}::Gui 
+-                                                  Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(CentralWidgetExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                                  Qt${QT_BUILD_VERSION}::Gui
++                                                  Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(CentralWidgetExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/deleteonclose/CMakeLists.txt b/examples/deleteonclose/CMakeLists.txt
+index d329704..e916b91 100644
+--- a/examples/deleteonclose/CMakeLists.txt
++++ b/examples/deleteonclose/CMakeLists.txt
+@@ -1,16 +1,21 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_deleteonclose VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(DeleteOnCloseTest WIN32 
+     main.cpp
+ )
+ target_include_directories(DeleteOnCloseTest PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(DeleteOnCloseTest PRIVATE qtadvanceddocking)
+-target_link_libraries(DeleteOnCloseTest PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                               Qt${QT_VERSION_MAJOR}::Gui 
+-                                               Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(DeleteOnCloseTest PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                               Qt${QT_BUILD_VERSION}::Gui
++                                               Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(DeleteOnCloseTest PROPERTIES 
+     AUTOMOC ON
+     CXX_STANDARD 14
+diff --git a/examples/dockindock/CMakeLists.txt b/examples/dockindock/CMakeLists.txt
+index 3bf489e..0c8c8a5 100644
+--- a/examples/dockindock/CMakeLists.txt
++++ b/examples/dockindock/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_dockindock VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(DockInDockExample WIN32 
+     dockindock.cpp
+@@ -13,9 +18,9 @@ add_executable(DockInDockExample WIN32
+ )
+ target_include_directories(DockInDockExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(DockInDockExample PRIVATE qtadvanceddocking)
+-target_link_libraries(DockInDockExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                           Qt${QT_VERSION_MAJOR}::Gui 
+-                                           Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(DockInDockExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                           Qt${QT_BUILD_VERSION}::Gui
++                                           Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(DockInDockExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/emptydockarea/CMakeLists.txt b/examples/emptydockarea/CMakeLists.txt
+index baed967..f14c3b8 100644
+--- a/examples/emptydockarea/CMakeLists.txt
++++ b/examples/emptydockarea/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_centralwidget VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(EmptyDockAreaExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(EmptyDockAreaExample WIN32
+ )
+ target_include_directories(EmptyDockAreaExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(EmptyDockAreaExample PRIVATE qtadvanceddocking)
+-target_link_libraries(EmptyDockAreaExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                                  Qt${QT_VERSION_MAJOR}::Gui 
+-                                                  Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(EmptyDockAreaExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                                  Qt${QT_BUILD_VERSION}::Gui
++                                                  Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(EmptyDockAreaExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/hideshow/CMakeLists.txt b/examples/hideshow/CMakeLists.txt
+index 71f22f2..c612815 100644
+--- a/examples/hideshow/CMakeLists.txt
++++ b/examples/hideshow/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_hideshow VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(HideShowExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(HideShowExample WIN32
+ )
+ target_include_directories(HideShowExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(HideShowExample PRIVATE qtadvanceddocking)
+-target_link_libraries(HideShowExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                             Qt${QT_VERSION_MAJOR}::Gui 
+-                                             Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(HideShowExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                             Qt${QT_BUILD_VERSION}::Gui
++                                             Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(HideShowExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/sidebar/CMakeLists.txt b/examples/sidebar/CMakeLists.txt
+index 24b1954..b9ca476 100644
+--- a/examples/sidebar/CMakeLists.txt
++++ b/examples/sidebar/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_sidebar VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(SidebarExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(SidebarExample WIN32
+ )
+ target_include_directories(SidebarExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(SidebarExample PRIVATE qtadvanceddocking)
+-target_link_libraries(SidebarExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                            Qt${QT_VERSION_MAJOR}::Gui 
+-                                            Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(SidebarExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                            Qt${QT_BUILD_VERSION}::Gui
++                                            Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(SidebarExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/examples/simple/CMakeLists.txt b/examples/simple/CMakeLists.txt
+index 027ed0f..2b620d9 100644
+--- a/examples/simple/CMakeLists.txt
++++ b/examples/simple/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_simple VERSION ${VERSION_SHORT}) 
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ add_executable(SimpleExample WIN32 
+     main.cpp
+@@ -10,9 +15,9 @@ add_executable(SimpleExample WIN32
+ )
+ target_include_directories(SimpleExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
+ target_link_libraries(SimpleExample PRIVATE qtadvanceddocking)
+-target_link_libraries(SimpleExample PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                           Qt${QT_VERSION_MAJOR}::Gui 
+-                                           Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(SimpleExample PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                           Qt${QT_BUILD_VERSION}::Gui
++                                           Qt${QT_BUILD_VERSION}::Widgets)
+ set_target_properties(SimpleExample PROPERTIES 
+     AUTOMOC ON
+     AUTORCC ON
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index ba62e48..1569db5 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,12 +1,18 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(QtAdvancedDockingSystem LANGUAGES CXX VERSION ${VERSION_SHORT})
++
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
++if(NOT DEFINED QT_BUILD_VERSION)
++    set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
++endif()
++
++find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets REQUIRED)
++
+ if (UNIX AND NOT APPLE)
+-    include_directories(${Qt${QT_VERSION_MAJOR}Gui_PRIVATE_INCLUDE_DIRS})
++    include_directories(${Qt${QT_BUILD_VERSION}Gui_PRIVATE_INCLUDE_DIRS})
+ endif()
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+-if(BUILD_STATIC)
++if(ADS_BUILD_STATIC)
+     set(CMAKE_STATIC_LIBRARY_SUFFIX "_static${CMAKE_STATIC_LIBRARY_SUFFIX}")
+ endif()
+ set(ads_SRCS
+@@ -64,7 +70,7 @@ if (UNIX AND NOT APPLE)
+     set(ads_SRCS linux/FloatingWidgetTitleBar.cpp ${ads_SRCS})
+     set(ads_HEADERS linux/FloatingWidgetTitleBar.h ${ads_HEADERS})
+ endif()
+-if(BUILD_STATIC)
++if(ADS_BUILD_STATIC)
+     add_library(qtadvanceddocking STATIC ${ads_SRCS} ${ads_HEADERS})
+     target_compile_definitions(qtadvanceddocking PUBLIC ADS_STATIC)
+ else()
+@@ -74,9 +80,9 @@ endif()
+ 
+ add_library(ads::qtadvanceddocking ALIAS qtadvanceddocking)
+ 
+-target_link_libraries(qtadvanceddocking PUBLIC Qt${QT_VERSION_MAJOR}::Core 
+-                                               Qt${QT_VERSION_MAJOR}::Gui 
+-                                               Qt${QT_VERSION_MAJOR}::Widgets)
++target_link_libraries(qtadvanceddocking PUBLIC Qt${QT_BUILD_VERSION}::Core
++                                               Qt${QT_BUILD_VERSION}::Gui
++                                               Qt${QT_BUILD_VERSION}::Widgets)
+ if (UNIX AND NOT APPLE)
+   target_link_libraries(qtadvanceddocking PUBLIC xcb)
+ endif()
+@@ -90,48 +96,51 @@ set_target_properties(qtadvanceddocking PROPERTIES
+     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
+ )
+-if(QT_VERSION_MAJOR STREQUAL "5")
++if(QT_BUILD_VERSION STREQUAL "5")
+     set_target_properties(qtadvanceddocking PROPERTIES
+         CXX_STANDARD 14
+         CXX_STANDARD_REQUIRED ON)
+-elseif(QT_VERSION_MAJOR STREQUAL "6")
++elseif(QT_BUILD_VERSION STREQUAL "6")
+     set_target_properties(qtadvanceddocking PROPERTIES
+         CXX_STANDARD 17
+         CXX_STANDARD_REQUIRED ON)
+ endif()
+ 
+-include(CMakePackageConfigHelpers)
+-write_basic_package_version_file(
+-    "qtadvanceddockingConfigVersion.cmake"
+-    VERSION ${VERSION_SHORT}
+-    COMPATIBILITY SameMajorVersion
+-)
+-install(FILES ${ads_HEADERS}
+-    DESTINATION include
+-    COMPONENT headers
+-)
+-install(FILES
+-    "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE"
+-    "${CMAKE_CURRENT_SOURCE_DIR}/../gnu-lgpl-v2.1.md"
+-    DESTINATION license/ads
+-    COMPONENT license
+-)
+-install(TARGETS qtadvanceddocking
+-    EXPORT adsTargets
+-    RUNTIME DESTINATION bin
+-    LIBRARY DESTINATION lib
+-    ARCHIVE DESTINATION lib
+-    INCLUDES DESTINATION include
+-)
+ 
+-install(EXPORT adsTargets
+-    FILE adsTargets.cmake
+-    NAMESPACE ads::
+-    DESTINATION lib/cmake/qtadvanceddocking
+-)
+-install(FILES qtadvanceddockingConfig.cmake "${CMAKE_CURRENT_BINARY_DIR}/qtadvanceddockingConfigVersion.cmake"
+-    DESTINATION lib/cmake/qtadvanceddocking
+-)
++if(ADS_INSTALL)
++    include(CMakePackageConfigHelpers)
++    write_basic_package_version_file(
++        "qtadvanceddockingConfigVersion.cmake"
++        VERSION ${VERSION_SHORT}
++        COMPATIBILITY SameMajorVersion
++    )
++    install(FILES ${ads_HEADERS}
++        DESTINATION include
++        COMPONENT headers
++    )
++    install(FILES
++        "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE"
++        "${CMAKE_CURRENT_SOURCE_DIR}/../gnu-lgpl-v2.1.md"
++        DESTINATION license/ads
++        COMPONENT license
++    )
++    install(TARGETS qtadvanceddocking
++        EXPORT adsTargets
++        RUNTIME DESTINATION bin
++        LIBRARY DESTINATION lib
++        ARCHIVE DESTINATION lib
++        INCLUDES DESTINATION include
++    )
++
++    install(EXPORT adsTargets
++        FILE adsTargets.cmake
++        NAMESPACE ads::
++        DESTINATION lib/cmake/qtadvanceddocking
++    )
++    install(FILES qtadvanceddockingConfig.cmake "${CMAKE_CURRENT_BINARY_DIR}/qtadvanceddockingConfigVersion.cmake"
++        DESTINATION lib/cmake/qtadvanceddocking
++    )
++endif()
+ 
+ target_include_directories(qtadvanceddocking PUBLIC
+     $<INSTALL_INTERFACE:include>
