@@ -8,9 +8,9 @@ index 72271a6..459b0f5 100644
  
 -option(BUILD_STATIC "Build the static library" OFF)
 -option(BUILD_EXAMPLES "Build the examples" ON)
-+option(ADS_BUILD_STATIC "Build the static library" OFF)
-+option(ADS_BUILD_EXAMPLES "Build the examples" ON)
-+option(ADS_INSTALL "Generate the install target." ON)
++option(ADS_BUILD_STATIC "Build the static library" ON)
++option(ADS_BUILD_EXAMPLES "Build the examples" OFF)
++option(ADS_INSTALL "Generate the install target." OFF)
  
  if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
      set(ads_PlatformDir "x86")
