@@ -1,0 +1,33 @@
+pkgname=protodb-qt6
+pkgver=1.0.2
+pkgrel=1
+pkgdesc="A graphical software for reverse engineering and debugging protocols"
+arch=('x86_64')
+url="https://github.com/evgeniy1294/protodb"
+license=('BSD')
+depends=('qt6-base' 'qt6-serialport' 'nlohmann-json')
+makedepends=('cmake')
+source=(${pkgname}::git+https://github.com/evgeniy1294/protodb)
+conflicts=('protodb-qt5')
+md5sums=('SKIP')
+
+prepare() {
+    cd ${srcdir}/$pkgname
+    git checkout develop
+    cmake ./ -B ./build -DQT_BUILD_VERSION:STRING=6 -DCMAKE_BUILD_TYPE=Release
+}
+
+build() {
+    cd ${srcdir}/$pkgname
+    cmake --build ./build --target all -- -j8
+}
+
+package() {
+    cd ${srcdir}/$pkgname
+    cmake --install ./build --prefix "$pkgdir/usr/"
+  
+    mkdir -p ${pkgdir}/etc/ld.so.conf.d/
+    cd ${pkgdir}/etc/ld.so.conf.d/
+
+    echo "/usr/lib/protodb" > ./protodb.conf
+}
