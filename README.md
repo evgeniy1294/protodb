@@ -30,8 +30,8 @@ _-DQT_BUILD_VERSION:STRING=5_ - сборка программы с Qt5.
 
 Следующие команды завершают процесс установки. Данные команды позволяют указать путь до библиотек protodb-base, protodb-gui и protodb-dev, которые необходимы для запуска и разработки плагинов для программы. Команды подразумевают, что библиотеки уже находятся в каталоге /usr/lib/protodb
 ```sh
-$ mkdir -p ${pkgdir}/etc/ld.so.conf.d/
-$ cd ${pkgdir}/etc/ld.so.conf.d/
+$ mkdir -p /etc/ld.so.conf.d/
+$ cd /etc/ld.so.conf.d/
 
 $echo "/usr/lib/protodb" > ./protodb.conf
 ```
