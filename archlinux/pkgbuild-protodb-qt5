@@ -13,7 +13,6 @@ md5sums=('SKIP')
 
 prepare() {
     cd ${srcdir}/$pkgname
-    git checkout develop
     cmake ./ -B ./build -DQT_BUILD_VERSION:STRING=5 -DCMAKE_BUILD_TYPE=Release
 }
 
