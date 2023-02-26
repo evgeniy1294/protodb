@@ -134,17 +134,16 @@ void LogFormatWidget::createGui() {
     // ---------[LAYOUT]---------- //
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-        main_layout->addWidget(new QLabel(tr("Log configurations:")), 0, 0, 1, 1);
-        main_layout->addWidget(m_append_en, 1, 0, 1, 1);
-        main_layout->addWidget(m_timestamp_en, 2, 0, 1, 1);
-        main_layout->addWidget(m_timestamp_format, 2, 1, 1, 1);
-        main_layout->addWidget(m_ch_name_en, 3, 0, 1, 1);
-        main_layout->addWidget(m_ch1_en, 4, 0, 1, 1);
-        main_layout->addWidget(m_ch1_name, 4, 1, 1, 1);
-        main_layout->addWidget(m_ch2_en, 5, 0, 1, 1);
-        main_layout->addWidget(m_ch2_name, 5, 1, 1, 1);
-        main_layout->addWidget(m_cmt_en, 6, 0, 1, 1);
-        main_layout->addWidget(m_cmt_name, 6, 1, 1, 1);
+        main_layout->addWidget(m_append_en, 0, 0, 1, 1);
+        main_layout->addWidget(m_timestamp_en, 1, 0, 1, 1);
+        main_layout->addWidget(m_timestamp_format, 1, 1, 1, 1);
+        main_layout->addWidget(m_ch_name_en, 2, 0, 1, 1);
+        main_layout->addWidget(m_ch1_en, 3, 0, 1, 1);
+        main_layout->addWidget(m_ch1_name, 3, 1, 1, 1);
+        main_layout->addWidget(m_ch2_en, 4, 0, 1, 1);
+        main_layout->addWidget(m_ch2_name, 4, 1, 1, 1);
+        main_layout->addWidget(m_cmt_en, 5, 0, 1, 1);
+        main_layout->addWidget(m_cmt_name, 5, 1, 1, 1);
         main_layout->setColumnStretch(0, 0);
         main_layout->setColumnStretch(1, 1);
 

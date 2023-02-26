@@ -14,12 +14,14 @@ class QDialogButtonBox;
 class QLineEdit;
 class QVBoxLayout;
 class QGridLayout;
+class QTabWidget;
 
 namespace protodb {
 
 class IOWidgetFactory;
 class IOWidget;
 class LogFormatWidget;
+class DelimetersConfigWidget;
 
 class SeanceConfigDialog: public QDialog, public Configurable
 {
@@ -59,8 +61,10 @@ private:
     QWidget* m_dummy_wgt;
     QGridLayout* m_layout;
     QWidget* m_current_iowiget;
+    QTabWidget* m_tab_widget;
 
     LogFormatWidget* m_log_format_wiget;
+    DelimetersConfigWidget* m_delimeters_cfg_widget;
 
     QMap<QString, QAbstractButton*> m_selection_btns;
     QMap<QString, IOWidget*> m_io_widgets;

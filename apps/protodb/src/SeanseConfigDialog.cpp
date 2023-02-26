@@ -1,5 +1,6 @@
 #include "SeanseConfigDialog.h"
 #include "LogFormatWidget.h"
+#include "DelimetersConfigWidget.h"
 #include "MainClass.h"
 
 #include <protodb/IOWidget.h>
@@ -20,6 +21,7 @@
 #include <QLayout>
 #include <QLabel>
 #include <QAction>
+#include <QTabWidget>
 
 using namespace protodb;
 
@@ -99,8 +101,14 @@ void SeanceConfigDialog::createGui()
         m_scr_le->setPlaceholderText(tr("Path to script file"));
 
     // ------[CONFIG WIDGETS] ------ //
+    m_tab_widget = new QTabWidget;
+
     m_current_iowiget  = m_io_widgets.empty() ? m_dummy_wgt : m_io_widgets.first();
     m_log_format_wiget = new LogFormatWidget();
+        m_tab_widget->addTab(m_log_format_wiget, tr("Log"));
+
+    m_delimeters_cfg_widget = new DelimetersConfigWidget();
+        m_tab_widget->addTab(m_delimeters_cfg_widget, tr("Delimeters"));
 
     // ---------[SELECTOR FRAME]---------//
     auto selector_frame = new QFrame();
@@ -125,7 +133,7 @@ void SeanceConfigDialog::createGui()
         m_layout->addWidget(m_current_iowiget, 1 , 1, 1, 2);
         m_layout->addWidget(m_log_le, 2, 1, 1, 1);
         m_layout->addWidget(m_log_btn, 2 , 2, 1, 1);
-        m_layout->addWidget(m_log_format_wiget, 3 ,1, 1, 2);
+        m_layout->addWidget(m_tab_widget, 3 ,1, 1, 2);
         m_layout->addWidget(m_dialog_btn, 4, 0, 1, 3);
         m_layout->setColumnStretch(0, 0);
         m_layout->setColumnStretch(1, 1);
@@ -325,6 +333,9 @@ void SeanceConfigDialog::setState(const nlohmann::json& json)
     auto log_configs = json.value("LogConfigs", nlohmann::json::object());
         m_log_format_wiget->setConfig(log_configs);
 
+    auto delim_configs = json.value("Delimeters", nlohmann::json::object_t());
+        m_delimeters_cfg_widget->setConfig(delim_configs);
+
     QString log_file_path = json.value("LogFile", QString());
         m_log_le->setText(log_file_path);
 
@@ -369,6 +380,9 @@ void SeanceConfigDialog::state(nlohmann::json& json) const
     auto log_configs = nlohmann::json::object();
         m_log_format_wiget->config(log_configs);
 
+    auto delim_configs = nlohmann::json::object();
+        m_delimeters_cfg_widget->config(delim_configs);
+
     auto configs = nlohmann::json::object();
     for (auto it = m_io_widgets.begin(); it != m_io_widgets.end(); ++it) {
         nlohmann::json cfg = nlohmann::json::object();
@@ -387,6 +401,7 @@ void SeanceConfigDialog::state(nlohmann::json& json) const
 
     json["Configs"]     = configs;
     json["LogConfigs"]  = log_configs;
+    json["Delimeters"]  = delim_configs;
     json["ScriptFile"]  = m_scr_le->text();
     json["LogFile"]     = m_log_le->text();
 
@@ -398,13 +413,14 @@ void SeanceConfigDialog::defaultState(nlohmann::json& json) const
     json = nlohmann::json::object();
 
     auto log_configs = nlohmann::json::object();
-        m_log_format_wiget->setDefaultConfig();
-        m_log_format_wiget->config(log_configs);
+        m_log_format_wiget->defaultConfig(log_configs);
+
+    auto delim_configs = nlohmann::json::object();
+        m_delimeters_cfg_widget->defaultConfig(delim_configs);
 
     auto configs = nlohmann::json::object();
     for (auto it = m_io_widgets.begin(); it != m_io_widgets.end(); ++it) {
         nlohmann::json cfg = nlohmann::json::object();
-            it.value()->setDefaultConfig();
             it.value()->defaultConfig(cfg);
 
         auto deviceCID = it.value()->deviceCID().toStdString();
@@ -420,7 +436,9 @@ void SeanceConfigDialog::defaultState(nlohmann::json& json) const
 
     json["Configs"]     = configs;
     json["LogConfigs"]  = log_configs;
+    json["Delimeters"]  = delim_configs;
     json["ScriptFile"]  = "";
+    json["LogFile"]     = "";
 
     return;
 }

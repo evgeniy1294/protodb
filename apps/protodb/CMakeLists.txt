@@ -44,6 +44,7 @@ set(SOURCES_LIST
     src/ProtodbConfigDialog.cpp
     src/ProtodbConfigStorage.cpp
     src/MainClass.cpp
+    src/DelimetersConfigWidget.cpp
 )
 
 set(HEADERS_LIST
@@ -78,6 +79,7 @@ set(HEADERS_LIST
     include/ProtodbConfigDialog.h
     include/ProtodbConfigStorage.h
     include/MainClass.h
+    include/DelimetersConfigWidget.h
 )
 
 set( WIN_RESOURCES
