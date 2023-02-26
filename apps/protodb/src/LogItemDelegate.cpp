@@ -84,39 +84,34 @@ void LogItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
 QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    QSize ret;
+
     auto model = index.model();
     auto channel = static_cast<Logger::Channel>(model->data( model->index(index.row(), Logger::ColumnChannel) ).toInt());
     auto font  = m_dec != nullptr ? m_dec->channelFont (channel) :
                                     LogDecorator::defaultChannelFonts ().value(channel);
-    QSize cell_size = option.rect.size();
     QString data;
 
+    QStyleOptionViewItem opt(option);
+        opt.font = font;
+        opt.fontMetrics = QFontMetrics(font);
+
     if (index.column() == Logger::ColumnMsg) {
-        if (cell_size.isEmpty())
-            return QStyledItemDelegate::sizeHint(option, index);
+        auto raw_data = index.model()->data(index).toByteArray();
+        data = m_fmt != nullptr ? m_fmt->format( channel, raw_data ) :
+                                  LogFormatter::defaultFormat(channel, raw_data);
 
-        if (channel == Logger::ChannelFirst || channel == Logger::ChannelSecond) {
-            auto raw_data = index.model()->data(index).toByteArray();
-            int flags = 0;
-            if (m_fmt != nullptr) {
-                flags |= m_fmt->byteFormat() == LogFormatter::AsciiFormat ?
-                            Qt::TextWrapAnywhere : Qt::TextWordWrap;
-                data = m_fmt->format( channel, raw_data );
-            }
-            else {
-                data = LogFormatter::defaultFormat(channel, raw_data);
-                flags |= Qt::TextWordWrap;
-            }
+        const QWidget *widget = option.widget;
+        QStyle *style = widget ? widget->style() : QApplication::style();
 
-            auto fm = QFontMetrics(font);
-                int width = fm.horizontalAdvance(data, flags);
-                int height = fm.height()*width/cell_size.width() +
-                                ((width % cell_size.width() != 0) ? fm.height() : 0);
+        opt.features |= QStyleOptionViewItem::HasDisplay | QStyleOptionViewItem::WrapText;
+        opt.text = displayText(data, opt.locale);
 
-            cell_size.setHeight(height);
+        int flags = static_cast<Qt::AlignmentFlag>(0x81);
+            flags |= m_fmt != nullptr ? m_fmt->byteFormat() == LogFormatter::AsciiFormat ?
+                                       Qt::TextWrapAnywhere : Qt::TextWordWrap : Qt::TextWordWrap;
 
-            return cell_size;
-        }
+        ret = style->itemTextRect(opt.fontMetrics, opt.rect, flags, true, opt.text).size();
     }
     else
     {
@@ -129,16 +124,11 @@ QSize LogItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModel
         }
 
         auto fm = QFontMetrics(font);
-            int width  = fm.horizontalAdvance(data)*1.15;
-            int height = fm.height();
-
-        cell_size.setHeight(height);
-        cell_size.setWidth(width);
-        return cell_size;
+            ret.setHeight(fm.height());
+            ret.setWidth(fm.horizontalAdvance(data)*1.25);
     }
 
-
-    return QStyledItemDelegate::sizeHint(option, index);
+    return ret;
 }
 
 QString LogItemDelegate::message(const QModelIndex& index)

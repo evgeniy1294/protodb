@@ -10,6 +10,7 @@
 #include <QMap>
 
 class QIODevice;
+class QTimer;
 
 namespace protodb {
 
@@ -72,6 +73,12 @@ private:
     SequenceModel* m_incoming_sequences;
     SequenceModel* m_outgoing_sequences;
     ScriptMultiInterface* m_script_multi_interface;
+
+    int m_d1;
+    int m_d2;
+    bool m_d_custom;
+    QTimer* m_guard_timer;
+    QByteArray m_buffer;
 
     QMap<int, QUuid> m_repeat_timers;
     QMap<int, QUuid> m_singleshot_timers;

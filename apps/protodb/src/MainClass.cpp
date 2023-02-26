@@ -16,6 +16,7 @@
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
 
+#include <QTimer>
 #include <QRegularExpression>
 #include <QApplication>
 
@@ -27,7 +28,15 @@ MainClass::MainClass()
     , m_logger(new Logger(this))
     , m_log_printer(new LogPrinter(this))
     , m_script_multi_interface(new ScriptMultiInterface(this))
+    , m_guard_timer(new QTimer(this))
 {
+    m_guard_timer->setTimerType(Qt::TimerType::PreciseTimer);
+    m_guard_timer->setSingleShot(true);
+
+    m_d1 = -1;
+    m_d2 = -1;
+    m_d_custom = false;
+
     m_incoming_sequences->setIncomingMode();
     m_outgoing_sequences->setOutgoingMode();
     connect_signals();
@@ -286,6 +295,15 @@ void MainClass::start()
 
     m_log_printer->setLogFile(log_file);
 
+    // Configure delimiter
+    auto delimeters_cfg = m_seance_cfg.value("Delimeters", nlohmann::json::object());
+    m_d1 = delimeters_cfg.value("Delimeter1", -1);
+    m_d2 = delimeters_cfg.value("Delimeter2", -1);
+    m_d_custom = delimeters_cfg.value("UseCustom", false);
+
+    int guard_interval = delimeters_cfg.value("GuardInterval", 0);
+        m_guard_timer->setInterval(guard_interval);
+
     // Set script file
     auto script_file = m_seance_cfg.value("ScriptFile", QString());
     if (!m_script_multi_interface->setScriptFile(script_file)) {
@@ -419,24 +437,65 @@ void MainClass::timerEvent(QTimerEvent* event)
 
 void MainClass::readyRead()
 {
-    // TODO: задействовать делиметр
-    auto bytes = m_io->readAll();
-    if (bytes.isEmpty())
+    m_buffer.append(m_io->readAll());
+    if (m_buffer.isEmpty())
         return;
 
-    m_logger->log(Logger::ChannelFirst, bytes);
+    auto slicing = [this]() -> QList<QByteArray> {
+        QList<QByteArray> ret;
 
-    m_script_multi_interface->handleDataEvent(ScriptInterface::Received, bytes);
-
-    auto incoming = m_incoming_sequences->getSequenceByBytes(bytes, true);
-    if (!incoming.isNull()) {
-        if ( incoming->period() <= 0 ) {
-            auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());
-            send_sequence(sequence);
+        if (m_d_custom) {
+            // Call script function
         }
         else {
-            auto timer_id = startTimer(incoming->period(), Qt::PreciseTimer);
-            m_singleshot_timers[timer_id] = incoming->uuid();
+            if (m_d1 != -1) {
+                int count = 0; int index = count;
+
+                while(count == index) {
+                    int idx1 = m_buffer.indexOf(static_cast<char>(m_d1), count);
+                    if (idx1 == -1) break;
+
+                    if (m_d2 != -1) {
+                        int idx2 = m_buffer.indexOf(static_cast<char>(m_d2), idx1);
+                        index = idx2 == (idx1+1) ? idx2 + 1 : idx2;
+                    }
+                    else {
+                        index = idx1 == -1 ? idx1 : idx1 + 1;
+                    }
+
+                    if (index != -1) {
+                        ret.append(m_buffer.mid(count, index - count));
+                        count = index;
+                    }
+                }
+
+                if (count != 0) {
+                    m_buffer.remove(0, count);
+                }
+            }
+            else {
+                ret.append(m_buffer);
+                m_buffer.clear();
+            }
+        }
+
+        return ret;
+    };
+
+    for (auto& msg: slicing()) {
+        m_logger->log(Logger::ChannelFirst, msg);
+        m_script_multi_interface->handleDataEvent(ScriptInterface::Received, msg);
+
+        auto incoming = m_incoming_sequences->getSequenceByBytes(msg, true);
+        if (!incoming.isNull()) {
+            if ( incoming->period() <= 0 ) {
+                auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());
+                send_sequence(sequence);
+            }
+            else {
+                auto timer_id = startTimer(incoming->period(), Qt::PreciseTimer);
+                m_singleshot_timers[timer_id] = incoming->uuid();
+            }
         }
     }
 
