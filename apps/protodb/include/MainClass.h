@@ -68,6 +68,7 @@ private:
     bool try_create_connection(const QString& cid, const nlohmann::json& json);
 
     bool send_sequence(QSharedPointer<const Sequence>& sequence);
+    void read_message(QByteArray msg);
 
 private:
     SequenceModel* m_incoming_sequences;

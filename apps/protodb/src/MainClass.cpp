@@ -151,6 +151,11 @@ void MainClass::connect_signals()
     connect(m_outgoing_sequences, &SequenceModel::sSequenceActivated, this, &MainClass::sequenceActivated);
     connect(m_outgoing_sequences, &SequenceModel::sSequenceDisactivated, this, &MainClass::sequenceDisactivated);
     connect(m_incoming_sequences, &SequenceModel::sSequenceDisactivated, this, &MainClass::sequenceDisactivated);
+
+    connect(m_guard_timer, &QTimer::timeout, this, [this]() {
+        read_message(m_buffer);
+        m_buffer.clear();
+    });
 }
 
 void MainClass::config_logger(const nlohmann::json &json)
@@ -441,6 +446,8 @@ void MainClass::readyRead()
     if (m_buffer.isEmpty())
         return;
 
+    m_guard_timer->stop();
+
     auto slicing = [this]() -> QList<QByteArray> {
         QList<QByteArray> ret;
 
@@ -483,21 +490,34 @@ void MainClass::readyRead()
     };
 
     for (auto& msg: slicing()) {
-        m_logger->log(Logger::ChannelFirst, msg);
-        m_script_multi_interface->handleDataEvent(ScriptInterface::Received, msg);
+        read_message(msg);
+    }
 
-        auto incoming = m_incoming_sequences->getSequenceByBytes(msg, true);
-        if (!incoming.isNull()) {
-            if ( incoming->period() <= 0 ) {
-                auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());
-                send_sequence(sequence);
-            }
-            else {
-                auto timer_id = startTimer(incoming->period(), Qt::PreciseTimer);
-                m_singleshot_timers[timer_id] = incoming->uuid();
-            }
+    if (m_guard_timer->interval() != 0) {
+        if (!m_buffer.isEmpty()) {
+            m_guard_timer->start();
         }
     }
 
     return;
+}
+
+void MainClass::read_message(QByteArray msg)
+{
+    if (msg.isEmpty()) return;
+
+    m_logger->log(Logger::ChannelFirst, msg);
+    m_script_multi_interface->handleDataEvent(ScriptInterface::Received, msg);
+
+    auto incoming = m_incoming_sequences->getSequenceByBytes(msg, true);
+    if (!incoming.isNull()) {
+        if ( incoming->period() <= 0 ) {
+            auto sequence = m_outgoing_sequences->getSequenceByName(incoming->bindedName());
+            send_sequence(sequence);
+        }
+        else {
+            auto timer_id = startTimer(incoming->period(), Qt::PreciseTimer);
+            m_singleshot_timers[timer_id] = incoming->uuid();
+        }
+    }
 }
