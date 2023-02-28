@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
-project(ProtodbProject VERSION "0.0.1")
+project(ProtodbProject VERSION "1.0.2")
 
 # Libs
 add_subdirectory(libs/base)
