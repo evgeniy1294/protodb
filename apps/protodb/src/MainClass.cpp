@@ -351,6 +351,8 @@ void MainClass::stop()
 
     m_outgoing_sequences->disableAll();
     m_log_printer->setDisabled();
+    m_buffer.clear();
+
     emit sStopted();
 }
 
