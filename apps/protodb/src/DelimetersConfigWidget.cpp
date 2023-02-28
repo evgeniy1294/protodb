@@ -51,8 +51,8 @@ void DelimetersConfigWidget::createGui()
     auto m_layout = new QGridLayout;
         m_layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-        m_layout->addWidget(new QLabel(tr("Custom delimeter")), 0, 0, 1, 1);
-        m_layout->addWidget(m_use_custom, 0, 1, 1, 1);
+        //m_layout->addWidget(new QLabel(tr("Custom delimeter")), 0, 0, 1, 1);
+        //m_layout->addWidget(m_use_custom, 0, 1, 1, 1);
 
         m_layout->addWidget(new QLabel(tr("Delimeters")), 1, 0, 1, 1);
         m_layout->addWidget(m_del_1, 1, 1, 1, 1);
