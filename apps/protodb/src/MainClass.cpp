@@ -482,9 +482,8 @@ void MainClass::readyRead()
                     m_buffer.remove(0, count);
                 }
             }
-            else {
-                ret.append(m_buffer);
-                m_buffer.clear();
+            else if (m_guard_timer->interval() == 0) {
+                ret.append(m_buffer); m_buffer.clear();
             }
         }
 
@@ -495,8 +494,8 @@ void MainClass::readyRead()
         read_message(msg);
     }
 
-    if (m_guard_timer->interval() != 0) {
-        if (!m_buffer.isEmpty()) {
+    if (!m_buffer.isEmpty()) {
+        if (m_guard_timer->interval() != 0) {
             m_guard_timer->start();
         }
     }
