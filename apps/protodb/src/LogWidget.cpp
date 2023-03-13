@@ -69,8 +69,7 @@ void LogWidget::setSeanceState(const nlohmann::json state)
     enabled = log_configs.value("ChannelNameEnabled", true);
         m_view->setChannelNameVisible(enabled);
 
-    m_view->resizeRowsToContents();
-    m_view->resizeColumnsToContents();
+    m_view->reset();
 }
 
 void LogWidget::getLogStyle(nlohmann::json& json) const
@@ -266,6 +265,15 @@ void LogWidget::createConnections()
     });
 
     connect(&MainClass::instance(), &MainClass::sStartFailed, m_conn_dialog, &QWidget::show);
+}
+
+bool LogWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::Resize) {
+        m_view->reset();
+    }
+
+    return QWidget::event(e);
 }
 
 

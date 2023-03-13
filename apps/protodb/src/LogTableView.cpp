@@ -26,13 +26,10 @@ LogTableView::LogTableView(QWidget *parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegate(m_item_delegate);
-    setWordWrap(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setShowGrid(false);
-    setTextElideMode(Qt::ElideNone);
 
     QHeaderView* vh = verticalHeader();
-        vh->setSectionResizeMode(QHeaderView::ResizeToContents);
         vh->hide();
 
     QHeaderView* hh = horizontalHeader();
@@ -56,8 +53,8 @@ void LogTableView::setModel(QAbstractItemModel *model)
 {
     QTableView::setModel(model);
     QHeaderView* hh = horizontalHeader();
-        hh->setSectionResizeMode(Logger::ColumnTimestamp, QHeaderView::ResizeToContents);
-        hh->setSectionResizeMode(Logger::ColumnChannel,   QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(Logger::ColumnTimestamp, QHeaderView::Fixed);
+        hh->setSectionResizeMode(Logger::ColumnChannel,   QHeaderView::Fixed);
         hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
 }
 
@@ -89,6 +86,42 @@ void LogTableView::setChannelNameVisible(bool visible)
 
 void LogTableView::reset()
 {
+    int width, tmp;
+    auto fm_1 = QFontMetrics(m_decorator->channelFont(Logger::ChannelFirst));
+    auto fm_2 = QFontMetrics(m_decorator->channelFont(Logger::ChannelSecond));
+    auto fm_c = QFontMetrics(m_decorator->channelFont(Logger::ChannelComment));
+    auto fm_e = QFontMetrics(m_decorator->channelFont(Logger::ChannelError));
+
+    // Timestamp column size
+    auto dt = m_formatter->format(QDateTime::currentDateTime());
+
+    width = fm_1.horizontalAdvance(dt)*1.25;
+
+    tmp = fm_2.horizontalAdvance(dt)*1.25;
+    width = tmp > width ? tmp : width;
+
+    tmp = fm_c.horizontalAdvance(dt)*1.25;
+    width = tmp > width ? tmp : width;
+
+    tmp = fm_e.horizontalAdvance(dt)*1.25;
+    width = tmp > width ? tmp : width;
+
+    setColumnWidth(Logger::ColumnTimestamp, width);
+
+    // ChannelName column size
+    width = fm_1.horizontalAdvance(m_formatter->channelName(Logger::ChannelFirst))*1.25;
+
+    tmp = fm_2.horizontalAdvance(m_formatter->channelName(Logger::ChannelSecond))*1.25;
+    width = tmp > width ? tmp : width;
+
+    tmp = fm_c.horizontalAdvance(m_formatter->channelName(Logger::ChannelComment))*1.25;
+    width = tmp > width ? tmp : width;
+
+    tmp = fm_e.horizontalAdvance(m_formatter->channelName(Logger::ChannelError))*1.25;
+    width = tmp > width ? tmp : width;
+
+    setColumnWidth(Logger::ColumnChannel, width);
+    resizeRowsToContents();
 
     QTableView::reset();
 }

@@ -37,6 +37,9 @@ private:
     void createGui();
     void createConnections();
 
+private slots:
+    bool event(QEvent *e) override;
+
 private:
     enum RawDataFormat {
         Hex_Format        = 0,
