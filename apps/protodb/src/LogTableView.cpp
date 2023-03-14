@@ -29,6 +29,7 @@ LogTableView::LogTableView(QWidget *parent)
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setShowGrid(false);
 
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QHeaderView* vh = verticalHeader();
         vh->hide();
 
@@ -56,6 +57,12 @@ void LogTableView::setModel(QAbstractItemModel *model)
         hh->setSectionResizeMode(Logger::ColumnTimestamp, QHeaderView::Fixed);
         hh->setSectionResizeMode(Logger::ColumnChannel,   QHeaderView::Fixed);
         hh->setSectionResizeMode(Logger::ColumnMsg,       QHeaderView::Stretch);
+
+    connect(model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex &parent, int first, int last) {
+        for (int i = first; i <= last; i++) {
+            resizeRowToContents(i);
+        }
+    });
 }
 
 LogFormatter* LogTableView::formatter() const
@@ -243,4 +250,5 @@ void LogTableView::connectSignals()
         resizeRowsToContents();
     });
 }
+
 
