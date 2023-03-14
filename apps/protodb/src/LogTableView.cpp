@@ -11,6 +11,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QAction>
+#include <QScrollBar>
 
 using namespace protodb;
 
@@ -89,6 +90,27 @@ void LogTableView::setChannelNameVisible(bool visible)
         showColumn(Logger::ColumnChannel);
     else
         hideColumn(Logger::ColumnChannel);
+}
+
+void LogTableView::resizeVisibleRows()
+{
+    if (model()->rowCount() == 0) {
+        return;
+    }
+
+    int page_cnt    = verticalScrollBar()->pageStep();
+
+    int start_index = verticalScrollBar()->value() - page_cnt * 2;
+        start_index = start_index < 0 ? 0 : start_index;
+
+    int end_index   = verticalScrollBar()->value() + page_cnt * 2;
+        end_index   = end_index >= model()->rowCount() ? model()->rowCount() - 1 : end_index;
+
+    qDebug() << start_index << end_index;
+
+    for (int i = start_index; i <= end_index; i++) {
+        resizeRowToContents(i);
+    }
 }
 
 void LogTableView::reset()

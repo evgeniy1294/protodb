@@ -18,6 +18,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
+
 using namespace protodb;
 
 LogWidget::LogWidget(QWidget* parent)
@@ -225,14 +226,14 @@ void LogWidget::createConnections()
 
        if (state) {
            m_view->formatter()->setByteFormat(LogFormatter::AsciiFormat);
-           m_view->reset();
-           m_view->resizeRowsToContents();
+           m_view->resizeVisibleRows();
+           m_view->update();
            m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
            m_view->formatter()->setByteFormat(LogFormatter::HexFormat);
-           m_view->reset();
-           m_view->resizeRowsToContents();
+           m_view->resizeVisibleRows();
+           m_view->update();
            m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }
 
@@ -269,8 +270,9 @@ void LogWidget::createConnections()
 
 bool LogWidget::event(QEvent *e)
 {
-    if (e->type() == QEvent::Resize) {
-        m_view->reset();
+    if (e->type() == QEvent::Resize || e->type() == QEvent::Paint) {
+        m_view->resizeVisibleRows();
+        qDebug() << e->type();
     }
 
     return QWidget::event(e);

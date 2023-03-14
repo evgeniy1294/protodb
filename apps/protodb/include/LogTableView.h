@@ -27,6 +27,8 @@ public:
     void setTimestampVisible(bool visible);
     void setChannelNameVisible(bool visible);
 
+    void resizeVisibleRows();
+
 public slots:
     void reset() override;
 
