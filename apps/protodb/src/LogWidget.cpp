@@ -227,13 +227,13 @@ void LogWidget::createConnections()
        if (state) {
            m_view->formatter()->setByteFormat(LogFormatter::AsciiFormat);
            m_view->resizeVisibleRows();
-           m_view->update();
+           m_view->viewport()->repaint();
            m_mode_btn->setIcon(QIcon(":/icons/ascii.svg"));
        }
        else {
            m_view->formatter()->setByteFormat(LogFormatter::HexFormat);
            m_view->resizeVisibleRows();
-           m_view->update();
+           m_view->viewport()->repaint();
            m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
        }
 

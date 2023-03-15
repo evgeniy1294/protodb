@@ -29,8 +29,8 @@ LogTableView::LogTableView(QWidget *parent)
     setItemDelegate(m_item_delegate);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setShowGrid(false);
+    setVerticalScrollMode(ScrollMode::ScrollPerPixel);
 
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QHeaderView* vh = verticalHeader();
         vh->hide();
 
@@ -98,17 +98,19 @@ void LogTableView::resizeVisibleRows()
         return;
     }
 
-    int page_cnt    = verticalScrollBar()->pageStep();
+    auto rect = QRect(QPoint(0, 0), viewport()->size());
+    auto gridW  = rect.width();
+    auto gridH  = rect.height();
 
-    int start_index = verticalScrollBar()->value() - page_cnt * 2;
-        start_index = start_index < 0 ? 0 : start_index;
+    int start_idx = indexAt(QPoint(gridW/2, 0)).row() - 5;
+        start_idx = start_idx < 0 ? 0 : start_idx;
 
-    int end_index   = verticalScrollBar()->value() + page_cnt * 2;
-        end_index   = end_index >= model()->rowCount() ? model()->rowCount() - 1 : end_index;
+    int end_idx = indexAt(QPoint(gridW/2, gridH-10)).row() + 5;
+        end_idx = end_idx >= model()->rowCount() ? model()->rowCount() - 1 : end_idx;
 
-    qDebug() << start_index << end_index;
+    qDebug() << start_idx << end_idx;
 
-    for (int i = start_index; i <= end_index; i++) {
+    for (int i = start_idx; i <= end_idx; i++) {
         resizeRowToContents(i);
     }
 }
