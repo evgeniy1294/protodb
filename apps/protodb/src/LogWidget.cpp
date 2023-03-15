@@ -272,7 +272,6 @@ bool LogWidget::event(QEvent *e)
 {
     if (e->type() == QEvent::Resize || e->type() == QEvent::Paint) {
         m_view->resizeVisibleRows();
-        qDebug() << e->type();
     }
 
     return QWidget::event(e);

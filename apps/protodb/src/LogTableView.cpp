@@ -108,8 +108,6 @@ void LogTableView::resizeVisibleRows()
     int end_idx = indexAt(QPoint(gridW/2, gridH-10)).row() + 5;
         end_idx = end_idx >= model()->rowCount() ? model()->rowCount() - 1 : end_idx;
 
-    qDebug() << start_idx << end_idx;
-
     for (int i = start_idx; i <= end_idx; i++) {
         resizeRowToContents(i);
     }
