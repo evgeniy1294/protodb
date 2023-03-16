@@ -100,7 +100,8 @@ QByteArray LuaInterface::compileCode(const QString& code) const
         compiler["vec"] = std::vector<uint8_t>();
 
         if (pfr.valid()) {
-            pfr = compiler["compile"]( compiler["vec"] );
+            sol::safe_function compile = compiler["compile"];
+                pfr = compile( compiler["vec"] );
 
             if (pfr.valid()) {
                 std::vector<uint8_t>& bytes = compiler["vec"];

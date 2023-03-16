@@ -4,8 +4,6 @@
 
 namespace protodb {
 
-class Sequence;
-
 class SequenceFormatter {
 public:
     SequenceFormatter() = default;
