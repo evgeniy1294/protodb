@@ -1,7 +1,8 @@
 #include "SequenceModel.h"
 
 #include <QPointer>
-#include <QDebug>
+#include <QMimeData>
+#include <QIODevice>
 
 using namespace protodb;
 
@@ -204,7 +205,11 @@ Qt::ItemFlags SequenceModel::flags(const QModelIndex& index) const
     int row[[maybe_unused]] = index.row();
     int col = index.column();
 
-    Qt::ItemFlags flags = QAbstractTableModel::flags(index);
+    Qt::ItemFlags flags = QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled;
+
+    if (!index.isValid()) {
+        flags |= Qt::ItemIsDropEnabled;
+    }
 
     if (col != kColumnName) {
         flags |= Qt::ItemIsEditable;
@@ -215,12 +220,14 @@ Qt::ItemFlags SequenceModel::flags(const QModelIndex& index) const
 
 bool SequenceModel::insertRows(int row, int count, const QModelIndex& parent)
 {
+    if (row < 0) {
+         return false;
+    }
+
     auto sq = QSharedPointer<Sequence>::create();
     beginInsertRows(QModelIndex(), row, row + count - 1);
-
-    sq->setName(tr("Sequence %1").arg(m_sequences.size()+1));
-    m_sequences.insert(row, sq);
-
+        sq->setName(tr("Sequence %1").arg(m_sequences.size()+1));
+        m_sequences.insert(row, sq);
     endInsertRows();
 
 
@@ -230,24 +237,107 @@ bool SequenceModel::insertRows(int row, int count, const QModelIndex& parent)
 bool SequenceModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if (row >= 0 && row < m_sequences.size()) {
-      count = ((row + count) > m_sequences.size()) ? m_sequences.size() - row : count;
-      beginRemoveRows(QModelIndex(), row, row + count - 1);
+        count = ((row + count) > m_sequences.size()) ? m_sequences.size() - row : count;
+        beginRemoveRows(QModelIndex(), row, row + count - 1);
 
-      if (row == 0 && count == m_sequences.size()) {
-        m_sequences.clear();
-      }
-      else
-      {
-        for (int i = 0; i < count; i++) {
-          m_sequences.removeAt(row);
+        if (row == 0 && count == m_sequences.size()) {
+            m_sequences.clear();
+        }
+        else
+        {
+            for (int i = 0; i < count; i++) {
+                m_sequences.removeAt(row);
+            }
+
         }
 
-      }
-
-      endRemoveRows();
+        endRemoveRows();
     }
 
     return true;
+}
+
+bool SequenceModel::moveRows(const QModelIndex& sourceParent, int sourceRow, int count, const QModelIndex& destinationParent, int destinationChild)
+{
+    if (destinationChild == sourceRow)
+        return true;
+
+    if (destinationChild == (sourceRow + count))
+        return true;
+
+    beginMoveRows(QModelIndex(), sourceRow, sourceRow+count-1, QModelIndex(), destinationChild);
+        auto s = m_sequences.mid(sourceRow, count);
+        m_sequences.remove(sourceRow, count);
+
+        int insertPos = destinationChild > sourceRow ?
+                    destinationChild - count : destinationChild;
+
+        for (int i = 0; i < count; i++) {
+            m_sequences.insert(insertPos + i, s.at(i));
+        }
+    endMoveRows();
+
+    return true;
+}
+
+QStringList SequenceModel::mimeTypes() const
+{
+    QStringList types;
+        types << QStringLiteral("application/protodb-sequences");
+
+    return types;
+}
+
+QMimeData* SequenceModel::mimeData(const QModelIndexList& indexes) const
+{
+    if (indexes.count() <= 0)
+        return nullptr;
+
+    QStringList types = mimeTypes();
+    if (types.isEmpty())
+        return nullptr;
+
+    int moveIdx = indexes.at(0).row();
+    int moveCount = indexes.last().row() - moveIdx + 1;
+
+    QMimeData *data = new QMimeData();
+        QString format = types.at(0);
+        QByteArray encoded;
+        QDataStream stream(&encoded, QIODevice::WriteOnly);
+            stream << moveIdx << moveCount;
+        data->setData(format, encoded);
+
+    return data;
+}
+
+bool SequenceModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(column);
+
+    if(row == -1) {
+        row = rowCount();
+    }
+
+    QStringList types = mimeTypes();
+    if (types.isEmpty())
+        return false;
+
+    auto encoded = data->data( types.at(0) );
+    QDataStream stream(&encoded, QIODevice::ReadOnly);
+
+    int moveIdx = -1;
+    int moveCount = -1;
+        stream >> moveIdx >> moveCount;
+
+    moveRows(QModelIndex(), moveIdx, moveCount, QModelIndex(), row);
+
+    return false;
+}
+
+Qt::DropActions SequenceModel::supportedDropActions() const
+{
+    return Qt::MoveAction | Qt::CopyAction;
 }
 
 void SequenceModel::setIncomingMode()

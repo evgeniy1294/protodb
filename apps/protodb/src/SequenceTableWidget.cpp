@@ -88,7 +88,7 @@ void SequenceTableWidget::createGui()
 
     // ---------[MENU]---------- //
     m_menu = new QMenu;
-        m_menu->addAction(m_cp_act);
+        //m_menu->addAction(m_cp_act);
         m_menu->addAction(m_ed_act);
         m_menu->addSeparator();
         m_menu->addAction(m_rm_act);
@@ -128,9 +128,6 @@ void SequenceTableWidget::createConnections()
     // ---------[BUTTONS]---------- //
     connect(m_add_btn, &QPushButton::released, this, [this]() {
         m_model->insertRow( m_model->rowCount() );
-        m_mapper->toLast();
-
-        m_edit_dialog->show();
     });
 
     connect(m_clr_btn, &QPushButton::released, this, &SequenceTableWidget::onClickClear);

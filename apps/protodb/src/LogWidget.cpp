@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 
 using namespace protodb;
@@ -122,6 +123,7 @@ void LogWidget::createGui()
 
     m_msg_le = new QLineEdit();
         m_msg_le->setPlaceholderText("Print your message");
+        m_msg_le->installEventFilter(this);
 
 
     // ---------[COMBO BOX]---------- //
@@ -275,6 +277,30 @@ bool LogWidget::event(QEvent *e)
     }
 
     return QWidget::event(e);
+}
+
+bool LogWidget::eventFilter(QObject* obj, QEvent* event)
+{
+    if (obj == m_msg_le) {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Up)
+            {
+                m_msg_le->undo();
+                return true;
+            }
+            else if(keyEvent->key() == Qt::Key_Down)
+            {
+                m_msg_le->redo();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    return QWidget::eventFilter(obj, event);
 }
 
 

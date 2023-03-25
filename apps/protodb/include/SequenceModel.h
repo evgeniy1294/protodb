@@ -43,6 +43,15 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count,
+                  const QModelIndex &destinationParent, int destinationChild) override;
+
+    // Drag and drop
+    QStringList mimeTypes() const override;
+    QMimeData* mimeData(const QModelIndexList &indexes) const override;
+    Qt::DropActions supportedDropActions() const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                      int row, int column, const QModelIndex &parent) override;
 
     void setIncomingMode();
     void setOutgoingMode();
@@ -64,6 +73,10 @@ public:
 signals:
     void sSequenceActivated(QUuid uid);
     void sSequenceDisactivated(QUuid uid);
+
+private:
+    //void encodeSequenceToMime(const QModelIndexList &indexes, QDataStream &stream) const;
+    //bool decodeSequenceFromMime(int row, int column, const QModelIndex &parent, QDataStream &stream);
 
 private:
     QList< QSharedPointer<Sequence> > m_sequences;

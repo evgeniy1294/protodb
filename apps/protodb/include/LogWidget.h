@@ -39,6 +39,7 @@ private:
 
 private slots:
     bool event(QEvent *e) override;
+    bool eventFilter(QObject* obj, QEvent *event) override;
 
 private:
     enum RawDataFormat {

@@ -5,6 +5,7 @@
 #include "CellButtonDelegate.h"
 
 #include <QHeaderView>
+#include <QDropEvent>
 
 using namespace protodb;
 
@@ -29,6 +30,7 @@ SequenceTableView::SequenceTableView(QWidget *parent)
     setStyleSheet("alternate-background-color: #eff0f1");
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
+
     auto vh = verticalHeader();
         vh->setSectionResizeMode(QHeaderView::Fixed);
 }
@@ -60,5 +62,14 @@ void SequenceTableView::setSequenceModel(QAbstractItemModel *model, bool incomin
         setItemDelegateForColumn(SequenceModel::kColumnActiveFlag, m_btn_delegate);
     }
 
+    setDragEnabled(true);
+    setDropIndicatorShown(true);
+    setAcceptDrops(true);
+    viewport()->setAcceptDrops(true);
+    setDefaultDropAction(Qt::MoveAction);
+    setDragDropMode(QTableView::InternalMove);
+    setDragDropOverwriteMode(false);
+
     return;
 }
+
