@@ -3,6 +3,7 @@
 #include <QPointer>
 #include <QMimeData>
 #include <QIODevice>
+#include <QDataStream>
 
 using namespace protodb;
 
@@ -267,7 +268,15 @@ bool SequenceModel::moveRows(const QModelIndex& sourceParent, int sourceRow, int
 
     beginMoveRows(QModelIndex(), sourceRow, sourceRow+count-1, QModelIndex(), destinationChild);
         auto s = m_sequences.mid(sourceRow, count);
-        m_sequences.remove(sourceRow, count);
+
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            for (int i = 0; i < count; i++) {
+                m_sequences.removeAt(sourceRow);
+            }
+        #else
+            m_sequences.remove(sourceRow, count);
+        #endif
+
 
         int insertPos = destinationChild > sourceRow ?
                     destinationChild - count : destinationChild;
