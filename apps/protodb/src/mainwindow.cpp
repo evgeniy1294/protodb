@@ -6,6 +6,7 @@
 #include "ProtodbConfigDialog.h"
 #include "Assistant.h"
 #include "MainClass.h"
+#include "CrcCalculator.h"
 
 #include <protodb/plugins/PluginManagerDialog.h>
 #include <protodb/sessions/SessionManagerGui.h>
@@ -51,6 +52,8 @@ void MainWindow::createGui()
 
     setCentralWidget(central_widget);
 
+    m_crc_calc = new CrcCalculator(this);
+        m_crc_calc->setWindowFlags(Qt::WindowStaysOnTopHint);
     m_config_dialog = new ProtodbConfigDialog(this);
     m_plugin_manager_dialog = new PluginManagerDialog(this);
     m_session_manager_dialog = new SessionManagerGui(this);
@@ -90,6 +93,7 @@ void MainWindow::createDock()
 
 void MainWindow::createActions()
 {
+    m_show_crc_calc = new QAction(QIcon(":/icons/crc.svg"), tr("&CRC calculator"), this);
     m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
     m_options = new QAction(QIcon(), tr("&Options..."), this);
@@ -111,6 +115,7 @@ void MainWindow::createToolBar() {
     m_toolbar = new isa_tool_bar( QBoxLayout::TopToBottom );
     m_toolbar->setButtonSize( QSize( 28, 28 ) );
 
+    m_toolbar->addToolAction(m_show_crc_calc, true);
     m_toolbar->addToolAction(m_show_wgt_menu, false);
     m_toolbar->addToolAction(m_export_tables, false);
     m_toolbar->addToolAction(m_import_tables, false);
@@ -136,6 +141,10 @@ void MainWindow::connectSignals()
 {
     connect(m_exit, &QAction::triggered, QApplication::instance(), &QApplication::quit);
     connect(m_about_qt, &QAction::triggered, &QApplication::aboutQt);
+
+    connect(m_show_crc_calc, &QAction::triggered, this, [this]() {
+        m_crc_calc->show();
+    });
 
     connect(m_plugins, &QAction::triggered, this, [this]() {
         m_plugin_manager_dialog->show();

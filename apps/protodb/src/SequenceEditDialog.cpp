@@ -17,8 +17,8 @@
 
 using namespace protodb;
 
-SequenceEditDialog::SequenceEditDialog(QWidget* aParent)
-    : QDialog(aParent)
+SequenceEditDialog::SequenceEditDialog(QWidget* parent)
+    : QDialog(parent)
     , m_mapper(nullptr)
 {
     createGui();
@@ -30,15 +30,15 @@ QDataWidgetMapper* SequenceEditDialog::mapper() const
     return m_mapper;
 }
 
-void SequenceEditDialog::setMapper(QDataWidgetMapper* aMapper)
+void SequenceEditDialog::setMapper(QDataWidgetMapper* mapper)
 {
-    if (m_mapper != aMapper) {
+    if (m_mapper != mapper) {
         if ( m_mapper != nullptr ) {
             m_mapper->clearMapping();
             disconnect(m_mapper);
         }
 
-        m_mapper = aMapper;
+        m_mapper = mapper;
         m_mapper->addMapping(m_name_edit, SequenceModel::kColumnName);
         m_mapper->addMapping(m_desc_editor, SequenceModel::kColumnDescription);
         m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);

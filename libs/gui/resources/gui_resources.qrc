@@ -32,5 +32,6 @@
         <file alias="sort_down_alt.svg">icons/sort_down_alt.svg</file>
         <file alias="sort_down.svg">icons/sort_down.svg</file>
         <file alias="terminal.svg">icons/terminal.svg</file>
+        <file alias="crc.svg">icons/crc.svg</file>
     </qresource>
 </RCC>
