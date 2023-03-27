@@ -16,7 +16,7 @@ class LuaInterfacePrivate final {
 
     void setExceptionHandler(sol::state& lua) const;
     void bindSpecial(sol::state& lua);
-    void bindUtils(sol::state& lua);
+    void bindUtils(sol::state& lua) const;
     void bindChecksum(sol::state& lua);
     void bindQt(sol::state& lua);
     void bindAll(sol::state& lua);

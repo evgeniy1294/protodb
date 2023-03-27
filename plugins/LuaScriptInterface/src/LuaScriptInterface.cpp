@@ -90,6 +90,8 @@ QByteArray LuaInterface::compileCode(const QString& code) const
     };
 
     sol::state compiler;
+        d->bindUtils(compiler);
+
     if (code.length() != 0) {
         compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
         d->setExceptionHandler(compiler);

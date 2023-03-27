@@ -229,7 +229,7 @@ void protodb::LuaInterfacePrivate::bindSpecial(sol::state& lua)
     });
 }
 
-void protodb::LuaInterfacePrivate::bindUtils(sol::state& lua) {
+void protodb::LuaInterfacePrivate::bindUtils(sol::state& lua) const {
     auto utils = lua["utils"].get_or_create<sol::table>();
         utils.set_function("tableToFloat", tableToFloat);
         utils.set_function("tableToDouble", tableToDouble);
