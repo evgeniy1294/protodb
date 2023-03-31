@@ -9,12 +9,14 @@
                     <section title="Сеанс" ref="content/seance.html">
                         <section title="Настройка сеанса" ref="content/seance_config.html"/>
                         <section title="Лог" ref="content/log.html"/>
+                        <section title="Делиметры" ref="content/delimeters.html"/>
                     </section>
                     <section title="Таблицы последовательностей" ref="content/tables.html"/>
                 </section>
                 <section title="Скрипты" ref="content/scripting.html">
                       <section title="LUA-скрипты" ref="content/scripting_lua.html"/>
                 </section>
+                <section title="Калькулятор CRC" ref="content/crc_calculator.html"/>
                 <section title="Глобальные настройки" ref="content/options.html"/>
                 <section title="Менеджер плагинов" ref="content/plugins.html"/>
                 <section title="Менеджер сессий" ref="content/session.html"/>
@@ -36,6 +38,8 @@
             <file>content/log.html</file>
             <file>content/session.html</file>
             <file>content/tables.html</file>
+            <file>content/delimeters.html</file>
+            <file>content/crc_calculator.html</file>
             <file>content/images/mainwindow.png</file>
             <file>content/images/mainwindow_label.png</file>
             <file>content/images/mainwindow_mod.png</file>
@@ -51,6 +55,9 @@
             <file>content/images/options.png</file>
             <file>content/images/sessions.png</file>
             <file>content/images/plugin_manager.png</file>
+            <file>content/images/crc_calculator.png</file>
+            <file>content/images/guard_timer.png</file>
+            <file>content/images/delimeter_example.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

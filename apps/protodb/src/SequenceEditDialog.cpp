@@ -14,6 +14,7 @@
 #include <QDialogButtonBox>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QMessageBox>
 
 using namespace protodb;
 
@@ -156,9 +157,12 @@ void SequenceEditDialog::createGui()
         main_layout->addLayout(h_layout, 0, 0);
         main_layout->addWidget(m_name_edit, 1, 0);
         main_layout->addWidget(format_group_box, 2, 0);
-        main_layout->addWidget(m_dsl_editor,  3, 0);
-        main_layout->addWidget(m_desc_editor, 4, 0);
+        main_layout->addWidget(m_desc_editor, 3, 0);
+        main_layout->addWidget(m_dsl_editor,  4, 0);
         main_layout->addWidget(m_dialog_btn,  5, 0);
+
+        main_layout->setRowStretch(3, 1);
+        main_layout->setRowStretch(4, 2);
 
     setLayout(main_layout);
     setWindowModality(Qt::NonModal);
@@ -167,30 +171,106 @@ void SequenceEditDialog::createGui()
 void SequenceEditDialog::createConnections()
 {
     connect(m_back_btn, &QPushButton::released, this, [this]() { if (m_mapper != nullptr) {
-        m_mapper->toFirst();
+        if (checkUnsavedChanges()) {
+            m_mapper->toFirst();
+        }
     }});
 
     connect(m_prev_btn, &QPushButton::released, this, [this]() { if (m_mapper != nullptr) {
-        m_mapper->toPrevious();
+        if (checkUnsavedChanges()) {
+            m_mapper->toPrevious();
+        }
     }});
 
     connect(m_next_btn, &QPushButton::released, this, [this]() { if (m_mapper != nullptr) {
-        m_mapper->toNext();
+        if (checkUnsavedChanges()) {
+            m_mapper->toNext();
+        }
     }});
 
     connect(m_front_btn, &QPushButton::released, this, [this]() {if (m_mapper != nullptr) {
-        m_mapper->toLast();
+        if (checkUnsavedChanges()) {
+            m_mapper->toLast();
+        }
     }});
 
     connect(m_add_btn, &QPushButton::released, this, [this]() {
-      if (m_mapper != nullptr) {
-          auto row = m_mapper->currentIndex() + 1;
-          m_mapper->model()->insertRow(row);
-          m_mapper->toNext();
-      }
+        if (m_mapper != nullptr) {
+            if (checkUnsavedChanges()) {
+                auto row = m_mapper->currentIndex() + 1;
+                m_mapper->model()->insertRow(row);
+                m_mapper->toNext();
+            }
+        }
     });
 
     connect(m_dialog_btn, &QDialogButtonBox::clicked, this, &SequenceEditDialog::onDialogClicked);
+}
+
+bool SequenceEditDialog::checkUnsavedChanges()
+{
+    if (isHaveUnsavedChanges()) {
+        auto result = QMessageBox::warning(this, tr("Save changes?"),
+            tr("Sequence '%1' have unsaved changes.").arg(m_name_edit->text()),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+            QMessageBox::Cancel);
+
+        if (result == QMessageBox::Save) {
+            m_mapper->submit();
+        }
+        else if (result == QMessageBox::Discard){
+            m_mapper->revert();
+        }
+        else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool SequenceEditDialog::isHaveUnsavedChanges() const
+{
+    auto model = m_mapper->model();
+    auto row = m_mapper->currentIndex();
+
+    // Check name changes
+    auto name = model->data( model->index(row, SequenceModel::kColumnName) ).toString();
+    if (name != m_name_edit->text()) {
+        return true;
+    }
+
+    // Check format changes
+    auto desc = model->data( model->index(row, SequenceModel::kColumnDescription) ).toString();
+    if (desc != m_desc_editor->toPlainText()) {
+        return true;
+    }
+
+    // Check text changes
+    auto dsl = model->data( model->index(row, SequenceModel::kColumnDsl) ).toString();
+    if (dsl != m_dsl_editor->toPlainText()) {
+        return true;
+    }
+
+    // Check syntax id
+    auto syntax =  model->data( model->index(row, SequenceModel::kColumnSyntaxId) ).toString();
+    if (syntax != m_format_selection_wgt->selectedFormat()) {
+        return true;
+    }
+
+    return false;
+}
+
+bool SequenceEditDialog::event(QEvent* event)
+{
+    if (event->type() == QEvent::Close) {
+        if (!checkUnsavedChanges()) {
+            event->ignore();
+            return false;
+        }
+    }
+
+    return QDialog::event(event);
 }
 
 
@@ -218,7 +298,9 @@ void SequenceEditDialog::onDialogClicked(QAbstractButton* aBtn)
                 break;
 
             case QDialogButtonBox::Cancel:
-                hide();
+                if (checkUnsavedChanges()) {
+                    hide();
+                }
                 break;
 
             default:

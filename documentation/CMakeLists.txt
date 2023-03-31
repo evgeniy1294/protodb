@@ -26,6 +26,8 @@ set(
       content/images/options.png
       content/images/sessions.png
       content/images/sequence_lua.png
+      content/images/crc_calculator.png
+      content/images/delimeters.png
 )
 
 set(
@@ -42,6 +44,8 @@ set(
       content/session.html
       content/log.html
       content/tables.html
+      content/crc_calculator.html
+      content/delimeters.html
 )
 
 set(SOURCES_LIST

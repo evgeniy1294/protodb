@@ -35,6 +35,10 @@ private slots:
 private:
     void createGui();
     void createConnections();
+    bool checkUnsavedChanges();
+    bool isHaveUnsavedChanges() const;
+
+    bool event(QEvent *event) override;
 
 private:
     QPushButton* m_back_btn;
