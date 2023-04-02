@@ -29,15 +29,19 @@ void protodb::CrcCalculator::create_gui()
 
     m_poly = new QLineEdit();
         m_poly->setPlaceholderText(tr("Poly"));
+        m_poly->setToolTip(tr("Polynominal"));
 
     m_init = new QLineEdit();
         m_init->setPlaceholderText(tr("Seed"));
+        m_init->setToolTip(tr("Seed"));
 
     m_xor_out = new QLineEdit();
         m_xor_out->setPlaceholderText(tr("Xor value"));
+        m_xor_out->setToolTip(tr("Xor out"));
 
     m_result = new QLineEdit();
         m_result->setPlaceholderText(tr("Result"));
+        m_result->setToolTip(tr("Result"));
         m_result->setReadOnly(true);
 
     m_ref_in = new QCheckBox();
