@@ -156,13 +156,13 @@ void SequenceEditDialog::createGui()
         main_layout->setAlignment(Qt::AlignTop);
         main_layout->addLayout(h_layout, 0, 0);
         main_layout->addWidget(m_name_edit, 1, 0);
-        main_layout->addWidget(format_group_box, 2, 0);
-        main_layout->addWidget(m_desc_editor, 3, 0);
+        main_layout->addWidget(m_desc_editor, 2, 0);
+        main_layout->addWidget(format_group_box, 3, 0);
         main_layout->addWidget(m_dsl_editor,  4, 0);
         main_layout->addWidget(m_dialog_btn,  5, 0);
 
-        main_layout->setRowStretch(3, 1);
-        main_layout->setRowStretch(4, 2);
+        main_layout->setRowStretch(2, 2);
+        main_layout->setRowStretch(4, 5);
 
     setLayout(main_layout);
     setWindowModality(Qt::NonModal);

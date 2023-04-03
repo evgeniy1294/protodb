@@ -14,7 +14,7 @@ LuaInterface::LuaInterface(QObject* parent)
     Q_D(LuaInterface);
         d->q_ptr = this;
 
-    m_lua.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
+    m_lua.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string, sol::lib::table);
     d->setExceptionHandler(m_lua);
     d->bindAll(m_lua);
 }
@@ -93,7 +93,7 @@ QByteArray LuaInterface::compileCode(const QString& code) const
         d->bindUtils(compiler);
 
     if (code.length() != 0) {
-        compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string);
+        compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string, sol::lib::table);
         d->setExceptionHandler(compiler);
 
         sol::protected_function_result pfr =
