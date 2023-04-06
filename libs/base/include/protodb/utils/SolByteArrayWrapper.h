@@ -3,6 +3,7 @@
 #include <protodb/export/base_cfg.hpp>
 
 #include <QByteArray>
+#include <string>
 
 class PROTODB_BASE_EXPORT SolByteArrayWrapper {
 public:
@@ -45,7 +46,9 @@ public:
 
     inline value_type at(int i) const;
 
+    QByteArray* byteArray() const;
 
 private:
     QByteArray* m_byte_array;
 };
+

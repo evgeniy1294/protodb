@@ -184,9 +184,9 @@ void LogTableView::createMenu()
 void LogTableView::createActions()
 {
     m_copy = new QAction(tr("Copy"));
-    m_copy_message = new QAction(tr("Copy Message"));
-    m_copy_as_bytes = new QAction(tr("Copy as Bytes"));
-    m_copy_as_string = new QAction(tr("Copy as String"));
+    m_copy_message = new QAction(tr("Copy message"));
+    m_copy_as_bytes = new QAction(QIcon(":/icons/hex.svg"), tr("Copy as HEX string"));
+    m_copy_as_string = new QAction(QIcon(":/icons/ascii.svg"), tr("Copy as ASCII text"));
     m_add_to_analyzer = new QAction(tr("Add to Analyzer"));
     m_options = new QAction(tr("Options"));
 }

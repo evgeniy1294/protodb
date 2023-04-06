@@ -86,3 +86,8 @@ auto SolByteArrayWrapper::at(int i) const -> value_type
 {
     return static_cast<value_type>(m_byte_array->at(i));
 }
+
+QByteArray* SolByteArrayWrapper::byteArray() const
+{
+    return m_byte_array;
+}

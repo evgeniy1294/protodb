@@ -2,8 +2,13 @@
 #include "protodb/LuaScriptInterface.h"
 
 #include <protodb/utils/crc_logic.h>
+#include <protodb/utils/SolByteArrayWrapper.h>
 
 #include <QTimer>
+
+static std::string toString_BA(const sol::table&, SolByteArrayWrapper& src) {
+    return src.byteArray()->toStdString();
+};
 
 static float tableToFloat(const sol::table parent, sol::nested< std::vector<uint8_t> > src)
 {
@@ -241,6 +246,7 @@ void protodb::LuaInterfacePrivate::bindUtils(sol::state& lua) const {
         utils.set_function("shortToBytes", shortToBytes);
         utils.set_function("wordToBytes", wordToBytes);
         utils.set_function("dwordToBytes", dwordToBytes);
+        utils.set_function("toString", sol::overload(&toString_BA));
 }
 
 void protodb::LuaInterfacePrivate::bindChecksum(sol::state& lua)
