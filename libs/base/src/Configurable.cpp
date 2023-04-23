@@ -1,4 +1,5 @@
 #include "configurable/Configurable.h"
+#include <nlohmann/json.hpp>
 
 using namespace protodb;
 

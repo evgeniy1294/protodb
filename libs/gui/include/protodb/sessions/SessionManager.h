@@ -4,6 +4,8 @@
 
 #include <protodb/utils/JsonBaseUtils.h>
 
+#include <nlohmann/json.hpp>
+
 #include <QAbstractTableModel>
 #include <QDateTime>
 #include <QFileInfoList>

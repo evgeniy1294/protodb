@@ -5,7 +5,7 @@
 #include <protodb/factories/CreatorAbstract.h>
 
 #include <QtPlugin>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 namespace protodb {
 

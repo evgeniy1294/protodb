@@ -5,7 +5,7 @@
 #include <QWidget>
 
 #include <protodb/configurable/Configurable.h>
-#include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
 
 class QGroupBox;
 class QButtonGroup;

@@ -3,7 +3,7 @@
 #include <protodb/export/dev_cfg.hpp>
 
 #include <protodb/factories/CreatorAbstract.h>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 namespace protodb
 {

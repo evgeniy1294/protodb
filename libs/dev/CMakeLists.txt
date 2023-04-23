@@ -17,6 +17,7 @@ set(CMAKE_AUTOMOC ON)
 
 set(
   DevHeaders
+      include/protodb/Seance.h
       include/protodb/IOWidget.h
       include/protodb/ScriptInterface.h
 )
@@ -36,6 +37,7 @@ set(
 )
 
 set( DevSources
+    src/Seance.cpp
     src/IOWidgetFactory.cpp
     src/IODeviceFactory.cpp
     src/ScriptInterfaceFactory.cpp

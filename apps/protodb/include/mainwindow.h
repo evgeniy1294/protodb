@@ -4,7 +4,7 @@
 
 #include <QMainWindow>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class QMenu;
 

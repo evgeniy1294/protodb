@@ -3,22 +3,24 @@
 #include <protodb/export/dev_cfg.hpp>
 
 #include <protodb/factories/CreatorAbstract.h>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class QIODevice;
 
 namespace protodb
 {
 
-class PROTODB_DEV_EXPORT IODeviceCreator: public CreatorAbstract
+class Seance;
+
+class PROTODB_DEV_EXPORT SeanceCreator: public CreatorAbstract
 {
 public:
-    virtual ~IODeviceCreator() override = default;
+    virtual ~SeanceCreator() override = default;
 
-    virtual QIODevice* create(QString& desc) const = 0;
-    virtual QIODevice* create(const nlohmann::json&, QString& desc) const = 0;
+    virtual Seance* create(QObject* parent = nullptr) const = 0;
+    virtual Seance* create(const nlohmann::json&, QObject* parent = nullptr) const = 0;
 };
 
 } // namespace protodb
 
-Q_DECLARE_INTERFACE(protodb::IODeviceCreator, "ProtoDb.IODeviceCreatorInterface")
+Q_DECLARE_INTERFACE(protodb::SeanceCreator, "ProtoDb.SeanceCreatorInterface")

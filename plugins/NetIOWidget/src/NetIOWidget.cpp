@@ -2,6 +2,7 @@
 #include "protodb/NetIOWidgetCreator.h"
 
 #include <protodb/utils/JsonUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <protodb/NetIODeviceCreator.h>
 

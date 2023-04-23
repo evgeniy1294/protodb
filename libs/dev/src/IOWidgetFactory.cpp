@@ -3,6 +3,8 @@
 #include <protodb/creators/IOWidgetCreatorInterface.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
+#include <nlohmann/json.hpp>
+
 using namespace protodb;
 
 IOWidgetFactory::IOWidgetFactory(QObject* parent)

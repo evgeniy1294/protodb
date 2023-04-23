@@ -2,6 +2,8 @@
 
 #include <QStandardPaths>
 
+#include <nlohmann/json.hpp>
+
 #include <protodb/utils/JsonBaseUtils.h>
 #include <protodb/plugins/PluginManager.h>
 

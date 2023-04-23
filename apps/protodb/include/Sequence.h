@@ -4,6 +4,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QUuid>
+#include <QSharedPointer>
 
 
 namespace protodb  {

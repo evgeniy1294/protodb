@@ -2,7 +2,7 @@
 
 #include "Sequence.h"
 
-#include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QObject>
 #include <QStringList>

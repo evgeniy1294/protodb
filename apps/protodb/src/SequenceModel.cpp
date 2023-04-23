@@ -1,5 +1,7 @@
 #include "SequenceModel.h"
 
+#include <nlohmann/json.hpp>
+
 #include <QPointer>
 #include <QMimeData>
 #include <QIODevice>

@@ -2,7 +2,7 @@
 
 #include <protodb/export/base_cfg.hpp>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class QString;
 class QJsonValue;

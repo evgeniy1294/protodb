@@ -6,8 +6,6 @@
 #include <QColor>
 #include <QFont>
 
-#include <nlohmann/json.hpp>
-
 class QAbstractButton;
 class QPushButton;
 class QDialogButtonBox;

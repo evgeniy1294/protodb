@@ -4,6 +4,7 @@
 #include <protodb/SerialIODeviceCreator.h>
 
 #include <protodb/utils/JsonUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -33,7 +34,7 @@ QString SerialIOWidget::gcid() const
 
 QString SerialIOWidget::deviceCID() const
 {
-    return SerialIODeviceCreator::creatorId();
+    return SerialIoSeanceCreator::creatorId();
 }
 
 void SerialIOWidget::defaultConfig(nlohmann::json &json) const

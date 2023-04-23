@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-#include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
 
 using namespace protodb;
 

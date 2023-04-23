@@ -2,11 +2,13 @@
 #include "ProtodbConfigStorage.h"
 
 #include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QEvent>
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+
 #include <QPushButton>
 #include <QFileDialog>
 #include <QGridLayout>

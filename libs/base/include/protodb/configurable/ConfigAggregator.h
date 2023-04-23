@@ -4,6 +4,8 @@
 
 #include <protodb/configurable/Configurable.h>
 
+#include <nlohmann/json.hpp>
+
 #include <QObject>
 
 namespace protodb {

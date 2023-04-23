@@ -1,5 +1,7 @@
 #include "utils/JsonUtils.h"
 
+#include <nlohmann/json.hpp>
+
 #include <QColor>
 #include <QFont>
 

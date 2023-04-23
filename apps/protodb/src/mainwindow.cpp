@@ -14,6 +14,8 @@
 
 #include <DockManager.h>
 
+#include <nlohmann/json.hpp>
+
 #include <QApplication>
 #include <QLabel>
 #include <QMenuBar>

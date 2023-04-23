@@ -3,6 +3,7 @@
 #include "protodb/UdpSocket.h"
 
 #include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QTcpSocket>
 #include <QUdpSocket>

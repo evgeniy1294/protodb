@@ -7,6 +7,8 @@
 #include "LogDecorator.h"
 #include "MainClass.h"
 
+#include <nlohmann/json.hpp>
+
 #include <QApplication>
 #include <QLayout>
 #include <QTableView>

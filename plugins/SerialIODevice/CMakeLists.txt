@@ -14,10 +14,12 @@ set(CMAKE_AUTOMOC ON)
 # ------------ [ Sources ] ------------
 set( BaseHeaders
     include/protodb/SerialIODeviceCreator.h
+    include/protodb/SerialIoSeance.h
 )
 
 set( BaseSources
     src/SerialIODeviceCreator.cpp
+    src/SerialIoSeance.cpp
 )
 
 set(SOURCES_LIST

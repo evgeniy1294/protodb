@@ -1,5 +1,8 @@
 #include "DelimetersConfigWidget.h"
 
+#include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json.hpp>
+
 #include <QGridLayout>
 #include <QCheckBox>
 #include <QComboBox>

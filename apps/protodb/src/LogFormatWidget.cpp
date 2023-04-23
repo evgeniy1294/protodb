@@ -2,6 +2,7 @@
 #include "LogFormatter.h"
 
 #include <protodb/utils/JsonUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QLayout>
 #include <QLabel>

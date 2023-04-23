@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/utils/JsonBaseUtils.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include <QWidget>
 

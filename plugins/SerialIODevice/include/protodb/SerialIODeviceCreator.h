@@ -6,25 +6,27 @@
 
 namespace protodb {
 
-class SerialIODeviceCreator: public QObject, public IODeviceCreator
+class Seance;
+
+class SerialIoSeanceCreator: public QObject, public SeanceCreator
 {
     Q_OBJECT
-    Q_INTERFACES(protodb::IODeviceCreator)
-    Q_PLUGIN_METADATA(IID "protodb.SerialIODeviceCreator" FILE "SerialIODevicePluginMetadata.json")
+    Q_INTERFACES(protodb::SeanceCreator)
+    Q_PLUGIN_METADATA(IID "protodb.SerialIoSeanceCreator" FILE "SerialIoSeanceCreator.json")
 
 public:
-    explicit SerialIODeviceCreator() = default;
-    ~SerialIODeviceCreator() override = default;
+    explicit SerialIoSeanceCreator() = default;
+    ~SerialIoSeanceCreator() override = default;
 
-    static QString creatorId() { return QString("SerialIODeviceCreator"); }
+    static QString creatorId() { return QString("SerialIoSeanceCreator"); }
     QString cid() const override;
     QString name() const override;
     QString description() const override;
 
     QString iconName() const override;
 
-    QIODevice* create(QString& desc) const override;
-    QIODevice* create(const nlohmann::json& json, QString& desc) const override;
+    Seance* create(QObject* parent = nullptr) const override;
+    Seance* create(const nlohmann::json& cfg, QObject* parent = nullptr) const override;
 };
 
 } // namespace protodb

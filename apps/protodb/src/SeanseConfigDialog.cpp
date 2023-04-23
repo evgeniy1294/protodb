@@ -9,6 +9,8 @@
 
 #include <protodb/factories/GlobalFactoryStorage.h>
 
+#include <protodb/utils/JsonBaseUtils.h>
+
 #include <QFrame>
 #include <QFileDialog>
 #include <QDialogButtonBox>

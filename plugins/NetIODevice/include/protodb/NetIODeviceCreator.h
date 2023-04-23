@@ -6,7 +6,7 @@ class QIODevice;
 
 namespace protodb {
 
-class NetIODeviceCreator: public QObject, public IODeviceCreator
+class NetIODeviceCreator: public QObject, public SeanceCreator
 {
     Q_OBJECT
     Q_INTERFACES(protodb::IODeviceCreator)

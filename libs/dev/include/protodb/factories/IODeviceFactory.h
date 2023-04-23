@@ -7,14 +7,14 @@
 #include <QString>
 #include <QSharedPointer>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class QIODevice;
 
 namespace protodb
 {
 
-class IODeviceCreator;
+class SeanceCreator;
 
 class PROTODB_DEV_EXPORT IODeviceFactory final: public FactoryAbstract
 {
@@ -28,17 +28,17 @@ public:
     static QString fid();
 
     // ---------------- [ Creators ] --------------- //
-    bool addCreator(const QSharedPointer< IODeviceCreator >& creator);
+    bool addCreator(const QSharedPointer< SeanceCreator >& creator);
 
-    QList< QSharedPointer< IODeviceCreator > > getAllCreators() const;
-    QSharedPointer< IODeviceCreator > getCreator( const QString& cid ) const;
-    QSharedPointer< IODeviceCreator > operator[]( const QString& cid ) const;
+    QList< QSharedPointer< SeanceCreator > > getAllCreators() const;
+    QSharedPointer< SeanceCreator > getCreator( const QString& cid ) const;
+    QSharedPointer< SeanceCreator > operator[]( const QString& cid ) const;
 
     // ------------ [ Default creator ] ------------ //
     const QString &getDefaultCreator() const;
     void setDefaultCreator( const QString &cid );
 
-    // ------------ [ Create new ephemers ] --------- //
+    // ------------ [ Create new device ] --------- //
     QIODevice* createIODevice(QString& desc) const;
     QIODevice* createIODevice(const nlohmann::json& json, QString& desc) const;
 

@@ -1,6 +1,7 @@
 #include "LogDecorator.h"
 
 #include <protodb/utils/JsonUtils.h>
+#include <nlohmann/json.hpp>
 
 #include <QApplication>
 

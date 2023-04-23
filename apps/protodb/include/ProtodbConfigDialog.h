@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class QLineEdit;
 class QPushButton;

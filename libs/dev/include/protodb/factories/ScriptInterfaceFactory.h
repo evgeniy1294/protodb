@@ -4,7 +4,7 @@
 
 #include <protodb/factories/FactoryAbstract.h>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 namespace protodb
 {

@@ -15,6 +15,7 @@
 #include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
+#include <protodb/utils/JsonBaseUtils.h>
 
 #include <QTimer>
 #include <QRegularExpression>
@@ -82,10 +83,10 @@ void MainClass::init_factories()
         }
 
         auto factory  = IODeviceFactory::globalInstance();
-        auto creators = PluginManager::instance().getPlugins<IODeviceCreator>();
+        auto creators = PluginManager::instance().getPlugins<SeanceCreator>();
 
         for (auto& it: creators) {
-            factory->addCreator(QSharedPointer<IODeviceCreator>(it));
+            factory->addCreator(QSharedPointer<SeanceCreator>(it));
         }
     }
 

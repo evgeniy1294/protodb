@@ -1,5 +1,7 @@
 #include "utils/JsonBaseUtils.h"
 
+#include <nlohmann/json.hpp>
+
 #include <QString>
 #include <QJsonObject>
 #include <QJsonArray>
