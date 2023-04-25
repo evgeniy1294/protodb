@@ -29,7 +29,7 @@ QString NetIODeviceCreator::iconName() const {
     return QString();
 }
 
-QIODevice* NetIODeviceCreator::create(QString& desc) const
+Seance* NetIODeviceCreator::create(QObject* parent) const
 {
     desc = QString("TCP -:-");
     auto socket = new TcpSocket();
@@ -37,7 +37,7 @@ QIODevice* NetIODeviceCreator::create(QString& desc) const
     return socket;
 }
 
-QIODevice* NetIODeviceCreator::create(const nlohmann::json& json, QString& desc) const
+Seance* NetIODeviceCreator::create(const nlohmann::json& cfg, QObject* parent = nullptr) const
 {
     if (json.is_null())
         return create(desc);
