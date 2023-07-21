@@ -1,0 +1,9 @@
+{
+    "Group": "Connection",
+    "Name": "Serial Port Support",
+    "Version": "1.0.0",
+    "Vendor": "Evgenii Fedoseev",
+    "Description": "Based on QSerialPort",
+    "Platform": "All",
+    "Dependencies": []
+}

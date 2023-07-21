@@ -1,0 +1,9 @@
+{
+    "Group": "Connection",
+    "Name": "TCP/UDP Support",
+    "Version": "1.0.0",
+    "Vendor": "Evgenii Fedoseev",
+    "Description": "TCP/UDP connection support. Based on Qt5 Network",
+    "Platform": "All",
+    "Dependencies": []
+}
