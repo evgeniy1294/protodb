@@ -16,6 +16,7 @@ namespace protodb {
 
 class Logger;
 class LogPrinter;
+class Connection;
 class Sequence;
 class SequenceModel;
 class ScriptMultiInterface;
@@ -86,10 +87,9 @@ private:
 
     Logger* m_logger;
     LogPrinter* m_log_printer;
-    QIODevice* m_io;
+    Connection* m_io;
 
     nlohmann::json m_seance_cfg;
-    QString m_seance_desc;
 };
 
 } // namespace protodb

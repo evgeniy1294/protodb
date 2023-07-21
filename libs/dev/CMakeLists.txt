@@ -18,20 +18,21 @@ set(CMAKE_AUTOMOC ON)
 set(
   DevHeaders
       include/protodb/Seance.h
+      include/protodb/Connection.h
       include/protodb/IOWidget.h
       include/protodb/ScriptInterface.h
 )
 
 set(
   CreatorsHeaders
-      include/protodb/creators/IODeviceCreatorInterface.h
+      include/protodb/creators/ConnectionCreator.h
       include/protodb/creators/IOWidgetCreatorInterface.h
       include/protodb/creators/ScriptInterfaceCreator.h
 )
 
 set(
   FactoriesHeaders
-      include/protodb/factories/IODeviceFactory.h
+      include/protodb/factories/ConnectionFactory.h
       include/protodb/factories/IOWidgetFactory.h
       include/protodb/factories/ScriptInterfaceFactory.h
 )
@@ -39,7 +40,7 @@ set(
 set( DevSources
     src/Seance.cpp
     src/IOWidgetFactory.cpp
-    src/IODeviceFactory.cpp
+    src/ConnectionFactory.cpp
     src/ScriptInterfaceFactory.cpp
 )
 

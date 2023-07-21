@@ -4,7 +4,7 @@
 #include <protodb/utils/JsonUtils.h>
 #include <nlohmann/json.hpp>
 
-#include <protodb/NetIODeviceCreator.h>
+#include <protodb/NetworkConnectionCreator.h>
 
 #include <QLineEdit>
 #include <QComboBox>
@@ -31,7 +31,7 @@ QString NetIOWidget::gcid() const
 
 QString NetIOWidget::deviceCID() const
 {
-    return NetIODeviceCreator::creatorId();
+    return NetworkConnectionCreator::creatorId();
 }
 
 void NetIOWidget::defaultConfig(nlohmann::json& json) const

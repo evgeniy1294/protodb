@@ -1,7 +1,7 @@
 #include "protodb/SerialIOWidget.h"
 #include "protodb/SerialIOWidgetCreator.h"
 
-#include <protodb/SerialIODeviceCreator.h>
+#include <protodb/SerialConnectionCreator.h>
 
 #include <protodb/utils/JsonUtils.h>
 #include <nlohmann/json.hpp>
@@ -34,7 +34,7 @@ QString SerialIOWidget::gcid() const
 
 QString SerialIOWidget::deviceCID() const
 {
-    return SerialIoSeanceCreator::creatorId();
+    return SerialConnectionCreator::creatorId();
 }
 
 void SerialIOWidget::defaultConfig(nlohmann::json &json) const

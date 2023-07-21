@@ -9,13 +9,14 @@
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/factories/IOWidgetFactory.h>
-#include <protodb/factories/IODeviceFactory.h>
+#include <protodb/factories/ConnectionFactory.h>
 #include <protodb/creators/IOWidgetCreatorInterface.h>
-#include <protodb/creators/IODeviceCreatorInterface.h>
+#include <protodb/creators/ConnectionCreator.h>
 #include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/ScriptInterface.h>
 #include <protodb/utils/JsonBaseUtils.h>
+#include <protodb/Connection.h>
 
 #include <QTimer>
 #include <QRegularExpression>
@@ -78,15 +79,15 @@ void MainClass::init_factories()
 
     // IODevice factories
     {
-        if (!IODeviceFactory::globalInstance()) {
-            GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
+        if (!ConnectionFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(ConnectionFactory::fid(), new ConnectionFactory);
         }
 
-        auto factory  = IODeviceFactory::globalInstance();
-        auto creators = PluginManager::instance().getPlugins<SeanceCreator>();
+        auto factory  = ConnectionFactory::globalInstance();
+        auto creators = PluginManager::instance().getPlugins<ConnectionCreator>();
 
         for (auto& it: creators) {
-            factory->addCreator(QSharedPointer<SeanceCreator>(it));
+            factory->addCreator(QSharedPointer<ConnectionCreator>(it));
         }
     }
 
@@ -188,36 +189,30 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
 {
     bool ret = false;
 
-    auto factory = IODeviceFactory::globalInstance();
+    auto factory = ConnectionFactory::globalInstance();
     if (!factory) {
-        GlobalFactoryStorage::addFactory(IODeviceFactory::fid(), new IODeviceFactory);
-        factory = IODeviceFactory::globalInstance();
+        GlobalFactoryStorage::addFactory(ConnectionFactory::fid(), new ConnectionFactory);
+        factory = ConnectionFactory::globalInstance();
     }
 
-    m_io = factory->createIODevice(cid, cfg, m_seance_desc);
+    m_io = factory->createConnection(cid, cfg, this);
     if (m_io) {
-        if (cfg.value("OpenMode", QString()) == "Monitoring") {
-            m_io->open(QIODevice::ReadOnly);
+        if (m_io->setEnable()) {
+            connect(m_io, &Connection::readyRead, this, &MainClass::readyRead);
+            connect(m_io, &Connection::aboutToClose, this, &MainClass::stop);
+
+            if (!m_log_printer->setEnabled()) {
+                m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toUtf8());
+            }
+
+            ret = true;
         }
         else {
-            m_io->open(QIODevice::ReadWrite);
-        }
-
-        if (!m_io->isOpen()) {
-            qDebug() << m_io->errorString();
+            qDebug() << m_io->lastError();
             m_logger->error(QString("Can't open device: %2").
-                                arg(m_io->errorString()).toUtf8());
-            return false;
+                                arg(m_io->lastError()).toUtf8());
+            ret = false;
         }
-
-        connect(m_io, &QIODevice::readyRead, this, &MainClass::readyRead);
-        connect(m_io, &QIODevice::aboutToClose, this, &MainClass::stop);
-
-        if (!m_log_printer->setEnabled()) {
-            m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toUtf8());
-        }
-
-        ret = true;
     }
     else {
         m_logger->error(QString("Can't create IODevice: %1").arg(cid).toUtf8());
@@ -323,7 +318,7 @@ void MainClass::start()
 
     if (try_create_connection(QString::fromStdString(cid), cfg)) {
         m_script_multi_interface->handleEvent( ScriptInterface::Start );
-        emit sStarted(m_seance_desc);
+        emit sStarted(m_io->statusString());
     }
     else {
         stop();
@@ -336,8 +331,8 @@ void MainClass::stop()
 {
     auto io = m_io; m_io = nullptr;
     if (io) {
-        if (io->isOpen()) {
-            disconnect(io); io->close(); io->deleteLater();
+        if (io->isEnabled()) {
+            disconnect(io); io->setDisable(); io->deleteLater();
             m_script_multi_interface->handleEvent( ScriptInterface::Stop );
         }
     }
@@ -373,7 +368,7 @@ void MainClass::sendBytes(QByteArray& bytes)
     }
 
     m_script_multi_interface->handleDataEvent( ScriptInterface::Transmit, bytes );
-    m_io->write( bytes );
+    m_io->writeTo( bytes );
     m_logger->log(Logger::ChannelSecond, bytes);
 }
 
@@ -445,7 +440,7 @@ void MainClass::timerEvent(QTimerEvent* event)
 
 void MainClass::readyRead()
 {
-    m_buffer.append(m_io->readAll());
+    m_buffer.append(m_io->readAllFrom());
     if (m_buffer.isEmpty())
         return;
 
