@@ -28,9 +28,11 @@ private:
     void connectSignals();
 
 private:
-    QLineEdit* m_ip;
-    QLineEdit* m_port;
+    QComboBox* m_mode;
     QComboBox* m_protocol;
+    QLineEdit* m_remote_ip;
+    QLineEdit* m_remote_port;
+    QLineEdit* m_local_port;
 };
 
 } // namespace protodb
