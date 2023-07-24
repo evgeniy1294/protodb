@@ -3,6 +3,7 @@
 #include <protodb/utils/JsonBaseUtils.h>
 
 #include <QSerialPort>
+#include <QSerialPortInfo>
 
 using namespace protodb;
 
@@ -113,6 +114,13 @@ bool SerialConnection::setEnable(bool enabled)
             m_serial_port->open(QIODevice::ReadWrite);
         }
 
+        QSerialPortInfo portInfo(m_serial_port->portName());
+        #ifdef _WIN32
+            m_port_name = portInfo.portName();
+        #else
+            m_port_name = portInfo.systemLocation();
+        #endif
+
         if (!m_serial_port->isOpen()) emit errorOccurred(m_serial_port->errorString());
         else m_description = desc;
     }
@@ -201,7 +209,7 @@ qint64 SerialConnection::bytesToWrite() const
 
 QString SerialConnection::lastError() const
 {
-    return m_serial_port->errorString();
+    return QString("%1: %2").arg(m_port_name, m_serial_port->errorString());
 }
 
 void SerialConnection::serialReadyRead()
@@ -211,7 +219,7 @@ void SerialConnection::serialReadyRead()
 
 void SerialConnection::serialErrorOccurred()
 {
-    emit errorOccurred(m_serial_port->errorString());
+    emit errorOccurred(QString("%1: %2").arg(m_port_name, m_serial_port->errorString()));
     emit aboutToClose();
 }
 

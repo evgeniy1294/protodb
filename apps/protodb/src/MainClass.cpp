@@ -198,6 +198,7 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
     m_io = factory->createConnection(cid, cfg, this);
     if (m_io) {
         if (m_io->setEnable()) {
+            connect(m_io, &Connection::errorOccurred, this, &MainClass::errorOccurred);
             connect(m_io, &Connection::readyRead, this, &MainClass::readyRead);
             connect(m_io, &Connection::aboutToClose, this, &MainClass::stop);
 
@@ -497,6 +498,11 @@ void MainClass::readyRead()
     }
 
     return;
+}
+
+void MainClass::errorOccurred(QString what)
+{
+    m_logger->error(what.toUtf8());
 }
 
 void MainClass::read_message(QByteArray msg)

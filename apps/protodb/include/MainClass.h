@@ -55,6 +55,7 @@ private slots:
 
     void timerEvent(QTimerEvent *event) override;
     void readyRead();
+    void errorOccurred(QString what);
 
 private:
     MainClass();

@@ -42,6 +42,7 @@ private:
 
 private:
     QSerialPort* m_serial_port;
+    QString m_port_name;
 };
 
 } // namespace protodb
