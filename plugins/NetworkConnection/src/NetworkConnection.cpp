@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include <QNetworkDatagram>
 
 using namespace protodb;
 
@@ -20,12 +21,20 @@ NetworkConnection::NetworkConnection(QObject* parent)
 
 NetworkConnection::~NetworkConnection()
 {
-    setDisable();
 }
 
 bool NetworkConnection::isEnabled() const
 {
-    return m_socket->isOpen();
+    if (m_protocol == tcp && m_mode == server) {
+        return m_tcp_server->isListening();
+    }
+    else {
+        if (m_socket) {
+            return m_socket->isOpen();
+        }
+    }
+
+    return false;
 }
 
 void NetworkConnection::connectSignals()
@@ -45,14 +54,15 @@ bool NetworkConnection::setEnable(bool enabled)
         if (m_protocol == udp) {
             m_socket = new QUdpSocket(this);
             if (m_mode == server) {
-                m_socket->bind(m_local_port);
+                m_socket->bind(QHostAddress::LocalHost, m_local_port);
 
                 m_description = tr("Network UDP:Server:%1").arg(m_local_port);
             }
             else {
-                m_description = tr("Network UDP:Client:%1:%2").arg(m_remote_ip.toString(), m_remote_port);
+                m_description = tr("Network UDP:Client:%1:%2").arg(m_remote_ip.toString(), QString::number(m_remote_port));
             }
 
+            m_socket->open(QIODevice::ReadWrite);
             connect(m_socket, &QAbstractSocket::readyRead, this, &NetworkConnection::socketReadyRead);
         }
         else {
@@ -60,7 +70,7 @@ bool NetworkConnection::setEnable(bool enabled)
                 m_socket = new QTcpSocket(this);
                 m_socket->connectToHost(m_remote_ip, m_remote_port);
 
-                m_description = tr("Network TCP:Client:%1:%2").arg(m_remote_ip.toString(), m_remote_port);
+                m_description = tr("Network TCP:Client:%1:%2").arg(m_remote_ip.toString(), QString::number(m_remote_port));
 
                 connect(m_socket, &QAbstractSocket::stateChanged, this, &NetworkConnection::socketStateChanged);
                 connect(m_socket, &QAbstractSocket::readyRead, this, &NetworkConnection::socketReadyRead);
@@ -69,7 +79,7 @@ bool NetworkConnection::setEnable(bool enabled)
             else {
                 m_tcp_server->listen(QHostAddress::Any, m_local_port);
 
-                m_description = tr("Network TCP:Server:%1").arg(m_local_port);
+                m_description = tr("Network TCP:Server:%1").arg(QString::number(m_local_port));
 
                 connect(m_tcp_server, &QTcpServer::newConnection, this, &NetworkConnection::newServerConnection);
                 connect(m_tcp_server, &QTcpServer::acceptError, this, &NetworkConnection::socketErrorOccurred);
@@ -169,7 +179,20 @@ QByteArray NetworkConnection::readFrom(qint64 maxSize)
 QByteArray NetworkConnection::readAllFrom()
 {
     if (m_socket != nullptr) {
-        return m_socket->readAll();
+        if (m_protocol == udp) {
+            QByteArray ret;
+            QUdpSocket* udpSocket = qobject_cast<QUdpSocket*>(m_socket);
+
+            while (udpSocket->hasPendingDatagrams()) {
+                QNetworkDatagram datagram = udpSocket->receiveDatagram();
+                ret.append(datagram.data());
+            }
+
+            return ret;
+        }
+        else {
+            return m_socket->readAll();
+        }
     }
 
     return QByteArray();

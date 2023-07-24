@@ -40,8 +40,8 @@ void NetIOWidget::defaultConfig(nlohmann::json& json) const
     json["Mode"] = "Client";
     json["Protocol"] = "TCP";
     json["RemoteIP"] = "127.0.0.1";
-    json["RemotePort"] = "0";
-    json["LocalPort"]  = "0";
+    json["RemotePort"] = 0;
+    json["LocalPort"]  = 0;
 }
 
 void NetIOWidget::config(nlohmann::json& json) const
@@ -50,8 +50,8 @@ void NetIOWidget::config(nlohmann::json& json) const
     json["Mode"] = m_mode->currentText();
     json["Protocol"] = m_protocol->currentText();
     json["RemoteIP"]   = m_remote_ip->text();
-    json["RemotePort"] = m_remote_port->text();
-    json["LocalPort"] = m_local_port->text();
+    json["RemotePort"] = m_remote_port->text().toInt();
+    json["LocalPort"] = m_local_port->text().toInt();
 }
 
 void NetIOWidget::setConfig(const nlohmann::json& json)
@@ -59,8 +59,8 @@ void NetIOWidget::setConfig(const nlohmann::json& json)
     m_mode->setCurrentText(json.value<QString>("Mode", QString("Client")));
     m_protocol->setCurrentText(json.value<QString>("Protocol", QString("TCP")));
     m_remote_ip->setText(json.value<QString>("RemoteIP", QString("127.0.0.1")));
-    m_remote_port->setText(json.value<QString>("RemotePort", QString("0")));
-    m_local_port->setText(json.value<QString>("LocalPort", QString("0")));
+    m_remote_port->setText(QString::number(json.value<int>("RemotePort", int(0))));
+    m_local_port->setText(QString::number(json.value<int>("LocalPort", int(0))));
 }
 
 void NetIOWidget::createGui()
