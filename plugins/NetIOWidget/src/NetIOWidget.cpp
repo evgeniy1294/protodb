@@ -88,13 +88,17 @@ void NetIOWidget::createGui()
         m_mode->addItem("Client");
         m_mode->addItem("Server");
 
+    if (m_protocol->currentText() == "UDP") {
+            m_mode->setDisabled(true);
+    }
+
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop);
         main_layout->addWidget(new QLabel(tr("Network configurations:")), 0, 0, 1, 3);
-        main_layout->addWidget(new QLabel(tr("Mode")), 1, 0, 1, 1);
-        main_layout->addWidget(m_mode, 1, 1, 1, 1);
-        main_layout->addWidget(new QLabel(tr("Protocol")), 2, 0, 1, 1);
-        main_layout->addWidget(m_protocol, 2, 1, 1, 1);
+        main_layout->addWidget(new QLabel(tr("Protocol")), 1, 0, 1, 1);
+        main_layout->addWidget(m_protocol, 1, 1, 1, 1);
+        main_layout->addWidget(new QLabel(tr("Mode")), 2, 0, 1, 1);
+        main_layout->addWidget(m_mode, 2, 1, 1, 1);
         main_layout->addWidget(new QLabel(tr("Remote IP")), 3, 0, 1, 1);
         main_layout->addWidget(m_remote_ip, 3, 1, 1, 1);
         main_layout->addWidget(new QLabel(tr("Remote port")), 4, 0, 1, 1);
@@ -107,6 +111,15 @@ void NetIOWidget::createGui()
 
 void NetIOWidget::connectSignals()
 {
+    connect(m_protocol, &QComboBox::currentTextChanged, this, [this](const QString& text) {
+        if (m_protocol->currentText() == "UDP") {
+            m_mode->setDisabled(true);
+        }
+        else {
+            m_mode->setEnabled(true);
+        }
+    });
+
     connect(m_remote_ip, &QLineEdit::editingFinished, this, [this]() {
         QHostAddress address =  QHostAddress(m_remote_ip->text());
         if (address.isNull()) {

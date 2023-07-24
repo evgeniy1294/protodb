@@ -53,14 +53,8 @@ bool NetworkConnection::setEnable(bool enabled)
 
         if (m_protocol == udp) {
             m_socket = new QUdpSocket(this);
-            if (m_mode == server) {
-                m_socket->bind(QHostAddress::LocalHost, m_local_port);
-
-                m_description = tr("Network UDP:Server:%1").arg(m_local_port);
-            }
-            else {
-                m_description = tr("Network UDP:Client:%1:%2").arg(m_remote_ip.toString(), QString::number(m_remote_port));
-            }
+            m_socket->bind(QHostAddress::LocalHost, m_local_port);
+            m_description = tr("Network UDP:%1").arg(QString::number(m_local_port));
 
             m_socket->open(QIODevice::ReadWrite);
             connect(m_socket, &QAbstractSocket::readyRead, this, &NetworkConnection::socketReadyRead);
