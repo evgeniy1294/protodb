@@ -33,5 +33,10 @@
         <file alias="sort_down.svg">icons/sort_down.svg</file>
         <file alias="terminal.svg">icons/terminal.svg</file>
         <file alias="crc.svg">icons/crc.svg</file>
+        <file alias="dec.svg">icons/dec.svg</file>
+        <file alias="binary.svg">icons/binary.svg</file>
+        <file alias="octal.svg">icons/octal.svg</file>
+        <file alias="code.svg">icons/code.svg</file>
+        <file alias="code_text.svg">icons/code_text.svg</file>
     </qresource>
 </RCC>

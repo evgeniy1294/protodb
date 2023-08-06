@@ -34,7 +34,7 @@ set(SOURCES_LIST
     src/SequenceScriptFormatter.cpp
     src/SequenceModel.cpp
     src/SequenceEditDialog.cpp
-    src/SequenceEditDialog.cpp
+    src/SequenceEditor.cpp
     src/SequenceTableView.cpp
     src/SequenceTableWidget.cpp
     src/SequenceFormatSelectionWidget.cpp
@@ -72,6 +72,7 @@ set(HEADERS_LIST
     include/SequenceScriptFormatter.h
     include/SequenceModel.h
     include/SequenceEditDialog.h
+    include/SequenceEditor.h
     include/SequenceTableView.h
     include/SequenceTableWidget.h
     include/SequenceFormatSelectionWidget.h
@@ -114,6 +115,8 @@ target_link_libraries(${TARGET}
     qtadvanceddocking
     ${LUA_LIBRARIES}
     sol::sol
+    Okteta::Core
+    Okteta::Gui
 )
 
 target_link_libraries(${TARGET}

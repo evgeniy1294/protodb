@@ -1,6 +1,7 @@
 #include "SequenceModel.h"
 #include "SequenceEditDialog.h"
 #include "SequenceFormatSelectionWidget.h"
+#include "SequenceEditor.h"
 
 #include <QLineEdit>
 #include <QTextBrowser>
@@ -152,18 +153,21 @@ void SequenceEditDialog::createGui()
                                        QDialogButtonBox::Reset|
                                        QDialogButtonBox::Cancel );
 
+    m_editor = new SequenceEditor();
+
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop);
         main_layout->addLayout(h_layout, 0, 0);
         main_layout->addWidget(m_name_edit, 1, 0);
         main_layout->addWidget(m_desc_editor, 2, 0);
-        main_layout->addWidget(format_group_box, 3, 0);
-        main_layout->addWidget(m_dsl_editor,  4, 0);
-        main_layout->addWidget(m_dialog_btn,  5, 0);
-
+        // main_layout->addWidget(format_group_box, 3, 0);
+        main_layout->addWidget(m_editor,  3, 0);
+        //main_layout->addWidget(m_dsl_editor,  5, 0);
+        main_layout->addWidget(m_dialog_btn,  4, 0);
         main_layout->setRowStretch(2, 2);
-        main_layout->setRowStretch(4, 5);
+        main_layout->setRowStretch(3, 5);
 
+    resize(680, 570);
     setLayout(main_layout);
     setWindowModality(Qt::NonModal);
 }
