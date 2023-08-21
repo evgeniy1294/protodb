@@ -4,6 +4,7 @@
 
 class QAction;
 class QComboBox;
+class QLabel;
 class QPlainTextEdit;
 class QToolButton;
 
@@ -14,7 +15,7 @@ namespace Okteta {
 
 namespace protodb {
 
-class SequenceEditor: public QWidget
+class BytecodeEditor: public QWidget
 {
     Q_OBJECT
 
@@ -37,8 +38,8 @@ public:
         ModeCount
     };
 
-    SequenceEditor(QWidget* parent = nullptr);
-   ~SequenceEditor() = default;
+    BytecodeEditor(QWidget* parent = nullptr);
+   ~BytecodeEditor() = default;
 
     void setDisplayFormat(DisplayFormat format);
     DisplayFormat displayFormat() const;
@@ -55,6 +56,9 @@ private:
     void connectSignals();
 
 private:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
     DisplayFormat m_format;
     DisplayMode m_mode;
 
@@ -62,6 +66,8 @@ private:
     Okteta::ByteArrayColumnView* m_view;
 
     QComboBox* m_codecs;
+
+    QLabel* m_counter_label;
 
     QToolButton* m_format_btn;
     QToolButton* m_mode_btn;

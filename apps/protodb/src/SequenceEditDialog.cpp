@@ -153,7 +153,7 @@ void SequenceEditDialog::createGui()
                                        QDialogButtonBox::Reset|
                                        QDialogButtonBox::Cancel );
 
-    m_editor = new SequenceEditor();
+    m_editor = new BytecodeEditor();
 
     auto main_layout = new QGridLayout();
         main_layout->setAlignment(Qt::AlignTop);

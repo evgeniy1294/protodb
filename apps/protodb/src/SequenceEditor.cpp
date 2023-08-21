@@ -5,6 +5,7 @@
 #include <Okteta/PieceTableByteArrayModel.hpp>
 
 #include <QApplication>
+#include <QLabel>
 #include <QAction>
 #include <QComboBox>
 #include <QMenu>
@@ -35,7 +36,7 @@ public:
 using namespace protodb;
 
 
-SequenceEditor::SequenceEditor(QWidget* parent)
+BytecodeEditor::BytecodeEditor(QWidget* parent)
     : QWidget(parent)
     , m_format(HexFormat)
     , m_mode(CodePlusTextMode)
@@ -47,7 +48,7 @@ SequenceEditor::SequenceEditor(QWidget* parent)
     connectSignals();
 }
 
-void SequenceEditor::setDisplayFormat(DisplayFormat format)
+void BytecodeEditor::setDisplayFormat(DisplayFormat format)
 {
     switch(format) {
         case HexFormat:
@@ -73,12 +74,12 @@ void SequenceEditor::setDisplayFormat(DisplayFormat format)
     m_format = format;
 }
 
-SequenceEditor::DisplayFormat SequenceEditor::displayFormat() const
+BytecodeEditor::DisplayFormat BytecodeEditor::displayFormat() const
 {
     return m_format;
 }
 
-void SequenceEditor::setDisplayMode(DisplayMode mode)
+void BytecodeEditor::setDisplayMode(DisplayMode mode)
 {
     if (mode == DisplayMode::CodePlusTextMode) {
         m_mode_btn->setDefaultAction(m_set_code_text_act);
@@ -96,22 +97,22 @@ void SequenceEditor::setDisplayMode(DisplayMode mode)
     m_mode = mode;
 }
 
-SequenceEditor::DisplayMode SequenceEditor::displayMode() const
+BytecodeEditor::DisplayMode BytecodeEditor::displayMode() const
 {
     return m_mode;
 }
 
-void SequenceEditor::setData(const QByteArray& data)
+void BytecodeEditor::setData(const QByteArray& data)
 {
     m_model->setData(data);
 }
 
-QByteArray SequenceEditor::currentData() const
+QByteArray BytecodeEditor::currentData() const
 {
-    return QByteArray();
+    return m_model->initialData();
 }
 
-void SequenceEditor::createActions()
+void BytecodeEditor::createActions()
 {
     m_set_hexmode_act = new QAction(this);
         m_set_hexmode_act->setIcon(QIcon(":/icons/hex.svg"));
@@ -142,7 +143,7 @@ void SequenceEditor::createActions()
         m_set_text_only_act->setText(QObject::tr("Text only"));
 }
 
-void SequenceEditor::createGui()
+void BytecodeEditor::createGui()
 {
     m_view = new Okteta::ByteArrayColumnView(this);
         m_view->setByteArrayModel(m_model);
@@ -152,6 +153,8 @@ void SequenceEditor::createGui()
         m_view->setVisibleCodings(Okteta::AbstractByteArrayView::ValueAndCharCodings);
         m_view->setValueCoding(Okteta::AbstractByteArrayView::HexadecimalCoding);
         m_view->setOverwriteMode(false);
+
+    m_counter_label = new QLabel("0/0");
 
     m_codecs = new QComboBox();
         m_codecs->addItems(Okteta::CharCodec::codecNames());
@@ -186,6 +189,7 @@ void SequenceEditor::createGui()
         horizontalLayout->addWidget(m_mode_btn);
         horizontalLayout->addWidget(m_codecs);
         horizontalLayout->addStretch();
+        horizontalLayout->addWidget(m_counter_label);
 
 
     auto verticalLayout = new QVBoxLayout();
@@ -196,8 +200,12 @@ void SequenceEditor::createGui()
     setLayout(verticalLayout);
 }
 
-void SequenceEditor::connectSignals()
+void BytecodeEditor::connectSignals()
 {
+    connect(m_codecs, &QComboBox::currentTextChanged, this, [this](const QString& name) {
+        m_view->setCharCoding(name);
+    });
+
     connect(m_mode_btn, &QToolButton::clicked, this, [this]() {
         if (m_mode == CodePlusTextMode) {
             setDisplayMode(CodeOnlyMode);
@@ -256,4 +264,17 @@ void SequenceEditor::connectSignals()
     connect(m_set_binmode_act, &QAction::triggered, this, [this]() {
         setDisplayFormat(BinaryFormat);
     });
+
+    connect(m_view, &Okteta::ByteArrayColumnView::cursorPositionChanged, this, [this](Okteta::Address index) {
+        m_counter_label->setText(QString("%1/%2")
+            .arg(QString::number(m_view->cursorPosition()), QString::number(m_model->size())));
+    });
+}
+
+void BytecodeEditor::paintEvent(QPaintEvent* event)
+{
+   // m_counter_label->setText(QString("%1/%2")
+   //     .arg(QString::number(m_view->cursorPosition()), QString::number(m_model->size())));
+
+    QWidget::paintEvent(event);
 }

@@ -1,4 +1,5 @@
 #include "CrcCalculator.h"
+#include "SequenceEditor.h"
 
 #include <QSpinBox>
 #include <QCheckBox>
@@ -11,7 +12,6 @@
 
 
 protodb::CrcCalculator::CrcCalculator(QWidget* parent)
-    : m_fmt(false)
 {
     create_gui();
     connect_signals();
@@ -50,11 +50,10 @@ void protodb::CrcCalculator::create_gui()
     m_ref_out = new QCheckBox();
         m_ref_out->setText(tr("Reflect Out"));
 
-    m_bytes = new QPlainTextEdit();
 
     m_calc_btn = new QPushButton(tr("Calculate"));
-    m_fmt_btn  = new QPushButton(tr("HEX"));
 
+    m_editor = new BytecodeEditor();
 
     auto m_layout = new QGridLayout();
         m_layout->addWidget(m_width, 0, 0, 1, 1);
@@ -64,26 +63,21 @@ void protodb::CrcCalculator::create_gui()
         m_layout->addWidget(m_init, 2, 0, 1, 1);
         m_layout->addWidget(m_xor_out, 3, 0, 1, 1);
         m_layout->addWidget(m_result, 4, 0, 1, 1);
-        m_layout->addWidget(m_fmt_btn, 4, 1, 1, 1);
 
         m_layout->addWidget(m_ref_in, 0, 1, 1, 1);
         m_layout->addWidget(m_ref_out, 1, 1, 1, 1);
 
-        m_layout->addWidget(m_bytes, 5, 0, 1, 2);
+        m_layout->addWidget(m_editor, 5, 0, 1, 2);
         m_layout->addWidget(m_calc_btn, 6, 0, 1, 2, Qt::AlignRight);
 
     setLayout(m_layout);
     setWindowModality(Qt::NonModal);
-    resize(480, 320);
+    resize(640, 480);
 }
 
 void protodb::CrcCalculator::connect_signals()
 {
     connect(m_calc_btn, &QPushButton::clicked, this, &CrcCalculator::calculate);
-    connect(m_fmt_btn, &QPushButton::clicked, this, [this]() {
-        m_fmt = !m_fmt;
-        m_fmt_btn->setText(m_fmt ? "ASCII" : "HEX");
-    });
 }
 
 void protodb::CrcCalculator::calculate()
@@ -128,10 +122,7 @@ void protodb::CrcCalculator::calculate()
     m_crc.setReflectIn(m_ref_in->isChecked());
     m_crc.setReflectOut(m_ref_out->isChecked());
 
-    auto bytes = m_bytes->toPlainText().toLatin1();
-    if ( !m_fmt ) {
-        bytes = QByteArray::fromHex( bytes );
-    }
+    auto bytes = m_editor->currentData();
 
     if (bytes.isEmpty()) {
         return;

@@ -12,6 +12,8 @@ class QPushButton;
 
 namespace protodb {
 
+class BytecodeEditor;
+
 class CrcCalculator: public QWidget
 {
     Q_OBJECT
@@ -29,7 +31,8 @@ private slots:
 
 private:
     CrcLogic m_crc;
-    bool m_fmt;
+
+    BytecodeEditor* m_editor;
 
     QSpinBox*  m_width;
     QLineEdit* m_poly;
@@ -38,9 +41,7 @@ private:
     QLineEdit* m_result;
     QCheckBox* m_ref_in;
     QCheckBox* m_ref_out;
-    QPlainTextEdit* m_bytes;
     QPushButton* m_calc_btn;
-    QPushButton* m_fmt_btn;
 };
 
 } // namespace protodb

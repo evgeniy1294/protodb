@@ -15,7 +15,7 @@ class QRadioButton;
 namespace protodb {
 
 class SequenceFormatSelectionWidget;
-class SequenceEditor;
+class BytecodeEditor;
 
 class SequenceEditDialog: public QDialog
 {
@@ -54,7 +54,7 @@ private:
     QDataWidgetMapper* m_mapper;
     QDialogButtonBox* m_dialog_btn;
 
-    SequenceEditor* m_editor;
+    BytecodeEditor* m_editor;
     SequenceFormatSelectionWidget* m_format_selection_wgt;
 };
 
