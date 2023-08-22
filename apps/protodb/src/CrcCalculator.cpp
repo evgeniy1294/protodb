@@ -25,7 +25,6 @@ void protodb::CrcCalculator::create_gui()
         m_width->setMinimum(3);
         m_width->setMaximum(64);
         m_width->setValue(32);
-        m_width->setPrefix(tr("Width: "));
 
     m_poly = new QLineEdit();
         m_poly->setPlaceholderText(tr("Poly"));
@@ -36,8 +35,8 @@ void protodb::CrcCalculator::create_gui()
         m_init->setToolTip(tr("Seed"));
 
     m_xor_out = new QLineEdit();
-        m_xor_out->setPlaceholderText(tr("Xor value"));
-        m_xor_out->setToolTip(tr("Xor out"));
+        m_xor_out->setPlaceholderText(tr("XOR out"));
+        m_xor_out->setToolTip(tr("XOR out"));
 
     m_result = new QLineEdit();
         m_result->setPlaceholderText(tr("Result"));
@@ -56,19 +55,23 @@ void protodb::CrcCalculator::create_gui()
     m_editor = new BytecodeEditor();
 
     auto m_layout = new QGridLayout();
-        m_layout->addWidget(m_width, 0, 0, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Width:")), 0, 0, 1, 1);
+        m_layout->addWidget(m_width, 0, 1, 1, 1);
 
-        m_layout->addWidget(m_poly, 1, 0, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Polynomial:")), 1, 0, 1, 1);
+        m_layout->addWidget(m_poly, 1, 1, 1, 1);
 
-        m_layout->addWidget(m_init, 2, 0, 1, 1);
-        m_layout->addWidget(m_xor_out, 3, 0, 1, 1);
-        m_layout->addWidget(m_result, 4, 0, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Seed:")), 2, 0, 1, 1);
+        m_layout->addWidget(m_init, 2, 1, 1, 1);
+        m_layout->addWidget(new QLabel(tr("XOR out:")), 3, 0, 1, 1);
+        m_layout->addWidget(m_xor_out, 3, 1, 1, 1);
 
-        m_layout->addWidget(m_ref_in, 0, 1, 1, 1);
-        m_layout->addWidget(m_ref_out, 1, 1, 1, 1);
+        m_layout->addWidget(m_ref_in, 0, 2, 1, 1);
+        m_layout->addWidget(m_ref_out, 1, 2, 1, 1);
 
-        m_layout->addWidget(m_editor, 5, 0, 1, 2);
-        m_layout->addWidget(m_calc_btn, 6, 0, 1, 2, Qt::AlignRight);
+        m_layout->addWidget(m_editor, 4, 0, 1, 3);
+        m_layout->addWidget(m_result, 5, 0, 1, 3);
+        m_layout->addWidget(m_calc_btn, 6, 0, 1, 3, Qt::AlignRight);
 
     setLayout(m_layout);
     setWindowModality(Qt::NonModal);

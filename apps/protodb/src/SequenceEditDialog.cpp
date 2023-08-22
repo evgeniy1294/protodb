@@ -43,8 +43,8 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* mapper)
         m_mapper = mapper;
         m_mapper->addMapping(m_name_edit, SequenceModel::kColumnName);
         m_mapper->addMapping(m_desc_editor, SequenceModel::kColumnDescription);
-        m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);
-        m_mapper->addMapping(m_format_selection_wgt, SequenceModel::kColumnSyntaxId, "selectedFormat");
+        //m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);
+        m_mapper->addMapping(m_editor, SequenceModel::kColumnDsl, "currentData");
 
         auto onIndexChanged = [this](int idx) {
             auto model = qobject_cast<SequenceModel*>(m_mapper->model());
@@ -58,7 +58,7 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* mapper)
 
                 m_name_edit->setDisabled(false);
                 m_desc_editor->setDisabled(false);
-                m_dsl_editor->setDisabled(false);
+                m_editor->setDisabled(false);
 
                 if (idx <= 0) {
                     m_back_btn->setDisabled(true);
@@ -92,7 +92,7 @@ void SequenceEditDialog::reload()
     m_item_label->setText(QString("0/0"));
     m_name_edit->setDisabled(true);
     m_desc_editor->setDisabled(true);
-    m_dsl_editor->setDisabled(true);
+    m_editor->setDisabled(true);
     m_back_btn->setDisabled(true);
     m_prev_btn->setDisabled(true);
     m_next_btn->setDisabled(true);
@@ -145,8 +145,8 @@ void SequenceEditDialog::createGui()
     m_desc_editor = new QPlainTextEdit();
         m_desc_editor->setPlaceholderText(tr("Document me!"));
 
-    m_dsl_editor = new QPlainTextEdit();
-        m_dsl_editor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
+    //m_dsl_editor = new QPlainTextEdit();
+    //    m_dsl_editor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
 
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok|
                                        QDialogButtonBox::Apply|
@@ -252,7 +252,7 @@ bool SequenceEditDialog::isHaveUnsavedChanges() const
 
     // Check text changes
     auto dsl = model->data( model->index(row, SequenceModel::kColumnDsl) ).toString();
-    if (dsl != m_dsl_editor->toPlainText()) {
+    if (dsl != m_editor->currentData()) {
         return true;
     }
 

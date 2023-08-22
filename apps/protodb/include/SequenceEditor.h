@@ -19,6 +19,8 @@ class BytecodeEditor: public QWidget
 {
     Q_OBJECT
 
+    Q_PROPERTY(QByteArray currentData READ currentData WRITE setData)
+
 public:
     enum DisplayFormat {
         HexFormat,
@@ -54,9 +56,6 @@ private:
     void createActions();
     void createGui();
     void connectSignals();
-
-private:
-    void paintEvent(QPaintEvent *event) override;
 
 private:
     DisplayFormat m_format;

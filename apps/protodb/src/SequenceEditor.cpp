@@ -109,7 +109,14 @@ void BytecodeEditor::setData(const QByteArray& data)
 
 QByteArray BytecodeEditor::currentData() const
 {
-    return m_model->initialData();
+    QByteArray ret;
+        ret.resize(m_model->size());
+
+    for (int i = 0; i < m_model->size(); ++i) {
+        ret[i] = m_model->byte(i);
+    }
+
+    return ret;
 }
 
 void BytecodeEditor::createActions()
@@ -147,6 +154,7 @@ void BytecodeEditor::createGui()
 {
     m_view = new Okteta::ByteArrayColumnView(this);
         m_view->setByteArrayModel(m_model);
+        m_view->setCharCoding("US-ASCII");
         m_view->setFrameShadow(QFrame::Raised);
         m_view->setVisibleCodings(4);
         m_view->setLayoutStyle(Okteta::AbstractByteArrayView::WrapOnlyByteGroupsLayoutStyle);
@@ -158,6 +166,7 @@ void BytecodeEditor::createGui()
 
     m_codecs = new QComboBox();
         m_codecs->addItems(Okteta::CharCodec::codecNames());
+        m_codecs->setCurrentText(m_view->charCodingName());
 
     auto menu_style = new MenuProxyStyle(QApplication::style());
 
@@ -269,12 +278,4 @@ void BytecodeEditor::connectSignals()
         m_counter_label->setText(QString("%1/%2")
             .arg(QString::number(m_view->cursorPosition()), QString::number(m_model->size())));
     });
-}
-
-void BytecodeEditor::paintEvent(QPaintEvent* event)
-{
-   // m_counter_label->setText(QString("%1/%2")
-   //     .arg(QString::number(m_view->cursorPosition()), QString::number(m_model->size())));
-
-    QWidget::paintEvent(event);
 }
