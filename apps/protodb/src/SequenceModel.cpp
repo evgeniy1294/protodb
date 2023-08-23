@@ -60,11 +60,8 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                 case kColumnDescription:
                     return sq->description();
 
-                case kColumnDsl:
-                    return sq->dslString();
-
-                case kColumnSyntaxId:
-                    return sq->formatId();
+                case kColumnBytecode:
+                    return sq->bytes();
 
                 case kColumnActiveFlag:
                     return sq->active();
@@ -85,11 +82,8 @@ QVariant SequenceModel::data(const QModelIndex& index, int role) const
                 case kColumnDescription:
                     return sq->description();
 
-                case kColumnDsl:
-                    return sq->dslString();
-
-                case kColumnSyntaxId:
-                    return sq->formatId();
+                case kColumnBytecode:
+                    return sq->bytes();
 
                 case kColumnActiveFlag:
                     return sq->active();
@@ -111,8 +105,7 @@ QVariant SequenceModel::headerData(int section, Qt::Orientation orientation, int
                 case kColumnBindedName: return (isModeIncoming()) ? QString(tr("Triggered")) : QString();
                 case kColumnPeriod: return (isModeIncoming()) ? QString(tr("Delay")) : QString(tr("Repeat"));
                 case kColumnDescription: return QString(tr("Description"));
-                case kColumnDsl: return QString(tr("Sequence"));
-                case kColumnSyntaxId: return QString(tr("Syntax"));
+                case kColumnBytecode: return QString(tr("Bytecode"));
                 case kColumnActiveFlag: return (isModeIncoming()) ? QString(tr("Use")): QString("");
                 default: break;
             }
@@ -153,15 +146,15 @@ bool SequenceModel::setData(const QModelIndex& index, const QVariant& value, int
                 case kColumnPeriod:
                     sq->setPeriod(value.toInt());
                     break;
+
                 case kColumnDescription:
                     sq->setDescription(value.toString());
                     break;
-                case kColumnDsl:
-                    sq->setDslString(value.toString());
+
+                case kColumnBytecode:
+                    sq->setBytes(value.toByteArray());
                     break;
-                case kColumnSyntaxId:
-                    sq->setFormatId(value.toString());
-                    break;
+
                 case kColumnActiveFlag: {
                     auto active = value.toBool();
 
@@ -374,8 +367,7 @@ void SequenceModel::toJson(nlohmann::json& json) const
             fields["binded_name"] = sequence->bindedName();
             fields["period"]      = sequence->period();
             fields["description"] = sequence->description();
-            fields["dsl"]         = sequence->dslString();
-            fields["format_id"]   = sequence->formatId();
+            fields["dsl"]         = sequence->bytes();
             fields["active"]      = sequence->active();
 
         json.push_back(fields);
@@ -419,13 +411,7 @@ void SequenceModel::fromJson(const nlohmann::json& json)
 
         if ( it.contains("dsl") ) {
             if ( it["dsl"].is_string() ) {
-                s->setDslString( it["dsl"] );
-            }
-        }
-
-        if ( it.contains("format_id") ) {
-            if ( it["format_id"].is_string() ) {
-                s->setFormatId( it["format_id"] );
+                s->setBytes( it["dsl"] );
             }
         }
 

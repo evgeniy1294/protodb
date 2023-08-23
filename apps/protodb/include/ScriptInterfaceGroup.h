@@ -26,9 +26,6 @@ public:
 
     QString syntaxId() const override;
 
-    // Compile code to byte array
-    QByteArray compileCode(const QString& code) const override;
-
     // Custom event handler
     bool handleDataEvent(Event event, QByteArray& bytes) override;
 

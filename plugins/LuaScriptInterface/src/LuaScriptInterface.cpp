@@ -81,45 +81,6 @@ bool LuaInterface::isValid() const
     return m_valid;
 }
 
-QByteArray LuaInterface::compileCode(const QString& code) const
-{
-    const Q_D(LuaInterface);
-
-    static const QString m_template = {
-        "function compile(bytes) \n %1 \n end"
-    };
-
-    sol::state compiler;
-        d->bindUtils(compiler);
-
-    if (code.length() != 0) {
-        compiler.open_libraries(sol::lib::base, sol::lib::bit32, sol::lib::math, sol::lib::string, sol::lib::table);
-        d->setExceptionHandler(compiler);
-
-        sol::protected_function_result pfr =
-                compiler.safe_script(m_template.arg(code).toStdString(), &sol::script_pass_on_error);
-
-        compiler["vec"] = std::vector<uint8_t>();
-
-        if (pfr.valid()) {
-            sol::safe_function compile = compiler["compile"];
-                pfr = compile( compiler["vec"] );
-
-            if (pfr.valid()) {
-                std::vector<uint8_t>& bytes = compiler["vec"];
-                return QByteArray(reinterpret_cast<const char*>(bytes.data()), static_cast<int>(bytes.size()));
-            }
-        }
-
-        if (!pfr.valid()) {
-            sol::error err = pfr;
-            std::cout << err.what() << std::endl;
-        }
-    }
-
-    return QByteArray();
-}
-
 bool LuaInterface::handleDataEvent(Event event, QByteArray& bytes)
 {
     Q_D(LuaInterface);

@@ -13,6 +13,7 @@ set(CMAKE_AUTORCC ON)
 # ------------ [ Sources ] ------------
 set(SOURCES_LIST
     src/Assistant.cpp
+    src/BytecodeEditor.cpp
     src/CellButtonDelegate.cpp
     src/CellCheckBoxDelegate.cpp
     src/CellSpinBoxDelegate.cpp
@@ -31,13 +32,10 @@ set(SOURCES_LIST
     src/mainwindow.cpp
     src/menu.cpp
     src/Sequence.cpp
-    src/SequenceScriptFormatter.cpp
     src/SequenceModel.cpp
     src/SequenceEditDialog.cpp
-    src/SequenceEditor.cpp
     src/SequenceTableView.cpp
     src/SequenceTableWidget.cpp
-    src/SequenceFormatSelectionWidget.cpp
     src/ScriptInterfaceGroup.cpp
     src/tool_bar.cpp
     src/ProtodbSessionManager.cpp
@@ -51,6 +49,7 @@ set(SOURCES_LIST
 
 set(HEADERS_LIST
     include/Assistant.h
+    include/BytecodeEditor.h
     include/CellButtonDelegate.h
     include/CellCheckBoxDelegate.h
     include/CellSpinBoxDelegate.h
@@ -69,13 +68,10 @@ set(HEADERS_LIST
     include/menu.h
     include/Sequence.h
     include/SequenceFormatter.h
-    include/SequenceScriptFormatter.h
     include/SequenceModel.h
     include/SequenceEditDialog.h
-    include/SequenceEditor.h
     include/SequenceTableView.h
     include/SequenceTableWidget.h
-    include/SequenceFormatSelectionWidget.h
     include/ScriptInterfaceGroup.h
     include/tool_bar.h
     include/ProtodbSessionManager.h

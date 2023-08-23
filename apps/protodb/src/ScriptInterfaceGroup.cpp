@@ -97,15 +97,6 @@ QString ScriptMultiInterface::syntaxId() const
     return QString();
 }
 
-QByteArray ScriptMultiInterface::compileCode(const QString& code) const
-{
-    if (m_interface_id != -1 && m_interface_id < m_script_interfaces.size()) {
-        return m_script_interfaces[m_interface_id]->compileCode(code);
-    }
-
-    return QByteArray();
-}
-
 bool ScriptMultiInterface::handleDataEvent(Event event, QByteArray& bytes)
 {
     if (m_interface_id != -1 && m_interface_id < m_script_interfaces.size()) {

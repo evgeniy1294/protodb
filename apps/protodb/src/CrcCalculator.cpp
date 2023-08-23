@@ -1,5 +1,5 @@
 #include "CrcCalculator.h"
-#include "SequenceEditor.h"
+#include "BytecodeEditor.h"
 
 #include <QSpinBox>
 #include <QCheckBox>

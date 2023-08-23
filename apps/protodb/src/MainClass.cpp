@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "LogPrinter.h"
 #include "LogFormatter.h"
-#include "SequenceScriptFormatter.h"
 #include "ScriptInterfaceGroup.h"
 
 #include <protodb/plugins/PluginManager.h>
@@ -132,19 +131,10 @@ void MainClass::init_logger()
 void MainClass::init_syntaxes()
 {
     // Create script interfaces
-        auto script_interface_creators = ScriptInterfaceFactory::globalInstance()->getAllCreators();
-        for (auto& creator: script_interface_creators) {
-            auto interface = QSharedPointer<ScriptInterface>(creator->create());
-                m_script_multi_interface->addScriptInterface( interface );
-        }
-
-    // Add script interface to supported syntax list
-    for (auto& script_interface: m_script_multi_interface->scriptInterfaces()) {
-        auto formatter = qSharedPointerCast<SequenceFormatter> (
-            QSharedPointer<SequenceScriptFormatter>::create(script_interface)
-        );
-
-        Sequence::addFormatter( formatter );
+    auto script_interface_creators = ScriptInterfaceFactory::globalInstance()->getAllCreators();
+    for (auto& creator: script_interface_creators) {
+        auto interface = QSharedPointer<ScriptInterface>(creator->create());
+            m_script_multi_interface->addScriptInterface( interface );
     }
 }
 

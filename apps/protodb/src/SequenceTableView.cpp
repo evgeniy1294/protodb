@@ -41,8 +41,7 @@ void SequenceTableView::setSequenceModel(QAbstractItemModel *model, bool incomin
         setItemDelegateForColumn(SequenceModel::kColumnPeriod, m_spinbox_delegate);
         setColumnWidth(SequenceModel::kColumnActiveFlag, 0);
         hideColumn(SequenceModel::kColumnDescription);
-        hideColumn(SequenceModel::kColumnDsl);
-        hideColumn(SequenceModel::kColumnSyntaxId);
+        hideColumn(SequenceModel::kColumnBytecode);
 
     QHeaderView* hh = horizontalHeader();
         hh->setSectionResizeMode(SequenceModel::kColumnName, QHeaderView::Stretch);

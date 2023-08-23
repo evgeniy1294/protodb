@@ -1,7 +1,6 @@
 #include "SequenceModel.h"
 #include "SequenceEditDialog.h"
-#include "SequenceFormatSelectionWidget.h"
-#include "SequenceEditor.h"
+#include "BytecodeEditor.h"
 
 #include <QLineEdit>
 #include <QTextBrowser>
@@ -43,8 +42,7 @@ void SequenceEditDialog::setMapper(QDataWidgetMapper* mapper)
         m_mapper = mapper;
         m_mapper->addMapping(m_name_edit, SequenceModel::kColumnName);
         m_mapper->addMapping(m_desc_editor, SequenceModel::kColumnDescription);
-        //m_mapper->addMapping(m_dsl_editor, SequenceModel::kColumnDsl);
-        m_mapper->addMapping(m_editor, SequenceModel::kColumnDsl, "currentData");
+        m_mapper->addMapping(m_editor, SequenceModel::kColumnBytecode, "currentData");
 
         auto onIndexChanged = [this](int idx) {
             auto model = qobject_cast<SequenceModel*>(m_mapper->model());
@@ -106,14 +104,6 @@ void SequenceEditDialog::createGui()
 
     auto h_layout = new QHBoxLayout();
 
-        auto format_group_box = new QGroupBox();
-            m_format_selection_wgt = new SequenceFormatSelectionWidget();
-
-            auto format_group_box_layout = new QHBoxLayout();
-            format_group_box_layout->addWidget(m_format_selection_wgt);
-
-            format_group_box->setLayout(format_group_box_layout);
-
         m_back_btn  = new QPushButton();
             m_back_btn->setIcon(QIcon(":/icons/arrow_back.svg"));
 
@@ -145,9 +135,6 @@ void SequenceEditDialog::createGui()
     m_desc_editor = new QPlainTextEdit();
         m_desc_editor->setPlaceholderText(tr("Document me!"));
 
-    //m_dsl_editor = new QPlainTextEdit();
-    //    m_dsl_editor->setPlaceholderText(tr("CRC:Modbus{bytes}"));
-
     m_dialog_btn = new QDialogButtonBox( QDialogButtonBox::Ok|
                                        QDialogButtonBox::Apply|
                                        QDialogButtonBox::Reset|
@@ -160,9 +147,7 @@ void SequenceEditDialog::createGui()
         main_layout->addLayout(h_layout, 0, 0);
         main_layout->addWidget(m_name_edit, 1, 0);
         main_layout->addWidget(m_desc_editor, 2, 0);
-        // main_layout->addWidget(format_group_box, 3, 0);
         main_layout->addWidget(m_editor,  3, 0);
-        //main_layout->addWidget(m_dsl_editor,  5, 0);
         main_layout->addWidget(m_dialog_btn,  4, 0);
         main_layout->setRowStretch(2, 2);
         main_layout->setRowStretch(3, 5);
@@ -251,14 +236,8 @@ bool SequenceEditDialog::isHaveUnsavedChanges() const
     }
 
     // Check text changes
-    auto dsl = model->data( model->index(row, SequenceModel::kColumnDsl) ).toString();
+    auto dsl = model->data( model->index(row, SequenceModel::kColumnBytecode) ).toByteArray();
     if (dsl != m_editor->currentData()) {
-        return true;
-    }
-
-    // Check syntax id
-    auto syntax =  model->data( model->index(row, SequenceModel::kColumnSyntaxId) ).toString();
-    if (syntax != m_format_selection_wgt->selectedFormat()) {
         return true;
     }
 

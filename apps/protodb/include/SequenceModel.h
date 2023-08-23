@@ -20,9 +20,8 @@ public:
         kColumnBindedName  = 1,
         kColumnPeriod      = 2,
         kColumnDescription = 3,
-        kColumnDsl         = 4,
-        kColumnSyntaxId    = 5,
-        kColumnActiveFlag  = 6,
+        kColumnBytecode         = 4,
+        kColumnActiveFlag  = 5,
 
         kColumnCount
     };

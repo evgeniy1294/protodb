@@ -1,4 +1,4 @@
-#include "SequenceEditor.h"
+#include "BytecodeEditor.h"
 
 #include <Okteta/CharCodec.hpp>
 #include <Okteta/ByteArrayColumnView.hpp>

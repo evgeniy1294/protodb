@@ -9,22 +9,11 @@
 
 namespace protodb  {
 
-class SequenceFormatter;
-
 class Sequence {
-
-public:
-    static QStringList supportedFormats() { return m_supported_formats; }
-    static void addFormatter(QSharedPointer<SequenceFormatter>& formatter);
-
-    static const QString DefaultFormatId;
-
 public:
     Sequence()
      : m_uuid(QUuid::createUuid())
      , m_name()
-     , m_dsl_string()
-     , m_format_id(DefaultFormatId)
      , m_cached(false)
      , m_bytes()
      , m_active(false)
@@ -35,8 +24,6 @@ public:
     Sequence(const Sequence& seq)
       : m_uuid(seq.m_uuid)
       , m_name(seq.m_name)
-      , m_dsl_string(seq.m_dsl_string)
-      , m_format_id(seq.m_format_id)
       , m_cached(seq.m_cached)
       , m_bytes(seq.m_bytes)
       , m_active(seq.m_active)
@@ -48,12 +35,6 @@ public:
 
     QString name() const { return m_name; }
     void setName(const QString& a_name) { m_name = a_name; }
-
-    QString dslString() const { return m_dsl_string; };
-    void setDslString(const QString& dsl);
-
-    QString formatId() const { return m_format_id; };
-    void setFormatId(QString id);
 
     QString description() const { return m_description; }
     void setDescription(const QString& description) { m_description = description; }
@@ -67,17 +48,12 @@ public:
     quint32 period() const { return m_period;}
     void setPeriod( quint32 period ) { m_period = period; }
 
-    bool isCached() const { return m_cached; }
+    //bool isCached() const { return m_cached; }
 
+    void setBytes(const QByteArray& bytes) { m_bytes = bytes; }
     QByteArray bytes() const { return m_bytes; }
 
-    bool format();
-
     bool operator==(const Sequence& rsh) {return m_uuid == rsh.m_uuid;}
-
-private:
-    static QStringList m_supported_formats;
-    static QList< QSharedPointer<SequenceFormatter> > m_formatters;
 
 private:
     bool m_cached;
@@ -86,9 +62,6 @@ private:
 
 private:
     QUuid m_uuid;
-
-    QString m_format_id;
-    QString m_dsl_string;
 
     bool m_active;
     quint32 m_period;
