@@ -1,5 +1,7 @@
 #include "SequenceModel.h"
 
+#include <protodb/utils/JsonBaseUtils.h>
+
 #include <nlohmann/json.hpp>
 
 #include <QPointer>
@@ -367,7 +369,7 @@ void SequenceModel::toJson(nlohmann::json& json) const
             fields["binded_name"] = sequence->bindedName();
             fields["period"]      = sequence->period();
             fields["description"] = sequence->description();
-            fields["dsl"]         = sequence->bytes();
+            fields["bytecode"]    = sequence->bytes();
             fields["active"]      = sequence->active();
 
         json.push_back(fields);
@@ -409,9 +411,9 @@ void SequenceModel::fromJson(const nlohmann::json& json)
             }
         }
 
-        if ( it.contains("dsl") ) {
-            if ( it["dsl"].is_string() ) {
-                s->setBytes( it["dsl"] );
+        if ( it.contains("bytecode") ) {
+            if ( it["bytecode"].is_array() ) {
+                s->setBytes( it["bytecode"].get<QByteArray>() );
             }
         }
 

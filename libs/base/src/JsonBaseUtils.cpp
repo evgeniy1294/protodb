@@ -159,7 +159,7 @@ void to_json(nlohmann::json& j, const QByteArray& array)
 {
     j = nlohmann::json::array();
     for (auto& byte: qAsConst(array)) {
-        j.push_back(byte);
+        j.push_back(static_cast<uint8_t>(byte));
     }
 }
 
