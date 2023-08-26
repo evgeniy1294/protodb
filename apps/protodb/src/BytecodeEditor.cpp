@@ -204,7 +204,7 @@ void BytecodeEditor::createGui()
     auto verticalLayout = new QVBoxLayout();
         verticalLayout->addLayout(horizontalLayout);
         verticalLayout->addWidget(m_view);
-        verticalLayout->setMargin(0);
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(verticalLayout);
 }
