@@ -95,26 +95,28 @@ void LogWidget::createGui()
     m_clr_btn = new QPushButton();
         m_clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
         m_clr_btn->setToolTip("Clear log window");
+        m_clr_btn->setIconSize(QSize(16,16));
+        m_clr_btn->setFixedSize(28, 28);
 
     m_mode_btn = new QPushButton();
         m_mode_btn->setIcon(QIcon(":/icons/hex.svg"));
         m_mode_btn->setIconSize(QSize(24,24));
-        m_mode_btn->setFixedSize(32, 32);
+        m_mode_btn->setFixedSize(28, 28);
 
     m_run = new QPushButton();
         m_run->setIcon(QIcon(":/icons/run.svg"));
         m_run->setIconSize(QSize(24,24));
-        m_run->setFixedSize(32, 32);
+        m_run->setFixedSize(28, 28);
 
     m_cfg_btn = new QPushButton();
         m_cfg_btn->setIcon(QIcon(":/icons/settings_gear.svg"));
         m_cfg_btn->setIconSize(QSize(18,18));
-        m_cfg_btn->setFixedSize(32, 32);
+        m_cfg_btn->setFixedSize(28, 28);
 
     m_auto_scroll = new QPushButton();
         m_auto_scroll->setIcon(QIcon(":/icons/sort_down.svg"));
         m_auto_scroll->setIconSize(QSize(18,18));
-        m_auto_scroll->setFixedSize(32, 32);
+        m_auto_scroll->setFixedSize(28, 28);
         m_auto_scroll->setCheckable(true);
         m_auto_scroll->setChecked(true);
 
@@ -122,6 +124,7 @@ void LogWidget::createGui()
     m_find_le = new QLineEdit();
         m_find_le->setPlaceholderText(tr("Find message"));
         m_find_le->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+        m_find_le->setMinimumHeight(28);
 
     m_msg_le = new QLineEdit();
         m_msg_le->setPlaceholderText("Print your message");

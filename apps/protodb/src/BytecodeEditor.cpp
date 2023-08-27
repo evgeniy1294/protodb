@@ -14,7 +14,6 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 
-
 namespace protodb {
 
 class MenuProxyStyle final: public QProxyStyle
