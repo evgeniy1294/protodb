@@ -77,14 +77,20 @@ void SequenceTableWidget::createGui()
     m_add_btn = new QPushButton();
         m_add_btn->setIcon(QIcon(":/icons/add.svg"));
         m_add_btn->setToolTip("Add sequence");
+        m_add_btn->setIconSize(QSize(16,16));
+        m_add_btn->setFixedSize(28, 28);
 
     m_rm_btn = new QPushButton();
         m_rm_btn->setIcon(QIcon(":/icons/delete_minus.svg"));
         m_rm_btn->setToolTip("Delete selected");
+        m_rm_btn->setIconSize(QSize(16,16));
+        m_rm_btn->setFixedSize(28, 28);
 
     m_clr_btn = new QPushButton();
         m_clr_btn->setIcon(QIcon(":/icons/delete_cross.svg"));
         m_clr_btn->setToolTip("Delete all");
+        m_clr_btn->setIconSize(QSize(16,16));
+        m_clr_btn->setFixedSize(28, 28);
 
     // ---------[MENU]---------- //
     m_menu = new QMenu;
@@ -97,6 +103,7 @@ void SequenceTableWidget::createGui()
     m_search_line = new QLineEdit();
         m_search_line->setPlaceholderText(tr("Find sequence"));
         m_search_line->addAction(QIcon(":/icons/search.svg"), QLineEdit::TrailingPosition);
+        m_search_line->setMinimumHeight(28);
 
 
     // ---------[TABLE VIEW]---------- //
