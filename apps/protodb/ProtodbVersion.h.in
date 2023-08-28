@@ -1,0 +1,5 @@
+#pragma once
+
+#define PROTODB_VERSION_MAJOR @protodb_VERSION_MAJOR@
+#define PROTODB_VERSION_MINOR @protodb_VERSION_MINOR@
+#define PROTODB_VERSION_PATCH @protodb_VERSION_PATCH@

@@ -38,5 +38,9 @@
         <file alias="octal.svg">icons/octal.svg</file>
         <file alias="code.svg">icons/code.svg</file>
         <file alias="code_text.svg">icons/code_text.svg</file>
+        <file alias="four.svg">icons/four.svg</file>
+        <file alias="one.svg">icons/one.svg</file>
+        <file alias="eight.svg">icons/eigth.svg</file>
+        <file alias="two.svg">icons/two.svg</file>
     </qresource>
 </RCC>

@@ -8,6 +8,8 @@
 #include "MainClass.h"
 #include "CrcCalculator.h"
 
+#include "ProtodbVersion.h"
+
 #include <protodb/plugins/PluginManagerDialog.h>
 #include <protodb/sessions/SessionManagerGui.h>
 #include <protodb/utils/JsonUtils.h>
@@ -159,9 +161,13 @@ void MainWindow::connectSignals()
     connect(m_options, &QAction::triggered, m_config_dialog, &QDialog::show);
 
     connect(m_about, &QAction::triggered, this, []() {
+        static auto msg = QString("Protocol debugger v%1.%2.%3\n\nProtocol Debugger is powerful terminal software.\n"
+                                  "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
+
         QMessageBox box;
-        box.setText("Protocol debugger v1.0.3\n\nProtocol Debugger is powerful terminal software.\n"
-                    "(c)2021 Evgenii Fedoseev (evgeniy1294@yandex.ru)");
+        box.setText(msg.arg(QString::number(PROTODB_VERSION_MAJOR),
+                            QString::number(PROTODB_VERSION_MINOR),
+                            QString::number(PROTODB_VERSION_PATCH)));
         box.setIcon(QMessageBox::Icon::Information);
         box.exec();
     });

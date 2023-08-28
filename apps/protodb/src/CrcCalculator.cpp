@@ -69,9 +69,11 @@ void protodb::CrcCalculator::create_gui()
         m_layout->addWidget(m_ref_in, 0, 2, 1, 1);
         m_layout->addWidget(m_ref_out, 1, 2, 1, 1);
 
-        m_layout->addWidget(m_editor, 4, 0, 1, 3);
-        m_layout->addWidget(m_result, 5, 0, 1, 3);
-        m_layout->addWidget(m_calc_btn, 6, 0, 1, 3, Qt::AlignRight);
+        m_layout->addWidget(new QLabel(), 4, 2, 1, 1);
+
+        m_layout->addWidget(m_editor, 5, 0, 1, 3);
+        m_layout->addWidget(m_result, 6, 0, 1, 3);
+        m_layout->addWidget(m_calc_btn, 7, 0, 1, 3, Qt::AlignRight);
 
     setLayout(m_layout);
     setWindowModality(Qt::NonModal);

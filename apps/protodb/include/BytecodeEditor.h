@@ -40,6 +40,10 @@ public:
         ModeCount
     };
 
+    enum ColumnWidth {
+        One = 1, Two = 2, Four = 4, Eight = 8
+    };
+
     BytecodeEditor(QWidget* parent = nullptr);
    ~BytecodeEditor() = default;
 
@@ -48,6 +52,9 @@ public:
 
     void setDisplayMode(DisplayMode mode);
     DisplayMode displayMode() const;
+
+    void setColumnWidth(ColumnWidth width);
+    ColumnWidth columnWidth() const;
 
     void setData(const QByteArray& data);
     QByteArray currentData() const;
@@ -60,6 +67,7 @@ private:
 private:
     DisplayFormat m_format;
     DisplayMode m_mode;
+    ColumnWidth m_width;
 
     Okteta::PieceTableByteArrayModel* m_model;
     Okteta::ByteArrayColumnView* m_view;
@@ -70,6 +78,7 @@ private:
 
     QToolButton* m_format_btn;
     QToolButton* m_mode_btn;
+    QToolButton* m_width_btn;
 
     QAction* m_set_hexmode_act;
     QAction* m_set_decmode_act;
@@ -78,6 +87,10 @@ private:
     QAction* m_set_code_text_act;
     QAction* m_set_code_only_act;
     QAction* m_set_text_only_act;
+    QAction* m_set_width_1_act;
+    QAction* m_set_width_2_act;
+    QAction* m_set_width_4_act;
+    QAction* m_set_width_8_act;
 };
 
 

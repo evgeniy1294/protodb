@@ -39,6 +39,7 @@ BytecodeEditor::BytecodeEditor(QWidget* parent)
     : QWidget(parent)
     , m_format(HexFormat)
     , m_mode(CodePlusTextMode)
+    , m_width(ColumnWidth::Four)
 {
     m_model = new Okteta::PieceTableByteArrayModel(QByteArray(), this);
 
@@ -96,6 +97,33 @@ void BytecodeEditor::setDisplayMode(DisplayMode mode)
     m_mode = mode;
 }
 
+void BytecodeEditor::setColumnWidth(ColumnWidth width)
+{
+    if (width == ColumnWidth::One) {
+        m_width_btn->setDefaultAction(m_set_width_1_act);
+        m_view->setNoOfGroupedBytes(1);
+    }
+    else if (width == ColumnWidth::Two) {
+        m_width_btn->setDefaultAction(m_set_width_2_act);
+        m_view->setNoOfGroupedBytes(2);
+    }
+    else if (width == ColumnWidth::Four) {
+        m_width_btn->setDefaultAction(m_set_width_4_act);
+        m_view->setNoOfGroupedBytes(4);
+    }
+    else {
+        m_width_btn->setDefaultAction(m_set_width_8_act);
+        m_view->setNoOfGroupedBytes(8);
+    }
+
+    m_width = width;
+}
+
+BytecodeEditor::ColumnWidth BytecodeEditor::columnWidth() const
+{
+    return m_width;
+}
+
 BytecodeEditor::DisplayMode BytecodeEditor::displayMode() const
 {
     return m_mode;
@@ -147,6 +175,22 @@ void BytecodeEditor::createActions()
     m_set_text_only_act = new QAction(this);
         m_set_text_only_act->setIcon(QIcon(":/icons/ascii.svg"));
         m_set_text_only_act->setText(QObject::tr("Text only"));
+
+    m_set_width_1_act = new QAction(this);
+        m_set_width_1_act->setIcon(QIcon(":/icons/one.svg"));
+        m_set_width_1_act->setText(QObject::tr("Byte"));
+
+    m_set_width_2_act = new QAction(this);
+        m_set_width_2_act->setIcon(QIcon(":/icons/two.svg"));
+        m_set_width_2_act->setText(QObject::tr("Half word"));
+
+    m_set_width_4_act = new QAction(this);
+        m_set_width_4_act->setIcon(QIcon(":/icons/four.svg"));
+        m_set_width_4_act->setText(QObject::tr("Word"));
+
+    m_set_width_8_act = new QAction(this);
+        m_set_width_8_act->setIcon(QIcon(":/icons/eight.svg"));
+        m_set_width_8_act->setText(QObject::tr("Double word"));
 }
 
 void BytecodeEditor::createGui()
@@ -155,7 +199,7 @@ void BytecodeEditor::createGui()
         m_view->setByteArrayModel(m_model);
         m_view->setCharCoding("US-ASCII");
         m_view->setFrameShadow(QFrame::Raised);
-        m_view->setVisibleCodings(4);
+        m_view->setNoOfGroupedBytes(4);
         m_view->setLayoutStyle(Okteta::AbstractByteArrayView::WrapOnlyByteGroupsLayoutStyle);
         m_view->setVisibleCodings(Okteta::AbstractByteArrayView::ValueAndCharCodings);
         m_view->setValueCoding(Okteta::AbstractByteArrayView::HexadecimalCoding);
@@ -192,9 +236,22 @@ void BytecodeEditor::createGui()
         m_mode_btn->setMenu(mode_menu);
         m_mode_btn->setIconSize({18, 18});
 
+    auto width_menu = new QMenu(this);
+        width_menu->addAction(m_set_width_1_act);
+        width_menu->addAction(m_set_width_2_act);
+        width_menu->addAction(m_set_width_4_act);
+        width_menu->addAction(m_set_width_8_act);
+        width_menu->setStyle(menu_style);
+
+    m_width_btn = new QToolButton();
+        m_width_btn->setDefaultAction(m_set_width_4_act);
+        m_width_btn->setMenu(width_menu);
+        m_width_btn->setIconSize({18, 18});
+
     auto horizontalLayout = new QHBoxLayout();
         horizontalLayout->addWidget(m_format_btn);
         horizontalLayout->addWidget(m_mode_btn);
+        horizontalLayout->addWidget(m_width_btn);
         horizontalLayout->addWidget(m_codecs);
         horizontalLayout->addStretch();
         horizontalLayout->addWidget(m_counter_label);
@@ -271,6 +328,42 @@ void BytecodeEditor::connectSignals()
 
     connect(m_set_binmode_act, &QAction::triggered, this, [this]() {
         setDisplayFormat(BinaryFormat);
+    });
+
+
+    connect(m_width_btn, &QToolButton::clicked, this, [this]() {
+        switch(m_width) {
+        case ColumnWidth::One:
+            setColumnWidth(ColumnWidth::Two);
+            break;
+        case ColumnWidth::Two:
+            setColumnWidth(ColumnWidth::Four);
+            break;
+        case ColumnWidth::Four:
+            setColumnWidth(ColumnWidth::Eight);
+            break;
+        case ColumnWidth::Eight:
+            setColumnWidth(ColumnWidth::One);
+            break;
+        default:
+            return;
+        }
+    });
+
+    connect(m_set_width_1_act, &QAction::triggered, this, [this]() {
+        setColumnWidth(ColumnWidth::One);
+    });
+
+    connect(m_set_width_2_act, &QAction::triggered, this, [this]() {
+        setColumnWidth(ColumnWidth::Two);
+    });
+
+    connect(m_set_width_4_act, &QAction::triggered, this, [this]() {
+        setColumnWidth(ColumnWidth::Four);
+    });
+
+    connect(m_set_width_8_act, &QAction::triggered, this, [this]() {
+        setColumnWidth(ColumnWidth::Eight);
     });
 
     connect(m_view, &Okteta::ByteArrayColumnView::cursorPositionChanged, this, [this](Okteta::Address index) {

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
 set(TARGET protodb)
-set(${TARGET}_VERSION "1.0.3")
+set(${TARGET}_VERSION 1.0.4)
 
 project(${TARGET} VERSION ${${TARGET}_VERSION} LANGUAGES CXX)
 
@@ -88,8 +88,9 @@ set( WIN_RESOURCES
 )
 
 add_executable(${TARGET} WIN32)
+configure_file(ProtodbVersion.h.in ProtodbVersion.h)
 target_sources(${TARGET} PRIVATE ${SOURCES_LIST} ${HEADERS_LIST} ${WIN_RESOURCES})
-target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include "${PROJECT_BINARY_DIR}")
 
 # ------------ [ Depends ] ------------
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)

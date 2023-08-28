@@ -41,7 +41,7 @@ private:
     QLineEdit* m_plugin_location;
     QTextBrowser* m_plugin_descr;
     QPlainTextEdit* m_plugin_deps;
-    QPushButton* m_detail_btn;
+    //QPushButton* m_detail_btn;
 };
 
 } // namespace protodb
