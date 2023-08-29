@@ -1,0 +1,61 @@
+From 47ded6bf449558ada8cd430cd0c1f8a20e162be2 Mon Sep 17 00:00:00 2001
+From: Evgenii Fedoseev <evgeniy1294@yandex.ru>
+Date: Wed, 30 Aug 2023 01:28:13 +0300
+Subject: [PATCH] patch
+
+---
+ core/CMakeLists.txt | 6 +++---
+ gui/CMakeLists.txt  | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/core/CMakeLists.txt b/core/CMakeLists.txt
+index b2ba2e9..de6009e 100644
+--- a/core/CMakeLists.txt
++++ b/core/CMakeLists.txt
+@@ -236,8 +236,8 @@ if(${TARGET}_INSTALL)
+ 
+     install(TARGETS ${TARGET} EXPORT ${TARGET}
+         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
+-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
++        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/protodb"
++        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/protodb"
+     )
+ 
+     #---------------------------------------------------------------------------------------
+@@ -248,7 +248,7 @@ if(${TARGET}_INSTALL)
+     set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config.cmake")
+     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config_version.cmake")
+     set(config_targets_file "${TARGET}_config_targets.cmake")
+-    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}/cmake")
++    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/protodb/cmake")
+ 
+     install(EXPORT ${TARGET}
+             DESTINATION ${export_dest_dir}
+diff --git a/gui/CMakeLists.txt b/gui/CMakeLists.txt
+index 47ab3cf..b4b3e6d 100644
+--- a/gui/CMakeLists.txt
++++ b/gui/CMakeLists.txt
+@@ -286,8 +286,8 @@ if(${TARGET}_INSTALL)
+ 
+     install(TARGETS ${TARGET} EXPORT ${TARGET}
+         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
+-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}"
++        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/protodb"
++        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/protodb"
+     )
+ 
+     #---------------------------------------------------------------------------------------
+@@ -298,7 +298,7 @@ if(${TARGET}_INSTALL)
+     set(project_config_out  "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config.cmake")
+     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_config_version.cmake")
+     set(config_targets_file "${TARGET}_config_targets.cmake")
+-    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}/cmake")
++    set(export_dest_dir     "${CMAKE_INSTALL_LIBDIR}/protodb/cmake")
+ 
+     install(EXPORT ${TARGET}
+             DESTINATION ${export_dest_dir}
+-- 
+2.41.0
+

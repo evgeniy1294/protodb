@@ -17,7 +17,7 @@ ExternalProject_Add(okteta
     SOURCE_DIR "${CMAKE_BINARY_DIR}/okteta_src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/okteta_build"
     UPDATE_COMMAND ""
-    PATCH_COMMAND ""
+    PATCH_COMMAND git apply "${CMAKE_SOURCE_DIR}/patches/okteta.patch"
     CONFIGURE_COMMAND ""
     CMAKE_ARGS ""
     BUILD_COMMAND ""
