@@ -210,6 +210,8 @@ void BytecodeEditor::createGui()
     m_codecs = new QComboBox();
         m_codecs->addItems(Okteta::CharCodec::codecNames());
         m_codecs->setCurrentText(m_view->charCodingName());
+        m_codecs->setMaxVisibleItems(10);
+        m_codecs->setStyleSheet("combobox-popup: 0;");
 
     auto menu_style = new MenuProxyStyle(QApplication::style());
 

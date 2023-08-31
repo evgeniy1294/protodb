@@ -1,5 +1,5 @@
 pkgname=protodb-qt5
-pkgver=1.0.2
+pkgver=1.0.4
 pkgrel=1
 pkgdesc="A graphical software for reverse engineering and debugging protocols"
 arch=('x86_64')
