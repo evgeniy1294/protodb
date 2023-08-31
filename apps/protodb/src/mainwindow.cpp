@@ -98,6 +98,7 @@ void MainWindow::createDock()
 void MainWindow::createActions()
 {
     m_show_crc_calc = new QAction(QIcon(":/icons/crc.svg"), tr("&CRC calculator"), this);
+        m_show_crc_calc->setIconVisibleInMenu(false);
     m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
     m_options = new QAction(QIcon(), tr("&Options..."), this);
@@ -106,11 +107,11 @@ void MainWindow::createActions()
     m_export_tables = new QAction(tr("&Export tables"), this);
     m_import_log    = new QAction(tr("&Import log"), this);
     m_export_log    = new QAction(tr("&Export log"), this);
-    m_plugins = new QAction(QIcon(":/icons/plugin.svg"), tr("&Plugins..."), this);
+    m_plugins = new QAction(tr("&Plugins..."), this);
     m_about = new QAction(tr("&About"), this);
     m_about_qt = new QAction(tr("&About Qt"), this);
     m_help_content = new QAction(tr("&Help"), this);
-    m_exit = new QAction(QIcon(":/icons/close.svg"), tr("&Exit"), this);
+    m_exit = new QAction(tr("&Exit"), this);
 }
 
 

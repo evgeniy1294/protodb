@@ -7,6 +7,8 @@
 #include "LogDecorator.h"
 #include "MainClass.h"
 
+#include <Okteta/ByteArrayColumnView.hpp>
+#include <Okteta/PieceTableByteArrayModel.hpp>
 #include <nlohmann/json.hpp>
 
 #include <QApplication>
@@ -129,6 +131,7 @@ void LogWidget::createGui()
     m_msg_le = new QLineEdit();
         m_msg_le->setPlaceholderText("Print your message");
         m_msg_le->installEventFilter(this);
+        m_msg_le->setMinimumHeight(28);
 
 
     // ---------[COMBO BOX]---------- //
@@ -138,6 +141,7 @@ void LogWidget::createGui()
         m_data_format_cmb->addItem("CR",    Ascii_CR_Format);
         m_data_format_cmb->addItem("CR/LF", Ascii_CRLF_Format);
         m_data_format_cmb->addItem("None",  Ascii_None_Format);
+        m_data_format_cmb->setMinimumHeight(28);
 
     // ---------[LAYOUT]---------- //
     auto top_layout = new QHBoxLayout();

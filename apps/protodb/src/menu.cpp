@@ -1,4 +1,5 @@
 #include "menu.h"
+
 #include <QMouseEvent>
 
 using namespace protodb;
