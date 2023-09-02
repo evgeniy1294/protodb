@@ -4,8 +4,8 @@
 
 #include <protodb/utils/crc_logic.h>
 
-class QLineEdit;
 class QCheckBox;
+class QLineEdit;
 class QSpinBox;
 class QPlainTextEdit;
 class QPushButton;
@@ -13,6 +13,7 @@ class QPushButton;
 namespace protodb {
 
 class BytecodeEditor;
+class FilteredComboBox;
 
 class CrcCalculator: public QWidget
 {
@@ -21,6 +22,8 @@ class CrcCalculator: public QWidget
 public:
     CrcCalculator(QWidget* parent = nullptr);
    ~CrcCalculator() = default;
+
+    void setModel(CrcModel& model);
 
 private:
     void create_gui();
@@ -34,6 +37,7 @@ private:
 
     BytecodeEditor* m_editor;
 
+    FilteredComboBox* m_model_sel;
     QSpinBox*  m_width;
     QLineEdit* m_poly;
     QLineEdit* m_init;
@@ -42,6 +46,7 @@ private:
     QCheckBox* m_ref_in;
     QCheckBox* m_ref_out;
     QPushButton* m_calc_btn;
+    QPushButton* m_set_model_btn;
 };
 
 } // namespace protodb

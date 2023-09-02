@@ -2,10 +2,15 @@
 
 #include <protodb/export/base_cfg.hpp>
 
+#include <QStringList>
+#include <QMap>
+
 #include <cstdint>
 #include <array>
 #include <variant>
 #include <limits>
+
+class QString;
 
 namespace protodb {
 
@@ -28,10 +33,14 @@ public:
 
 public:
     CrcLogic();
-    CrcLogic(const CrcModel& a_model);
+    CrcLogic(const CrcModel& model);
+    CrcLogic(const QString& model);
 
     CrcModel model();
-    bool setModel(const CrcModel& a_model);
+    bool setModel(const CrcModel& model);
+    bool setModel(const QString& model);
+
+    static QStringList standartModels();
 
     void setWidth(std::size_t width);
     void setPoly(Crc poly);
@@ -56,10 +65,14 @@ private:
     bool m_ref_out;
 
 private:
+    void calculateTable();
+    void initStandartModels();
+
+private:
     std::array< Crc, k_table_size > m_table;
     Crc m_crc;
 
-    void calculateTable();
+    static QMap<QString, CrcModel> m_models;
 };
 
 }  // namespace ant::api

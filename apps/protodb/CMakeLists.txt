@@ -45,6 +45,7 @@ set(SOURCES_LIST
     src/DelimetersConfigWidget.cpp
     src/Delimeter.cpp
     src/CrcCalculator.cpp
+    src/FilteredComboBox.cpp
 )
 
 set(HEADERS_LIST
@@ -81,6 +82,7 @@ set(HEADERS_LIST
     include/DelimetersConfigWidget.h
     include/Delimeter.h
     include/CrcCalculator.h
+    include/FilteredComboBox.h
 )
 
 set( WIN_RESOURCES

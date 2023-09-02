@@ -1,5 +1,6 @@
 #include "CrcCalculator.h"
 #include "BytecodeEditor.h"
+#include "FilteredComboBox.h"
 
 #include <QSpinBox>
 #include <QCheckBox>
@@ -10,7 +11,6 @@
 #include <QGridLayout>
 #include <QApplication>
 
-
 protodb::CrcCalculator::CrcCalculator(QWidget* parent)
 {
     create_gui();
@@ -20,6 +20,11 @@ protodb::CrcCalculator::CrcCalculator(QWidget* parent)
 void protodb::CrcCalculator::create_gui()
 {
     setWindowTitle(tr("CRC Calculator"));
+
+    m_set_model_btn = new QPushButton(tr("Set"));
+
+    m_model_sel = new FilteredComboBox();
+        m_model_sel->addItems(CrcLogic::standartModels());
 
     m_width = new QSpinBox();
         m_width->setMinimum(3);
@@ -55,25 +60,29 @@ void protodb::CrcCalculator::create_gui()
     m_editor = new BytecodeEditor();
 
     auto m_layout = new QGridLayout();
-        m_layout->addWidget(new QLabel(tr("Width:")), 0, 0, 1, 1);
-        m_layout->addWidget(m_width, 0, 1, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Models:")), 0, 0, 1, 1);
+        m_layout->addWidget(m_model_sel, 0, 1, 1, 1);
+        m_layout->addWidget(m_set_model_btn, 0, 2, 1, 1);
 
-        m_layout->addWidget(new QLabel(tr("Polynomial:")), 1, 0, 1, 1);
-        m_layout->addWidget(m_poly, 1, 1, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Width:")), 1, 0, 1, 1);
+        m_layout->addWidget(m_width, 1, 1, 1, 1);
 
-        m_layout->addWidget(new QLabel(tr("Seed:")), 2, 0, 1, 1);
-        m_layout->addWidget(m_init, 2, 1, 1, 1);
-        m_layout->addWidget(new QLabel(tr("XOR out:")), 3, 0, 1, 1);
-        m_layout->addWidget(m_xor_out, 3, 1, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Polynomial:")), 2, 0, 1, 1);
+        m_layout->addWidget(m_poly, 2, 1, 1, 1);
 
-        m_layout->addWidget(m_ref_in, 0, 2, 1, 1);
-        m_layout->addWidget(m_ref_out, 1, 2, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Seed:")), 3, 0, 1, 1);
+        m_layout->addWidget(m_init, 3, 1, 1, 1);
+        m_layout->addWidget(new QLabel(tr("XOR out:")), 4, 0, 1, 1);
+        m_layout->addWidget(m_xor_out, 4, 1, 1, 1);
 
-        m_layout->addWidget(new QLabel(), 4, 2, 1, 1);
+        m_layout->addWidget(m_ref_in, 1, 2, 1, 1);
+        m_layout->addWidget(m_ref_out, 2, 2, 1, 1);
 
-        m_layout->addWidget(m_editor, 5, 0, 1, 3);
-        m_layout->addWidget(m_result, 6, 0, 1, 3);
-        m_layout->addWidget(m_calc_btn, 7, 0, 1, 3, Qt::AlignRight);
+        m_layout->addWidget(new QLabel(), 5, 2, 1, 1);
+
+        m_layout->addWidget(m_editor, 6, 0, 1, 3);
+        m_layout->addWidget(m_result, 7, 0, 1, 3);
+        m_layout->addWidget(m_calc_btn, 8, 0, 1, 3, Qt::AlignRight);
 
     setLayout(m_layout);
     setWindowModality(Qt::NonModal);
@@ -83,6 +92,20 @@ void protodb::CrcCalculator::create_gui()
 void protodb::CrcCalculator::connect_signals()
 {
     connect(m_calc_btn, &QPushButton::clicked, this, &CrcCalculator::calculate);
+    connect(m_set_model_btn, &QPushButton::clicked, this, [this]() {
+        auto name = m_model_sel->currentText();
+        if (CrcLogic::standartModels().contains(name)) {
+            m_crc.setModel(name);
+
+            auto model = m_crc.model();
+            m_width->setValue(model.width);
+            m_poly->setText(QString("0x%1").arg(QString::number(model.poly, 16)));
+            m_init->setText(QString("0x%1").arg(QString::number(model.seed, 16)));
+            m_xor_out->setText(QString("0x%1").arg(QString::number(model.xor_out, 16)));
+            m_ref_in->setChecked(model.ref_in);
+            m_ref_out->setChecked(model.ref_out);
+        }
+    });
 }
 
 void protodb::CrcCalculator::calculate()

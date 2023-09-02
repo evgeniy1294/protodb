@@ -2,6 +2,8 @@
 
 using namespace protodb;
 
+QMap<QString, CrcModel> CrcLogic::m_models;
+
 static Crc Reflect ( Crc x, std::size_t bits )
 {
     Crc reflection = 0;
@@ -19,18 +21,25 @@ static Crc Reflect ( Crc x, std::size_t bits )
 
 CrcLogic::CrcLogic()
     : m_table_inited(false)
-    , m_width(32)
-    , m_poly()
-    , m_seed()
-    , m_xor_out()
-    , m_ref_in(false)
-    , m_ref_out(false)
+    , m_width(16)
+    , m_poly(0x8005)
+    , m_seed(0xFFFF)
+    , m_xor_out(0x0)
+    , m_ref_in(true)
+    , m_ref_out(true)
 {
-
+    initStandartModels();
 }
 
 CrcLogic::CrcLogic(const CrcModel& model)
 {
+    initStandartModels();
+    setModel(model);
+}
+
+CrcLogic::CrcLogic(const QString& model)
+{
+    initStandartModels();
     setModel(model);
 }
 
@@ -43,7 +52,7 @@ bool CrcLogic::setModel(const CrcModel& model)
 {
     bool ret = false;
 
-    if (model.width > k_min_poly_size && model.width < k_max_poly_size) {
+    if (model.width >= k_min_poly_size && model.width <= k_max_poly_size) {
         m_width       = model.width;
         m_poly        = model.poly;
         m_seed        = model.seed;
@@ -58,6 +67,20 @@ bool CrcLogic::setModel(const CrcModel& model)
     }
 
     return ret;
+}
+
+bool CrcLogic::setModel(const QString& model)
+{
+    if (m_models.contains(model)) {
+        return setModel(m_models[model]);
+    }
+
+    return false;
+}
+
+QStringList CrcLogic::standartModels()
+{
+    return m_models.keys();
 }
 
 void CrcLogic::setWidth(std::size_t width)
@@ -206,6 +229,89 @@ void CrcLogic::calculateTable() {
     }
 
     m_table_inited = true;
+}
+
+void CrcLogic::initStandartModels()
+{
+    static bool inited = false;
+
+    if (!inited) {
+        m_models["CRC64 WE"]          = CrcModel{64, 0x42F0E1EBA9EA3693, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, true, true};
+        m_models["CRC64 XZ"]          = CrcModel{64, 0x42F0E1EBA9EA3693, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, false, false};
+        m_models["CRC64"]             = CrcModel{64, 0x42F0E1EBA9EA3693, 0, 0, false, false};
+        m_models["CRC40 GSM"]         = CrcModel{40, 0x4820009, 0, 0xFFFFFFFFFF, false, false};
+        m_models["CRC32 XFER"]        = CrcModel{32, 0xAF, 0, 0, false, false};
+        m_models["CRC32 JAMCRC"]      = CrcModel{32, 0x04C11DB7, 0xFFFFFFFF, 0, true, true};
+        m_models["CRC32 Q"]           = CrcModel{32, 0x814141AB, 0, 0, false, false};
+        m_models["CRC32 POSIX"]       = CrcModel{32, 0x04C11DB7, 0, 0xFFFFFFFF, false, false};
+        m_models["CRC32 MPEG-2"]      = CrcModel{32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false};
+        m_models["CRC32 D"]           = CrcModel{32, 0xA833982B, 0xFFFFFFFF, 0xFFFFFFFF, true, true};
+        m_models["CRC32 C"]           = CrcModel{32, 0x1EDC6F41, 0xFFFFFFFF, 0xFFFFFFFF, true, true};
+        m_models["CRC32 BZIP2"]       = CrcModel{32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, false, false};
+        m_models["CRC32 ZLIB"]        = CrcModel{32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true};
+        m_models["CRC31 PHILIPS"]     = CrcModel{31, 0x04C11DB7, 0x7FFFFFFF, 0x7FFFFFFF, false, false};
+        m_models["CRC24 FLEXRAY-A"]   = CrcModel{24, 0x5D6DCB, 0xFEDCBA, 0, false, false};
+        m_models["CRC24 FLEXRAY-B"]   = CrcModel{24, 0x5D6DCB, 0xABCDEF, 0, false, false};
+        m_models["CRC24"]             = CrcModel{24, 0x864CFB, 0xB704CE, 0, false, false};
+        m_models["CRC16 XMODEM"]      = CrcModel{16, 0x1021, 0, 0, false, false};
+        m_models["CRC16 X-25"]        = CrcModel{16, 0x1021, 0xFFFF, 0xFFFF, true, true};
+        m_models["CRC16 MODBUS"]      = CrcModel{16, 0x8005, 0xFFFF, 0, true, true};
+        m_models["CRC16 KERMIT"]      = CrcModel{16, 0x1021, 0, 0, true, true};
+        m_models["CRC-A"]             = CrcModel{16, 0x1021, 0xC6C6, 0, true, true};
+        m_models["CRC16 USB"]         = CrcModel{16, 0x8005, 0xFFFF, 0xFFFF, true, true};
+        m_models["CRC16 TMS37157"]    = CrcModel{16, 0x1021, 0x89EC, 0, true, true};
+        m_models["CRC16 TELEDISK"]    = CrcModel{16, 0xA097, 0, 0, false, false};
+        m_models["CRC16 T10-DIF"]     = CrcModel{16, 0x8BB7, 0, 0, false, false};
+        m_models["CRC16 RIELLO"]      = CrcModel{16, 0x1021, 0xB2AA, 0, true, true};
+        m_models["CRC16 MCRF4XX"]     = CrcModel{16, 0x1021, 0xFFFF, 0, true, true};
+        m_models["CRC16 MAXIM"]       = CrcModel{16, 0x8005, 0, 0xFFFF, true, true};
+        m_models["CRC16 GENIBUS"]     = CrcModel{16, 0x1021, 0xFFFF, 0xFFFF, false, false};
+        m_models["CRC16 EN-13757"]    = CrcModel{16, 0x3D65, 0, 0xFFFF, false, false};
+        m_models["CRC16 DNP"]         = CrcModel{16, 0x3D65, 0, 0xFFFF, true, true};
+        m_models["CRC16 DECT-X"]      = CrcModel{16, 0x0589, 0, 0, false, false};
+        m_models["CRC16 DECT-R"]      = CrcModel{16, 0x0589, 0, 0x1, false, false};
+        m_models["CRC16 DDS-110"]     = CrcModel{16, 0x8005, 0x800D, 0, false, false};
+        m_models["CRC16 CDMA2000"]    = CrcModel{16, 0xC867, 0xFFFF, 0, false, false};
+        m_models["CRC16 CCITT-FALSE"] = CrcModel{16, 0x1021, 0xFFFF, 0, false, false};
+        m_models["CRC16 BUYPASS"]     = CrcModel{16, 0x8005, 0, 0, false, false};
+        m_models["CRC16 AUG-CCITT"]   = CrcModel{16, 0x1021, 0x1D0F, 0, false, false};
+        m_models["CRC16 ARC"]         = CrcModel{16, 0x8005, 0, 0, true, true};
+        m_models["CRC15 MPT1327"]     = CrcModel{15, 0x6815, 0, 0x1, false, false};
+        m_models["CRC15"]             = CrcModel{15, 0x4599, 0, 0, false, false};
+        m_models["CRC14 DARC"]        = CrcModel{14, 0x805, 0, 0, true, true};
+        m_models["CRC13 BBC"]         = CrcModel{13, 0x1CF5, 0, 0, false, false};
+        m_models["CRC12 DECT"]        = CrcModel{12, 0x80F, 0, 0, false, false};
+        m_models["CRC12 CDMA2000"]    = CrcModel{12, 0xF13, 0xFFF, 0, false, false};
+        m_models["CRC12 3GPP"]        = CrcModel{12, 0x80F, 0, 0, false, true};
+        m_models["CRC11"]             = CrcModel{11, 0x385, 0x1A, 0, false, false};
+        m_models["CRC10 CDMA2000"]    = CrcModel{10, 0x3D9, 0x3FF, 0, false, false};
+        m_models["CRC10"]             = CrcModel{10, 0x233, 0, 0, false, false};
+        m_models["CRC8 WCDMA"]        = CrcModel{8, 0x9B, 0, 0, true, true};
+        m_models["CRC8 ROHC"]         = CrcModel{8, 0x7, 0xFF, 0, true, true};
+        m_models["CRC8 MAXIM"]        = CrcModel{8, 0x31, 0, 0, true, true};
+        m_models["CRC8 ITU"]          = CrcModel{8, 0x7, 0, 0x55, false, false};
+        m_models["CRC8 I-CODE"]       = CrcModel{8, 0x1D, 0xFD, 0, false, false};
+        m_models["CRC8 EBU"]          = CrcModel{8, 0x1D, 0xFF, 0, true, true};
+        m_models["CRC8 DVB-S2"]       = CrcModel{8, 0xD5, 0, 0, false, false};
+        m_models["CRC8 DARC"]         = CrcModel{8, 0x39, 0, 0, true, true};
+        m_models["CRC8 CDMA2000"]     = CrcModel{8, 0x9B, 0xFF, 0, false, false};
+        m_models["CRC8"]              = CrcModel{8, 0x7, 0, 0, false, false};
+        m_models["CRC7 ROHC"]         = CrcModel{7, 0x4F, 0x7F, 0, true, true};
+        m_models["CRC7"]              = CrcModel{7, 0x9, 0, 0, false, false};
+        m_models["CRC6 ITU"]          = CrcModel{6, 0x3, 0, 0, true, true};
+        m_models["CRC6 DARC"]         = CrcModel{6, 0x19, 0, 0, true, true};
+        m_models["CRC6 CDMA2000-A"]   = CrcModel{6, 0x27, 0x3F, 0, false, false};
+        m_models["CRC6 CDMA2000-B"]   = CrcModel{6, 0x7, 0x3F, 0, false, false};
+        m_models["CRC5 USB"]          = CrcModel{5, 0x5, 0x1F, 0x1F, true, true};
+        m_models["CRC5 ITU"]          = CrcModel{5, 0x15, 0, 0, true, true};
+        m_models["CRC5 EPC"]          = CrcModel{5, 0x9, 0x9, 0, false, false};
+        m_models["CRC4 ITU"]          = CrcModel{4, 0x3, 0x0, 0, true, true};
+        m_models["CRC3 ROHC"]         = CrcModel{3, 0x3, 0x7, 0, true, true};
+
+        inited = true;
+    }
+
+    return;
 }
 
 
