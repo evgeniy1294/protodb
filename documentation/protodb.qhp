@@ -9,7 +9,6 @@
                     <section title="Сеанс" ref="content/seance.html">
                         <section title="Настройка сеанса" ref="content/seance_config.html"/>
                         <section title="Лог" ref="content/log.html"/>
-                        <section title="Делиметры" ref="content/delimeters.html"/>
                     </section>
                     <section title="Таблицы последовательностей" ref="content/tables.html"/>
                 </section>
