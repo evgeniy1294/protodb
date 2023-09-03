@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="12.7124mm"
+   height="12.68811mm"
+   viewBox="0 0 12.712401 12.68811"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="delete_cross.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="11.056441"
+     inkscape:cx="-1.9445679"
+     inkscape:cy="22.927812"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showguides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid896"
+       originx="-310.47855"
+       originy="-228.77374" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient7768"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop7766" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       id="SVGID_1_"
+       x1="256"
+       x2="256"
+       y1="512"
+       y2="-9.094947e-13"
+       gradientTransform="matrix(0.27163778,0,0,0.27960838,30.857492,67.779025)">
+      <stop
+         offset="0"
+         style="stop-color:#E73827"
+         id="stop2" />
+      <stop
+         offset="1"
+         style="stop-color:#F85032"
+         id="stop4" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-310.47853,-228.77375)">
+    <path
+       id="path1278"
+       style="display:inline;fill:#d40000;fill-rule:evenodd;stroke-width:1.06669"
+       d="M 24.023438 0 A 24.023812 23.977387 0 0 0 0 23.976562 A 24.023812 23.977387 0 0 0 24.023438 47.955078 A 24.023812 23.977387 0 0 0 48.046875 23.976562 A 24.023812 23.977387 0 0 0 24.023438 0 z M 17.216797 13.787109 L 24.019531 20.589844 L 30.802734 13.806641 L 34.205078 17.207031 L 27.419922 23.992188 L 34.222656 30.794922 L 30.830078 34.1875 L 24.027344 27.384766 L 17.244141 34.169922 L 13.841797 30.767578 L 20.626953 23.982422 L 13.824219 17.179688 L 17.216797 13.787109 z "
+       transform="matrix(0.26458333,0,0,0.26458333,310.47853,228.77375)" />
+  </g>
+</svg>
