@@ -15,15 +15,18 @@ namespace protodb {
 class BytecodeEditor;
 class FilteredComboBox;
 
-class CrcCalculator: public QWidget
+class ChecksumCalculator: public QWidget
 {
     Q_OBJECT
 
 public:
-    CrcCalculator(QWidget* parent = nullptr);
-   ~CrcCalculator() = default;
+    ChecksumCalculator(QWidget* parent = nullptr);
+   ~ChecksumCalculator() = default;
 
     void setModel(CrcModel& model);
+    void setModel(QString& name);
+
+    void setData(const QByteArray& data, bool calculate = false);
 
 private:
     void create_gui();

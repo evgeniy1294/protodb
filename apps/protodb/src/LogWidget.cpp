@@ -277,6 +277,10 @@ void LogWidget::createConnections()
     });
 
     connect(&MainClass::instance(), &MainClass::sStartFailed, m_conn_dialog, &QWidget::show);
+
+    connect(m_view, &LogTableView::sCalculateChecksum, this, [this](const QByteArray& bytes) {
+        emit sCalculateCrc(bytes);
+    });
 }
 
 bool LogWidget::event(QEvent *e)

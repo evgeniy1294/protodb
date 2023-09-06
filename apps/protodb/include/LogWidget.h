@@ -32,6 +32,7 @@ public:
 
 signals:
     void sByteFormatChanged(LogFormatter::ByteFormat format);
+    void sCalculateCrc(QByteArray bytes);
 
 private:
     void createGui();

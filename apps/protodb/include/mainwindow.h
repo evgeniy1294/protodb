@@ -18,7 +18,8 @@ namespace protodb {
 class PluginManagerDialog;
 class SessionManagerGui;
 class ProtodbConfigDialog;
-class CrcCalculator;
+class ChecksumCalculator;
+class LogWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -60,10 +61,11 @@ private:
     isa_tool_bar* m_toolbar;
     ads::CDockManager* m_dock_man;
 
+    LogWidget* m_log_widget;
     PluginManagerDialog* m_plugin_manager_dialog;
     SessionManagerGui* m_session_manager_dialog;
     ProtodbConfigDialog* m_config_dialog;
-    CrcCalculator* m_crc_calc;
+    ChecksumCalculator* m_crc_calc;
 };
 
 } // namespace protodb

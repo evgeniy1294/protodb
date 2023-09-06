@@ -32,6 +32,9 @@ public:
 public slots:
     void reset() override;
 
+signals:
+    void sCalculateChecksum(QByteArray bytes);
+
 private:
     void createMenu();
     void createActions();
@@ -47,6 +50,7 @@ private:
     QAction* m_copy_message;
     QAction* m_copy_as_bytes;
     QAction* m_copy_as_string;
+    QAction* m_calculate_crc;
     QAction* m_add_to_analyzer;
     QAction* m_options;
 

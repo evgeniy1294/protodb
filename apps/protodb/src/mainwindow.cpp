@@ -56,7 +56,7 @@ void MainWindow::createGui()
 
     setCentralWidget(central_widget);
 
-    m_crc_calc = new CrcCalculator(this);
+    m_crc_calc = new ChecksumCalculator(this);
         m_crc_calc->setWindowFlags(Qt::WindowStaysOnTopHint);
     m_config_dialog = new ProtodbConfigDialog(this);
     m_plugin_manager_dialog = new PluginManagerDialog(this);
@@ -69,9 +69,11 @@ void MainWindow::createDock()
     ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);
     ads::CDockManager::setConfigFlag(ads::CDockManager::AlwaysShowTabs, true);
 
+    m_log_widget = new LogWidget();
+
     auto seance_widget = new ads::CDockWidget("Seance");
         seance_widget->setObjectName("SeanceWidget");
-        seance_widget->setWidget(new LogWidget());
+        seance_widget->setWidget(m_log_widget);
 
         m_wgt_menu->addAction(seance_widget->toggleViewAction());
 
@@ -99,6 +101,7 @@ void MainWindow::createActions()
 {
     m_show_crc_calc = new QAction(QIcon(":/icons/crc.svg"), tr("&CRC calculator"), this);
         m_show_crc_calc->setIconVisibleInMenu(false);
+
     m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
     m_options = new QAction(QIcon(), tr("&Options..."), this);
@@ -260,6 +263,11 @@ void MainWindow::connectSignals()
     connect(&MainClass::instance(), &MainClass::sStopted, this, [this]() {
         auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
         seance_widget->setWindowTitle(QString("Seance"));
+    });
+
+    connect(m_log_widget, &LogWidget::sCalculateCrc, this, [this](const QByteArray& bytes) {
+        m_crc_calc->setData(bytes, true);
+        m_crc_calc->show();
     });
 }
 

@@ -11,13 +11,47 @@
 #include <QGridLayout>
 #include <QApplication>
 
-protodb::CrcCalculator::CrcCalculator(QWidget* parent)
+protodb::ChecksumCalculator::ChecksumCalculator(QWidget* parent)
 {
     create_gui();
     connect_signals();
 }
 
-void protodb::CrcCalculator::create_gui()
+void protodb::ChecksumCalculator::setModel(CrcModel& model)
+{
+    if (m_crc.setModel(model)) {
+        m_width->setValue(model.width);
+        m_poly->setText(QString("0x%1").arg(QString::number(model.poly, 16)));
+        m_init->setText(QString("0x%1").arg(QString::number(model.seed, 16)));
+        m_xor_out->setText(QString("0x%1").arg(QString::number(model.xor_out, 16)));
+        m_ref_in->setChecked(model.ref_in);
+        m_ref_out->setChecked(model.ref_out);
+    }
+}
+
+void protodb::ChecksumCalculator::setModel(QString& model)
+{
+    if (m_crc.setModel(model)) {
+        auto model = m_crc.model();
+
+        m_width->setValue(model.width);
+        m_poly->setText(QString("0x%1").arg(QString::number(model.poly, 16)));
+        m_init->setText(QString("0x%1").arg(QString::number(model.seed, 16)));
+        m_xor_out->setText(QString("0x%1").arg(QString::number(model.xor_out, 16)));
+        m_ref_in->setChecked(model.ref_in);
+        m_ref_out->setChecked(model.ref_out);
+    }
+}
+
+void protodb::ChecksumCalculator::setData(const QByteArray& data, bool calculate)
+{
+    m_editor->setData(data);
+    if (calculate) {
+        this->calculate();
+    }
+}
+
+void protodb::ChecksumCalculator::create_gui()
 {
     setWindowTitle(tr("CRC Calculator"));
 
@@ -89,26 +123,18 @@ void protodb::CrcCalculator::create_gui()
     resize(640, 480);
 }
 
-void protodb::CrcCalculator::connect_signals()
+void protodb::ChecksumCalculator::connect_signals()
 {
-    connect(m_calc_btn, &QPushButton::clicked, this, &CrcCalculator::calculate);
+    connect(m_calc_btn, &QPushButton::clicked, this, &ChecksumCalculator::calculate);
     connect(m_set_model_btn, &QPushButton::clicked, this, [this]() {
         auto name = m_model_sel->currentText();
         if (CrcLogic::standartModels().contains(name)) {
-            m_crc.setModel(name);
-
-            auto model = m_crc.model();
-            m_width->setValue(model.width);
-            m_poly->setText(QString("0x%1").arg(QString::number(model.poly, 16)));
-            m_init->setText(QString("0x%1").arg(QString::number(model.seed, 16)));
-            m_xor_out->setText(QString("0x%1").arg(QString::number(model.xor_out, 16)));
-            m_ref_in->setChecked(model.ref_in);
-            m_ref_out->setChecked(model.ref_out);
+            setModel(name);
         }
     });
 }
 
-void protodb::CrcCalculator::calculate()
+void protodb::ChecksumCalculator::calculate()
 {
     auto palette = QApplication::palette();
         palette.setColor(QPalette::Base, QColor(0xffcece));
@@ -159,7 +185,7 @@ void protodb::CrcCalculator::calculate()
     if (!fail) {
         m_crc.calculate(reinterpret_cast<uint8_t*>(bytes.data()),
                         reinterpret_cast<uint8_t*>(bytes.end()));
-        m_result->setText(QString::number(m_crc.finalize(), 16));
+        m_result->setText(QString("0x%1").arg(QString::number(m_crc.finalize(), 16)));
     }
 
     return;
