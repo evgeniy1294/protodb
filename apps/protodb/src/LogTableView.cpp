@@ -188,7 +188,7 @@ void LogTableView::createActions()
     m_copy_message = new QAction(tr("Copy message"));
     m_copy_as_bytes = new QAction(QIcon(":/icons/hex.svg"), tr("Copy as HEX string"));
     m_copy_as_string = new QAction(QIcon(":/icons/ascii.svg"), tr("Copy as ASCII text"));
-    m_calculate_crc = new QAction(tr("Calculate checksum"));
+    m_calculate_crc = new QAction(QIcon(":/icons/crc.svg"), tr("Calculate checksum"));
     m_add_to_analyzer = new QAction(tr("Add to Analyzer"));
     m_options = new QAction(tr("Options"));
 }
