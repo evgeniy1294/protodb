@@ -56,7 +56,6 @@ private:
     QAction* m_help_content;
     QAction* m_sessions;
     QAction* m_exit;
-    QAction* m_show_crc_calc;
     QMenu*   m_wgt_menu;
     isa_tool_bar* m_toolbar;
     ads::CDockManager* m_dock_man;
