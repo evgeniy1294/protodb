@@ -1,4 +1,5 @@
 #include "utils/JsonBaseUtils.h"
+#include "utils/crc_logic.h"
 
 #include <nlohmann/json.hpp>
 
@@ -176,3 +177,27 @@ void from_json(const nlohmann::json& j, QByteArray& array)
         array[i] = j[i].get<std::uint8_t>();
     }
 }
+
+namespace protodb {
+
+void from_json(const nlohmann::json& j, CrcModel& model)
+{
+    model.width   = j.value("Width", 16);
+    model.poly    = j.value("Poly", uint64_t(0x8005u));
+    model.seed    = j.value("Seed", uint64_t(0xffffu));
+    model.xor_out = j.value("XorOut", uint64_t(0x0000u));
+    model.ref_in  = j.value("ReflectIn", true);
+    model.ref_out = j.value("ReflectOut", true);
+}
+
+void to_json(nlohmann::json& j, const CrcModel& model)
+{
+    j["Width"]      = model.width;
+    j["Poly"]       = model.poly;
+    j["Seed"]       = model.seed;
+    j["XorOut"]     = model.xor_out;
+    j["ReflectIn"]  = model.ref_in;
+    j["ReflectOut"] = model.ref_out;
+}
+
+} // namespace protodb

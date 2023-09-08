@@ -36,7 +36,7 @@ public:
     CrcLogic(const CrcModel& model);
     CrcLogic(const QString& model);
 
-    CrcModel model();
+    CrcModel model() const;
     bool setModel(const CrcModel& model);
     bool setModel(const QString& model);
 

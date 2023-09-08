@@ -25,8 +25,10 @@ public:
 
     void setModel(CrcModel& model);
     void setModel(QString& name);
+    CrcModel currentModel() const;
 
     void setData(const QByteArray& data, bool calculate = false);
+
 
 private:
     void create_gui();

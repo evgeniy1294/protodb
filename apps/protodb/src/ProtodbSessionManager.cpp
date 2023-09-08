@@ -90,6 +90,9 @@ bool ProtodbSessionManager::load_session(const QString& path_to_folder)
             if (main_window != nullptr) {
                 main_window->setWidgetsState(gui);
                 main_window->updateSeanceState();
+
+                auto tools = gui.value("Tools", nlohmann::json::object_t());
+                main_window->setToolsState(tools);
             }
         }
     }
@@ -124,9 +127,12 @@ bool ProtodbSessionManager::save_session(const QString& path_to_folder)
     }
 
     nlohmann::json gui;
+    nlohmann::json tools;
     auto main_window = getMainWindow();
     if (main_window != nullptr) {
         main_window->getWidgetsState(gui);
+        main_window->getToolsState(tools);
+        gui["Tools"] = tools;
     }
 
     if (! writeToFile(path_to_folder+"/gui.json", gui) ) {

@@ -43,6 +43,11 @@ void protodb::ChecksumCalculator::setModel(QString& model)
     }
 }
 
+protodb::CrcModel protodb::ChecksumCalculator::currentModel() const
+{
+    return m_crc.model();
+}
+
 void protodb::ChecksumCalculator::setData(const QByteArray& data, bool calculate)
 {
     m_editor->setData(data);
@@ -59,6 +64,7 @@ void protodb::ChecksumCalculator::create_gui()
 
     m_model_sel = new FilteredComboBox();
         m_model_sel->addItems(CrcLogic::standartModels());
+        m_model_sel->setCurrentText("");
 
     m_width = new QSpinBox();
         m_width->setMinimum(3);

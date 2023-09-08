@@ -308,6 +308,18 @@ void MainWindow::setWidgetsState(const nlohmann::json& json)
     }
 }
 
+void MainWindow::getToolsState(nlohmann::json& json) const
+{
+    json["ChecksumCalculator"] = m_crc_calc->currentModel();
+}
+
+void MainWindow::setToolsState(const nlohmann::json& json)
+{
+    auto model = json.value("ChecksumCalculator", CrcModel{ 16, 0x8005, 0xffff, 0x0000, true, true});
+    m_crc_calc->setModel(model);
+}
+
+
 void MainWindow::updateSeanceState()
 {
     nlohmann::json state; MainClass::instance().seanceConfigs(state);

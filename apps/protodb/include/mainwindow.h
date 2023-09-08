@@ -34,6 +34,9 @@ public:
     void getWidgetsState(nlohmann::json& json) const;
     void setWidgetsState(const nlohmann::json& json);
 
+    void getToolsState(nlohmann::json& json) const;
+    void setToolsState(const nlohmann::json& json);
+
 private:
     void createGui();
     void createDock();
