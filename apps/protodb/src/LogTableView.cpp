@@ -166,6 +166,7 @@ void LogTableView::createMenu()
         m_data_channel_menu->addAction(m_copy);
         m_data_channel_menu->addAction(m_copy_as_bytes);
         m_data_channel_menu->addAction(m_copy_as_string);
+        m_data_channel_menu->addAction(m_calculate_crc);
         m_data_channel_menu->addSeparator();
         m_data_channel_menu->addAction(m_options);
 
@@ -187,6 +188,7 @@ void LogTableView::createActions()
     m_copy_message = new QAction(tr("Copy message"));
     m_copy_as_bytes = new QAction(QIcon(":/icons/hex.svg"), tr("Copy as HEX string"));
     m_copy_as_string = new QAction(QIcon(":/icons/ascii.svg"), tr("Copy as ASCII text"));
+    m_calculate_crc = new QAction(QIcon(":/icons/crc.svg"), tr("Calculate checksum"));
     m_add_to_analyzer = new QAction(tr("Add to Analyzer"));
     m_options = new QAction(tr("Options"));
 }
@@ -240,6 +242,13 @@ void LogTableView::connectSignals()
 
         QClipboard* pcb = QApplication::clipboard();
             pcb->setText(msg);
+    });
+
+    connect(m_calculate_crc, &QAction::triggered, this, [this]() {
+        auto msg = model()->data(model()->index(currentIndex().row(), Logger::ColumnMsg))
+                       .toByteArray();
+
+        emit sCalculateChecksum(msg);
     });
 
     connect(m_copy_as_string, &QAction::triggered, this, [this]() {

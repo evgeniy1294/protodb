@@ -21,6 +21,7 @@ set(
       include/protodb/Connection.h
       include/protodb/IOWidget.h
       include/protodb/ScriptInterface.h
+      include/protodb/BytecodeEncoderAbstract.h
 )
 
 set(
@@ -28,6 +29,7 @@ set(
       include/protodb/creators/ConnectionCreator.h
       include/protodb/creators/IOWidgetCreatorInterface.h
       include/protodb/creators/ScriptInterfaceCreator.h
+      include/protodb/creators/BytecodeEncoderCreator.h
 )
 
 set(
@@ -35,6 +37,7 @@ set(
       include/protodb/factories/ConnectionFactory.h
       include/protodb/factories/IOWidgetFactory.h
       include/protodb/factories/ScriptInterfaceFactory.h
+      include/protodb/factories/BytecodeEncoderFactory.h
 )
 
 set( DevSources
@@ -42,6 +45,7 @@ set( DevSources
     src/IOWidgetFactory.cpp
     src/ConnectionFactory.cpp
     src/ScriptInterfaceFactory.cpp
+    src/BytecodeEncoderFactory.cpp
 )
 
 set(SOURCES_LIST

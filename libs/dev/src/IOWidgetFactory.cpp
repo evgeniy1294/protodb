@@ -3,8 +3,6 @@
 #include <protodb/creators/IOWidgetCreatorInterface.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
-#include <nlohmann/json.hpp>
-
 using namespace protodb;
 
 IOWidgetFactory::IOWidgetFactory(QObject* parent)
@@ -45,25 +43,14 @@ QSharedPointer<IOWidgetCreator> IOWidgetFactory::operator[](const QString& cid) 
     return nullptr;
 }
 
-const QString& IOWidgetFactory::getDefaultCreator() const
-{
-    return m_default_cid;
-}
-
-void IOWidgetFactory::setDefaultCreator(const QString& cid)
-{
-    if (m_creators.contains(cid))
-        m_default_cid = cid;
-}
-
 IOWidget* IOWidgetFactory::createIOWidget() const
 {
-    return createIOWidget(m_default_cid);
+    return createIOWidget(getDefaultCreator());
 }
 
 IOWidget* IOWidgetFactory::createIOWidget(const nlohmann::json& json) const
 {
-    return createIOWidget(m_default_cid, json);
+    return createIOWidget(getDefaultCreator(), json);
 }
 
 IOWidget* IOWidgetFactory::createIOWidget(const QString& cid) const

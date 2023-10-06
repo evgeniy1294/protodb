@@ -1,5 +1,10 @@
 #include "BytecodeEditor.h"
 
+#include "BytecodeCharsEncoder.h"
+#include "BytecodeValuesEncoder.h"
+#include "BytecodeSourceCodeEncoder.h"
+#include "BytecodeCopyAsDialog.h"
+
 #include <Okteta/CharCodec.hpp>
 #include <Okteta/ByteArrayColumnView.hpp>
 #include <Okteta/PieceTableByteArrayModel.hpp>
@@ -46,6 +51,7 @@ BytecodeEditor::BytecodeEditor(QWidget* parent)
     createActions();
     createGui();
     connectSignals();
+    createEncoders();
 }
 
 void BytecodeEditor::setDisplayFormat(DisplayFormat format)
@@ -72,6 +78,7 @@ void BytecodeEditor::setDisplayFormat(DisplayFormat format)
     }
 
     m_format = format;
+    m_values_encoder->setValueCoding(static_cast<Okteta::ValueCoding>(m_view->valueCoding()));
 }
 
 BytecodeEditor::DisplayFormat BytecodeEditor::displayFormat() const
@@ -138,10 +145,8 @@ QByteArray BytecodeEditor::currentData() const
 {
     QByteArray ret;
         ret.resize(m_model->size());
-
-    for (int i = 0; i < m_model->size(); ++i) {
-        ret[i] = m_model->byte(i);
-    }
+        m_model->copyTo(reinterpret_cast<Okteta::Byte*>(ret.data()),
+                        Okteta::AddressRange(0, m_model->size()-1));
 
     return ret;
 }
@@ -191,10 +196,36 @@ void BytecodeEditor::createActions()
     m_set_width_8_act = new QAction(this);
         m_set_width_8_act->setIcon(QIcon(":/icons/eight.svg"));
         m_set_width_8_act->setText(QObject::tr("Double word"));
+
+    m_encode_as_chars_act  = new QAction(tr("Chars"), this);
+    m_encode_as_values_act = new QAction(tr("Values"), this);
+    m_encode_as_code_act   = new QAction(tr("C-array..."), this);
+
+    m_copy_as_menu = new QMenu(tr("Copy as..."),this);
+        m_copy_as_menu->addAction(m_encode_as_chars_act);
+        m_copy_as_menu->addAction(m_encode_as_values_act);
+        m_copy_as_menu->addAction(m_encode_as_code_act);
+}
+
+void BytecodeEditor::createEncoders()
+{
+    m_values_encoder = new BytecodeValuesEncoder(this);
+        m_values_encoder->setValueCoding(static_cast<Okteta::ValueCoding>(m_view->valueCoding()));
+
+    m_chars_encoder = new BytecodeCharsEncoder(this);
+        m_chars_encoder->setCodecName(m_view->charCodingName());
+        m_chars_encoder->setUndefinedChar(m_view->undefinedChar());
+        m_chars_encoder->setSubstituteChar(m_view->substituteChar());
+
+    m_code_encoder = new BytecodeSourceCodeEncoder(this);
+
+    m_copy_as_dialog->setEncoder(m_code_encoder, new BytecodeSourceCodeEncoderConfigDialog(this));
 }
 
 void BytecodeEditor::createGui()
 {
+    m_copy_as_dialog = new BytecodeCopyAsDialog(this);
+
     m_view = new Okteta::ByteArrayColumnView(this);
         m_view->setByteArrayModel(m_model);
         m_view->setCharCoding("US-ASCII");
@@ -204,6 +235,7 @@ void BytecodeEditor::createGui()
         m_view->setVisibleCodings(Okteta::AbstractByteArrayView::ValueAndCharCodings);
         m_view->setValueCoding(Okteta::AbstractByteArrayView::HexadecimalCoding);
         m_view->setOverwriteMode(false);
+        m_view->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_counter_label = new QLabel("0/0");
 
@@ -271,6 +303,7 @@ void BytecodeEditor::connectSignals()
 {
     connect(m_codecs, &QComboBox::currentTextChanged, this, [this](const QString& name) {
         m_view->setCharCoding(name);
+        m_chars_encoder->setCodecName(name);
     });
 
     connect(m_mode_btn, &QToolButton::clicked, this, [this]() {
@@ -371,5 +404,40 @@ void BytecodeEditor::connectSignals()
     connect(m_view, &Okteta::ByteArrayColumnView::cursorPositionChanged, this, [this](Okteta::Address index) {
         m_counter_label->setText(QString("%1/%2")
             .arg(QString::number(m_view->cursorPosition()), QString::number(m_model->size())));
+    });
+
+    connect(m_encode_as_chars_act , &QAction::triggered, this, [this]() {
+        auto text = m_chars_encoder->encodeData(m_view->selectedData());
+        QGuiApplication::clipboard()->setText(text);
+    });
+
+    connect(m_encode_as_values_act, &QAction::triggered, this, [this]() {
+        auto text = m_values_encoder->encodeData(m_view->selectedData());
+        QGuiApplication::clipboard()->setText(text);
+    });
+
+    connect(m_encode_as_code_act, &QAction::triggered, this, [this]() {
+        m_copy_as_dialog->setData(m_view->selectedData());
+        m_copy_as_dialog->show();
+    });
+
+    connect(m_view, &QWidget::customContextMenuRequested, this, [this](const QPoint pos) {
+        auto menu = m_view->createStandardContextMenu(pos);
+        if (menu) {
+            auto actions = menu->actions();
+            for (int i = 0; i < actions.size(); i++) {
+                if (actions.at(i)->text().contains("Copy")) {
+                    menu->insertMenu(actions.at(i), m_copy_as_menu);
+                    break;
+                }
+
+                if (i == actions.size() - 1) {
+                    menu->addMenu(m_copy_as_menu);
+                }
+            }
+
+            m_copy_as_menu->setEnabled(m_view->hasSelectedData());
+            menu->popup(mapToGlobal(pos));
+        }
     });
 }

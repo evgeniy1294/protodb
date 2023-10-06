@@ -14,16 +14,22 @@ namespace protodb {
 
 class BytecodeEditor;
 class FilteredComboBox;
+class SpoilerWidget;
 
-class CrcCalculator: public QWidget
+class ChecksumCalculator: public QWidget
 {
     Q_OBJECT
 
 public:
-    CrcCalculator(QWidget* parent = nullptr);
-   ~CrcCalculator() = default;
+    ChecksumCalculator(QWidget* parent = nullptr);
+   ~ChecksumCalculator() = default;
 
     void setModel(CrcModel& model);
+    void setModel(QString& name);
+    CrcModel currentModel() const;
+
+    void setData(const QByteArray& data, bool calculate = false);
+
 
 private:
     void create_gui();
@@ -36,6 +42,7 @@ private:
     CrcLogic m_crc;
 
     BytecodeEditor* m_editor;
+    SpoilerWidget* m_spoiler;
 
     FilteredComboBox* m_model_sel;
     QSpinBox*  m_width;

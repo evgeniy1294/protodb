@@ -56,8 +56,6 @@ void MainWindow::createGui()
 
     setCentralWidget(central_widget);
 
-    m_crc_calc = new CrcCalculator(this);
-        m_crc_calc->setWindowFlags(Qt::WindowStaysOnTopHint);
     m_config_dialog = new ProtodbConfigDialog(this);
     m_plugin_manager_dialog = new PluginManagerDialog(this);
     m_session_manager_dialog = new SessionManagerGui(this);
@@ -69,9 +67,11 @@ void MainWindow::createDock()
     ads::CDockManager::setConfigFlag(ads::CDockManager::DockAreaHideDisabledButtons, true);
     ads::CDockManager::setConfigFlag(ads::CDockManager::AlwaysShowTabs, true);
 
+    m_log_widget = new LogWidget();
+
     auto seance_widget = new ads::CDockWidget("Seance");
         seance_widget->setObjectName("SeanceWidget");
-        seance_widget->setWidget(new LogWidget());
+        seance_widget->setWidget(m_log_widget);
 
         m_wgt_menu->addAction(seance_widget->toggleViewAction());
 
@@ -88,17 +88,25 @@ void MainWindow::createDock()
 
         m_wgt_menu->addAction(outgoing_table_widget->toggleViewAction());
 
+    m_crc_calc = new ChecksumCalculator();
+    auto checksum_dock = new ads::CDockWidget("Checksum calculator");
+        checksum_dock->setObjectName("ChecksumCalculator");
+        checksum_dock->setWidget(m_crc_calc);
+
+        m_wgt_menu->addAction(checksum_dock->toggleViewAction());
+
+    ads::CDockAreaWidget* area;
     m_dock_man = new ads::CDockManager();
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, seance_widget);
-    m_dock_man->addDockWidget(ads::RightDockWidgetArea, outgoing_table_widget);
-    m_dock_man->addDockWidgetTab(ads::BottomDockWidgetArea, incoming_table_widget);
+
+    area = m_dock_man->addDockWidget(ads::RightDockWidgetArea, outgoing_table_widget);
+    area = m_dock_man->addDockWidget(ads::BottomDockWidgetArea, checksum_dock, area, 1);
+    m_dock_man->addDockWidget(ads::CenterDockWidgetArea, incoming_table_widget, area, 0);
 }
 
 
 void MainWindow::createActions()
 {
-    m_show_crc_calc = new QAction(QIcon(":/icons/crc.svg"), tr("&CRC calculator"), this);
-        m_show_crc_calc->setIconVisibleInMenu(false);
     m_show_wgt_menu = new QAction(QIcon(), tr("&Wigets"), this);
     m_sessions = new QAction(QIcon(), tr("&Sessions..."), this);
     m_options = new QAction(QIcon(), tr("&Options..."), this);
@@ -120,7 +128,6 @@ void MainWindow::createToolBar() {
     m_toolbar = new isa_tool_bar( QBoxLayout::TopToBottom );
     m_toolbar->setButtonSize( QSize( 28, 28 ) );
 
-    m_toolbar->addToolAction(m_show_crc_calc, true);
     m_toolbar->addToolAction(m_show_wgt_menu, false);
     m_toolbar->addToolAction(m_export_tables, false);
     m_toolbar->addToolAction(m_import_tables, false);
@@ -146,10 +153,6 @@ void MainWindow::connectSignals()
 {
     connect(m_exit, &QAction::triggered, QApplication::instance(), &QApplication::quit);
     connect(m_about_qt, &QAction::triggered, &QApplication::aboutQt);
-
-    connect(m_show_crc_calc, &QAction::triggered, this, [this]() {
-        m_crc_calc->show();
-    });
 
     connect(m_plugins, &QAction::triggered, this, [this]() {
         m_plugin_manager_dialog->show();
@@ -261,6 +264,10 @@ void MainWindow::connectSignals()
         auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
         seance_widget->setWindowTitle(QString("Seance"));
     });
+
+    connect(m_log_widget, &LogWidget::sCalculateCrc, this, [this](const QByteArray& bytes) {
+        m_crc_calc->setData(bytes, true);
+    });
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -300,6 +307,18 @@ void MainWindow::setWidgetsState(const nlohmann::json& json)
         log->setLogStyle(json.value("LogStyle", nlohmann::json::object()));
     }
 }
+
+void MainWindow::getToolsState(nlohmann::json& json) const
+{
+    json["ChecksumCalculator"] = m_crc_calc->currentModel();
+}
+
+void MainWindow::setToolsState(const nlohmann::json& json)
+{
+    auto model = json.value("ChecksumCalculator", CrcModel{ 16, 0x8005, 0xffff, 0x0000, true, true});
+    m_crc_calc->setModel(model);
+}
+
 
 void MainWindow::updateSeanceState()
 {

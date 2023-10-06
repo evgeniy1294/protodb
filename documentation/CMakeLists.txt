@@ -12,25 +12,6 @@ option(${TARGET}_INSTALL "Generate the install target" ON)
 # ------------ [ Sources ] ------------
 
 set(
-  Images
-      content/images/handbook.png
-      content/images/mainwindow.png
-      content/images/mainwindow_mod.png
-      content/images/mainwindow_label.png
-      content/images/seance.png
-      content/images/seance_config.png
-      content/images/log.png
-      content/images/log_decoration.png
-      content/images/log_filtered.png
-      content/images/sequence_editor.png
-      content/images/options.png
-      content/images/sessions.png
-      content/images/sequence_lua.png
-      content/images/crc_calculator.png
-      content/images/delimeters.png
-)
-
-set(
   ContentFiles
       content/about.txt
       content/index.html
@@ -45,11 +26,9 @@ set(
       content/log.html
       content/tables.html
       content/crc_calculator.html
-      content/delimeters.html
 )
 
 set(SOURCES_LIST
-    ${Images}
     ${ContentFiles}
     protodb.qhp
     protodb.qhcp

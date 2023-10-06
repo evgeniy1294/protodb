@@ -3,8 +3,6 @@
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
-#include <nlohmann/json.hpp>
-
 using namespace protodb;
 
 ScriptInterfaceFactory::ScriptInterfaceFactory(QObject* parent)
@@ -45,25 +43,14 @@ QSharedPointer<ScriptInterfaceCreator> ScriptInterfaceFactory::operator[](const 
     return nullptr;
 }
 
-const QString& ScriptInterfaceFactory::getDefaultCreator() const
-{
-    return m_default_cid;
-}
-
-void ScriptInterfaceFactory::setDefaultCreator(const QString& cid)
-{
-    if (m_creators.contains(cid))
-        m_default_cid = cid;
-}
-
 ScriptInterface* ScriptInterfaceFactory::createScriptInterface() const
 {
-    return createScriptInterface(m_default_cid);
+    return createScriptInterface(getDefaultCreator());
 }
 
 ScriptInterface* ScriptInterfaceFactory::createScriptInterface(const nlohmann::json& json) const
 {
-    return createScriptInterface(m_default_cid, json);
+    return createScriptInterface(getDefaultCreator(), json);
 }
 
 ScriptInterface* ScriptInterfaceFactory::createScriptInterface(const QString& cid) const

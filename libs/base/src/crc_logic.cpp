@@ -43,7 +43,7 @@ CrcLogic::CrcLogic(const QString& model)
     setModel(model);
 }
 
-CrcModel CrcLogic::model()
+CrcModel CrcLogic::model() const
 {
     return {m_width, m_poly, m_seed, m_xor_out, m_ref_in, m_ref_out};
 }

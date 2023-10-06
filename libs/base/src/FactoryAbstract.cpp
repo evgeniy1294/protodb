@@ -13,6 +13,17 @@ FactoryAbstract::~FactoryAbstract()
 {
 }
 
+const QString& FactoryAbstract::getDefaultCreator() const
+{
+    return m_default_cid;
+}
+
+void FactoryAbstract::setDefaultCreator(const QString& cid)
+{
+    if (m_creators.contains(cid))
+        m_default_cid = cid;
+}
+
 QPointer<FactoryAbstract> FactoryAbstract::globalInstance(const QString& fid)
 {
     return GlobalFactoryStorage::getFactory(fid);
