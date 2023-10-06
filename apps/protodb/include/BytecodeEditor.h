@@ -26,7 +26,7 @@ class BytecodeEditor: public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QByteArray currentData READ currentData WRITE setData CONSTANT)
+    Q_PROPERTY(QByteArray currentData READ currentData WRITE setData)
 
 public:
     enum DisplayFormat {

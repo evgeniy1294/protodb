@@ -370,7 +370,7 @@ void SequenceModel::toJson(nlohmann::json& json) const
             fields["period"]      = sequence->period();
             fields["description"] = sequence->description();
             fields["bytecode"]    = sequence->bytes();
-            fields["active"]      = sequence->active();
+            fields["active"]      = isModeIncoming() ? sequence->active() : false;
 
         json.push_back(fields);
     }
@@ -417,10 +417,15 @@ void SequenceModel::fromJson(const nlohmann::json& json)
             }
         }
 
-        if ( it.contains("active") ) {
-            if ( it["active"].is_boolean() ) {
-                s->setActive( it["active"] );
+        if (isModeIncoming()) {
+            if ( it.contains("active") ) {
+                if ( it["active"].is_boolean() ) {
+                    s->setActive( it["active"] );
+                }
             }
+        }
+        else {
+            s->setActive(false);
         }
 
         imported.append(s);
