@@ -46,6 +46,10 @@ set(SOURCES_LIST
     src/Delimeter.cpp
     src/CrcCalculator.cpp
     src/FilteredComboBox.cpp
+    src/BytecodeCharsEncoder.cpp
+    src/BytecodeSourceCodeEncoder.cpp
+    src/BytecodeValuesEncoder.cpp
+    src/BytecodeCopyAsDialog.cpp
 )
 
 set(HEADERS_LIST
@@ -83,6 +87,13 @@ set(HEADERS_LIST
     include/Delimeter.h
     include/CrcCalculator.h
     include/FilteredComboBox.h
+    include/BytecodeCharsEncoder.h
+    include/BytecodeSourceCodeEncoder.h
+    include/BytecodeValuesEncoder.h
+    include/BytecodeCharsEncoderCreator.h
+    include/BytecodeSourceCodeEncoderCreator.h
+    include/BytecodeValuesEncoderCreator.h
+    include/BytecodeCopyAsDialog.h
 )
 
 set( WIN_RESOURCES

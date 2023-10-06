@@ -30,10 +30,6 @@ public:
     QSharedPointer< ScriptInterfaceCreator > getCreator( const QString& cid ) const;
     QSharedPointer< ScriptInterfaceCreator > operator[]( const QString& cid ) const;
 
-    // ------------ [ Default creator ] ------------ //
-    const QString &getDefaultCreator() const;
-    void setDefaultCreator( const QString &cid );
-
     // ------------ [ Create new ] --------- //
     ScriptInterface* createScriptInterface() const;
     ScriptInterface* createScriptInterface(const nlohmann::json& json) const;
@@ -43,7 +39,6 @@ public:
 
 private:
     Q_DISABLE_COPY( ScriptInterfaceFactory )
-    QString m_default_cid;
 };
 
 } // namespace protodb

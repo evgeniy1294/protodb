@@ -2,6 +2,8 @@
 #include "BytecodeEditor.h"
 #include "FilteredComboBox.h"
 
+#include <protodb/SpoilerWidget.h>
+
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QLineEdit>
@@ -97,32 +99,37 @@ void protodb::ChecksumCalculator::create_gui()
 
     m_calc_btn = new QPushButton(tr("Calculate"));
 
+    auto m_spoiler_layout = new QGridLayout();
+        m_spoiler_layout->addWidget(new QLabel(tr("Width: ")));
+        m_spoiler_layout->addWidget(m_width, 0, 1, 1, 1);
+        m_spoiler_layout->addWidget(new QLabel(tr("Polynomial: ")), 1, 0, 1, 1);
+        m_spoiler_layout->addWidget(m_poly, 1, 1, 1, 1);
+        m_spoiler_layout->addWidget(new QLabel(tr("Seed: ")), 2, 0, 1, 1);
+        m_spoiler_layout->addWidget(m_init, 2, 1, 1, 1);
+        m_spoiler_layout->addWidget(new QLabel(tr("XOR out: ")), 3, 0, 1, 1);
+        m_spoiler_layout->addWidget(m_xor_out, 3, 1, 1, 1);
+        m_spoiler_layout->addWidget(m_ref_in, 0, 2, 1, 1);
+        m_spoiler_layout->addWidget(m_ref_out, 1, 2, 1, 1);
+        m_spoiler_layout->addWidget(new QLabel(), 4, 2, 1, 1);
+        m_spoiler_layout->setContentsMargins(0, 0, 0, 0);
+
+    m_spoiler = new SpoilerWidget(tr("Parameters:"));
+        m_spoiler->setContentLayout(m_spoiler_layout);
+        m_spoiler->setAnimationDuration(100);
+
     m_editor = new BytecodeEditor();
 
+
     auto m_layout = new QGridLayout();
-        m_layout->addWidget(new QLabel(tr("Models:")), 0, 0, 1, 1);
+        m_layout->addWidget(new QLabel(tr("CRC Models:")), 0, 0, 1, 1, Qt::AlignLeft);
         m_layout->addWidget(m_model_sel, 0, 1, 1, 1);
-        m_layout->addWidget(m_set_model_btn, 0, 2, 1, 1);
-
-        m_layout->addWidget(new QLabel(tr("Width:")), 1, 0, 1, 1);
-        m_layout->addWidget(m_width, 1, 1, 1, 1);
-
-        m_layout->addWidget(new QLabel(tr("Polynomial:")), 2, 0, 1, 1);
-        m_layout->addWidget(m_poly, 2, 1, 1, 1);
-
-        m_layout->addWidget(new QLabel(tr("Seed:")), 3, 0, 1, 1);
-        m_layout->addWidget(m_init, 3, 1, 1, 1);
-        m_layout->addWidget(new QLabel(tr("XOR out:")), 4, 0, 1, 1);
-        m_layout->addWidget(m_xor_out, 4, 1, 1, 1);
-
-        m_layout->addWidget(m_ref_in, 1, 2, 1, 1);
-        m_layout->addWidget(m_ref_out, 2, 2, 1, 1);
-
-        m_layout->addWidget(new QLabel(), 5, 2, 1, 1);
-
-        m_layout->addWidget(m_editor, 6, 0, 1, 3);
-        m_layout->addWidget(m_result, 7, 0, 1, 3);
-        m_layout->addWidget(m_calc_btn, 8, 0, 1, 3, Qt::AlignRight);
+        m_layout->addWidget(m_set_model_btn, 0, 2, 1, 1, Qt::AlignRight);
+        m_layout->addWidget(m_spoiler, 1, 0, 1, 3);
+        m_layout->addWidget(m_editor, 2, 0, 1, 3);
+        m_layout->addWidget(m_result, 3, 0, 1, 3);
+        m_layout->addWidget(m_calc_btn, 4, 0, 1, 3, Qt::AlignRight);
+        m_layout->setColumnStretch(1, 1);
+        m_layout->setColumnMinimumWidth(0, m_spoiler_layout->columnMinimumWidth(0));
 
     setLayout(m_layout);
     setWindowModality(Qt::NonModal);

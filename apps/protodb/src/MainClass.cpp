@@ -4,15 +4,20 @@
 #include "LogPrinter.h"
 #include "LogFormatter.h"
 #include "ScriptInterfaceGroup.h"
+#include "BytecodeCharsEncoderCreator.h"
+#include "BytecodeValuesEncoderCreator.h"
+#include "BytecodeSourceCodeEncoderCreator.h"
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/factories/IOWidgetFactory.h>
 #include <protodb/factories/ConnectionFactory.h>
+#include <protodb/factories/BytecodeEncoderFactory.h>
+#include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/IOWidgetCreatorInterface.h>
 #include <protodb/creators/ConnectionCreator.h>
-#include <protodb/factories/ScriptInterfaceFactory.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
+#include <protodb/creators/BytecodeEncoderCreator.h>
 #include <protodb/ScriptInterface.h>
 #include <protodb/utils/JsonBaseUtils.h>
 #include <protodb/Connection.h>
@@ -101,6 +106,26 @@ void MainClass::init_factories()
 
         for (auto& it: creators) {
             factory->addCreator(QSharedPointer<ScriptInterfaceCreator>(it));
+        }
+    }
+
+    // Encoders
+    {
+        if (!BytecodeEncoderFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(BytecodeEncoderFactory::fid(), new BytecodeEncoderFactory);
+        }
+
+        auto factory  = BytecodeEncoderFactory::globalInstance();
+            BytecodeEncoderCreator* charsEncoderCreator  = new BytecodeCharsEncoderCreator();
+            BytecodeEncoderCreator* valuesEncoderCreator = new BytecodeValuesEncoderCreator();
+            BytecodeEncoderCreator* sourceCodeEncoderCreator = new BytecodeSourceCodeEncoderCreator();
+            auto userCreators = PluginManager::instance().getPlugins<BytecodeEncoderCreator>();
+
+        factory->addCreator(QSharedPointer<BytecodeEncoderCreator>(charsEncoderCreator));
+        factory->addCreator(QSharedPointer<BytecodeEncoderCreator>(valuesEncoderCreator));
+        factory->addCreator(QSharedPointer<BytecodeEncoderCreator>(sourceCodeEncoderCreator));
+        for (auto& it: userCreators) {
+            factory->addCreator(QSharedPointer<BytecodeEncoderCreator>(it));
         }
     }
 }

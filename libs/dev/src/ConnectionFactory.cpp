@@ -3,8 +3,6 @@
 #include <protodb/factories/GlobalFactoryStorage.h>
 #include <protodb/creators/ConnectionCreator.h>
 
-#include <nlohmann/json.hpp>
-
 using namespace protodb;
 
 ConnectionFactory::ConnectionFactory(QObject* parent)
@@ -56,25 +54,14 @@ QSharedPointer<ConnectionCreator> ConnectionFactory::operator[](const QString& c
     return nullptr;
 }
 
-const QString& ConnectionFactory::getDefaultCreator() const
-{
-    return m_default_cid;
-}
-
-void ConnectionFactory::setDefaultCreator(const QString& cid)
-{
-    if (m_creators.contains(cid))
-        m_default_cid = cid;
-}
-
 Connection* ConnectionFactory::createConnection(QObject* parent) const
 {
-    return createConnection(m_default_cid, parent);
+    return createConnection(getDefaultCreator(), parent);
 }
 
 Connection* ConnectionFactory::createConnection(const nlohmann::json& json, QObject* parent) const
 {
-    return createConnection(m_default_cid, json, parent);
+    return createConnection(getDefaultCreator(), json, parent);
 }
 
 Connection* ConnectionFactory::createConnection(const QString& cid, QObject* parent) const

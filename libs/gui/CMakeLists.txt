@@ -37,6 +37,12 @@ set(
     include/protodb/sessions/SessionCreateDialog.h
 )
 
+set(
+  GuiHeaders
+    include/protodb/SpoilerWidget.h
+    include/protodb/ConfigWidgetAbstract.h
+)
+
 set( GuiSources
     src/JsonUtils.cpp
     src/MetaTypeUtils.cpp
@@ -45,6 +51,7 @@ set( GuiSources
     src/SessionCreateDialog.cpp
     src/PluginTreeView.cpp
     src/PluginManagerDialog.cpp
+    src/SpoilerWidget.cpp
 )
 
 set( GuiResources
@@ -56,6 +63,7 @@ set(SOURCES_LIST
     ${UtilsHeaders}
     ${SessionsHeaders}
     ${GuiSources}
+    ${GuiHeaders}
     ${GuiResources}
 )
 

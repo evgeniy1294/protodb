@@ -33,10 +33,6 @@ public:
     QSharedPointer< ConnectionCreator > getCreator( const QString& cid ) const;
     QSharedPointer< ConnectionCreator > operator[]( const QString& cid ) const;
 
-    // ------------ [ Default creator ] ------------ //
-    const QString& getDefaultCreator() const;
-    void setDefaultCreator( const QString &cid );
-
     // ------------ [ Create new ] --------- //
     Connection* createConnection(QObject* parent = nullptr) const;
     Connection* createConnection(const nlohmann::json& json, QObject* parent = nullptr) const;
@@ -46,7 +42,6 @@ public:
 
 private:
     Q_DISABLE_COPY( ConnectionFactory )
-    QString m_default_cid;
 };
 
 } // namespace protodb

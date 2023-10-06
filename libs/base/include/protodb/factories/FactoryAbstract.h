@@ -34,6 +34,10 @@ public:
 
     QStringList getAllCid() const;
 
+    // ------------ [ Default creator ] ------------ //
+    const QString &getDefaultCreator() const;
+    void setDefaultCreator( const QString &cid );
+
 signals:
     void sCreatorAdded( QString cid );
     void sCreatorRemoved( QString cid );
@@ -46,6 +50,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(FactoryAbstract)
+    QString m_default_cid;
 };
 
 } // namespace protodb

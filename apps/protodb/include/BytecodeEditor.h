@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QWidget>
+#include <QMap>
 
 class QAction;
 class QComboBox;
 class QLabel;
 class QPlainTextEdit;
 class QToolButton;
+class QMenu;
 
 namespace Okteta {
     class PieceTableByteArrayModel;
@@ -15,11 +17,16 @@ namespace Okteta {
 
 namespace protodb {
 
+class BytecodeCharsEncoder;
+class BytecodeValuesEncoder;
+class BytecodeSourceCodeEncoder;
+class BytecodeCopyAsDialog;
+
 class BytecodeEditor: public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QByteArray currentData READ currentData WRITE setData)
+    Q_PROPERTY(QByteArray currentData READ currentData WRITE setData CONSTANT)
 
 public:
     enum DisplayFormat {
@@ -61,6 +68,7 @@ public:
 
 private:
     void createActions();
+    void createEncoders();
     void createGui();
     void connectSignals();
 
@@ -71,6 +79,7 @@ private:
 
     Okteta::PieceTableByteArrayModel* m_model;
     Okteta::ByteArrayColumnView* m_view;
+
 
     QComboBox* m_codecs;
 
@@ -91,6 +100,16 @@ private:
     QAction* m_set_width_2_act;
     QAction* m_set_width_4_act;
     QAction* m_set_width_8_act;
+    QAction* m_encode_as_values_act;
+    QAction* m_encode_as_chars_act;
+    QAction* m_encode_as_code_act;
+
+    QMenu* m_copy_as_menu;
+
+    BytecodeValuesEncoder* m_values_encoder;
+    BytecodeCharsEncoder* m_chars_encoder;
+    BytecodeSourceCodeEncoder* m_code_encoder;
+    BytecodeCopyAsDialog* m_copy_as_dialog;
 };
 
 

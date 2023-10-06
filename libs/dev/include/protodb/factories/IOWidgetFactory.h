@@ -30,10 +30,6 @@ public:
     QSharedPointer< IOWidgetCreator > getCreator( const QString& cid ) const;
     QSharedPointer< IOWidgetCreator > operator[]( const QString& cid ) const;
 
-    // ------------ [ Default creator ] ------------ //
-    const QString &getDefaultCreator() const;
-    void setDefaultCreator( const QString &cid );
-
     // ------------ [ Create new widget ] --------- //
     IOWidget* createIOWidget() const;
     IOWidget* createIOWidget(const nlohmann::json& json) const;
@@ -43,7 +39,6 @@ public:
 
 private:
     Q_DISABLE_COPY( IOWidgetFactory )
-    QString m_default_cid;
 };
 
 } // namespace protodb

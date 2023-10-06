@@ -14,6 +14,7 @@ namespace protodb {
 
 class BytecodeEditor;
 class FilteredComboBox;
+class SpoilerWidget;
 
 class ChecksumCalculator: public QWidget
 {
@@ -41,6 +42,7 @@ private:
     CrcLogic m_crc;
 
     BytecodeEditor* m_editor;
+    SpoilerWidget* m_spoiler;
 
     FilteredComboBox* m_model_sel;
     QSpinBox*  m_width;
