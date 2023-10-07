@@ -111,7 +111,8 @@ void NetIOWidget::refreshIpList()
 
     m_local_ip->clear();
     for (int i = 0; i < ip_list.count(); i++) {
-        m_local_ip->addItem(ip_list[i].ip().toString());
+        auto str = ip_list[i].ip().toString();
+        m_local_ip->addItem(str.mid(0, str.indexOf('%')));
     }
 }
 
