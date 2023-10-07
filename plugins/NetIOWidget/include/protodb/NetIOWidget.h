@@ -2,8 +2,9 @@
 
 #include <protodb/IOWidget.h>
 
-class QLineEdit;
 class QComboBox;
+class QLineEdit;
+class QPushButton;
 
 namespace protodb {
 
@@ -26,13 +27,18 @@ public:
 private:
     void createGui();
     void connectSignals();
+    void refreshInterfaceList();
+    void refreshIpList();
 
 private:
     QComboBox* m_mode;
     QComboBox* m_protocol;
+    QComboBox* m_interfaces;
+    QComboBox* m_local_ip;
     QLineEdit* m_remote_ip;
     QLineEdit* m_remote_port;
     QLineEdit* m_local_port;
+    QPushButton* m_refresh_btn;
 };
 
 } // namespace protodb

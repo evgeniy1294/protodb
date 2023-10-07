@@ -3,6 +3,7 @@
 #include "protodb/Connection.h"
 
 #include <QHostAddress>
+#include <QNetworkInterface>
 
 class QAbstractSocket;
 class QTcpServer;
@@ -52,8 +53,10 @@ private:
     int m_mode;
     int m_protocol;
 
+    QNetworkInterface m_interface;
     QTcpServer* m_tcp_server;
     QAbstractSocket* m_socket;
+    QHostAddress m_local_ip;
     QHostAddress m_remote_ip;
     quint16 m_remote_port;
     quint16 m_local_port;

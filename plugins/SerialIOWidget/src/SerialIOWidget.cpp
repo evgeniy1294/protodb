@@ -107,10 +107,12 @@ void SerialIOWidget::createGui()
         m_open_mode->addItems(open_mode_list);
     m_device    = new QComboBox();
         m_device->setDuplicatesEnabled(false);
+        m_device->setMaxVisibleItems(10);
+        m_device->setStyleSheet("combobox-popup: 0;");
 
     m_refresh_btn = new QPushButton();
         m_refresh_btn->setIcon(QIcon(":/icons/refresh.svg"));
-        m_refresh_btn->setFixedSize(32, 32);
+        m_refresh_btn->setFixedSize(26, 26);
 
     // --------[LABELS]-------- //
     auto label_baudrate  = new QLabel(tr("Baudrate"));
