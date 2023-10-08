@@ -140,8 +140,8 @@ void MainWindow::createToolBar() {
     m_toolbar->addToolAction(m_sessions, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_help_content, false);
-    m_toolbar->addToolAction(m_about_qt, false);
     m_toolbar->addToolAction(m_about, false);
+    m_toolbar->addToolAction(m_about_qt, false);
     m_toolbar->addMenuSeparator();
     m_toolbar->addToolAction(m_exit, false);
 
