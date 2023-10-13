@@ -1,12 +1,14 @@
 #pragma once
 
+#include <protodb/export/dev_cfg.hpp>
+
 #include <QObject>
 
 #include <nlohmann/json_fwd.hpp>
 
 namespace protodb {
 
-class BytecodeEncoderAbstract: public QObject {
+class PROTODB_DEV_EXPORT BytecodeEncoderAbstract: public QObject {
     Q_OBJECT
 
 public:

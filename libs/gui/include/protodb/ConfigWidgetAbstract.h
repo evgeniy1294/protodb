@@ -1,5 +1,7 @@
 #pragma once
 
+#include <protodb/export/gui_cfg.hpp>
+
 #include <nlohmann/json_fwd.hpp>
 
 #include <QWidget>
@@ -7,7 +9,7 @@
 namespace protodb
 {
 
-class ConfigWidgetAbstract: public QWidget
+class PROTODB_GUI_EXPORT ConfigWidgetAbstract: public QWidget
 {
     Q_OBJECT
 
