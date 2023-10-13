@@ -95,7 +95,7 @@ void NetIOWidget::refreshInterfaceList()
     const auto& interfaces = QNetworkInterface::allInterfaces();
     for (int i = 0; i < interfaces.count(); i++) {
         auto name = interfaces[i].humanReadableName();
-        m_interfaces->addItem(QString("%1 (%2)").arg(name, interfaces[i].hardwareAddress()), name);
+        m_interfaces->addItem(QString("%1 (%2)").arg(name, interfaces[i].hardwareAddress()), interfaces[i].name());
         if (name == currentName) {
             idx = i;
         }
