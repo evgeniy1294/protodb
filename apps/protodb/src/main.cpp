@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
     #ifdef _WIN32
         PluginManager::instance().setMainDirectory(QCoreApplication::applicationDirPath() + "/plugins");
     #else
-        PluginManager::instance().setMainDirectory("/usr/lib/protodb/plugins");
+        // PluginManager::instance().setMainDirectory("/usr/lib/protodb/plugins");
+        PluginManager::instance().setMainDirectory("/home/evgen/Workspace/Install/protodb/lib/protodb/plugins/");
     #endif
 
     PluginManager::instance().setManualInstallDirectory(userPluginsLocation);

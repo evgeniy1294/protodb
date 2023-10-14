@@ -32,7 +32,7 @@ bool NetworkConnection::isEnabled() const
         return m_tcp_server->isListening();
     }
     else {
-        if (m_socket) {
+        if (m_socket != nullptr) {
             return m_socket->isOpen();
         }
     }
@@ -99,10 +99,11 @@ bool NetworkConnection::setEnable(bool enabled)
 
 void NetworkConnection::setDisable()
 {
-    m_tcp_server->close();
-    if (m_socket) {
+    if (m_socket != nullptr) {
+        m_socket->close();
         m_socket->deleteLater();
     }
+    m_tcp_server->close();
 
     m_description = tr("Network disconnected");
     emit aboutToClose();
@@ -110,7 +111,7 @@ void NetworkConnection::setDisable()
 
 bool NetworkConnection::isWritable() const
 {
-    if (m_socket) {
+    if (m_socket != nullptr) {
         return m_socket->isWritable();
     }
 
@@ -204,18 +205,33 @@ QByteArray NetworkConnection::readAllFrom()
 
 qint64 NetworkConnection::bytesAvailable() const
 {
-    return m_socket->bytesAvailable();
+    if (m_socket != nullptr) {
+        return m_socket->bytesAvailable();
+    }
+
+    return 0;
 }
 
 qint64 NetworkConnection::bytesToWrite() const
 {
-    return m_socket->bytesToWrite();
+    if (m_socket != nullptr) {
+        return m_socket->bytesToWrite();
+    }
+
+    return 0;
 }
 
 QString NetworkConnection::lastError() const
 {
-    if (m_socket != nullptr)
-        return m_socket->errorString();
+    if (isEnabled()) {
+        if (m_mode == server) {
+            return m_tcp_server->errorString();
+        }
+        else {
+            if (m_socket != nullptr)
+                return m_socket->errorString();
+        }
+    }
 
     return QString();
 }
@@ -223,6 +239,10 @@ QString NetworkConnection::lastError() const
 void NetworkConnection::newServerConnection()
 {
     if (m_tcp_server->hasPendingConnections()) {
+        if (m_socket != nullptr) {
+            m_socket->close(); m_socket->deleteLater();
+        }
+
         m_socket = m_tcp_server->nextPendingConnection();
             m_socket->setParent(this);
 
@@ -239,16 +259,34 @@ void NetworkConnection::socketReadyRead()
 
 void NetworkConnection::socketErrorOccurred(QAbstractSocket::SocketError err)
 {
-    emit errorOccurred(sender() == m_tcp_server ?
-        m_tcp_server->errorString() : m_socket->errorString());
+    QString str;
+    if (sender() == m_tcp_server) {
+        str = m_tcp_server->errorString();
+    }
+    else {
+        if (m_socket != nullptr) {
+            str = m_socket->errorString();
+        }
+        else {
+            str = "Unknown error";
+        }
+    }
+
+    emit errorOccurred(str);
 }
 
 void NetworkConnection::socketStateChanged(QAbstractSocket::SocketState socketState)
 {
     if (socketState == QAbstractSocket::UnconnectedState) {
-        m_socket->deleteLater();
-        if (m_mode == client) {
-            emit aboutToClose();
+        if (m_socket) {
+            m_socket->deleteLater();
+            m_socket = nullptr;
+
+            if (m_mode == client) {
+                emit aboutToClose();
+            }
         }
     }
+
+    return;
 }
