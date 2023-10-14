@@ -10,10 +10,10 @@
 #include <QComboBox>
 #include <QLayout>
 #include <QLabel>
-#include <QIntValidator>
 #include <QHostAddress>
 #include <QNetworkInterface>
 #include <QPushButton>
+#include <QSpinBox>
 
 using namespace protodb;
 
@@ -54,8 +54,8 @@ void NetIOWidget::config(nlohmann::json& json) const
     json["Mode"] = m_mode->currentText();
     json["Protocol"] = m_protocol->currentText();
     json["RemoteIP"] = m_remote_ip->text();
-    json["RemotePort"] = m_remote_port->text().toInt();
-    json["LocalPort"] = m_local_port->text().toInt();
+    json["RemotePort"] = m_remote_port->value();
+    json["LocalPort"] = m_local_port->value();
     json["Interface"] = m_interfaces->currentData().toString();
     json["LocalIP"] = m_local_ip->currentText();
 }
@@ -65,8 +65,8 @@ void NetIOWidget::setConfig(const nlohmann::json& json)
     m_mode->setCurrentText(json.value<QString>("Mode", QString("Client")));
     m_protocol->setCurrentText(json.value<QString>("Protocol", QString("TCP")));
     m_remote_ip->setText(json.value<QString>("RemoteIP", QString("127.0.0.1")));
-    m_remote_port->setText(QString::number(json.value<int>("RemotePort", int(0))));
-    m_local_port->setText(QString::number(json.value<int>("LocalPort", int(0))));
+    m_remote_port->setValue(json.value<int>("RemotePort", int(0)));
+    m_local_port->setValue(json.value<int>("LocalPort", int(0)));
 
     m_interfaces->blockSignals(true);
         auto interface = json.value<QString>("Interface", QString());
@@ -102,6 +102,7 @@ void NetIOWidget::refreshInterfaceList()
     }
 
     m_interfaces->setCurrentIndex(idx);
+    refreshIpList();
 }
 
 void NetIOWidget::refreshIpList()
@@ -135,16 +136,13 @@ void NetIOWidget::createGui()
         m_remote_ip->setPlaceholderText(tr("IPv4 or IPv6"));
         m_remote_ip->setText("127.0.0.1");
 
-    auto portValidator = new QIntValidator(0, 65535, this);
-    m_remote_port = new QLineEdit();
-        m_remote_port->setValidator(portValidator);
-        m_remote_port->setPlaceholderText(tr("0 to 65535"));
-        m_remote_port->setText("0");
+    m_remote_port = new QSpinBox();
+        m_remote_port->setMinimum(0);
+        m_remote_port->setMaximum(65535);
 
-    m_local_port = new QLineEdit();
-        m_local_port->setValidator(portValidator);
-        m_local_port->setPlaceholderText(tr("0 to 65535"));
-        m_local_port->setText("0");
+    m_local_port = new QSpinBox();
+        m_local_port->setMinimum(0);
+        m_local_port->setMaximum(65535);
 
     m_protocol = new QComboBox();
         m_protocol->addItem("TCP");

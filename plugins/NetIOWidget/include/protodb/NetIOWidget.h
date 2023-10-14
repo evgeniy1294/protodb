@@ -4,6 +4,7 @@
 
 class QComboBox;
 class QLineEdit;
+class QSpinBox;
 class QPushButton;
 
 namespace protodb {
@@ -36,8 +37,8 @@ private:
     QComboBox* m_interfaces;
     QComboBox* m_local_ip;
     QLineEdit* m_remote_ip;
-    QLineEdit* m_remote_port;
-    QLineEdit* m_local_port;
+    QSpinBox* m_remote_port;
+    QSpinBox* m_local_port;
     QPushButton* m_refresh_btn;
 };
 
