@@ -17,8 +17,8 @@ static const char* ValueConfigKey("ValueCoding");
 
 BytecodeValuesEncoder::BytecodeValuesEncoder(QObject* parent)
     : BytecodeEncoderAbstract(tr("name of the encoding target", "Values"), QStringLiteral("text/plain"), QString(), parent)
-    , m_separation(DefaultSeparator)
     , m_value_coding(Okteta::HexadecimalCoding)
+    , m_separation(DefaultSeparator)
 {
 
 }

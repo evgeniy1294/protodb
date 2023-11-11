@@ -229,7 +229,7 @@ void protodb::LuaInterfacePrivate::bindSpecial(sol::state& lua)
             const uint8_t* data = &(*vec.data());
             const uint8_t* end  = &(*vec.end());
 
-        QByteArray bytes((char*)vec.data(), vec.size());
+        QByteArray bytes((char*)vec.data(), static_cast<int>(vec.size()));
         emit q->sSendBytes(bytes);
     });
 }

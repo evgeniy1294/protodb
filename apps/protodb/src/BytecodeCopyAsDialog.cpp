@@ -28,9 +28,10 @@ BytecodeCopyAsDialog::BytecodeCopyAsDialog(QWidget* parent)
 
 void BytecodeCopyAsDialog::createGui()
 {
-    m_dialog_btn  = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    m_preview     = new QPlainTextEdit();
-    m_dummy_wgt   = new QWidget();
+    m_dialog_btn   = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    m_preview      = new QPlainTextEdit();
+    m_dummy_wgt    = new QWidget();
+    m_cofig_widget = nullptr;
 
     m_layout = new QGridLayout();
         m_layout->addWidget(m_dummy_wgt, 0, 0, 1, 1, Qt::AlignTop);

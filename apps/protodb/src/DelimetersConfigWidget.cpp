@@ -204,10 +204,12 @@ void DelimetersConfigWidget::setConfig(const nlohmann::json& json)
             if (m_use_custom->isChecked()) {
                 m_del_1->setDisabled(true);
                 m_del_2->setDisabled(true);
+                m_packet_size->setDisabled(true);
             }
             else {
-                m_del_1->setEnabled(true);
-                m_del_2->setEnabled(m_del_1->currentIndex() != 0);
+                m_packet_size->setEnabled(true);
+                m_del_1->setEnabled(m_packet_size->value() == 0);
+                m_del_2->setEnabled(m_packet_size->value() == 0 && m_del_1->currentIndex() > 0);
             }
 
         auto packet_size = json.value("SplitBySize", 0);
