@@ -46,6 +46,11 @@ void DelimetersConfigWidget::createGui()
         m_del_2->addItem(tr("Custom"), kCustomValue);
         m_del_2->setInsertPolicy(QComboBox::InsertAtCurrent);
 
+    m_packet_size = new QSpinBox();
+        m_packet_size->setMaximum(10000);
+        m_packet_size->setSpecialValueText("Off");
+        m_packet_size->setValue(0);
+
     m_guard_int = new QSpinBox();
         m_guard_int->setMaximum(10000);
         m_guard_int->setSuffix(tr("ms"));
@@ -57,9 +62,12 @@ void DelimetersConfigWidget::createGui()
         //m_layout->addWidget(new QLabel(tr("Custom delimeter")), 0, 0, 1, 1);
         //m_layout->addWidget(m_use_custom, 0, 1, 1, 1);
 
-        m_layout->addWidget(new QLabel(tr("Delimeters")), 1, 0, 1, 1);
-        m_layout->addWidget(m_del_1, 1, 1, 1, 1);
-        m_layout->addWidget(m_del_2, 1, 2, 1, 1);
+        m_layout->addWidget(new QLabel(tr("Delimeters")), 0, 0, 1, 1);
+        m_layout->addWidget(m_del_1, 0, 1, 1, 1);
+        m_layout->addWidget(m_del_2, 0, 2, 1, 1);
+
+        m_layout->addWidget(new QLabel(tr("Fixed size")), 1, 0, 1, 1);
+        m_layout->addWidget(m_packet_size, 1, 1, 1, 1);
 
         m_layout->addWidget(new QLabel(tr("Guard interval")), 2, 0, 1, 1);
         m_layout->addWidget(m_guard_int, 2, 1, 1, 1);
@@ -69,6 +77,11 @@ void DelimetersConfigWidget::createGui()
 
 void DelimetersConfigWidget::connectSignals()
 {
+    connect(m_packet_size, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int val) {
+        m_del_1->setEnabled(val == 0);
+        m_del_2->setEnabled(val == 0 && m_del_1->currentIndex() > 0);
+    });
+
     connect(m_use_custom, &QCheckBox::stateChanged, this, [this](int check) {
         if (check == Qt::Checked) {
             m_del_1->setDisabled(true);
@@ -147,6 +160,7 @@ void DelimetersConfigWidget::config(nlohmann::json& json) const
     json["UseCustom"] = m_use_custom->isChecked();
     json["Delimeter1"] = d1;
     json["Delimeter2"] = d2;
+    json["SplitBySize"] = m_packet_size->value();
     json["GuardInterval"] = m_guard_int->value();
 }
 
@@ -155,6 +169,7 @@ void DelimetersConfigWidget::defaultConfig(nlohmann::json& json) const
     json["UseCustom"] = false;
     json["Delimeter1"] = -1;
     json["Delimeter2"] = -1;
+    json["SplitBySize"] = 0;
     json["GuardInterval"] = 0;
 }
 
@@ -194,6 +209,9 @@ void DelimetersConfigWidget::setConfig(const nlohmann::json& json)
                 m_del_1->setEnabled(true);
                 m_del_2->setEnabled(m_del_1->currentIndex() != 0);
             }
+
+        auto packet_size = json.value("SplitBySize", 0);
+            m_packet_size->setValue(packet_size);
     }
 }
 

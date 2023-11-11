@@ -314,6 +314,7 @@ void MainClass::start()
 
     // Configure delimiter
     auto delimeters_cfg = m_seance_cfg.value("Delimeters", nlohmann::json::object());
+    m_d_size = delimeters_cfg.value("SplitBySize", -1);
     m_d1 = delimeters_cfg.value("Delimeter1", -1);
     m_d2 = delimeters_cfg.value("Delimeter2", -1);
     m_d_custom = delimeters_cfg.value("UseCustom", false);
@@ -465,37 +466,49 @@ void MainClass::readyRead()
     auto slicing = [this]() -> QList<QByteArray> {
         QList<QByteArray> ret;
 
-        if (m_d_custom) {
-            // Call script function
+        if (m_d_size > 0) {
+            while (m_buffer.count() >= m_d_size) {
+                ret.append(m_buffer.left(m_d_size));
+                m_buffer.remove(0, m_d_size);
+            }
         }
         else {
-            if (m_d1 != -1) {
-                int count = 0; int index = count;
-
-                while(count == index) {
-                    int idx1 = m_buffer.indexOf(static_cast<char>(m_d1), count);
-                    if (idx1 == -1) break;
-
-                    if (m_d2 != -1) {
-                        int idx2 = m_buffer.indexOf(static_cast<char>(m_d2), idx1);
-                        index = idx2 == (idx1+1) ? idx2 + 1 : idx2;
-                    }
-                    else {
-                        index = idx1 == -1 ? idx1 : idx1 + 1;
-                    }
-
-                    if (index != -1) {
-                        ret.append(m_buffer.mid(count, index - count));
-                        count = index;
-                    }
-                }
-
-                if (count != 0) {
-                    m_buffer.remove(0, count);
-                }
+            if (m_d_custom) {
+                // Call script function
             }
-            else if (m_guard_timer->interval() == 0) {
-                ret.append(m_buffer); m_buffer.clear();
+            else {
+                if (m_d1 != -1) {
+                    int iter = 0; int readed = 0;
+
+                    while(iter < m_buffer.count()) {
+                        iter = m_buffer.indexOf(static_cast<char>(m_d1), iter) + 1;
+                        if (iter == 0) {
+                            break;
+                        }
+
+                        bool captured = false;
+                        if (m_d2 != -1) {
+                            if (iter < m_buffer.count()) {
+                                captured = m_buffer.at(iter++) == m_d2 ? true : false;
+                            }
+                        }
+                        else {
+                            captured = true;
+                        }
+
+                        if (captured) {
+                            ret.append(m_buffer.mid(readed, iter - readed));
+                            readed = readed + (iter - readed);
+                        }
+                    }
+
+                    if (readed != 0) {
+                        m_buffer.remove(0, readed);
+                    }
+                }
+                else if (m_guard_timer->interval() == 0) {
+                    ret.append(m_buffer); m_buffer.clear();
+                }
             }
         }
 

@@ -36,6 +36,7 @@ private:
     QComboBox* m_del_1;
     QComboBox* m_del_2;
     QSpinBox*  m_guard_int;
+    QSpinBox*  m_packet_size;
 };
 
 } // namespace protodb

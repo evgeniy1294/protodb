@@ -79,6 +79,7 @@ private:
 
     int m_d1;
     int m_d2;
+    int m_d_size;
     bool m_d_custom;
     QTimer* m_guard_timer;
     QByteArray m_buffer;
