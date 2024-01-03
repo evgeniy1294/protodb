@@ -10,11 +10,12 @@
 
 #include <protodb/plugins/PluginManager.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
-#include <protodb/factories/IOWidgetFactory.h>
+#include <protodb/factories/ConnectionWidgetFactory.h>
+#include <protodb/ConnectionAdvanceControlWidget.h>
 #include <protodb/factories/ConnectionFactory.h>
 #include <protodb/factories/BytecodeEncoderFactory.h>
 #include <protodb/factories/ScriptInterfaceFactory.h>
-#include <protodb/creators/IOWidgetCreatorInterface.h>
+#include <protodb/creators/ConnectionWidgetCreator.h>
 #include <protodb/creators/ConnectionCreator.h>
 #include <protodb/creators/ScriptInterfaceCreator.h>
 #include <protodb/creators/BytecodeEncoderCreator.h>
@@ -69,15 +70,15 @@ void MainClass::init_factories()
 {
     // IOWidget factories
     {
-        if (!IOWidgetFactory::globalInstance()) {
-            GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
+        if (!ConnectionWidgetFactory::globalInstance()) {
+            GlobalFactoryStorage::addFactory(ConnectionWidgetFactory::fid(), new ConnectionWidgetFactory);
         }
 
-        auto factory  = IOWidgetFactory::globalInstance();
-        auto creators = PluginManager::instance().getPlugins<IOWidgetCreator>();
+        auto factory  = ConnectionWidgetFactory::globalInstance();
+        auto creators = PluginManager::instance().getPlugins<ConnectionWidgetCreator>();
 
         for (auto& it: creators) {
-            factory->addCreator(QSharedPointer<IOWidgetCreator>(it));
+            factory->addCreator(QSharedPointer<ConnectionWidgetCreator>(it));
         }
     }
 
@@ -210,12 +211,12 @@ bool MainClass::try_create_connection(const QString& cid, const nlohmann::json &
         factory = ConnectionFactory::globalInstance();
     }
 
-    m_io = factory->createConnection(cid, cfg, this);
+    m_io = QSharedPointer<Connection>(factory->createConnection(cid, cfg, this), &QObject::deleteLater);
     if (m_io) {
         if (m_io->setEnable()) {
-            connect(m_io, &Connection::errorOccurred, this, &MainClass::errorOccurred);
-            connect(m_io, &Connection::readyRead, this, &MainClass::readyRead);
-            connect(m_io, &Connection::aboutToClose, this, &MainClass::stop);
+            connect(m_io.data(), &Connection::errorOccurred, this, &MainClass::errorOccurred);
+            connect(m_io.data(), &Connection::readyRead, this, &MainClass::readyRead);
+            connect(m_io.data(), &Connection::aboutToClose, this, &MainClass::stop);
 
             if (!m_log_printer->setEnabled()) {
                 m_logger->error(QString("Can't open file: %1").arg(m_log_printer->logFile()).toUtf8());
@@ -334,7 +335,15 @@ void MainClass::start()
 
     if (try_create_connection(QString::fromStdString(cid), cfg)) {
         m_script_multi_interface->handleEvent( ScriptInterface::Start );
-        emit sStarted(m_io->statusString());
+
+        auto control_wgt = ConnectionWidgetFactory::globalInstance()
+                               ->createAdvanceControlWidget(QString::fromStdString(cid));
+
+        if (control_wgt) {
+            control_wgt->setConnection(m_io);
+        }
+
+        emit sStarted(m_io->statusString(), control_wgt);
     }
     else {
         stop();
@@ -348,7 +357,7 @@ void MainClass::stop()
     auto io = m_io; m_io = nullptr;
     if (io) {
         if (io->isEnabled()) {
-            disconnect(io); io->setDisable(); io->deleteLater();
+            disconnect(io.data()); io->setDisable(); io.reset();
             m_script_multi_interface->handleEvent( ScriptInterface::Stop );
         }
     }

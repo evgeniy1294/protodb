@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/IOWidget.h>
+#include <protodb/ConnectionConfigWidget.h>
 
 class QComboBox;
 class QLineEdit;
@@ -9,13 +9,13 @@ class QPushButton;
 
 namespace protodb {
 
-class NetIOWidget final: public IOWidget
+class NetworkConfigWidget final: public ConnectionConfigWidget
 {
   Q_OBJECT
 
 public:
-    NetIOWidget(QWidget *parent = nullptr);
-    ~NetIOWidget() = default;
+    NetworkConfigWidget(QWidget *parent = nullptr);
+    ~NetworkConfigWidget() = default;
 
     QString name() const override { return QString("Network"); }
     QString gcid() const override;

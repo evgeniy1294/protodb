@@ -17,8 +17,8 @@
 
 using namespace protodb;
 
-SerialIOWidget::SerialIOWidget(QWidget* parent)
-    : IOWidget(parent)
+SerialConfigWidget::SerialConfigWidget(QWidget* parent)
+    : ConnectionConfigWidget(parent)
 {
     createGui();
     connectSignals();
@@ -27,19 +27,19 @@ SerialIOWidget::SerialIOWidget(QWidget* parent)
     refreshPortList();
 }
 
-QString SerialIOWidget::gcid() const
+QString SerialConfigWidget::gcid() const
 {
-    return SerialIOWIdgetCreator::creatorId();
+    return SerialConnectionWidgetCreator::creatorId();
 }
 
-QString SerialIOWidget::deviceCID() const
+QString SerialConfigWidget::deviceCID() const
 {
     return SerialConnectionCreator::creatorId();
 }
 
-void SerialIOWidget::defaultConfig(nlohmann::json &json) const
+void SerialConfigWidget::defaultConfig(nlohmann::json &json) const
 {
-    json["gcid"]        = SerialIOWIdgetCreator::creatorId();
+    json["gcid"]        = SerialConnectionWidgetCreator::creatorId();
     json["PortName"]    = "";
     json["OpenMode"]    = "Communication";
     json["Baudrate"]    = "115200";
@@ -49,9 +49,9 @@ void SerialIOWidget::defaultConfig(nlohmann::json &json) const
     json["FlowControl"] = "None";
 }
 
-void SerialIOWidget::config(nlohmann::json &json) const
+void SerialConfigWidget::config(nlohmann::json &json) const
 {
-    json["gcid"]        = SerialIOWIdgetCreator::creatorId();
+    json["gcid"]        = SerialConnectionWidgetCreator::creatorId();
     json["PortName"]    = m_device->currentData().toString();
     json["OpenMode"]    = m_open_mode->currentText();
     json["Baudrate"]    = m_baudrate->currentText();
@@ -61,7 +61,7 @@ void SerialIOWidget::config(nlohmann::json &json) const
     json["FlowControl"] = m_flow_ctrl->currentText();
 }
 
-void SerialIOWidget::setConfig(const nlohmann::json &json)
+void SerialConfigWidget::setConfig(const nlohmann::json &json)
 {
     QString baudrate = json.value("Baudrate", QString());
     if (m_baudrate->findText(baudrate) == -1) {
@@ -80,7 +80,7 @@ void SerialIOWidget::setConfig(const nlohmann::json &json)
     m_flow_ctrl->setCurrentText(json.value("FlowControl", QString()));
 }
 
-void SerialIOWidget::createGui()
+void SerialConfigWidget::createGui()
 {
     static const QStringList baudrate_list   = { "1200", "4800", "9600", "19200", "38400", "57600", "115200", tr("Custom") };
     static const QStringList databits_list   = { "5", "6", "7", "8" };
@@ -156,7 +156,7 @@ void SerialIOWidget::createGui()
     setLayout(main_layout);
 }
 
-void SerialIOWidget::connectSignals()
+void SerialConfigWidget::connectSignals()
 {
     connect(m_refresh_btn, &QPushButton::clicked, this, [this]() {
         refreshPortList();
@@ -174,7 +174,7 @@ void SerialIOWidget::connectSignals()
     });
 }
 
-void SerialIOWidget::refreshPortList()
+void SerialConfigWidget::refreshPortList()
 {
     const auto& ports = QSerialPortInfo::availablePorts();
     int idx = m_device->currentIndex();
@@ -195,7 +195,7 @@ void SerialIOWidget::refreshPortList()
     m_device->setCurrentIndex(idx);
 }
 
-bool SerialIOWidget::event(QEvent* e)
+bool SerialConfigWidget::event(QEvent* e)
 {
     if (e->type() == QEvent::Show) {
         refreshPortList();

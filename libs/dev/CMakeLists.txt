@@ -19,7 +19,8 @@ set(
   DevHeaders
       include/protodb/Seance.h
       include/protodb/Connection.h
-      include/protodb/IOWidget.h
+      include/protodb/ConnectionConfigWidget.h
+      include/protodb/ConnectionAdvanceControlWidget.h
       include/protodb/ScriptInterface.h
       include/protodb/BytecodeEncoderAbstract.h
 )
@@ -27,7 +28,7 @@ set(
 set(
   CreatorsHeaders
       include/protodb/creators/ConnectionCreator.h
-      include/protodb/creators/IOWidgetCreatorInterface.h
+      include/protodb/creators/ConnectionWidgetCreator.h
       include/protodb/creators/ScriptInterfaceCreator.h
       include/protodb/creators/BytecodeEncoderCreator.h
 )
@@ -35,7 +36,7 @@ set(
 set(
   FactoriesHeaders
       include/protodb/factories/ConnectionFactory.h
-      include/protodb/factories/IOWidgetFactory.h
+      include/protodb/factories/ConnectionWidgetFactory.h
       include/protodb/factories/ScriptInterfaceFactory.h
       include/protodb/factories/BytecodeEncoderFactory.h
 )

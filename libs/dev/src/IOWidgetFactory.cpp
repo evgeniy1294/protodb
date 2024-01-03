@@ -1,22 +1,22 @@
-#include "protodb/factories/IOWidgetFactory.h"
+#include "protodb/factories/ConnectionWidgetFactory.h"
 
-#include <protodb/creators/IOWidgetCreatorInterface.h>
+#include <protodb/creators/ConnectionWidgetCreator.h>
 #include <protodb/factories/GlobalFactoryStorage.h>
 
 using namespace protodb;
 
-IOWidgetFactory::IOWidgetFactory(QObject* parent)
+ConnectionWidgetFactory::ConnectionWidgetFactory(QObject* parent)
     : FactoryAbstract(parent)
 {
 
 }
 
-QList<QSharedPointer<IOWidgetCreator> > IOWidgetFactory::getAllCreators() const
+QList<QSharedPointer<ConnectionWidgetCreator> > ConnectionWidgetFactory::getAllCreators() const
 {
-    QList<QSharedPointer<IOWidgetCreator> > ret;
+    QList<QSharedPointer<ConnectionWidgetCreator> > ret;
 
     for (auto& it: m_creators) {
-        auto ptr = qSharedPointerCast<IOWidgetCreator>(it);
+        auto ptr = qSharedPointerCast<ConnectionWidgetCreator>(it);
         if (ptr) {
             ret.append(ptr);
         }
@@ -25,73 +25,92 @@ QList<QSharedPointer<IOWidgetCreator> > IOWidgetFactory::getAllCreators() const
     return ret;
 }
 
-QSharedPointer<IOWidgetCreator> IOWidgetFactory::getCreator(const QString& cid) const
+QSharedPointer<ConnectionWidgetCreator> ConnectionWidgetFactory::getCreator(const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IOWidgetCreator>(m_creators[cid]);
+        return qSharedPointerCast<ConnectionWidgetCreator>(m_creators[cid]);
     }
 
     return nullptr;
 }
 
-QSharedPointer<IOWidgetCreator> IOWidgetFactory::operator[](const QString& cid) const
+QSharedPointer<ConnectionWidgetCreator> ConnectionWidgetFactory::operator[](const QString& cid) const
 {
     if (m_creators.contains(cid)) {
-        return qSharedPointerCast<IOWidgetCreator>(m_creators[cid]);
+        return qSharedPointerCast<ConnectionWidgetCreator>(m_creators[cid]);
     }
 
     return nullptr;
 }
 
-IOWidget* IOWidgetFactory::createIOWidget() const
+ConnectionConfigWidget* ConnectionWidgetFactory::createConfigWidget() const
 {
-    return createIOWidget(getDefaultCreator());
+    return createConfigWidget(getDefaultCreator());
 }
 
-IOWidget* IOWidgetFactory::createIOWidget(const nlohmann::json& json) const
+ConnectionConfigWidget* ConnectionWidgetFactory::createConfigWidget(const nlohmann::json& json) const
 {
-    return createIOWidget(getDefaultCreator(), json);
+    return createConfigWidget(getDefaultCreator(), json);
 }
 
-IOWidget* IOWidgetFactory::createIOWidget(const QString& cid) const
+ConnectionConfigWidget* ConnectionWidgetFactory::createConfigWidget(const QString& cid) const
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IOWidgetCreator >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< ConnectionWidgetCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 
-        return creator->create();
+        return creator->createConfigWidget();
     }
 
     return nullptr;
 }
 
-IOWidget* IOWidgetFactory::createIOWidget(const QString& cid, const nlohmann::json& json) const
+ConnectionConfigWidget* ConnectionWidgetFactory::createConfigWidget(const QString& cid, const nlohmann::json& json) const
 {
     if( m_creators.contains(cid) )
     {
-        auto creator = qSharedPointerCast< IOWidgetCreator >( m_creators[ cid ] );
+        auto creator = qSharedPointerCast< ConnectionWidgetCreator >( m_creators[ cid ] );
         if( ! creator )
             return nullptr;
 
-        return creator->create(json);
+        return creator->createConfigWidget(json);
     }
 
     return nullptr;
 }
 
-QPointer<IOWidgetFactory> IOWidgetFactory::globalInstance()
+ConnectionAdvanceControlWidget* ConnectionWidgetFactory::createAdvanceControlWidget() const
 {
-    return qobject_cast< IOWidgetFactory * >( GlobalFactoryStorage::getFactory( fid() ) );
+    return createAdvanceControlWidget(getDefaultCreator());
 }
 
-QString IOWidgetFactory::fid()
+ConnectionAdvanceControlWidget* ConnectionWidgetFactory::createAdvanceControlWidget(const QString& cid) const
+{
+    if( m_creators.contains(cid) )
+    {
+        auto creator = qSharedPointerCast< ConnectionWidgetCreator >( m_creators[ cid ] );
+        if( ! creator )
+            return nullptr;
+
+        return creator->createAdvanceControlWidget();
+    }
+
+    return nullptr;
+}
+
+QPointer<ConnectionWidgetFactory> ConnectionWidgetFactory::globalInstance()
+{
+    return qobject_cast< ConnectionWidgetFactory * >( GlobalFactoryStorage::getFactory( fid() ) );
+}
+
+QString ConnectionWidgetFactory::fid()
 {
     return QString("IOWidgetFactory");
 }
 
-bool IOWidgetFactory::addCreator(const QSharedPointer<IOWidgetCreator>& creator)
+bool ConnectionWidgetFactory::addCreator(const QSharedPointer<ConnectionWidgetCreator>& creator)
 {
     if (!creator || containsCreator(creator->cid())) {
         return false;

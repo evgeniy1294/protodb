@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protodb/IOWidget.h>
+#include <protodb/ConnectionConfigWidget.h>
 
 class QComboBox;
 class QValidator;
@@ -8,13 +8,13 @@ class QPushButton;
 
 namespace protodb {
 
-class SerialIOWidget final: public IOWidget
+class SerialConfigWidget final: public ConnectionConfigWidget
 {
   Q_OBJECT
 
 public:
-    SerialIOWidget(QWidget *parent = nullptr);
-    ~SerialIOWidget() = default;
+    SerialConfigWidget(QWidget *parent = nullptr);
+    ~SerialConfigWidget() = default;
 
     QString name() const override { return QString("Serial"); }
     virtual QString gcid() const override;

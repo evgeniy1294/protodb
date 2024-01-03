@@ -2,7 +2,6 @@
 
 #include <protodb/utils/JsonBaseUtils.h>
 
-#include <QSerialPort>
 #include <QSerialPortInfo>
 
 using namespace protodb;
@@ -70,6 +69,31 @@ SerialConnection::SerialConnection(QObject* parent)
 {
     m_description = tr("Serial disconnected");
     connectSignals();
+}
+
+bool SerialConnection::setDataTerminalReady(bool set)
+{
+    return m_serial_port->setDataTerminalReady(set);
+}
+
+bool SerialConnection::isDataTerminalReady() const
+{
+    return m_serial_port->isDataTerminalReady();
+}
+
+bool SerialConnection::setRequestToSend(bool set)
+{
+    return m_serial_port->setRequestToSend(set);
+}
+
+bool SerialConnection::isRequestToSend() const
+{
+    return m_serial_port->isRequestToSend();
+}
+
+QSerialPort::PinoutSignals SerialConnection::pinoutSignals() const
+{
+    return m_serial_port->pinoutSignals();
 }
 
 bool SerialConnection::isEnabled() const

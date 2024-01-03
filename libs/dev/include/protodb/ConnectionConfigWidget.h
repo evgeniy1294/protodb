@@ -9,14 +9,14 @@
 namespace protodb
 {
 
-class PROTODB_DEV_EXPORT IOWidget: public QWidget, public Configurable
+class PROTODB_DEV_EXPORT ConnectionConfigWidget: public QWidget, public Configurable
 {
     Q_OBJECT
 
 public:
-    explicit IOWidget(QWidget* parent = nullptr)
+    explicit ConnectionConfigWidget(QWidget* parent = nullptr)
         : QWidget(parent) {    }
-    virtual ~IOWidget() = default;
+    virtual ~ConnectionConfigWidget() = default;
 
     virtual QString name() const = 0;
     virtual QString deviceCID() const = 0;

@@ -45,7 +45,7 @@ public slots:
     void sendBytes(QByteArray& bytes);
 
 signals:
-    void sStarted(QString str);
+    void sStarted(QString str, QWidget* control_wgt);
     void sStopted();
     void sStartFailed();
 
@@ -88,7 +88,7 @@ private:
 
     Logger* m_logger;
     LogPrinter* m_log_printer;
-    Connection* m_io;
+    QSharedPointer<Connection> m_io;
 
     nlohmann::json m_seance_cfg;
 };

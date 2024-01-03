@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
-set(TARGET SerialIoWidget)
+set(TARGET NetworkConnectionWidgets)
 set(TARGET_NAMESPACE protodb)
 set(INCLUDE_PREFIX "")
 set(LIBRARY_DIST_SUFFIX "")
@@ -13,13 +13,13 @@ set(CMAKE_AUTOMOC ON)
 
 # ------------ [ Sources ] ------------
 set( BaseHeaders
-    include/protodb/SerialIOWidget.h
-    include/protodb/SerialIOWidgetCreator.h
+    include/protodb/NetIOWidget.h
+    include/protodb/NetIOWidgetCreator.h
 )
 
 set( BaseSources
-    src/SerialIOWidget.cpp
-    src/SerialIOWidgetCreator.cpp
+    src/NetIOWidget.cpp
+    src/NetIOWidgetCreator.cpp
 )
 
 set(SOURCES_LIST
@@ -44,7 +44,7 @@ if(NOT DEFINED QT_BUILD_VERSION)
     set(QT_BUILD_VERSION ${QT_VERSION_MAJOR})
 endif()
 
-find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets SerialPort REQUIRED)
+find_package(Qt${QT_BUILD_VERSION} COMPONENTS Core Gui Widgets Network REQUIRED)
 
 target_link_libraries(${TARGET}
 
@@ -53,7 +53,7 @@ target_link_libraries(${TARGET}
     Qt${QT_BUILD_VERSION}::Core
     Qt${QT_BUILD_VERSION}::Gui
     Qt${QT_BUILD_VERSION}::Widgets
-    Qt${QT_BUILD_VERSION}::SerialPort
+    Qt${QT_BUILD_VERSION}::Network
 )
 
 target_link_libraries(${TARGET}
@@ -63,7 +63,7 @@ target_link_libraries(${TARGET}
     protodb::base
     protodb::gui
     protodb::dev
-    protodb::SerialConnection
+    protodb::NetworkConnection
 )
 
 # ------------ [ Properties and compile definitions ] ------------
@@ -82,19 +82,16 @@ target_include_directories(${TARGET} PUBLIC
 # install
 #---------------------------------------------------------------------------------------
 if(${TARGET}_INSTALL)
-    message(STATUS "Generating install for ${TARGET} ${CMAKE_INSTALL_LIBDIR}")
+    message(STATUS "Generating install for ${TARGET}")
 
     #---------------------------------------------------------------------------------------
     # if we plan to export built library to CMAKE_INSTALL_PREFIX
     # (by default it's /usr/local or C:/Program Files/${PROJECT_NAME})
     #---------------------------------------------------------------------------------------
 
-    #install(FILES ${PROJECT_BINARY_DIR}/${INCLUDE_PREFIX}${TARGET}/${TARGET}_cfg.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDE_PREFIX}${TARGET}")
     install(TARGETS ${TARGET} EXPORT ${TARGET}
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/plugins"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${TARGET_NAMESPACE}/plugins"
     )
 
 endif()
-
-

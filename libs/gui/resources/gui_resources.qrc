@@ -42,5 +42,8 @@
         <file alias="one.svg">icons/one.svg</file>
         <file alias="eight.svg">icons/eigth.svg</file>
         <file alias="two.svg">icons/two.svg</file>
+        <file alias="lamp_off.svg">icons/lamp_off.svg</file>
+        <file alias="lamp_on_green.svg">icons/lamp_on_green.svg</file>
+        <file alias="lamp_on_red.svg">icons/lamp_on_red.svg</file>
     </qresource>
 </RCC>

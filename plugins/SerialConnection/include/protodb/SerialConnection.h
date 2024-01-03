@@ -2,6 +2,8 @@
 
 #include <protodb/Connection.h>
 
+#include <QSerialPort>
+
 class QSerialPort;
 
 namespace protodb {
@@ -13,6 +15,14 @@ class SerialConnection final: public Connection
 public:
     SerialConnection(QObject* parent = nullptr);
     ~SerialConnection() = default;
+
+    bool setDataTerminalReady(bool set);
+    bool isDataTerminalReady() const;
+
+    bool setRequestToSend(bool set);
+    bool isRequestToSend() const;
+
+    QSerialPort::PinoutSignals pinoutSignals() const;
 
     bool isEnabled() const override;
     bool setEnable(bool enable = true) override;

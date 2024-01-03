@@ -18,8 +18,7 @@ class QTabWidget;
 
 namespace protodb {
 
-class IOWidgetFactory;
-class IOWidget;
+class ConnectionConfigWidget;
 class LogFormatWidget;
 class DelimetersConfigWidget;
 
@@ -67,7 +66,7 @@ private:
     DelimetersConfigWidget* m_delimeters_cfg_widget;
 
     QMap<QString, QAbstractButton*> m_selection_btns;
-    QMap<QString, IOWidget*> m_io_widgets;
+    QMap<QString, ConnectionConfigWidget*> m_io_widgets;
     QString m_curr_cid;
     nlohmann::json m_curr_cfg;
 };

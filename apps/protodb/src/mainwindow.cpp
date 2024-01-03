@@ -82,6 +82,10 @@ void MainWindow::createDock()
 
         m_wgt_menu->addAction(incoming_table_widget->toggleViewAction());
 
+    auto connection_control_widget = new ads::CDockWidget("Connection control");
+        connection_control_widget->setObjectName("ConnectionControl");
+        m_wgt_menu->addAction(connection_control_widget->toggleViewAction());
+
     auto outgoing_table_widget = new ads::CDockWidget("Outgoing sequences");
         outgoing_table_widget->setObjectName("OutgoingSequences");
         outgoing_table_widget->setWidget(new SequenceTableWidget(main_class.outgoingSequences()));
@@ -99,7 +103,8 @@ void MainWindow::createDock()
     m_dock_man = new ads::CDockManager();
     m_dock_man->addDockWidget(ads::RightDockWidgetArea, seance_widget);
 
-    area = m_dock_man->addDockWidget(ads::RightDockWidgetArea, outgoing_table_widget);
+    area = m_dock_man->addDockWidget(ads::RightDockWidgetArea, connection_control_widget);
+    area = m_dock_man->addDockWidget(ads::BottomDockWidgetArea, outgoing_table_widget, area);
     area = m_dock_man->addDockWidget(ads::BottomDockWidgetArea, checksum_dock, area, 1);
     m_dock_man->addDockWidget(ads::CenterDockWidgetArea, incoming_table_widget, area, 0);
 }
@@ -255,14 +260,28 @@ void MainWindow::connectSignals()
         m_session_manager_dialog->show();
     });
 
-    connect(&MainClass::instance(), &MainClass::sStarted, this, [this](QString str) {
+    connect(&MainClass::instance(), &MainClass::sStarted, this, [this](QString str, QWidget* control_wgt) {
         auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
-        seance_widget->setWindowTitle(QString("Seance: %1").arg(str));
+            seance_widget->setWindowTitle(QString("Seance: %1").arg(str));
+
+        if (control_wgt) {
+            auto dock = m_dock_man->findDockWidget("ConnectionControl");
+                dock->setWidget(control_wgt);
+                dock->update();
+                dock->closeDockWidget();
+                dock->toggleView(true);
+        }
     });
 
     connect(&MainClass::instance(), &MainClass::sStopted, this, [this]() {
         auto seance_widget = m_dock_man->findDockWidget("SeanceWidget");
         seance_widget->setWindowTitle(QString("Seance"));
+
+        auto dock = m_dock_man->findDockWidget("ConnectionControl");
+            dock->toggleView(false);
+
+        auto wgt = dock->takeWidget();
+            if (wgt) wgt->deleteLater();
     });
 
     connect(m_log_widget, &LogWidget::sCalculateCrc, this, [this](const QByteArray& bytes) {

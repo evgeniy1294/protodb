@@ -12,10 +12,10 @@ add_subdirectory(cmake)
 add_subdirectory(apps/protodb)
 
 # Plugins
-add_subdirectory(plugins/NetIOWidget)
 add_subdirectory(plugins/NetworkConnection)
-add_subdirectory(plugins/SerialIOWidget)
+add_subdirectory(plugins/NetworkConnectionWidgets)
 add_subdirectory(plugins/SerialConnection)
+add_subdirectory(plugins/SerialConnectionWidgets)
 add_subdirectory(plugins/LuaScriptInterface)
 
 # docs

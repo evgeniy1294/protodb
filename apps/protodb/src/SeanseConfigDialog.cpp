@@ -3,9 +3,9 @@
 #include "DelimetersConfigWidget.h"
 #include "MainClass.h"
 
-#include <protodb/IOWidget.h>
-#include <protodb/factories/IOWidgetFactory.h>
-#include <protodb/creators/IOWidgetCreatorInterface.h>
+#include <protodb/ConnectionConfigWidget.h>
+#include <protodb/factories/ConnectionWidgetFactory.h>
+#include <protodb/creators/ConnectionWidgetCreator.h>
 
 #include <protodb/factories/GlobalFactoryStorage.h>
 
@@ -50,16 +50,16 @@ void SeanceConfigDialog::createGui()
     }
 
     // --------[CREATE IO WIDGETS]--------- //
-    auto factory = IOWidgetFactory::globalInstance();
+    auto factory = ConnectionWidgetFactory::globalInstance();
     if (!factory) {
-        GlobalFactoryStorage::addFactory(IOWidgetFactory::fid(), new IOWidgetFactory);
-        factory = IOWidgetFactory::globalInstance();
+        GlobalFactoryStorage::addFactory(ConnectionWidgetFactory::fid(), new ConnectionWidgetFactory);
+        factory = ConnectionWidgetFactory::globalInstance();
     }
 
     auto creators = factory->getAllCreators();
     for(auto &it: creators) {
         if (it) {
-            auto wgt = it.data()->create();
+            auto wgt = it.data()->createConfigWidget();
 
             m_io_widgets[it->cid()] = wgt;
             m_selection_btns[it->cid()] = new QRadioButton(wgt->name());
@@ -152,12 +152,12 @@ void SeanceConfigDialog::createGui()
 
 void SeanceConfigDialog::connectSignals()
 {
-    auto factory = GlobalFactoryStorage::getFactory(IOWidgetFactory::fid());
+    auto factory = GlobalFactoryStorage::getFactory(ConnectionWidgetFactory::fid());
     connect(factory, &FactoryAbstract::sCreatorAdded, this, [this](QString cid) {
-        auto factory = qobject_cast<IOWidgetFactory*>(QObject::sender());
+        auto factory = qobject_cast<ConnectionWidgetFactory*>(QObject::sender());
 
         if (factory) {
-            auto wgt = factory->createIOWidget(cid);
+            auto wgt = factory->createConfigWidget(cid);
             auto btn = new QRadioButton(wgt->name());
 
             m_io_widgets[ cid ] = wgt;
@@ -169,7 +169,7 @@ void SeanceConfigDialog::connectSignals()
     });
 
     connect(factory, &FactoryAbstract::sCreatorRemoved, this, [this](QString cid) {
-        auto factory = qobject_cast<IOWidgetFactory*>(QObject::sender());
+        auto factory = qobject_cast<ConnectionWidgetFactory*>(QObject::sender());
 
         if (factory) {
             auto wgt = m_io_widgets.take(cid);

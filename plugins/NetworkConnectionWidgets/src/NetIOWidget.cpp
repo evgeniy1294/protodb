@@ -17,8 +17,8 @@
 
 using namespace protodb;
 
-NetIOWidget::NetIOWidget(QWidget* parent)
-    : IOWidget(parent)
+NetworkConfigWidget::NetworkConfigWidget(QWidget* parent)
+    : ConnectionConfigWidget(parent)
 {
     createGui();
     connectSignals();
@@ -26,19 +26,19 @@ NetIOWidget::NetIOWidget(QWidget* parent)
     setDefaultConfig();
 }
 
-QString NetIOWidget::gcid() const
+QString NetworkConfigWidget::gcid() const
 {
-    return NetIOWIdgetCreator::creatorId();
+    return NetworkConnectionWidgetCreator::creatorId();
 }
 
-QString NetIOWidget::deviceCID() const
+QString NetworkConfigWidget::deviceCID() const
 {
     return NetworkConnectionCreator::creatorId();
 }
 
-void NetIOWidget::defaultConfig(nlohmann::json& json) const
+void NetworkConfigWidget::defaultConfig(nlohmann::json& json) const
 {
-    json["gcid"] = NetIOWIdgetCreator::creatorId();
+    json["gcid"] = NetworkConnectionWidgetCreator::creatorId();
     json["Mode"] = "Client";
     json["Protocol"] = "TCP";
     json["RemoteIP"] = "127.0.0.1";
@@ -48,9 +48,9 @@ void NetIOWidget::defaultConfig(nlohmann::json& json) const
     json["LocalIP"] = "127.0.0.1";
 }
 
-void NetIOWidget::config(nlohmann::json& json) const
+void NetworkConfigWidget::config(nlohmann::json& json) const
 {
-    json["gcid"] = NetIOWIdgetCreator::creatorId();
+    json["gcid"] = NetworkConnectionWidgetCreator::creatorId();
     json["Mode"] = m_mode->currentText();
     json["Protocol"] = m_protocol->currentText();
     json["RemoteIP"] = m_remote_ip->text();
@@ -60,7 +60,7 @@ void NetIOWidget::config(nlohmann::json& json) const
     json["LocalIP"] = m_local_ip->currentText();
 }
 
-void NetIOWidget::setConfig(const nlohmann::json& json)
+void NetworkConfigWidget::setConfig(const nlohmann::json& json)
 {
     m_mode->setCurrentText(json.value<QString>("Mode", QString("Client")));
     m_protocol->setCurrentText(json.value<QString>("Protocol", QString("TCP")));
@@ -86,7 +86,7 @@ void NetIOWidget::setConfig(const nlohmann::json& json)
     }
 }
 
-void NetIOWidget::refreshInterfaceList()
+void NetworkConfigWidget::refreshInterfaceList()
 {
     auto currentName = m_interfaces->currentData().toString();
     m_interfaces->clear();
@@ -105,7 +105,7 @@ void NetIOWidget::refreshInterfaceList()
     refreshIpList();
 }
 
-void NetIOWidget::refreshIpList()
+void NetworkConfigWidget::refreshIpList()
 {
     auto name = m_interfaces->currentData().toString();
     auto ip_list = QNetworkInterface::interfaceFromName(name).addressEntries();
@@ -117,7 +117,7 @@ void NetIOWidget::refreshIpList()
     }
 }
 
-void NetIOWidget::createGui()
+void NetworkConfigWidget::createGui()
 {
     m_local_ip = new QComboBox();
     m_local_ip->setMaxVisibleItems(10);
@@ -178,7 +178,7 @@ void NetIOWidget::createGui()
     setLayout(main_layout);
 }
 
-void NetIOWidget::connectSignals()
+void NetworkConfigWidget::connectSignals()
 {
     connect(m_interfaces, &QComboBox::currentTextChanged, this, [this](){
         refreshIpList();
@@ -204,5 +204,5 @@ void NetIOWidget::connectSignals()
         }
     });
 
-    connect(m_refresh_btn, &QPushButton::clicked, this, &NetIOWidget::refreshInterfaceList);
+    connect(m_refresh_btn, &QPushButton::clicked, this, &NetworkConfigWidget::refreshInterfaceList);
 }
