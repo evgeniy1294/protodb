@@ -137,9 +137,10 @@ function parseResponce(msg)
 
     elseif code == READ_HOLDING_REGISTERS or code == READ_INPUT_REGISTERS then
         str = str.."Byte count - "..string.format("%x", msg[3])..'\n'
-        str = str.."Values - { "
+        str = str.."Values - { \n"
         for i = 4, #msg-2, 2 do
-            str = str.."0x"..string.format("%x", msg[i])..string.format("%x", msg[i+1])..' '
+            value = (msg[i] << 8) | msg[i+1]
+            str = str.."  0x"..string.format("%x", value).." ("..string.format("%d", value)..") \n"
         end
         str = str.."}"
 

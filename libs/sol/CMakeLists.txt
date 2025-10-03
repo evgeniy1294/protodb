@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 set(TARGET sol)
 set(TARGET_NAMESPACE sol)
@@ -17,6 +17,7 @@ find_package(Lua REQUIRED)
 set(SOURCES_LIST
     ${CMAKE_CURRENT_LIST_DIR}/include/sol/sol.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/sol/config.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/sol/forward.hpp
 )
 
 add_library(${TARGET} INTERFACE)
@@ -36,4 +37,3 @@ if(${TARGET}_INSTALL)
     # TODO: install sol
 
 endif()
-
